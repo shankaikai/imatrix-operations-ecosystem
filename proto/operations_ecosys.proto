@@ -12,14 +12,14 @@ service AdminServices {
     rpc AddUser(User) returns (Response) {}
     rpc UpdateUser(User) returns (Response) {}
     rpc DeleteUser(User) returns (Response) {}
-    rpc FindUsers(Query) returns (BulkUsers) {}
+    rpc FindUsers(UserQuery) returns (BulkUsers) {}
 }
 
 service BroadcastServices{
     rpc AddBroadcast(Broadcast) returns (Response) {}
     rpc UpdateBroadcast(Broadcast) returns (Response) {}
     rpc DeleteBroadcast(Broadcast) returns (Response) {}
-    rpc FindBroadcasts(Query) returns (BulkBroadcasts) {}
+    rpc FindBroadcasts(BroadcastQuery) returns (BulkBroadcasts) {}
 }
 
 // Admin
@@ -64,6 +64,16 @@ message UserFilter {
         TELEGRAM_HANDLE = 5;
         IS_PART_TIMER = 6;
     }
+}
+
+// Get specific types users as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 50 will be used if the field is empty. 
+message UserQuery {
+    repeated UserFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 10 objects should be shown, limit = 10;
+    int64 limit = 2;
 }
 
 // Broadcasting
@@ -112,6 +122,16 @@ message BroadcastFilter {
     }
 }
 
+// Get specific types users as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 50 will be used if the field is empty. 
+message BroadcastQuery {
+    repeated BroadcastFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 10 objects should be shown, limit = 10;
+    int64 limit = 2;
+}
+
 // Common messages
 // Generic reponses to add or update requests
 message Response {
@@ -124,17 +144,6 @@ message Response {
         ACK = 0;
         ERROR = 1;
     }
-}
-
-// Get specific types of an object as specified in the Filter. 
-// The type of object is determined based on the service called. 
-// If one wants to get all objects, leave filters empty. 
-// A default limit of 50 will be used if the field is empty. 
-message Query {
-    repeated Filter filters = 1;
-    // Limit the number of objects being returned. 
-    // If only 10 objects should be shown, limit = 10;
-    int64 limit = 2;
 }
 
 // This is used to indicate what kind of objects should be returned that

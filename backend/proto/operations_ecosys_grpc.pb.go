@@ -21,7 +21,7 @@ type AdminServicesClient interface {
 	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
-	FindUsers(ctx context.Context, in *Query, opts ...grpc.CallOption) (*BulkUsers, error)
+	FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (*BulkUsers, error)
 }
 
 type adminServicesClient struct {
@@ -59,7 +59,7 @@ func (c *adminServicesClient) DeleteUser(ctx context.Context, in *User, opts ...
 	return out, nil
 }
 
-func (c *adminServicesClient) FindUsers(ctx context.Context, in *Query, opts ...grpc.CallOption) (*BulkUsers, error) {
+func (c *adminServicesClient) FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (*BulkUsers, error) {
 	out := new(BulkUsers)
 	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/FindUsers", in, out, opts...)
 	if err != nil {
@@ -75,7 +75,7 @@ type AdminServicesServer interface {
 	AddUser(context.Context, *User) (*Response, error)
 	UpdateUser(context.Context, *User) (*Response, error)
 	DeleteUser(context.Context, *User) (*Response, error)
-	FindUsers(context.Context, *Query) (*BulkUsers, error)
+	FindUsers(context.Context, *UserQuery) (*BulkUsers, error)
 	mustEmbedUnimplementedAdminServicesServer()
 }
 
@@ -92,7 +92,7 @@ func (UnimplementedAdminServicesServer) UpdateUser(context.Context, *User) (*Res
 func (UnimplementedAdminServicesServer) DeleteUser(context.Context, *User) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedAdminServicesServer) FindUsers(context.Context, *Query) (*BulkUsers, error) {
+func (UnimplementedAdminServicesServer) FindUsers(context.Context, *UserQuery) (*BulkUsers, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUsers not implemented")
 }
 func (UnimplementedAdminServicesServer) mustEmbedUnimplementedAdminServicesServer() {}
@@ -163,7 +163,7 @@ func _AdminServices_DeleteUser_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _AdminServices_FindUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Query)
+	in := new(UserQuery)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -175,7 +175,7 @@ func _AdminServices_FindUsers_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/operations_ecosys.AdminServices/FindUsers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServicesServer).FindUsers(ctx, req.(*Query))
+		return srv.(AdminServicesServer).FindUsers(ctx, req.(*UserQuery))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -215,7 +215,7 @@ type BroadcastServicesClient interface {
 	AddBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
 	UpdateBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
 	DeleteBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
-	FindBroadcasts(ctx context.Context, in *Query, opts ...grpc.CallOption) (*BulkBroadcasts, error)
+	FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (*BulkBroadcasts, error)
 }
 
 type broadcastServicesClient struct {
@@ -253,7 +253,7 @@ func (c *broadcastServicesClient) DeleteBroadcast(ctx context.Context, in *Broad
 	return out, nil
 }
 
-func (c *broadcastServicesClient) FindBroadcasts(ctx context.Context, in *Query, opts ...grpc.CallOption) (*BulkBroadcasts, error) {
+func (c *broadcastServicesClient) FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (*BulkBroadcasts, error) {
 	out := new(BulkBroadcasts)
 	err := c.cc.Invoke(ctx, "/operations_ecosys.BroadcastServices/FindBroadcasts", in, out, opts...)
 	if err != nil {
@@ -269,7 +269,7 @@ type BroadcastServicesServer interface {
 	AddBroadcast(context.Context, *Broadcast) (*Response, error)
 	UpdateBroadcast(context.Context, *Broadcast) (*Response, error)
 	DeleteBroadcast(context.Context, *Broadcast) (*Response, error)
-	FindBroadcasts(context.Context, *Query) (*BulkBroadcasts, error)
+	FindBroadcasts(context.Context, *BroadcastQuery) (*BulkBroadcasts, error)
 	mustEmbedUnimplementedBroadcastServicesServer()
 }
 
@@ -286,7 +286,7 @@ func (UnimplementedBroadcastServicesServer) UpdateBroadcast(context.Context, *Br
 func (UnimplementedBroadcastServicesServer) DeleteBroadcast(context.Context, *Broadcast) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBroadcast not implemented")
 }
-func (UnimplementedBroadcastServicesServer) FindBroadcasts(context.Context, *Query) (*BulkBroadcasts, error) {
+func (UnimplementedBroadcastServicesServer) FindBroadcasts(context.Context, *BroadcastQuery) (*BulkBroadcasts, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindBroadcasts not implemented")
 }
 func (UnimplementedBroadcastServicesServer) mustEmbedUnimplementedBroadcastServicesServer() {}
@@ -357,7 +357,7 @@ func _BroadcastServices_DeleteBroadcast_Handler(srv interface{}, ctx context.Con
 }
 
 func _BroadcastServices_FindBroadcasts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Query)
+	in := new(BroadcastQuery)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -369,7 +369,7 @@ func _BroadcastServices_FindBroadcasts_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/operations_ecosys.BroadcastServices/FindBroadcasts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BroadcastServicesServer).FindBroadcasts(ctx, req.(*Query))
+		return srv.(BroadcastServicesServer).FindBroadcasts(ctx, req.(*BroadcastQuery))
 	}
 	return interceptor(ctx, in, info, handler)
 }
