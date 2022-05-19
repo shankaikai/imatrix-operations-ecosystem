@@ -1,0 +1,158 @@
+// Showcasing the capabilities of protobuf with gRPC
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/operations_ecosys";
+
+package operations_ecosys;
+
+service AdminServices {
+    rpc AddUser(User) returns (Response) {}
+    rpc UpdateUser(User) returns (Response) {}
+    rpc DeleteUser(User) returns (Response) {}
+    rpc FindUsers(Query) returns (BulkUsers) {}
+}
+
+service BroadcastServices{
+    rpc AddBroadcast(Broadcast) returns (Response) {}
+    rpc UpdateBroadcast(Broadcast) returns (Response) {}
+    rpc DeleteBroadcast(Broadcast) returns (Response) {}
+    rpc FindBroadcasts(Query) returns (BulkBroadcasts) {}
+}
+
+// Admin
+// Users 
+// All users who use the operations ecosystem.
+message User {
+    int64 user_id = 1;
+    UserType user_type = 2;
+    string name = 3;
+    string email = 4;
+    string phone_number = 5;
+    string telegram_handle = 6;
+    string user_security_img = 7;
+    bool is_part_timer = 8;
+
+    enum UserType {
+        ISPECIALIST = 0;
+        SECURITY_GUARD = 1;
+        CONTROLLER = 2;
+        MANAGER = 3;
+    }
+}
+
+// Passing around multiple users in one message. 
+message BulkUsers {
+    Response response = 1;
+    repeated User users = 2;
+}
+
+// Filter the types of broadcasts to be returned. 
+message UserFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        USER_ID = 0;
+        TYPE = 1;
+        NAME = 2;
+        EMAIL = 3;
+        PHONE_NUMBER = 4;
+        TELEGRAM_HANDLE = 5;
+        IS_PART_TIMER = 6;
+    }
+}
+
+// Broadcasting
+// The default fields of a broadcast
+message Broadcast {
+    // Broadcast IDs are only useful for the backend database. 
+    int64 broadcast_id = 1;
+    BroadcastType type = 2;
+    string title = 3;
+    string content = 4;
+    google.protobuf.Timestamp creation_date = 5;
+    google.protobuf.Timestamp deadline = 6;
+    // The whole user fields does not need to be filled, 
+    // as long as the user is identifiable.
+    User creator = 7;
+    repeated User receipients = 8;
+
+    enum BroadcastType{
+        ANNOUNCEMENT = 0;
+        ASSIGNMENT = 1;
+    }
+}
+
+// Passing around multiple broadcasts in one message. 
+message BulkBroadcasts {
+    Response response = 1;
+    repeated Broadcast broadcasts = 2;
+}
+
+// Filter the types of broadcasts to be returned. 
+message BroadcastFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        BROADCAST_ID = 0;
+        TYPE = 1;
+        TITLE = 2;
+        CONTENT = 3;
+        CREATION_DATE = 4;
+        DEADLINE = 5;
+        CREATOR = 6;
+        RECEIPEIENTS = 7;
+        NUM_RECEIPIENTS = 8;
+    }
+}
+
+// Common messages
+// Generic reponses to add or update requests
+message Response {
+    Type type = 1;
+    string error_message = 2;
+    // Return any pk of the row that the query modified
+    int64 primary_key = 3;
+
+    enum Type {
+        ACK = 0;
+        ERROR = 1;
+    }
+}
+
+// Get specific types of an object as specified in the Filter. 
+// The type of object is determined based on the service called. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 50 will be used if the field is empty. 
+message Query {
+    repeated Filter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 10 objects should be shown, limit = 10;
+    int64 limit = 2;
+}
+
+// This is used to indicate what kind of objects should be returned that
+// fit this critera. 
+// For example, if one wishes to get all broadcasts that have more than 
+// one recipient. They might put the comparison as GREATER, value = 1;
+// The field to be compared with is in the corresponding XXXFilter message.
+message Filter {
+    Comparisons comparison = 1;
+    string value = 2;
+
+    enum Comparisons{
+        GREATER = 0;
+        GREATER_EQ = 1;
+        EQUAL = 2;
+        LESSER_EQ = 3;
+        LESSER = 4;
+        CONTAINS = 5;
+    }
+}
+

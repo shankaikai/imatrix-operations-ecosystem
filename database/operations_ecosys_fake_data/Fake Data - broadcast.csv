@@ -1,0 +1,9 @@
+broadcast_id,type,title,content,creation_date,deadline,creator
+1,announcement,Vesak Day Security,"We need extra guards during the holiday,", 2022-02-05 14:23:33, 2022-03-05 14:23:33,5
+2,announcement,Fire at Bukit Batok,Beware of smoke, 2022-04-02 14:23:33, 2022-04-02 14:23:33,5
+3,announcement,Sales of  Screwdrivers,There is a screwdriver sale at Bishan. Go buy your screwdrivers today!, 2022-03-04 14:23:33, 2022-04-04 14:23:33,5
+4,assignment,Duty Roster,You're duty is on 26 May at 3pm, 2022-03-05 14:23:33, 2022-04-05 14:23:33,5
+5,assignment,Duty Roster,You're duty is on 27 May at 3pm, 2022-03-20 14:23:33, 2022-04-20 14:23:33 ,9
+6,assignment,Duty Roster,You're duty is on 28 May at 3pm, 2022-04-02 14:23:33, 2022-05-02 14:23:33 ,9
+7,assignment,Duty Roster,You're duty is on 29 May at 3pm, 2022-05-04 14:23:33, 2022-06-04 14:23:33,9
+8,assignment,Duty Roster,You're duty is on 30 May at 3pm, 2022-05-07 14:23:33, 2022-06-07 14:23:33 ,9

@@ -1,0 +1,11 @@
+user_id,user_type,name,email,phone_number,telegram_handle,user_security_img,is_part_timer
+1,I-Specialist,Mark Lim,Mark_Lim_10@gmail.com,89532766,Mark_Lim_2,NOTHING,0
+2,I-Specialist,Yasmin Chan,Yasmin_Chan_3@gmail.com,90234634,Yasmin_Chan_1,NOTHING,1
+3,Security Guard,Kajal Khatri,Kajal_Khatri_5@gmail.com,85447205,Kajal_Khatri_1,NOTHING,0
+4,Manager,Emberly Reddy,Emberly_Reddy_3@gmail.com,88706974,Emberly_Reddy_1,NOTHING,1
+5,Controller,Ramya Nurnaim,Ramya_Nurnaim_1@gmail.com,97632907,Ramya_Nurnaim_6,NOTHING,0
+6,I-Specialist,Rueben Hooi,Rueben_Hooi_4@gmail.com,94666456,Rueben_Hooi_9,NOTHING,0
+7,I-Specialist,Lou Xin Yacob,Lou_Xin_Yacob_8@gmail.com,87279676,Lou_Xin_Yacob_3,NOTHING,1
+8,I-Specialist,Joseph Koh,Joseph_Koh_3@gmail.com,84254756,Joseph_Koh_9,NOTHING,0
+9,Controller,Mary Tan,Mary_Tan_2@gmail.com,87735598,Mary_Tan_3,NOTHING,0
+10,Security Guard,Qi Xuan,Qi_Xuan_4@gmail.com,81863868,Qi_Xuan_5,NOTHING,0
