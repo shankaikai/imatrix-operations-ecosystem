@@ -1,1 +1,6 @@
 .env
+
+# client
+client/.next
+client/srcnode_modules
+client/package-lock.json
