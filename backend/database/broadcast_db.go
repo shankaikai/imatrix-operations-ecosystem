@@ -5,35 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/protobuf/types/known/timestamppb"
-)
-
-const (
-	BROADCAST_DB_TABLE_NAME        = "broadcast"
-	BROADCAST_RECIPIENT_TABLE_NAME = "broadcast_recepients"
-
-	// Broadcast table fields
-	BC_DB_ID            = "broadcast_id"
-	BC_DB_TYPE          = "type"
-	BC_DB_TITLE         = "title"
-	BC_DB_CONTENT       = "content"
-	BC_DB_CREATION_DATE = "creation_date"
-	BC_DB_DEADLINE      = "deadline"
-	BC_DB_CREATOR       = "creator"
-
-	// Broadcast recipients table fields
-	// Broadcast table fields
-	BC_REC_DB_ID         = "broadcast_recipients_id"
-	BC_REC_DB_RELATED_BC = "related_broadcast"
-	BC_REC_DB_RECIPIENT  = "recipient"
-	BC_REC_DB_ACK        = "acknowledged"
-	BC_REC_DB_REJECTION  = "rejected"
 )
 
 // Insert a new broadcast into the database table.
@@ -54,8 +31,8 @@ func BroadcastInsert(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (i
 	}
 
 	// Create broadcast recipients rows for corresponding broadcast
-	for _, user := range broadcast.Receipients {
-		_, err = BroadcastReceipientInsert(db, user, bc_pk, dbLock)
+	for _, recipient := range broadcast.Receipients {
+		_, err = BroadcastReceipientInsert(db, recipient, bc_pk, dbLock)
 
 		if err != nil {
 			break
@@ -66,7 +43,7 @@ func BroadcastInsert(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (i
 }
 
 // Assumes the user has the correct user id that corresponds to its DB row.
-func BroadcastReceipientInsert(db *sql.DB, receipient *pb.User, mainBroadcastID int64, dbLock *sync.Mutex) (int64, error) {
+func BroadcastReceipientInsert(db *sql.DB, receipient *pb.BroadcastRecipient, mainBroadcastID int64, dbLock *sync.Mutex) (int64, error) {
 	// get fields and values for this particular receipient
 	fields := getBroadcastRecTableFields()
 	values := orderBroadcastRecFields(receipient, mainBroadcastID)
@@ -82,105 +59,132 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	fmt.Println("Getting Broadcasts...")
 	broadcasts := make([]*pb.Broadcast, 0)
 
-	// Get the main broadcasts
-	fields := "*"
+	// Join all the broadcast
+	innerFields := BC_DB_ID
+	outerFields := "*"
 	// Format filters
-	filters := getFormattedBroadcastWhereFilters(query)
-	// Add limits
-	filters += fmt.Sprintf(" LIMIT %d", query.Limit)
+	innerFilters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
+	onCondition := fmt.Sprintf("%s = %s", BC_DB_ID, BC_REC_DB_RELATED_BC)
 
-	mainBCRows, err := Query(db, BROADCAST_DB_TABLE_NAME, fields, filters)
+	innerQuery := createLeftJoinQuery(BROADCAST_DB_TABLE_NAME, BROADCAST_RECIPIENT_TABLE_NAME, onCondition, innerFields, innerFilters)
+
+	// It is not easy to find out how many rows a single broadcast will span because of the join.
+	outerFilter := fmt.Sprintf("WHERE %s IN (%s) LIMIT %d", BC_DB_ID, innerQuery, MAX_LIMIT)
+
+	rows, err := QueryLeftJoin(db, BROADCAST_DB_TABLE_NAME, BROADCAST_RECIPIENT_TABLE_NAME, onCondition, outerFields, outerFilter)
 
 	if err != nil {
 		return broadcasts, err
 	}
 
 	// convert query rows into broadcasts
-	for mainBCRows.Next() {
-		var broadcast pb.Broadcast
+	broadcastMap := make(map[int64]*pb.Broadcast)
+
+	for rows.Next() {
+		broadcast := &pb.Broadcast{}
+		broadcastReceipient := &pb.BroadcastRecipient{}
+
 		creatorUserId := -1
 		broadcastType := ""
 		creationDateStr := ""
 		deadlineStr := ""
+		recipientUserId := -1
+		relatedBroadcast := ""
 
 		// cast each row to a broadcast
-		err = mainBCRows.Scan(
+		err = rows.Scan(
 			&broadcast.BroadcastId,
 			&broadcastType,
 			&broadcast.Title,
 			&broadcast.Content,
 			&creationDateStr,
 			&deadlineStr,
-			&creatorUserId)
+			&creatorUserId,
+			&broadcastReceipient.BroadcastRecipientsId,
+			&relatedBroadcast,
+			&recipientUserId,
+			&broadcastReceipient.Acknowledged,
+			&broadcastReceipient.Rejected,
+		)
 
 		if err != nil {
 			fmt.Println("GetBroadcasts ERROR:", err)
 			continue
 		}
 
-		broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
-		creator, err := idUserByUserId(db, creatorUserId)
+		// Check if there was already a broadcast found with this id
+		if existingBroadcast, ok := broadcastMap[broadcast.BroadcastId]; ok {
+			broadcast = existingBroadcast
+		} else {
+			// Return only the necessary number of broadcasts.
+			// If the number of broadcasts have reached the limit,
+			// do not add new broadcasts.
+			if len(broadcastMap) >= int(query.Limit) {
+				continue
+			}
+			broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
+			creator, err := idUserByUserId(db, creatorUserId)
 
-		if err != nil {
-			fmt.Println("GetBroadcasts ERROR:", err)
-			continue
+			if err != nil {
+				fmt.Println("GetBroadcasts ERROR:", err)
+				continue
+			}
+
+			broadcast.Creator = creator
+			dateFormat := "2006-01-02 15:04:05"
+
+			creationDate, err := time.Parse(dateFormat, creationDateStr)
+			if err != nil {
+				fmt.Println("GetBroadcasts:", err.Error())
+				continue
+			}
+
+			deadline, err := time.Parse(dateFormat, deadlineStr)
+			if err != nil {
+				fmt.Println("GetBroadcasts:", err.Error())
+				continue
+			}
+
+			broadcast.CreationDate = &timestamppb.Timestamp{Seconds: creationDate.Unix()}
+			broadcast.Deadline = &timestamppb.Timestamp{Seconds: deadline.Unix()}
+			broadcastMap[broadcast.BroadcastId] = broadcast
 		}
 
-		broadcast.Creator = creator
-		fmt.Println("creation date", creationDateStr)
-		dateFormat := "2006-01-02 15:04:05"
-
-		creationDate, err := time.Parse(dateFormat, creationDateStr)
+		broadcastReceipient.Recipient, err = idUserByUserId(db, recipientUserId)
 		if err != nil {
 			fmt.Println("GetBroadcasts:", err.Error())
 			continue
 		}
 
-		deadline, err := time.Parse(dateFormat, deadlineStr)
-		if err != nil {
-			fmt.Println("GetBroadcasts:", err.Error())
-			continue
+		// Add recipient to broadcast
+		if broadcast.Receipients == nil {
+			broadcast.Receipients = make([]*pb.BroadcastRecipient, 0)
 		}
 
-		broadcast.CreationDate = &timestamppb.Timestamp{Seconds: creationDate.Unix()}
-		broadcast.Deadline = &timestamppb.Timestamp{Seconds: deadline.Unix()}
+		broadcast.Receipients = append(broadcast.Receipients, broadcastReceipient)
+	}
 
-		// For each broadcast, get the recepients
-		receipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
-		if err != nil {
-			fmt.Println("GetBroadcasts:", err.Error())
-			continue
-		}
-		broadcast.Receipients = receipients
-
-		// append broadcast to the output list
-		broadcasts = append(broadcasts, &broadcast)
+	// Add all broadcasts to the returning array
+	for _, broadcast := range broadcastMap {
+		broadcasts = append(broadcasts, broadcast)
 	}
 
 	return broadcasts, err
 }
 
 // Get all the broadcast rows in a table that meets specifications.
-func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastID int64) ([]*pb.User, error) {
+func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastID int64) ([]*pb.BroadcastRecipient, error) {
 	fmt.Println("Getting Broadcasts Recipients...")
-	broadcastReceipients := make([]*pb.User, 0)
+	broadcastReceipients := make([]*pb.BroadcastRecipient, 0)
 
 	// We are currently only interested in the corresponding user
 	// TODO: update this assumption
 	fields := BC_REC_DB_RECIPIENT
 
 	// Format filters
-	filters := getFormattedBroadcastWhereFilters(query)
 	// Get for a specific main broadcast
-	if len(filters) == 0 {
-		filters = "WHERE "
-	} else {
-		filters += ", "
-	}
-
-	filters += fmt.Sprintf("%s='%d'", BC_REC_DB_RELATED_BC, mainBroadcastID)
-	// Add limits
-	filters += fmt.Sprintf(" LIMIT %d", query.Limit)
+	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainBroadcastID)))
+	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, true)
 
 	BCRecRows, err := Query(db, BROADCAST_RECIPIENT_TABLE_NAME, fields, filters)
 
@@ -190,20 +194,29 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 
 	// convert query rows into broadcasts
 	for BCRecRows.Next() {
-		var receipient *pb.User
+		receipient := &pb.BroadcastRecipient{}
 		receipientId := -1
-
-		err = BCRecRows.Scan(&receipientId)
+		relatedBroadcast := ""
+		// cast each row to a broadcast
+		err = BCRecRows.Scan(
+			receipient.BroadcastRecipientsId,
+			&relatedBroadcast,
+			&receipientId,
+			receipient.Acknowledged,
+			receipient.Rejected,
+		)
 
 		if err != nil {
 			fmt.Println("GetBroadcastRecipients ERROR::", err)
 			break
 		}
 
-		receipient, err = idUserByUserId(db, receipientId)
+		// TODO think about whether I can store the users in cache rather than
+		// get the same few users over and over
+		receipient.Recipient, err = idUserByUserId(db, receipientId)
 		if err != nil {
-			fmt.Println("GetBroadcastRecipients ERROR::", err)
-			break
+			fmt.Println("GetBroadcasts:", err.Error())
+			continue
 		}
 
 		broadcastReceipients = append(broadcastReceipients, receipient)
@@ -212,178 +225,81 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 	return broadcastReceipients, err
 }
 
-//TODO
-// Update a specific row in the table
-// This function assumes that we are using the specific table new_table.
-func UpdateBroadcast(db *sql.DB, tableName string, Broadcast *pb.Broadcast) (int64, error) {
-	query := fmt.Sprintf("update %s set id = ?, Broadcast = ?, Creator = ? where id = ?", tableName)
-	result, err := db.Exec(query,
-		Broadcast.BroadcastId,
-		Broadcast.Content,
-		Broadcast.Creator,
-		Broadcast.BroadcastId,
-	)
-	if err != nil {
-		fmt.Println(err)
+// Update a specific broadcast in the table
+// Only fields that have been filled in the broadcast object will be updated.
+// Note that this update does not update the broadcast's recipient's inner status
+// such as the acknowledgement or rejection status but only if the recipient
+// is part of the broadcast.
+func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
+	// Update the main broadcast first
+	newFields := getFilledBroadcastFields(broadcast)
+	query := &pb.BroadcastQuery{}
+	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
+	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
 
-		return 0, err
-	} else {
-		return result.RowsAffected()
-	}
-}
-
-//TODO
-// Delete a particular row in the database
-// This function assumes that we are using the specific table new_table.
-func DeleteBroadcast(db *sql.DB, tableName string, BroadcastId int) (int64, error) {
-	query := fmt.Sprintf("DELETE FROM  %s WHERE id = ?;", tableName)
-	result, err := db.Exec(query, BroadcastId)
+	rowsAffected, err := Update(db, BROADCAST_DB_TABLE_NAME, newFields, filters)
 
 	if err != nil {
-		fmt.Println(err)
-
-		return 0, err
-	} else {
-		return result.RowsAffected()
+		fmt.Println("UpdateBroadcast ERROR::", err)
+		return rowsAffected, err
 	}
+
+	//TODO
+	// Update recipients if necessary
+	// Get all recipients
+	// See if any are missing
+	// See if any need to be deleted
+
+	return rowsAffected, err
 }
 
 //TODO
 // Update a specific row in the table
-// This function assumes that we are using the specific table new_table.
-func UpdateBroadcastReceipients(db *sql.DB, tableName string, Broadcast *pb.Broadcast) (int64, error) {
-	query := fmt.Sprintf("update %s set id = ?, Broadcast = ?, Creator = ? where id = ?", tableName)
-	result, err := db.Exec(query,
-		Broadcast.BroadcastId,
-		Broadcast.Content,
-		Broadcast.Creator,
-		Broadcast.BroadcastId,
-	)
-	if err != nil {
-		fmt.Println(err)
+func UpdateBroadcastReceipients(db *sql.DB, tableName string, broadcast *pb.Broadcast) (int64, error) {
+	// Update the main broadcast first
+	newFields := getFilledBroadcastFields(broadcast)
+	query := &pb.BroadcastQuery{}
+	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
+	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
 
-		return 0, err
-	} else {
-		return result.RowsAffected()
-	}
-}
-
-//TODO
-// Delete a particular row in the database
-// This function assumes that we are using the specific table new_table.
-func DeleteBroadcastReceipients(db *sql.DB, tableName string, BroadcastId int) (int64, error) {
-	query := fmt.Sprintf("DELETE FROM  %s WHERE id = ?;", tableName)
-	result, err := db.Exec(query, BroadcastId)
+	rowsAffected, err := Update(db, BROADCAST_DB_TABLE_NAME, newFields, filters)
 
 	if err != nil {
-		fmt.Println(err)
-
-		return 0, err
-	} else {
-		return result.RowsAffected()
-	}
-}
-
-// Returns the fields of the main broadcast table
-// in a specific order.
-// Note that IDs are auto incremented and should
-// not be modified manually. Ommits ID in resulting string.
-func getBroadcastTableFields() string {
-	broadcastTableFields := []string{
-		BC_DB_TYPE,
-		BC_DB_TITLE,
-		BC_DB_CONTENT,
-		BC_DB_CREATION_DATE,
-		BC_DB_DEADLINE,
-		BC_DB_CREATOR,
+		fmt.Println("UpdateBroadcast ERROR::", err)
+		return rowsAffected, err
 	}
 
-	return strings.Join(broadcastTableFields, ",")
+	return rowsAffected, err
 }
 
-// This function is highly dependent on the
-// order given in getBroadcastTableFields.
-func orderBroadcastFields(broadcast *pb.Broadcast) string {
-	output := ""
+// Delete a particular broadcast in the database together with
+// any corresponding recipients.
+// Recipients are deleted based on the cascading rule.
+func DeleteBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
+	// delete main broadcast
+	query := &pb.BroadcastQuery{}
+	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
+	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
 
-	output += "'" + getBroadcastDBTypeStringFromProto(broadcast.Type) + "'" + ", "
-	output += "'" + broadcast.Title + "'" + ", "
-	output += "'" + broadcast.Content + "'" + ", "
-	output += "'" + broadcast.CreationDate.AsTime().Format("2006-01-02 15:04:05") + "'" + ", "
-	output += "'" + broadcast.Deadline.AsTime().Format("2006-01-02 15:04:05") + "'" + ", "
-	output += "'" + strconv.Itoa(int(broadcast.Creator.UserId)) + "'"
-
-	return output
+	rowsAffected, err := Delete(db, BROADCAST_DB_TABLE_NAME, filters)
+	return rowsAffected, err
 }
 
-// Returns the fields of the broadcast receipeints table
-// in a specific order.
-// Note that IDs are auto incremented and should
-// not be modified manually. Ommits ID in resulting string.
-func getBroadcastRecTableFields() string {
-	broadcastRecTableFields := []string{
-		BC_REC_DB_RELATED_BC,
-		BC_REC_DB_RECIPIENT,
-		BC_REC_DB_ACK,
-		BC_REC_DB_REJECTION,
-	}
+// Delete a particular broadcast recipient
+func DeleteBroadcastRecipients(db *sql.DB, broadcastReceipient *pb.BroadcastRecipient) (int64, error) {
+	query := &pb.BroadcastQuery{}
+	addBroadcastFilter(query, pb.BroadcastFilter_RECEIPEIENT_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastReceipient.BroadcastRecipientsId)))
+	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false)
 
-	return strings.Join(broadcastRecTableFields, ",")
+	rowsAffected, err := Delete(db, BROADCAST_DB_TABLE_NAME, filters)
+	return rowsAffected, err
 }
 
-// This function is highly dependent on the
-// order given in getBroadcastTableFields.
-func orderBroadcastRecFields(receipeint *pb.User, relatedBCId int64) string {
-	output := ""
+func DeleteAllBCRecipientsOfMainBC(db *sql.DB, mainBroadcastID int) (int64, error) {
+	query := &pb.BroadcastQuery{}
+	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(mainBroadcastID))
+	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false)
 
-	output += strconv.Itoa(int(relatedBCId)) + ","
-	output += strconv.Itoa(int(receipeint.UserId)) + ","
-
-	// Ack and rejection are fale by default.
-	output += "0, 0"
-
-	return output
-}
-
-// Returns the Broadcast Type as expected in the DB
-func getBroadcastDBTypeStringFromProto(bcType pb.Broadcast_BroadcastType) string {
-	switch bcType {
-	case pb.Broadcast_ANNOUNCEMENT:
-		return "Announcement"
-	default:
-		return "Assignment"
-	}
-}
-
-// Returns the Broadcast Type as expected in the DB
-func getBroadcastProtoTypeStringFromDB(bcType string) pb.Broadcast_BroadcastType {
-	switch bcType {
-	case "Announcement":
-		return pb.Broadcast_ANNOUNCEMENT
-	default:
-		return pb.Broadcast_ASSIGNMENT
-	}
-}
-
-//TODO
-func getFormattedBroadcastWhereFilters(query *pb.BroadcastQuery) string {
-	// return "WHERE"
-	return ""
-}
-
-// get the user's corresponding to the id in the db
-func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
-	comparison := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: strconv.Itoa(userId)}
-	userFilter := &pb.UserFilter{Field: pb.UserFilter_USER_ID, Comparisons: comparison}
-	userQuery := &pb.UserQuery{Limit: 1, Filters: []*pb.UserFilter{userFilter}}
-
-	users, err := GetUsers(db, userQuery)
-
-	user := &pb.User{}
-
-	if err == nil {
-		user = users[0]
-	}
-
-	return user, err
+	rowsAffected, err := Delete(db, BROADCAST_RECIPIENT_TABLE_NAME, filters)
+	return rowsAffected, err
 }

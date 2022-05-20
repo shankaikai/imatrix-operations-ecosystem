@@ -1,6 +1,9 @@
+// TODO: Add validation
 package server
 
 import (
+	"fmt"
+
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
 
@@ -33,7 +36,20 @@ func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 }
 
 func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteBroadcast not implemented")
+	res := pb.Response{Type: pb.Response_ACK}
+	numDel, err := db_pck.DeleteBroadcast(
+		s.db,
+		broadcast,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numDel, "broadcasts were deleted.")
+	}
+
+	return &res, nil
 }
 
 func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (*pb.BulkBroadcasts, error) {

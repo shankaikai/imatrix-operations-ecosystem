@@ -14,6 +14,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	DATETIME_FORMAT = "2006-01-02 15:04:05"
+	DEFAULT_LIMIT   = 10
+	MAX_LIMIT       = 1000
+)
+
 // Create an authorised session with the database.
 // The credentials of the database are stored in a .env file.
 func GetDB() *sql.DB {
@@ -67,11 +73,11 @@ func Insert(db *sql.DB, tableName string, fields string, values string, dbLock *
 	return pk, err
 }
 
-// Get all the broadcast rows in a table that meets specifications.
+// Get all the rows in a table that meets specifications.
 // fields must be a the exact names of the table columns, separated
 // be commas. E.g. "name, cost, creator"
 // filters must include the filter keyword that is being used
-// such as WHERE, LIMIT, ORDER BY
+// such as WHERE, LIMIT, ORDER BY, GROUP BY, HAVING
 // filters can be an empty string but there should be a LIMIT.
 func Query(db *sql.DB, tableName string, fields string, filters string) (*sql.Rows, error) {
 	fmt.Println("Making query to table", tableName)
@@ -87,14 +93,59 @@ func Query(db *sql.DB, tableName string, fields string, filters string) (*sql.Ro
 	return results, err
 }
 
+// Get all the rows from 2 joined table that meets specifications.
+// fields must be a the exact names of the table columns, separated
+// be commas. E.g. "name, cost, creator"
+// filters must include the filter keyword that is being used
+// such as WHERE, LIMIT, ORDER BY, GROUP BY, HAVING
+// filters can be an empty string but there should be a LIMIT.
+func QueryLeftJoin(db *sql.DB, leftTableName string, rightTableName string,
+	onCondition string, fields string, filters string) (*sql.Rows, error) {
+	fmt.Println("Making left join query to tables", leftTableName, rightTableName)
+
+	query := createLeftJoinQuery(leftTableName, rightTableName, onCondition, fields, filters)
+
+	fmt.Println(query)
+
+	// query := fmt.Sprintf("SELECT %s FROM %s %s;", fields, tableName, filters)
+	results, err := db.Query(query)
+	if err != nil {
+		fmt.Println("QUERY ERROR:", err)
+	}
+
+	return results, err
+}
+
+func createLeftJoinQuery(leftTableName string, rightTableName string,
+	onCondition string, fields string, filters string) string {
+	fmt.Println("Creating left join query to tables", leftTableName, rightTableName)
+	query := fmt.Sprintf("SELECT %s FROM %s LEFT JOIN %s ON %s %s",
+		fields,
+		leftTableName,
+		rightTableName,
+		onCondition,
+		filters,
+	)
+	return query
+
+}
+
 // Update a specific row in the table
-func Update(db *sql.DB, tableName string, fields string, filters string) (int64, error) {
-	query := fmt.Sprintf("UPDATE %s SET %s %s", tableName, fields, filters)
+// newFields must be a the exact names of the table columns with their new values,
+// separated be commas. E.g. "name='mark', cost='22', creator='2'"
+// filters must include the filter keyword that is being used
+// such as WHERE. For updates filters must not be an empty string.
+// Returns the number of rows affected
+func Update(db *sql.DB, tableName string, newFields string, filters string) (int64, error) {
+	if len(filters) == 0 {
+		return 0, fmt.Errorf("filters must not be empty")
+	}
+
+	query := fmt.Sprintf("UPDATE %s SET %s %s", tableName, newFields, filters)
 
 	result, err := db.Exec(query)
 	if err != nil {
 		fmt.Println(err)
-
 		return 0, err
 	} else {
 		return result.RowsAffected()
@@ -102,9 +153,15 @@ func Update(db *sql.DB, tableName string, fields string, filters string) (int64,
 }
 
 // Delete a particular row in the database
+// filters must include the filter keyword that is being used
+// such as WHERE. For updates filters must not be an empty string.
 // Returns the number of rows affected
 func Delete(db *sql.DB, tableName string, filters string) (int64, error) {
-	query := fmt.Sprintf("DELETE FROM  %s %s;", tableName, filters)
+	if len(filters) == 0 {
+		return 0, fmt.Errorf("filters must not be empty")
+	}
+
+	query := fmt.Sprintf("DELETE FROM %s %s;", tableName, filters)
 	result, err := db.Exec(query)
 
 	if err != nil {
@@ -130,14 +187,24 @@ func GetMaxId(db *sql.DB, tableName string, idColName string) (int, error) {
 	return max_id, err
 }
 
-// TODO
+// Return the string comparison sign for a comparison.
 func GetFilterComparisonSign(compaison pb.Filter_Comparisons) string {
 	switch compaison {
-	case pb.Filter_EQUAL:
-		return "="
+	case pb.Filter_GREATER:
+		return ">"
 	case pb.Filter_GREATER_EQ:
 		return ">="
-	default:
+	case pb.Filter_LESSER_EQ:
+		return "<="
+	case pb.Filter_LESSER:
 		return "<"
+	case pb.Filter_CONTAINS:
+		return "LIKE"
+	default:
+		return "="
 	}
+}
+
+func FormatLikeQueryValue(value string) string {
+	return "%" + value + "%"
 }
