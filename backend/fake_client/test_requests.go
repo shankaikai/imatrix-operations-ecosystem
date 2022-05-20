@@ -1,4 +1,4 @@
-package server
+package client
 
 import (
 	"context"
@@ -12,7 +12,17 @@ import (
 )
 
 func TestClient(serverAddr *string, serverPort *int) {
-	user := pb.User{UserId: 3, Name: "duck"}
+	user := pb.User{
+		UserId:          3,
+		UserType:        pb.User_ISPECIALIST,
+		Name:            "test name",
+		Email:           "email",
+		PhoneNumber:     "1232",
+		TelegramHandle:  "sfds",
+		UserSecurityImg: "dsfds",
+		IsPartTimer:     false,
+	}
+
 	InsertUser(serverAddr, serverPort, &user)
 }
 

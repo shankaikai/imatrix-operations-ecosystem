@@ -5,6 +5,7 @@ package main
 import (
 	"flag"
 
+	client "capstone.operations_ecosystem/backend/fake_client"
 	"capstone.operations_ecosystem/backend/server"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -18,6 +19,6 @@ func main() {
 	if *serverFlag {
 		server.InitServer(serverAddrFlag, serverPortFlag)
 	} else {
-		server.TestClient(serverAddrFlag, serverPortFlag)
+		client.TestClient(serverAddrFlag, serverPortFlag)
 	}
 }
