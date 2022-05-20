@@ -43,6 +43,8 @@ func GetDB() *sql.DB {
 // Returns the pk of the last insert value.
 func Insert(db *sql.DB, tableName string, fields string, values string, dbLock *sync.Mutex) (int64, error) {
 	fmt.Println("Inserting into db", tableName)
+	fmt.Println("fields", fields)
+	fmt.Println("values", values)
 	query := fmt.Sprintf("INSERT INTO %s(%s) VALUES (%s)", tableName, fields, values)
 
 	// Ensure that the last insert id is for the corresponding insert
@@ -73,6 +75,8 @@ func Insert(db *sql.DB, tableName string, fields string, values string, dbLock *
 // filters can be an empty string but there should be a LIMIT.
 func Query(db *sql.DB, tableName string, fields string, filters string) (*sql.Rows, error) {
 	fmt.Println("Making query to table", tableName)
+	fmt.Println("fields", fields)
+	fmt.Println("filters", filters)
 
 	query := fmt.Sprintf("SELECT %s FROM %s %s;", fields, tableName, filters)
 	results, err := db.Query(query)

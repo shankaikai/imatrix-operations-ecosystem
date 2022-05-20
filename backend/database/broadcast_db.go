@@ -7,14 +7,16 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
 	BROADCAST_DB_TABLE_NAME        = "broadcast"
-	BROADCAST_RECIPIENT_TABLE_NAME = "brocast_recipients"
+	BROADCAST_RECIPIENT_TABLE_NAME = "broadcast_recepients"
 
 	// Broadcast table fields
 	BC_DB_ID            = "broadcast_id"
@@ -85,7 +87,7 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	// Format filters
 	filters := getFormattedBroadcastWhereFilters(query)
 	// Add limits
-	filters += fmt.Sprintf("LIMIT %d", query.Limit)
+	filters += fmt.Sprintf(" LIMIT %d", query.Limit)
 
 	mainBCRows, err := Query(db, BROADCAST_DB_TABLE_NAME, fields, filters)
 
@@ -96,26 +98,28 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	// convert query rows into broadcasts
 	for mainBCRows.Next() {
 		var broadcast pb.Broadcast
-		var creatorUserId *int
-		var broadcastType *string
+		creatorUserId := -1
+		broadcastType := ""
+		creationDateStr := ""
+		deadlineStr := ""
 
 		// cast each row to a broadcast
 		err = mainBCRows.Scan(
 			&broadcast.BroadcastId,
-			broadcastType,
+			&broadcastType,
 			&broadcast.Title,
 			&broadcast.Content,
-			&broadcast.CreationDate,
-			&broadcast.Deadline,
-			creatorUserId)
+			&creationDateStr,
+			&deadlineStr,
+			&creatorUserId)
 
 		if err != nil {
 			fmt.Println("GetBroadcasts ERROR:", err)
 			continue
 		}
 
-		broadcast.Type = getBroadcastProtoTypeStringFromDB(*broadcastType)
-		creator, err := idUserByUserId(db, *creatorUserId)
+		broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
+		creator, err := idUserByUserId(db, creatorUserId)
 
 		if err != nil {
 			fmt.Println("GetBroadcasts ERROR:", err)
@@ -123,11 +127,28 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 		}
 
 		broadcast.Creator = creator
+		fmt.Println("creation date", creationDateStr)
+		dateFormat := "2006-01-02 15:04:05"
+
+		creationDate, err := time.Parse(dateFormat, creationDateStr)
+		if err != nil {
+			fmt.Println("GetBroadcasts:", err.Error())
+			continue
+		}
+
+		deadline, err := time.Parse(dateFormat, deadlineStr)
+		if err != nil {
+			fmt.Println("GetBroadcasts:", err.Error())
+			continue
+		}
+
+		broadcast.CreationDate = &timestamppb.Timestamp{Seconds: creationDate.Unix()}
+		broadcast.Deadline = &timestamppb.Timestamp{Seconds: deadline.Unix()}
 
 		// For each broadcast, get the recepients
 		receipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
 		if err != nil {
-			fmt.Println("query:", err.Error())
+			fmt.Println("GetBroadcasts:", err.Error())
 			continue
 		}
 		broadcast.Receipients = receipients
@@ -151,9 +172,15 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 	// Format filters
 	filters := getFormattedBroadcastWhereFilters(query)
 	// Get for a specific main broadcast
-	filters += fmt.Sprintf(", %s=%d", BC_REC_DB_RELATED_BC, mainBroadcastID)
+	if len(filters) == 0 {
+		filters = "WHERE "
+	} else {
+		filters += ", "
+	}
+
+	filters += fmt.Sprintf("%s='%d'", BC_REC_DB_RELATED_BC, mainBroadcastID)
 	// Add limits
-	filters += fmt.Sprintf("LIMIT %d", query.Limit)
+	filters += fmt.Sprintf(" LIMIT %d", query.Limit)
 
 	BCRecRows, err := Query(db, BROADCAST_RECIPIENT_TABLE_NAME, fields, filters)
 
@@ -163,17 +190,23 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 
 	// convert query rows into broadcasts
 	for BCRecRows.Next() {
-		var receipient pb.User
-		var receipientId *int
+		var receipient *pb.User
+		receipientId := -1
 
-		err = BCRecRows.Scan(receipientId)
+		err = BCRecRows.Scan(&receipientId)
 
 		if err != nil {
 			fmt.Println("GetBroadcastRecipients ERROR::", err)
 			break
 		}
 
-		broadcastReceipients = append(broadcastReceipients, &receipient)
+		receipient, err = idUserByUserId(db, receipientId)
+		if err != nil {
+			fmt.Println("GetBroadcastRecipients ERROR::", err)
+			break
+		}
+
+		broadcastReceipients = append(broadcastReceipients, receipient)
 	}
 
 	return broadcastReceipients, err
@@ -273,12 +306,12 @@ func getBroadcastTableFields() string {
 func orderBroadcastFields(broadcast *pb.Broadcast) string {
 	output := ""
 
-	output += getBroadcastDBTypeStringFromProto(broadcast.Type) + ","
-	output += broadcast.Title + ","
-	output += broadcast.Content + ","
-	output += broadcast.CreationDate.AsTime().String() + ","
-	output += broadcast.Deadline.AsTime().String() + ","
-	output += strconv.Itoa(int(broadcast.Creator.UserId))
+	output += "'" + getBroadcastDBTypeStringFromProto(broadcast.Type) + "'" + ", "
+	output += "'" + broadcast.Title + "'" + ", "
+	output += "'" + broadcast.Content + "'" + ", "
+	output += "'" + broadcast.CreationDate.AsTime().Format("2006-01-02 15:04:05") + "'" + ", "
+	output += "'" + broadcast.Deadline.AsTime().Format("2006-01-02 15:04:05") + "'" + ", "
+	output += "'" + strconv.Itoa(int(broadcast.Creator.UserId)) + "'"
 
 	return output
 }

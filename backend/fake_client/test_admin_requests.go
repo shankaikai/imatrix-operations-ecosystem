@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -19,13 +18,13 @@ func TestAdminClient(serverAddr *string, serverPort *int) {
 }
 
 func InsertUser(serverAddr *string, serverPort *int, user *pb.User) {
-	fmt.Println("Inserting product:", user.Name)
+	fmt.Println("Inserting user:", user.Name)
 	client, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.AddUser(context.Background(), user)
 	if err != nil {
-		fmt.Println("InsertProduct ERROR:", err)
+		fmt.Println("InsertUser ERROR:", err)
 		return
 	}
 
@@ -43,7 +42,7 @@ func FindUsersNoFilter(serverAddr *string, serverPort *int, query *pb.UserQuery)
 
 	res, err := client.FindUsers(context.Background(), query)
 	if err != nil {
-		fmt.Println("InsertProduct ERROR:", err)
+		fmt.Println("FindUsersNoFilter ERROR:", err)
 		return
 	}
 
@@ -70,17 +69,4 @@ func createAdminClient(serverAddr *string, serverPort *int) (pb.AdminServicesCli
 	client := pb.NewAdminServicesClient(conn)
 
 	return client, conn
-}
-
-func createFakeUser(id int) *pb.User {
-	return &pb.User{
-		UserId:          int64(id),
-		UserType:        pb.User_ISPECIALIST,
-		Name:            "test name" + strconv.Itoa(id),
-		Email:           "email" + strconv.Itoa(id),
-		PhoneNumber:     "1232",
-		TelegramHandle:  "sfds",
-		UserSecurityImg: "dsfds",
-		IsPartTimer:     false,
-	}
 }

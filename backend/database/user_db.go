@@ -48,7 +48,7 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 	// Format filters
 	filters := getFormattedUserWhereFilters(query)
 	// Add limits
-	filters += fmt.Sprintf("LIMIT %d", query.Limit)
+	filters += fmt.Sprintf(" LIMIT %d", query.Limit)
 
 	userRows, err := Query(db, USER_DB_TABLE_NAME, fields, filters)
 
@@ -63,7 +63,6 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 			userType := ""
 
 			// cast each row to a user
-			fmt.Println("userRows", userRows)
 			err = userRows.Scan(
 				&user.UserId,
 				&userType,
@@ -169,7 +168,7 @@ func getFormattedUserWhereFilters(query *pb.UserQuery) string {
 	for _, filter := range query.Filters {
 		switch filter.Field {
 		case pb.UserFilter_USER_ID:
-			output += USER_DB_ID + GetFilterComparisonSign(filter.Comparisons.Comparison) + filter.Comparisons.Value
+			output += USER_DB_ID + GetFilterComparisonSign(filter.Comparisons.Comparison) + "'" + filter.Comparisons.Value + "'"
 		}
 
 		// TODO: should add a comma after the filter
