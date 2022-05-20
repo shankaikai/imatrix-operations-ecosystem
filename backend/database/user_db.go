@@ -56,30 +56,36 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 		return users, err
 	}
 
-	// convert query rows into broadcasts
-	for userRows.Next() {
-		var user pb.User
-		var userType *string
+	if userRows != nil {
+		// convert query rows into broadcasts
+		for userRows.Next() {
+			var user pb.User
+			userType := ""
 
-		// cast each row to a user
-		err = userRows.Scan(
-			&user.UserId,
-			userType,
-			&user.Name,
-			&user.Email,
-			&user.PhoneNumber,
-			&user.UserSecurityImg,
-			&user.IsPartTimer,
-		)
+			// cast each row to a user
+			fmt.Println("userRows", userRows)
+			err = userRows.Scan(
+				&user.UserId,
+				&userType,
+				&user.Name,
+				&user.Email,
+				&user.PhoneNumber,
+				&user.TelegramHandle,
+				&user.UserSecurityImg,
+				&user.IsPartTimer,
+			)
 
-		user.UserType = getUserProtoTypeStringFromDB(*userType)
+			if err != nil {
+				fmt.Println("GetUsers ERROR::", err)
+				break
+			}
 
-		if err != nil {
-			fmt.Println("GetUsers ERROR::", err)
-			break
+			user.UserType = getUserProtoTypeStringFromDB(userType)
+
+			users = append(users, &user)
 		}
-
-		users = append(users, &user)
+	} else {
+		fmt.Println("WARNING GetUsers: user results is null")
 	}
 
 	return users, err
@@ -91,7 +97,6 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 // not be modified manually. Ommits ID in resulting string.
 func getUserTableFields() string {
 	userTableFields := []string{
-		USER_DB_ID,
 		USER_DB_TYPE,
 		USER_DB_NAME,
 		USER_DB_EMAIL,
@@ -109,11 +114,12 @@ func getUserTableFields() string {
 func orderUserFields(user *pb.User) string {
 	output := ""
 
-	output += getUserDBTypeStringFromProto(user.UserType) + ","
-	output += user.Name + ","
-	output += user.Email + ","
-	output += user.PhoneNumber + ","
-	output += user.UserSecurityImg + ","
+	output += "'" + getUserDBTypeStringFromProto(user.UserType) + "'" + ", "
+	output += "'" + user.Name + "'" + ", "
+	output += "'" + user.Email + "'" + ", "
+	output += "'" + user.PhoneNumber + "'" + ", "
+	output += "'" + user.TelegramHandle + "'" + ", "
+	output += "'" + user.UserSecurityImg + "'" + ", "
 
 	if user.IsPartTimer {
 		output += "1"

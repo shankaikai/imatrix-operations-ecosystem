@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// TODO: Add field verification
 func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
 	pk, err := db_pck.UserInsert(
@@ -28,13 +29,17 @@ func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, erro
 	return &res, nil
 }
 
+// TODO: Add field verification
 func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
 
+// TODO: Add field verification
 func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
+
+// TODO: Add field verification
 func (s *Server) FindUsers(cxt context.Context, query *pb.UserQuery) (*pb.BulkUsers, error) {
 	res := pb.Response{Type: pb.Response_ACK}
 	Users := pb.BulkUsers{Response: &res}
