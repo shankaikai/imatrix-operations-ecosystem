@@ -151,13 +151,8 @@ func addBroadcastFilter(query *pb.BroadcastQuery, field pb.BroadcastFilter_Field
 	query.Filters = append(query.Filters, &pb.BroadcastFilter{Field: field, Comparisons: filter})
 }
 
-//TODO add more
 func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLimit bool) string {
 	output := ""
-
-	if len(query.Filters) > 0 {
-		output += "WHERE "
-	}
 
 	// Get all filters
 	whereFilters := make([]string, 0)
@@ -192,18 +187,22 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 
 		case pb.BroadcastFilter_NUM_RECEIPIENTS:
 			groupBy = append(groupBy, BC_DB_ID)
-			haveFilters = append(haveFilters, "COUNT(a.broadcast_id) > 2")
+			haveFilters = append(haveFilters, fmt.Sprintf("COUNT(%s) > %s", BC_DB_ID, filter.Comparisons.Value))
 		}
 	}
 
-	output += strings.Join(whereFilters, ",")
+	if len(whereFilters) > 0 {
+		output += "WHERE "
+	}
+
+	output += strings.Join(whereFilters, " AND ")
 
 	if len(groupBy) > 0 {
 		output += " GROUP BY " + strings.Join(groupBy, ",")
 	}
 
 	if len(haveFilters) > 0 {
-		output += " HAVING " + strings.Join(haveFilters, ",")
+		output += " HAVING " + strings.Join(haveFilters, " AND ")
 	}
 
 	// Add limits
