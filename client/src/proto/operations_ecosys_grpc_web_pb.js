@@ -258,16 +258,16 @@ proto.operations_ecosys.AdminServicesPromiseClient.prototype.deleteUser =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.operations_ecosys.Query,
+ *   !proto.operations_ecosys.UserQuery,
  *   !proto.operations_ecosys.BulkUsers>}
  */
 const methodDescriptor_AdminServices_FindUsers = new grpc.web.MethodDescriptor(
   '/operations_ecosys.AdminServices/FindUsers',
   grpc.web.MethodType.UNARY,
-  proto.operations_ecosys.Query,
+  proto.operations_ecosys.UserQuery,
   proto.operations_ecosys.BulkUsers,
   /**
-   * @param {!proto.operations_ecosys.Query} request
+   * @param {!proto.operations_ecosys.UserQuery} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -278,7 +278,7 @@ const methodDescriptor_AdminServices_FindUsers = new grpc.web.MethodDescriptor(
 
 
 /**
- * @param {!proto.operations_ecosys.Query} request The
+ * @param {!proto.operations_ecosys.UserQuery} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -299,7 +299,7 @@ proto.operations_ecosys.AdminServicesClient.prototype.findUsers =
 
 
 /**
- * @param {!proto.operations_ecosys.Query} request The
+ * @param {!proto.operations_ecosys.UserQuery} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
@@ -554,16 +554,16 @@ proto.operations_ecosys.BroadcastServicesPromiseClient.prototype.deleteBroadcast
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.operations_ecosys.Query,
+ *   !proto.operations_ecosys.BroadcastQuery,
  *   !proto.operations_ecosys.BulkBroadcasts>}
  */
 const methodDescriptor_BroadcastServices_FindBroadcasts = new grpc.web.MethodDescriptor(
   '/operations_ecosys.BroadcastServices/FindBroadcasts',
   grpc.web.MethodType.UNARY,
-  proto.operations_ecosys.Query,
+  proto.operations_ecosys.BroadcastQuery,
   proto.operations_ecosys.BulkBroadcasts,
   /**
-   * @param {!proto.operations_ecosys.Query} request
+   * @param {!proto.operations_ecosys.BroadcastQuery} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -574,7 +574,7 @@ const methodDescriptor_BroadcastServices_FindBroadcasts = new grpc.web.MethodDes
 
 
 /**
- * @param {!proto.operations_ecosys.Query} request The
+ * @param {!proto.operations_ecosys.BroadcastQuery} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -595,7 +595,7 @@ proto.operations_ecosys.BroadcastServicesClient.prototype.findBroadcasts =
 
 
 /**
- * @param {!proto.operations_ecosys.Query} request The
+ * @param {!proto.operations_ecosys.BroadcastQuery} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
