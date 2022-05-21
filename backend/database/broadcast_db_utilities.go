@@ -248,7 +248,3 @@ func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
 
 	return user, err
 }
-
-func formatFieldEqVal(field string, val string) string {
-	return fmt.Sprintf("%s='%s'", field, val)
-}

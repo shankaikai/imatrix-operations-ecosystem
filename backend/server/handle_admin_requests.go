@@ -3,13 +3,12 @@
 package server
 
 import (
+	"fmt"
+
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
 
 	"context"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // TODO: Add field verification
@@ -33,12 +32,38 @@ func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, erro
 
 // TODO: Add field verification
 func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+	res := pb.Response{Type: pb.Response_ACK}
+	pk, err := db_pck.UpdateUser(
+		s.db,
+		user,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	}
+
+	res.PrimaryKey = int64(pk)
+
+	return &res, nil
 }
 
 // TODO: Add field verification
 func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+	res := pb.Response{Type: pb.Response_ACK}
+	numDel, err := db_pck.DeleteUser(
+		s.db,
+		user,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	}
+
+	fmt.Println("Deleted", numDel, "users")
+
+	return &res, nil
 }
 
 // TODO: Add field verification

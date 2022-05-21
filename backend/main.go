@@ -19,7 +19,7 @@ func main() {
 	if *serverFlag {
 		server.InitServer(serverAddrFlag, serverPortFlag)
 	} else {
-		// client.TestAdminClient(serverAddrFlag, serverPortFlag)
-		client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
+		client.TestAdminClient(serverAddrFlag, serverPortFlag)
+		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
 	}
 }

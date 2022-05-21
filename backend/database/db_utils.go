@@ -142,6 +142,7 @@ func Update(db *sql.DB, tableName string, newFields string, filters string) (int
 	}
 
 	query := fmt.Sprintf("UPDATE %s SET %s %s", tableName, newFields, filters)
+	fmt.Println(query)
 
 	result, err := db.Exec(query)
 	if err != nil {
@@ -209,4 +210,9 @@ func GetFilterComparisonSign(compaison pb.Filter_Comparisons) string {
 
 func FormatLikeQueryValue(value string) string {
 	return "%" + value + "%"
+}
+
+// Note that this cannot be used for bool cols
+func formatFieldEqVal(field string, val string) string {
+	return fmt.Sprintf("%s='%s'", field, val)
 }

@@ -13,11 +13,14 @@ import (
 
 func TestAdminClient(serverAddr *string, serverPort *int) {
 	user := createFakeUser(1)
-	InsertUser(serverAddr, serverPort, user)
-	FindUsersNoFilter(serverAddr, serverPort, &pb.UserQuery{Limit: 20})
+	pk := InsertUser(serverAddr, serverPort, user)
+	user.UserId = pk
+	ConsolidatedFindUserTest(serverAddr, serverPort)
+	UpdateUserTest(serverAddr, serverPort, user)
+	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: 4})
 }
 
-func InsertUser(serverAddr *string, serverPort *int, user *pb.User) {
+func InsertUser(serverAddr *string, serverPort *int, user *pb.User) int64 {
 	fmt.Println("Inserting user:", user.Name)
 	client, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()
@@ -25,7 +28,7 @@ func InsertUser(serverAddr *string, serverPort *int, user *pb.User) {
 	res, err := client.AddUser(context.Background(), user)
 	if err != nil {
 		fmt.Println("InsertUser ERROR:", err)
-		return
+		return -1
 	}
 
 	fmt.Println("Client received response:", res.Type)
@@ -33,17 +36,130 @@ func InsertUser(serverAddr *string, serverPort *int, user *pb.User) {
 	if res.Type == pb.Response_ERROR {
 		fmt.Println("Client received error response:", res.ErrorMessage)
 	}
+
+	return res.PrimaryKey
 }
 
-func FindUsersNoFilter(serverAddr *string, serverPort *int, query *pb.UserQuery) {
+func ConsolidatedFindUserTest(serverAddr *string, serverPort *int) {
+	FindUsersNoFilter(serverAddr, serverPort)
+	FindUserIdFilter(serverAddr, serverPort)
+	FindUserTypeFilter(serverAddr, serverPort)
+	FindUserNameFilter(serverAddr, serverPort)
+	FindUserEmaililter(serverAddr, serverPort)
+	FindUserPNUMilter(serverAddr, serverPort)
+	FindUserTeleFilter(serverAddr, serverPort)
+	FindUserPartTimerFilter(serverAddr, serverPort)
+	FindUsersMultipleFilters(serverAddr, serverPort)
+}
+
+func FindUsersNoFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding users without filter")
+	FindUsersTest(serverAddr, serverPort, &pb.UserQuery{Limit: 5})
+}
+
+func FindUserIdFilter(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.UserFilter{Comparisons: com, Field: pb.UserFilter_USER_ID}
+
+	query := &pb.UserQuery{Limit: 4, Filters: []*pb.UserFilter{filter}}
+
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUserTypeFilter(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user type filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: pb.User_ISPECIALIST.String()}
+	filter := &pb.UserFilter{Comparisons: com, Field: pb.UserFilter_TYPE}
+
+	query := &pb.UserQuery{Limit: 4, Filters: []*pb.UserFilter{filter}}
+
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUserNameFilter(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user name filter")
+	com := &pb.Filter{Comparison: pb.Filter_CONTAINS, Value: "name2"}
+	filter := &pb.UserFilter{Comparisons: com, Field: pb.UserFilter_NAME}
+
+	query := &pb.UserQuery{Limit: 4, Filters: []*pb.UserFilter{filter}}
+
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUserEmaililter(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user email filter")
+	com := &pb.Filter{Comparison: pb.Filter_CONTAINS, Value: "email2"}
+	filter := &pb.UserFilter{Comparisons: com, Field: pb.UserFilter_EMAIL}
+
+	query := &pb.UserQuery{Limit: 4, Filters: []*pb.UserFilter{filter}}
+
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUserPNUMilter(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user phone num filter")
+	com := &pb.Filter{Comparison: pb.Filter_CONTAINS, Value: "12"}
+	filter := &pb.UserFilter{Comparisons: com, Field: pb.UserFilter_PHONE_NUMBER}
+
+	query := &pb.UserQuery{Limit: 4, Filters: []*pb.UserFilter{filter}}
+
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUserTeleFilter(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user tele handle filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "sfds"}
+	filter := &pb.UserFilter{Comparisons: com, Field: pb.UserFilter_TELEGRAM_HANDLE}
+
+	query := &pb.UserQuery{Limit: 4, Filters: []*pb.UserFilter{filter}}
+
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUserPartTimerFilter(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user part timer filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.UserFilter{Comparisons: com, Field: pb.UserFilter_IS_PART_TIMER}
+
+	query := &pb.UserQuery{Limit: 4, Filters: []*pb.UserFilter{filter}}
+
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUsersMultipleFilters(serverAddr *string, serverPort *int) *pb.BulkUsers {
+	fmt.Println("Finding user mutiple filter")
+
+	userFilters := make([]*pb.UserFilter, 0)
+
+	// type
+	typeCom := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: pb.User_ISPECIALIST.String()}
+	typeFilter := &pb.UserFilter{Comparisons: typeCom, Field: pb.UserFilter_TYPE}
+	userFilters = append(userFilters, typeFilter)
+
+	// tele handle
+	teleCom := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "sfds"}
+	teleFilter := &pb.UserFilter{Comparisons: teleCom, Field: pb.UserFilter_TELEGRAM_HANDLE}
+	userFilters = append(userFilters, teleFilter)
+
+	// part timer
+	ptCom := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	ptFilter := &pb.UserFilter{Comparisons: ptCom, Field: pb.UserFilter_IS_PART_TIMER}
+	userFilters = append(userFilters, ptFilter)
+
+	query := &pb.UserQuery{Limit: 4, Filters: userFilters}
+	return FindUsersTest(serverAddr, serverPort, query)
+}
+
+func FindUsersTest(serverAddr *string, serverPort *int, query *pb.UserQuery) *pb.BulkUsers {
+	fmt.Println("Finding users...")
 	client, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.FindUsers(context.Background(), query)
 	if err != nil {
 		fmt.Println("FindUsersNoFilter ERROR:", err)
-		return
+		return res
 	}
 
 	fmt.Println("Client received response:", res.Response.Type)
@@ -54,6 +170,52 @@ func FindUsersNoFilter(serverAddr *string, serverPort *int, query *pb.UserQuery)
 		for i, user := range res.Users {
 			fmt.Println(i, ":", user)
 		}
+	}
+
+	return res
+}
+
+func UpdateUserTest(serverAddr *string, serverPort *int, user *pb.User) {
+	updatedUser := &pb.User{
+		UserId:         user.UserId,
+		UserType:       pb.User_CONTROLLER,
+		TelegramHandle: "smthnew",
+		IsPartTimer:    true,
+	}
+
+	fmt.Println("Updating user:", user.UserId)
+
+	client, conn := createAdminClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.UpdateUser(context.Background(), updatedUser)
+	if err != nil {
+		fmt.Println("UpdateUserTest ERROR:", err)
+		return
+	}
+
+	fmt.Println("Client received response:", res.Type)
+
+	if res.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.ErrorMessage)
+	}
+}
+
+func DeleteUserTest(serverAddr *string, serverPort *int, user *pb.User) {
+	fmt.Println("Deleting user:", user.Name)
+	client, conn := createAdminClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.DeleteUser(context.Background(), user)
+	if err != nil {
+		fmt.Println("DeleteUserTest ERROR:", err)
+		return
+	}
+
+	fmt.Println("Client received response:", res.Type)
+
+	if res.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.ErrorMessage)
 	}
 }
 

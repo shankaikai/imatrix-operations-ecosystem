@@ -74,9 +74,8 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 	return users, err
 }
 
-//TODO check if working
 // Update a specific row in the table
-func UpdateUser(db *sql.DB, tableName string, user *pb.User) (int64, error) {
+func UpdateUser(db *sql.DB, user *pb.User) (int64, error) {
 	// Update the main broadcast first
 	newFields := getFilledUserFields(user)
 	query := &pb.UserQuery{}
@@ -94,7 +93,6 @@ func UpdateUser(db *sql.DB, tableName string, user *pb.User) (int64, error) {
 }
 
 // Delete a particular user in the database
-// TODO test if cacading delete works, I set it to do that but idk
 func DeleteUser(db *sql.DB, user *pb.User) (int64, error) {
 	query := &pb.UserQuery{}
 	addUserFilter(query, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(int(user.UserId)))

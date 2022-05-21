@@ -86,7 +86,6 @@ func getUserProtoTypeStringFromDB(userType string) pb.User_UserType {
 	}
 }
 
-//TODO
 func getFormattedUserFilters(query *pb.UserQuery, needLimit bool) string {
 	output := ""
 
@@ -104,11 +103,22 @@ func getFormattedUserFilters(query *pb.UserQuery, needLimit bool) string {
 		switch filter.Field {
 		case pb.UserFilter_USER_ID:
 			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_ID, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+		case pb.UserFilter_TYPE:
+			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_TYPE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+		case pb.UserFilter_NAME:
+			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_NAME, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+		case pb.UserFilter_EMAIL:
+			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_EMAIL, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+		case pb.UserFilter_PHONE_NUMBER:
+			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_PHONE_NUM, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+		case pb.UserFilter_TELEGRAM_HANDLE:
+			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_TELE_HANDLE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+		case pb.UserFilter_IS_PART_TIMER:
+			filters = append(filters, fmt.Sprintf("%s %s %s", USER_DB_PART_TIMER, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
 		}
-
 	}
 
-	output += strings.Join(filters, ",")
+	output += strings.Join(filters, " AND ")
 
 	// Add limits
 	if needLimit {
@@ -153,7 +163,7 @@ func getFilledUserFields(user *pb.User) string {
 		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_IMG, user.UserSecurityImg))
 	}
 
-	userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer)))
+	userTableFields = append(userTableFields, fmt.Sprintf("%s=%s", USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer)))
 
 	return strings.Join(userTableFields, ",")
 }

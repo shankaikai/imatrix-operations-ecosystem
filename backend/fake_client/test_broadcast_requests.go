@@ -177,8 +177,8 @@ func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) *pb.Bulk
 
 	// creation date
 	creationDateMax := time.Now().AddDate(0, 0, -1)
-	cdFom := &pb.Filter{Comparison: pb.Filter_LESSER_EQ, Value: creationDateMax.Format("2006-01-02 15:04:05")}
-	cdFilter := &pb.BroadcastFilter{Comparisons: cdFom, Field: pb.BroadcastFilter_CREATION_DATE}
+	cdCom := &pb.Filter{Comparison: pb.Filter_LESSER_EQ, Value: creationDateMax.Format("2006-01-02 15:04:05")}
+	cdFilter := &pb.BroadcastFilter{Comparisons: cdCom, Field: pb.BroadcastFilter_CREATION_DATE}
 	broadcastFilters = append(broadcastFilters, cdFilter)
 
 	// creator id
@@ -219,7 +219,6 @@ func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.Broadcast
 	return res
 }
 
-// TODO
 func ConsolidatedUpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
 	fmt.Println("unimplemented")
 	UpdateBroadcastBasicFields(serverAddr, serverPort, broadcast)
