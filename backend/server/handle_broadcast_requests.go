@@ -8,9 +8,6 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 
 	"context"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
@@ -32,7 +29,21 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 }
 
 func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBroadcast not implemented")
+	res := pb.Response{Type: pb.Response_ACK}
+	numAffected, err := db_pck.UpdateBroadcast(
+		s.db,
+		broadcast,
+		s.dbLock,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numAffected, "broadcasts were updated.")
+	}
+
+	return &res, nil
 }
 
 func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {

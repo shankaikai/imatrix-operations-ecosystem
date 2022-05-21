@@ -3,6 +3,7 @@ package database
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	pb "capstone.operations_ecosystem/backend/proto"
@@ -52,12 +53,7 @@ func orderUserFields(user *pb.User) string {
 	output += "'" + user.PhoneNumber + "'" + ", "
 	output += "'" + user.TelegramHandle + "'" + ", "
 	output += "'" + user.UserSecurityImg + "'" + ", "
-
-	if user.IsPartTimer {
-		output += "1"
-	} else {
-		output += "0"
-	}
+	output += strconv.FormatBool(user.IsPartTimer)
 
 	return output
 }
@@ -157,11 +153,7 @@ func getFilledUserFields(user *pb.User) string {
 		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_IMG, user.UserSecurityImg))
 	}
 
-	if user.IsPartTimer {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, "1"))
-	} else {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, "0"))
-	}
+	userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer)))
 
 	return strings.Join(userTableFields, ",")
 }

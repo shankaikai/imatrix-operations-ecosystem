@@ -4,10 +4,12 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"sort"
 	"strconv"
 	"sync"
 	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -177,9 +179,7 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 	fmt.Println("Getting Broadcasts Recipients...")
 	broadcastReceipients := make([]*pb.BroadcastRecipient, 0)
 
-	// We are currently only interested in the corresponding user
-	// TODO: update this assumption
-	fields := BC_REC_DB_RECIPIENT
+	fields := BC_REC_DB_ID + "," + getBroadcastRecTableFields()
 
 	// Format filters
 	// Get for a specific main broadcast
@@ -199,11 +199,11 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 		relatedBroadcast := ""
 		// cast each row to a broadcast
 		err = BCRecRows.Scan(
-			receipient.BroadcastRecipientsId,
+			&receipient.BroadcastRecipientsId,
 			&relatedBroadcast,
 			&receipientId,
-			receipient.Acknowledged,
-			receipient.Rejected,
+			&receipient.Acknowledged,
+			&receipient.Rejected,
 		)
 
 		if err != nil {
@@ -230,7 +230,7 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 // Note that this update does not update the broadcast's recipient's inner status
 // such as the acknowledgement or rejection status but only if the recipient
 // is part of the broadcast.
-func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
+func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (int64, error) {
 	// Update the main broadcast first
 	newFields := getFilledBroadcastFields(broadcast)
 	query := &pb.BroadcastQuery{}
@@ -244,28 +244,78 @@ func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
 		return rowsAffected, err
 	}
 
-	//TODO
 	// Update recipients if necessary
-	// Get all recipients
-	// See if any are missing
-	// See if any need to be deleted
+	if broadcast.Receipients != nil {
+		// Get all recipients
+		currentRecipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
+		if err != nil {
+			fmt.Println("UpdateBroadcast ERROR::", err)
+			return rowsAffected, err
+		}
 
+		// create array of current broadcast recipient ids
+		currentRecIds := make([]int, 0)
+
+		for _, br := range currentRecipients {
+			currentRecIds = append(currentRecIds, int(br.Recipient.UserId))
+		}
+
+		sort.Ints(currentRecIds)
+
+		// Check if the updated recipients exist within the current ones
+		// If they exist, ignore and remove them from the current list.
+		// If they do not exist, we need to add them to the db.
+		// If the current recipient is not within the list of new recipients
+		// delete this rogue recipient.
+
+		// Index of missing recipients from the input broadcast list
+		missingRecIndex := make([]int, 0)
+
+		for i, br := range broadcast.Receipients {
+			found, index := common.BinarySearch(currentRecIds, 0, len(currentRecIds)-1, int(br.Recipient.UserId))
+			if found {
+				fmt.Println("Found updated recipient in current recipient")
+				currentRecIds = append(currentRecIds[:index], currentRecIds[index+1:]...)
+			} else {
+				missingRecIndex = append(missingRecIndex, i)
+			}
+		}
+
+		fmt.Println("Missing Recipients Index:", missingRecIndex)
+		// Add the missing recipients
+		for _, recIndex := range missingRecIndex {
+			_, err := BroadcastReceipientInsert(db, broadcast.Receipients[recIndex], broadcast.BroadcastId, dbLock)
+			if err != nil {
+				fmt.Println("UpdateBroadcast ERROR::", err)
+				return rowsAffected, err
+			}
+		}
+
+		fmt.Println("Deleting Recipients IDs:", currentRecIds)
+		// See if any need to be deleted
+		for _, id := range currentRecIds {
+			_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{BroadcastRecipientsId: int64(id)})
+			if err != nil {
+				fmt.Println("UpdateBroadcast ERROR::", err)
+				return rowsAffected, err
+			}
+		}
+	}
 	return rowsAffected, err
 }
 
-//TODO
 // Update a specific row in the table
-func UpdateBroadcastReceipients(db *sql.DB, tableName string, broadcast *pb.Broadcast) (int64, error) {
+func UpdateBroadcastReceipients(db *sql.DB, tableName string, broadcastReceipient *pb.BroadcastRecipient) (int64, error) {
 	// Update the main broadcast first
-	newFields := getFilledBroadcastFields(broadcast)
+	newFields := getFilledBroadcastRecFields(broadcastReceipient)
 	query := &pb.BroadcastQuery{}
-	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
-	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
+	addBroadcastFilter(query, pb.BroadcastFilter_RECEIPEIENT_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastReceipient.BroadcastRecipientsId)))
+	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false)
 
-	rowsAffected, err := Update(db, BROADCAST_DB_TABLE_NAME, newFields, filters)
+	rowsAffected, err := Update(db, BROADCAST_RECIPIENT_TABLE_NAME, newFields, filters)
 
 	if err != nil {
-		fmt.Println("UpdateBroadcast ERROR::", err)
+		fmt.Println("UpdateBroadcastReceipients ERROR::", err)
 		return rowsAffected, err
 	}
 
@@ -291,10 +341,12 @@ func DeleteBroadcastRecipients(db *sql.DB, broadcastReceipient *pb.BroadcastReci
 	addBroadcastFilter(query, pb.BroadcastFilter_RECEIPEIENT_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastReceipient.BroadcastRecipientsId)))
 	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false)
 
-	rowsAffected, err := Delete(db, BROADCAST_DB_TABLE_NAME, filters)
+	rowsAffected, err := Delete(db, BROADCAST_RECIPIENT_TABLE_NAME, filters)
 	return rowsAffected, err
 }
 
+// Delete all recipients belonging to a particular broadcast
+// Currently not in use.
 func DeleteAllBCRecipientsOfMainBC(db *sql.DB, mainBroadcastID int) (int64, error) {
 	query := &pb.BroadcastQuery{}
 	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(mainBroadcastID))

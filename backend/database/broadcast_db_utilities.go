@@ -121,6 +121,22 @@ func getFilledBroadcastFields(broadcast *pb.Broadcast) string {
 	return strings.Join(broadcastTableFields, ",")
 }
 
+// ID not included in this because pk should not be manually changed.
+// Note this function highly depends on the protocol buffer message definition
+// Returns the string fields and values of the filled broadcast fields
+func getFilledBroadcastRecFields(bRec *pb.BroadcastRecipient) string {
+	broadcastTableFields := []string{}
+
+	if bRec.Recipient != nil {
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_RECIPIENT, formatFieldEqVal(BC_DB_TITLE, strconv.Itoa(int(bRec.Recipient.UserId)))))
+	}
+
+	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_ACK, formatFieldEqVal(BC_DB_TITLE, strconv.FormatBool(bRec.Acknowledged))))
+	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_REJECTION, formatFieldEqVal(BC_DB_TITLE, strconv.FormatBool(bRec.Rejected))))
+
+	return strings.Join(broadcastTableFields, ",")
+}
+
 // Returns the Broadcast Type as expected in the DB
 func getBroadcastDBTypeStringFromProto(bcType pb.Broadcast_BroadcastType) string {
 	switch bcType {

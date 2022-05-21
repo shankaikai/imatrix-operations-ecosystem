@@ -49,9 +49,9 @@ func GetDB() *sql.DB {
 // Returns the pk of the last insert value.
 func Insert(db *sql.DB, tableName string, fields string, values string, dbLock *sync.Mutex) (int64, error) {
 	fmt.Println("Inserting into db", tableName)
-	fmt.Println("fields", fields)
-	fmt.Println("values", values)
+
 	query := fmt.Sprintf("INSERT INTO %s(%s) VALUES (%s)", tableName, fields, values)
+	fmt.Println(query)
 
 	// Ensure that the last insert id is for the corresponding insert
 	dbLock.Lock()
@@ -81,10 +81,10 @@ func Insert(db *sql.DB, tableName string, fields string, values string, dbLock *
 // filters can be an empty string but there should be a LIMIT.
 func Query(db *sql.DB, tableName string, fields string, filters string) (*sql.Rows, error) {
 	fmt.Println("Making query to table", tableName)
-	fmt.Println("fields", fields)
-	fmt.Println("filters", filters)
 
 	query := fmt.Sprintf("SELECT %s FROM %s %s;", fields, tableName, filters)
+	fmt.Println(query)
+
 	results, err := db.Query(query)
 	if err != nil {
 		fmt.Println("QUERY ERROR:", err)
@@ -162,6 +162,8 @@ func Delete(db *sql.DB, tableName string, filters string) (int64, error) {
 	}
 
 	query := fmt.Sprintf("DELETE FROM %s %s;", tableName, filters)
+	fmt.Println(query)
+
 	result, err := db.Exec(query)
 
 	if err != nil {

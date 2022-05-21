@@ -8,18 +8,22 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
 func TestBroadcastClient(serverAddr *string, serverPort *int) {
-	// broadcast := createFakeBroadcast(1)
-	// InsertBroadcast(serverAddr, serverPort, broadcast)
+	broadcast := createFakeBroadcast(1)
+	pk := InsertBroadcast(serverAddr, serverPort, broadcast)
+	broadcast.BroadcastId = pk
+
 	ConsolidatedFindBroadcastTest(serverAddr, serverPort)
+	ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
 	DeleteBroadcast(serverAddr, serverPort, &pb.Broadcast{BroadcastId: 5})
 }
 
-func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
+func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) int64 {
 	// Ensure that there are users first, if there are users already existing,
 	// the returned users will be different, but its ok.
 	for i := 0; i < len(broadcast.Receipients); i++ {
@@ -33,7 +37,7 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	res, err := client.AddBroadcast(context.Background(), broadcast)
 	if err != nil {
 		fmt.Println("InsertBroadcast ERROR:", err)
-		return
+		return -1
 	}
 
 	fmt.Println("Client received response:", res.Type)
@@ -41,6 +45,8 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	if res.Type == pb.Response_ERROR {
 		fmt.Println("Client received error response:", res.ErrorMessage)
 	}
+
+	return res.PrimaryKey
 }
 
 func ConsolidatedFindBroadcastTest(serverAddr *string, serverPort *int) {
@@ -211,6 +217,54 @@ func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.Broadcast
 	}
 
 	return res
+}
+
+// TODO
+func ConsolidatedUpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
+	fmt.Println("unimplemented")
+	UpdateBroadcastBasicFields(serverAddr, serverPort, broadcast)
+	UpdateBroadcastReceipients(serverAddr, serverPort, broadcast)
+}
+
+func UpdateBroadcastBasicFields(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
+	creationTime := &timestamppb.Timestamp{Seconds: time.Now().Unix()}
+	updateBroadcast := pb.Broadcast{
+		BroadcastId:  broadcast.BroadcastId,
+		Content:      "This is an updated broadcast content",
+		CreationDate: creationTime,
+	}
+
+	UpdateBroadcastTest(serverAddr, serverPort, &updateBroadcast)
+}
+
+func UpdateBroadcastReceipients(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
+	updateBroadcast := pb.Broadcast{
+		BroadcastId: broadcast.BroadcastId,
+		Receipients: broadcast.Receipients,
+	}
+
+	// replace one of the recipients with someone else
+	updateBroadcast.Receipients[0].Recipient.UserId = 6
+
+	UpdateBroadcastTest(serverAddr, serverPort, &updateBroadcast)
+}
+
+func UpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
+	fmt.Println("Updating Broadcast...")
+	client, conn := createBroadcastClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.UpdateBroadcast(context.Background(), broadcast)
+	if err != nil {
+		fmt.Println("UpdateBroadcastTest ERROR:", err)
+		return
+	}
+
+	fmt.Println("Client received response:", res.Type)
+
+	if res.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.ErrorMessage)
+	}
 }
 
 func DeleteBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
