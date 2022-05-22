@@ -8,6 +8,14 @@ option go_package = "/operations_ecosys";
 
 package operations_ecosys;
 
+// Note for updates:
+// If the object fields should be updated, 
+// fields that do not need to be updated can be blank.
+// However, do note that enums and bools have default values, 
+// hence enums and bools should always be filled. 
+
+// TODO: Should change all FindXXX to use streams 
+
 service AdminServices {
     rpc AddUser(User) returns (Response) {}
     rpc UpdateUser(User) returns (Response) {}
@@ -17,6 +25,9 @@ service AdminServices {
 
 service BroadcastServices{
     rpc AddBroadcast(Broadcast) returns (Response) {}
+    // Note that this update does not update the broadcast's recipient's inner status 
+    // such as the acknowledgement or rejection status but only if the recipient 
+    // is part of the broadcast.
     rpc UpdateBroadcast(Broadcast) returns (Response) {}
     rpc DeleteBroadcast(Broadcast) returns (Response) {}
     rpc FindBroadcasts(BroadcastQuery) returns (BulkBroadcasts) {}
@@ -25,6 +36,8 @@ service BroadcastServices{
 // Admin
 // Users 
 // All users who use the operations ecosystem.
+// TODO: decide if we want to have an inactive field for users
+//       so that we don't need to delete users completely. 
 message User {
     int64 user_id = 1;
     UserType user_type = 2;
@@ -68,11 +81,11 @@ message UserFilter {
 
 // Get specific types users as specified in the Filter. 
 // If one wants to get all objects, leave filters empty. 
-// A default limit of 50 will be used if the field is empty. 
+// A default limit of 10 will be used if the field is empty. 
 message UserQuery {
     repeated UserFilter filters = 1;
     // Limit the number of objects being returned. 
-    // If only 10 objects should be shown, limit = 10;
+    // If only 5 objects should be shown, limit = 5;
     int64 limit = 2;
 }
 
@@ -89,12 +102,19 @@ message Broadcast {
     // The whole user fields does not need to be filled, 
     // as long as the user is identifiable.
     User creator = 7;
-    repeated User receipients = 8;
+    repeated BroadcastRecipient receipients = 8;
 
     enum BroadcastType{
         ANNOUNCEMENT = 0;
         ASSIGNMENT = 1;
     }
+}
+
+message BroadcastRecipient {
+    int64 broadcast_recipients_id = 1;
+    User recipient = 2;
+    bool acknowledged = 3;
+    bool rejected = 4;
 }
 
 // Passing around multiple broadcasts in one message. 
@@ -116,19 +136,22 @@ message BroadcastFilter {
         CONTENT = 3;
         CREATION_DATE = 4;
         DEADLINE = 5;
-        CREATOR = 6;
-        RECEIPEIENTS = 7;
+        // Creator and recipient values should 
+        // be the user id of these users
+        CREATOR_ID = 6;
+        // Note: Single receipient
+        RECEIPEIENT_ID = 7;
         NUM_RECEIPIENTS = 8;
     }
 }
 
 // Get specific types users as specified in the Filter. 
 // If one wants to get all objects, leave filters empty. 
-// A default limit of 50 will be used if the field is empty. 
+// A default limit of 10 will be used if the field is empty. 
 message BroadcastQuery {
     repeated BroadcastFilter filters = 1;
     // Limit the number of objects being returned. 
-    // If only 10 objects should be shown, limit = 10;
+    // If only 5 objects should be shown, limit = 5;
     int64 limit = 2;
 }
 

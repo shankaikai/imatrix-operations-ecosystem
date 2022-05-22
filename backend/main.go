@@ -23,6 +23,7 @@ func main() {
 	} else if *serverFlag {
 		server.InitServer(serverAddrFlag, serverPortFlag)
 	} else {
-		client.TestClient(serverAddrFlag, serverPortFlag)
+		client.TestAdminClient(serverAddrFlag, serverPortFlag)
+		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
 	}
 }
