@@ -33,11 +33,11 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 	broadcasts := pb.BulkBroadcasts{Response: &res}
 
 	foundBroadcasts := make([]*pb.Broadcast, 0)
-	receipients := make([]*pb.User, 0)
+	receipients := make([]*pb.BroadcastRecipient, 0)
 
 	for i := 0; i < 3; i++ {
-		receipients = append(receipients, &pb.User{
-			UserId:          3,
+		user := &pb.User{
+			UserId:          int64(i),
 			UserType:        pb.User_ISPECIALIST,
 			Name:            "test name",
 			Email:           "email",
@@ -45,6 +45,12 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 			TelegramHandle:  "sfds",
 			UserSecurityImg: "dsfds",
 			IsPartTimer:     false,
+		}
+		receipients = append(receipients, &pb.BroadcastRecipient{
+			BroadcastRecipientsId: int64(i),
+			Recipient:             user,
+			Acknowledged:          i%2 == 0,
+			Rejected:              false,
 		})
 	}
 
@@ -56,8 +62,17 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 			Content:      "email",
 			CreationDate: nil,
 			Deadline:     nil,
-			Creator:      receipients[0],
-			Receipients:  receipients,
+			Creator: &pb.User{
+				UserId:          1,
+				UserType:        pb.User_ISPECIALIST,
+				Name:            "test name",
+				Email:           "email",
+				PhoneNumber:     "1232",
+				TelegramHandle:  "sfds",
+				UserSecurityImg: "dsfds",
+				IsPartTimer:     false,
+			},
+			Receipients: receipients,
 		})
 	}
 
