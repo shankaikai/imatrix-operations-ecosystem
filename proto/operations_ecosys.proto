@@ -102,7 +102,7 @@ message Broadcast {
     // The whole user fields does not need to be filled, 
     // as long as the user is identifiable.
     User creator = 7;
-    repeated BroadcastRecipient receipients = 8;
+    repeated BroadcastRecipient recipients = 8;
 
     enum BroadcastType{
         ANNOUNCEMENT = 0;
@@ -139,7 +139,7 @@ message BroadcastFilter {
         // Creator and recipient values should 
         // be the user id of these users
         CREATOR_ID = 6;
-        // Note: Single receipient
+        // Note: Single recipient
         RECEIPEIENT_ID = 7;
         NUM_RECEIPIENTS = 8;
     }
