@@ -12,7 +12,7 @@ import (
 
 func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
-	pk, err := db_pck.BroadcastInsert(
+	pk, err := db_pck.InsertBroadcast(
 		s.db,
 		broadcast,
 		s.dbLock,

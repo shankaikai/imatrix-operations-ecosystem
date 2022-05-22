@@ -35,7 +35,7 @@ func createFakeBroadcast(id int) *pb.Broadcast {
 		CreationDate: timestamppb.Now(),
 		Deadline:     &timestamppb.Timestamp{Seconds: int64(time.Now().Add(30).Unix())},
 		Creator:      recipients[0].Recipient,
-		Receipients:  recipients,
+		Recipients:   recipients,
 	}
 }
 

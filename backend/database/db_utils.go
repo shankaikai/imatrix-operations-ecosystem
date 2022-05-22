@@ -18,6 +18,9 @@ const (
 	DATETIME_FORMAT = "2006-01-02 15:04:05"
 	DEFAULT_LIMIT   = 10
 	MAX_LIMIT       = 1000
+	ALL_COLS        = "*"
+	WHERE_KEYWORD   = "WHERE"
+	LIMIT_KEYWORD   = "LIMIT"
 )
 
 // Create an authorised session with the database.
@@ -212,7 +215,18 @@ func FormatLikeQueryValue(value string) string {
 	return "%" + value + "%"
 }
 
-// Note that this cannot be used for bool cols
-func formatFieldEqVal(field string, val string) string {
-	return fmt.Sprintf("%s='%s'", field, val)
+func formatFieldEqVal(field string, val string, encloseVal bool) string {
+	if encloseVal {
+		return fmt.Sprintf("%s='%s'", field, val)
+	} else {
+		return fmt.Sprintf("%s=%s", field, val)
+	}
+}
+
+func formatFilterCondition(filter *pb.Filter, fieldName string, encloseVal bool) string {
+	if encloseVal {
+		return fmt.Sprintf("%s %s '%s'", fieldName, GetFilterComparisonSign(filter.Comparison), filter.Value)
+	} else {
+		return fmt.Sprintf("%s %s %s", fieldName, GetFilterComparisonSign(filter.Comparison), filter.Value)
+	}
 }

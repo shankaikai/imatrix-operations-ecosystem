@@ -213,6 +213,9 @@ var AdminServices_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BroadcastServicesClient interface {
 	AddBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
+	// Note that this update does not update the broadcast's recipient's inner status
+	// such as the acknowledgement or rejection status but only if the recipient
+	// is part of the broadcast.
 	UpdateBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
 	DeleteBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
 	FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (*BulkBroadcasts, error)
@@ -267,6 +270,9 @@ func (c *broadcastServicesClient) FindBroadcasts(ctx context.Context, in *Broadc
 // for forward compatibility
 type BroadcastServicesServer interface {
 	AddBroadcast(context.Context, *Broadcast) (*Response, error)
+	// Note that this update does not update the broadcast's recipient's inner status
+	// such as the acknowledgement or rejection status but only if the recipient
+	// is part of the broadcast.
 	UpdateBroadcast(context.Context, *Broadcast) (*Response, error)
 	DeleteBroadcast(context.Context, *Broadcast) (*Response, error)
 	FindBroadcasts(context.Context, *BroadcastQuery) (*BulkBroadcasts, error)

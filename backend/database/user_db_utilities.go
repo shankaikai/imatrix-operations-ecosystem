@@ -43,7 +43,9 @@ func getUserTableFields() string {
 }
 
 // This function is highly dependent on the
-// order given in getBroadcastTableFields.
+// order given in getUserTableFields.
+// Returns the values of the user fields in the
+// order that is specified in getUserTableFields
 func orderUserFields(user *pb.User) string {
 	output := ""
 
@@ -58,7 +60,7 @@ func orderUserFields(user *pb.User) string {
 	return output
 }
 
-// Returns the User Type as expected in the DB
+// Returns the User Type as expected in the DB from the protobuf enum.
 func getUserDBTypeStringFromProto(userType pb.User_UserType) string {
 	switch userType {
 	case pb.User_ISPECIALIST:
@@ -72,7 +74,7 @@ func getUserDBTypeStringFromProto(userType pb.User_UserType) string {
 	}
 }
 
-// Returns the User Type as expected in the proto message
+// Returns the User Type as expected in the proto message from the DB enum.
 func getUserProtoTypeStringFromDB(userType string) pb.User_UserType {
 	switch userType {
 	case "I-Specialist":
@@ -86,51 +88,70 @@ func getUserProtoTypeStringFromDB(userType string) pb.User_UserType {
 	}
 }
 
+// Converts the filters in the user array into a formatted where clause
+// that can be parsed into MySQL. If a limit is needed, the LIMIT filter is
+// added to the end of the string.
+// For example returns: "WHERE id=22 AND num <2 LIMIT 5"
+// Returns the formatted SQL filter string.
 func getFormattedUserFilters(query *pb.UserQuery, needLimit bool) string {
 	output := ""
 
-	if len(query.Filters) > 0 {
-		output += "WHERE "
-	}
-
-	// Get all filters
+	// Store formatted filter conditions in an array to be joined later
 	filters := make([]string, 0)
+
 	for _, filter := range query.Filters {
+		// Values for contains have to be reformatted
 		if filter.Comparisons.Comparison == pb.Filter_CONTAINS {
 			filter.Comparisons.Value = FormatLikeQueryValue(filter.Comparisons.Value)
 		}
 
 		switch filter.Field {
 		case pb.UserFilter_USER_ID:
-			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_ID, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_ID, true))
 		case pb.UserFilter_TYPE:
-			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_TYPE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_TYPE, true))
 		case pb.UserFilter_NAME:
-			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_NAME, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_NAME, true))
 		case pb.UserFilter_EMAIL:
-			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_EMAIL, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_EMAIL, true))
 		case pb.UserFilter_PHONE_NUMBER:
-			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_PHONE_NUM, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_PHONE_NUM, true))
 		case pb.UserFilter_TELEGRAM_HANDLE:
-			filters = append(filters, fmt.Sprintf("%s %s '%s'", USER_DB_TELE_HANDLE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_TELE_HANDLE, true))
 		case pb.UserFilter_IS_PART_TIMER:
-			filters = append(filters, fmt.Sprintf("%s %s %s", USER_DB_PART_TIMER, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_PART_TIMER, false))
 		}
+	}
+
+	// Only add WHERE keyword if there are conditions to add.
+	if len(filters) > 0 {
+		output += fmt.Sprintf("%s ", WHERE_KEYWORD)
 	}
 
 	output += strings.Join(filters, " AND ")
 
-	// Add limits
+	// Add limits if needed
 	if needLimit {
 		if query.Limit == 0 {
 			query.Limit = DEFAULT_LIMIT
 		}
-		output += fmt.Sprintf(" LIMIT %d", query.Limit)
+		output += fmt.Sprintf(" %s %d", LIMIT_KEYWORD, query.Limit)
 	}
 
 	return output
 }
 
+// This function creates the filter required if
+// the only condition is a matching user id.
+func getUserIdFormattedFilter(userId int) string {
+	query := &pb.UserQuery{}
+	addUserFilter(query, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
+	return getFormattedUserFilters(query, false)
+}
+
+// Helper function to add a new filter to the list of existing
+// filters in a user query struct.
+// Modifies the user query parameter directly.
 func addUserFilter(query *pb.UserQuery, field pb.UserFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
@@ -141,29 +162,32 @@ func addUserFilter(query *pb.UserQuery, field pb.UserFilter_Field,
 	query.Filters = append(query.Filters, &pb.UserFilter{Field: field, Comparisons: filter})
 }
 
+// This function is used in anticipation of an update query.
+// Updates use the format "SET field1=val1, field2=val2".
+// The return value of this function is for example: "field1=val1, field2=val2"
 // ID not included in this because pk should not be manually changed.
 // Note this function highly depends on the protocol buffer message definition
-// Returns the string fields and values of the filled broadcast fields
+// Returns the formatted fields and values of the filled user fields
 func getFilledUserFields(user *pb.User) string {
-	userTableFields := []string{formatFieldEqVal(USER_DB_TYPE, getUserDBTypeStringFromProto(user.UserType))}
+	userTableFields := []string{formatFieldEqVal(USER_DB_TYPE, getUserDBTypeStringFromProto(user.UserType), true)}
 
 	if len(user.Name) > 0 {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_NAME, user.Name))
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_NAME, user.Name, true))
 	}
 	if len(user.Email) > 0 {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_EMAIL, user.Email))
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_EMAIL, user.Email, true))
 	}
 	if len(user.PhoneNumber) > 0 {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PHONE_NUM, user.PhoneNumber))
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PHONE_NUM, user.PhoneNumber, true))
 	}
 	if len(user.TelegramHandle) > 0 {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_TELE_HANDLE, user.TelegramHandle))
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_TELE_HANDLE, user.TelegramHandle, true))
 	}
 	if len(user.UserSecurityImg) > 0 {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_IMG, user.UserSecurityImg))
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_IMG, user.UserSecurityImg, true))
 	}
 
-	userTableFields = append(userTableFields, fmt.Sprintf("%s=%s", USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer)))
+	userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer), false))
 
 	return strings.Join(userTableFields, ",")
 }

@@ -33,7 +33,7 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 	broadcasts := pb.BulkBroadcasts{Response: &res}
 
 	foundBroadcasts := make([]*pb.Broadcast, 0)
-	receipients := make([]*pb.BroadcastRecipient, 0)
+	recipients := make([]*pb.BroadcastRecipient, 0)
 
 	for i := 0; i < 3; i++ {
 		user := &pb.User{
@@ -46,7 +46,7 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 			UserSecurityImg: "dsfds",
 			IsPartTimer:     false,
 		}
-		receipients = append(receipients, &pb.BroadcastRecipient{
+		recipients = append(recipients, &pb.BroadcastRecipient{
 			BroadcastRecipientsId: int64(i),
 			Recipient:             user,
 			Acknowledged:          i%2 == 0,
@@ -72,7 +72,7 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 				UserSecurityImg: "dsfds",
 				IsPartTimer:     false,
 			},
-			Receipients: receipients,
+			Recipients: recipients,
 		})
 	}
 

@@ -26,8 +26,8 @@ func TestBroadcastClient(serverAddr *string, serverPort *int) {
 func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) int64 {
 	// Ensure that there are users first, if there are users already existing,
 	// the returned users will be different, but its ok.
-	for i := 0; i < len(broadcast.Receipients); i++ {
-		InsertUser(serverAddr, serverPort, broadcast.Receipients[0].Recipient)
+	for i := 0; i < len(broadcast.Recipients); i++ {
+		InsertUser(serverAddr, serverPort, broadcast.Recipients[0].Recipient)
 	}
 
 	fmt.Println("Inserting Broadcast:", broadcast.Title)
@@ -222,7 +222,7 @@ func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.Broadcast
 func ConsolidatedUpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
 	fmt.Println("unimplemented")
 	UpdateBroadcastBasicFields(serverAddr, serverPort, broadcast)
-	UpdateBroadcastReceipients(serverAddr, serverPort, broadcast)
+	UpdateBroadcastRecipients(serverAddr, serverPort, broadcast)
 }
 
 func UpdateBroadcastBasicFields(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
@@ -236,14 +236,14 @@ func UpdateBroadcastBasicFields(serverAddr *string, serverPort *int, broadcast *
 	UpdateBroadcastTest(serverAddr, serverPort, &updateBroadcast)
 }
 
-func UpdateBroadcastReceipients(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
+func UpdateBroadcastRecipients(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
 	updateBroadcast := pb.Broadcast{
 		BroadcastId: broadcast.BroadcastId,
-		Receipients: broadcast.Receipients,
+		Recipients:  broadcast.Recipients,
 	}
 
 	// replace one of the recipients with someone else
-	updateBroadcast.Receipients[0].Recipient.UserId = 6
+	updateBroadcast.Recipients[0].Recipient.UserId = 6
 
 	UpdateBroadcastTest(serverAddr, serverPort, &updateBroadcast)
 }

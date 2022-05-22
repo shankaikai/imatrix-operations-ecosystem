@@ -4,37 +4,36 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"sort"
 	"strconv"
 	"sync"
-	"time"
 
-	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Insert a new broadcast into the database table.
+// Corresponding broadcast recipients are added to their
+// respective table as well.
+// Returns the primary key of the main broadcast and errors if any.
 // TODO: decide what should be done if the adding rows for the
-// receipients fail. Should the main broadcast and all others be deleted as well?
-func BroadcastInsert(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (int64, error) {
-	fmt.Println("Inserting Broadcast", broadcast.Title)
+// recipients fail. Should the main broadcast and all others be deleted as well?
+func InsertBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (int64, error) {
+	fmt.Println("Inserting Broadcast", broadcast.BroadcastId, broadcast.Title)
 
-	// Create and insert main broadcast first and it's pk
+	// Create and insert main broadcast first and get it's pk
 	bcTbFields := getBroadcastTableFields()
 	bcValues := orderBroadcastFields(broadcast)
 
 	bc_pk, err := Insert(db, BROADCAST_DB_TABLE_NAME, bcTbFields, bcValues, dbLock)
 
 	if err != nil {
-		// Do not add receipients if the main broadcast fails
+		// Do not add recipients if the main broadcast fails
 		return bc_pk, err
 	}
 
 	// Create broadcast recipients rows for corresponding broadcast
-	for _, recipient := range broadcast.Receipients {
-		_, err = BroadcastReceipientInsert(db, recipient, bc_pk, dbLock)
+	for _, recipient := range broadcast.Recipients {
+		_, err = InsertBroadcastRecipient(db, recipient, bc_pk, dbLock)
 
 		if err != nil {
 			break
@@ -44,34 +43,47 @@ func BroadcastInsert(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (i
 	return bc_pk, err
 }
 
-// Assumes the user has the correct user id that corresponds to its DB row.
-func BroadcastReceipientInsert(db *sql.DB, receipient *pb.BroadcastRecipient, mainBroadcastID int64, dbLock *sync.Mutex) (int64, error) {
-	// get fields and values for this particular receipient
+// Inserts a new recipient to the database and connects it to the appropriate
+// main broadcast.
+// Assumes the recipient has the correct id that corresponds to its DB row.
+// Returns the primary key of the recipient row and any errors.
+func InsertBroadcastRecipient(db *sql.DB, recipient *pb.BroadcastRecipient, mainBroadcastID int64, dbLock *sync.Mutex) (int64, error) {
+	// get fields and values for this particular recipient
 	fields := getBroadcastRecTableFields()
-	values := orderBroadcastRecFields(receipient, mainBroadcastID)
+	values := orderBroadcastRecFields(recipient, mainBroadcastID)
 
-	// Add receipient to DB
+	// Add recipient to DB
 	pk, err := Insert(db, BROADCAST_RECIPIENT_TABLE_NAME, fields, values, dbLock)
 
 	return pk, err
 }
 
 // Get all the broadcast rows in a table that meets specifications.
+// Returns an array of broadcasts and any errors.
 func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error) {
 	fmt.Println("Getting Broadcasts...")
 	broadcasts := make([]*pb.Broadcast, 0)
 
-	// Join all the broadcast
+	// Join the broadcast and recipient tables in order to
+	// easily filter conditions relating to both tables together.
+	// Conditions that are specified in the broadcast query
+	// are used in the inner query to facilitate agregated conditions.
 	innerFields := BC_DB_ID
-	outerFields := "*"
+	outerFields := ALL_COLS
+
 	// Format filters
 	innerFilters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
-	onCondition := fmt.Sprintf("%s = %s", BC_DB_ID, BC_REC_DB_RELATED_BC)
+
+	// tables are joined on the main broadcast id
+	onCondition := formatFieldEqVal(BC_DB_ID, BC_REC_DB_RELATED_BC, false)
 
 	innerQuery := createLeftJoinQuery(BROADCAST_DB_TABLE_NAME, BROADCAST_RECIPIENT_TABLE_NAME, onCondition, innerFields, innerFilters)
 
-	// It is not easy to find out how many rows a single broadcast will span because of the join.
-	outerFilter := fmt.Sprintf("WHERE %s IN (%s) LIMIT %d", BC_DB_ID, innerQuery, MAX_LIMIT)
+	// It is not easy to find out how many rows a single broadcast
+	// will span because of the join, hence limit is the max.
+	// The filter for the outer query is any rows that made it through the
+	// inner query.
+	outerFilter := fmt.Sprintf("%s %s IN (%s) %s %d", WHERE_KEYWORD, BC_DB_ID, innerQuery, LIMIT_KEYWORD, MAX_LIMIT)
 
 	rows, err := QueryLeftJoin(db, BROADCAST_DB_TABLE_NAME, BROADCAST_RECIPIENT_TABLE_NAME, onCondition, outerFields, outerFilter)
 
@@ -80,106 +92,20 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	}
 
 	// convert query rows into broadcasts
-	broadcastMap := make(map[int64]*pb.Broadcast)
-
-	for rows.Next() {
-		broadcast := &pb.Broadcast{}
-		broadcastReceipient := &pb.BroadcastRecipient{}
-
-		creatorUserId := -1
-		broadcastType := ""
-		creationDateStr := ""
-		deadlineStr := ""
-		recipientUserId := -1
-		relatedBroadcast := ""
-
-		// cast each row to a broadcast
-		err = rows.Scan(
-			&broadcast.BroadcastId,
-			&broadcastType,
-			&broadcast.Title,
-			&broadcast.Content,
-			&creationDateStr,
-			&deadlineStr,
-			&creatorUserId,
-			&broadcastReceipient.BroadcastRecipientsId,
-			&relatedBroadcast,
-			&recipientUserId,
-			&broadcastReceipient.Acknowledged,
-			&broadcastReceipient.Rejected,
-		)
-
-		if err != nil {
-			fmt.Println("GetBroadcasts ERROR:", err)
-			continue
-		}
-
-		// Check if there was already a broadcast found with this id
-		if existingBroadcast, ok := broadcastMap[broadcast.BroadcastId]; ok {
-			broadcast = existingBroadcast
-		} else {
-			// Return only the necessary number of broadcasts.
-			// If the number of broadcasts have reached the limit,
-			// do not add new broadcasts.
-			if len(broadcastMap) >= int(query.Limit) {
-				continue
-			}
-			broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
-			creator, err := idUserByUserId(db, creatorUserId)
-
-			if err != nil {
-				fmt.Println("GetBroadcasts ERROR:", err)
-				continue
-			}
-
-			broadcast.Creator = creator
-			dateFormat := "2006-01-02 15:04:05"
-
-			creationDate, err := time.Parse(dateFormat, creationDateStr)
-			if err != nil {
-				fmt.Println("GetBroadcasts:", err.Error())
-				continue
-			}
-
-			deadline, err := time.Parse(dateFormat, deadlineStr)
-			if err != nil {
-				fmt.Println("GetBroadcasts:", err.Error())
-				continue
-			}
-
-			broadcast.CreationDate = &timestamppb.Timestamp{Seconds: creationDate.Unix()}
-			broadcast.Deadline = &timestamppb.Timestamp{Seconds: deadline.Unix()}
-			broadcastMap[broadcast.BroadcastId] = broadcast
-		}
-
-		broadcastReceipient.Recipient, err = idUserByUserId(db, recipientUserId)
-		if err != nil {
-			fmt.Println("GetBroadcasts:", err.Error())
-			continue
-		}
-
-		// Add recipient to broadcast
-		if broadcast.Receipients == nil {
-			broadcast.Receipients = make([]*pb.BroadcastRecipient, 0)
-		}
-
-		broadcast.Receipients = append(broadcast.Receipients, broadcastReceipient)
-	}
-
-	// Add all broadcasts to the returning array
-	for _, broadcast := range broadcastMap {
-		broadcasts = append(broadcasts, broadcast)
-	}
+	err = convertDbRowsToBcNBcR(db, &broadcasts, rows, int(query.Limit))
 
 	return broadcasts, err
 }
 
-// Get all the broadcast rows in a table that meets specifications.
+// Get all the broadcast recipient rows in a table that meets specifications.
+// Returns an array of broadcast recipients and any errors.
 func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastID int64) ([]*pb.BroadcastRecipient, error) {
 	fmt.Println("Getting Broadcasts Recipients...")
-	broadcastReceipients := make([]*pb.BroadcastRecipient, 0)
+	broadcastRecipients := make([]*pb.BroadcastRecipient, 0)
 
-	fields := BC_REC_DB_ID + "," + getBroadcastRecTableFields()
+	//TODO remove comment
+	// fields := BC_REC_DB_ID + "," + getBroadcastRecTableFields()
+	fields := ALL_COLS
 
 	// Format filters
 	// Get for a specific main broadcast
@@ -189,21 +115,25 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 	BCRecRows, err := Query(db, BROADCAST_RECIPIENT_TABLE_NAME, fields, filters)
 
 	if err != nil {
-		return broadcastReceipients, err
+		return broadcastRecipients, err
 	}
 
-	// convert query rows into broadcasts
+	// convert query rows into broadcasts recipients
 	for BCRecRows.Next() {
-		receipient := &pb.BroadcastRecipient{}
-		receipientId := -1
+		recipient := &pb.BroadcastRecipient{}
+		// fields that cannot be auto converted
+		recipientId := -1
+		// related broadcast is not necessary, but for simplicity
+		// and for possible future use, we get it back in the query.
 		relatedBroadcast := ""
+
 		// cast each row to a broadcast
 		err = BCRecRows.Scan(
-			&receipient.BroadcastRecipientsId,
+			&recipient.BroadcastRecipientsId,
 			&relatedBroadcast,
-			&receipientId,
-			&receipient.Acknowledged,
-			&receipient.Rejected,
+			&recipientId,
+			&recipient.Acknowledged,
+			&recipient.Rejected,
 		)
 
 		if err != nil {
@@ -213,16 +143,16 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 
 		// TODO think about whether I can store the users in cache rather than
 		// get the same few users over and over
-		receipient.Recipient, err = idUserByUserId(db, receipientId)
+		recipient.Recipient, err = idUserByUserId(db, recipientId)
 		if err != nil {
 			fmt.Println("GetBroadcasts:", err.Error())
 			continue
 		}
 
-		broadcastReceipients = append(broadcastReceipients, receipient)
+		broadcastRecipients = append(broadcastRecipients, recipient)
 	}
 
-	return broadcastReceipients, err
+	return broadcastRecipients, err
 }
 
 // Update a specific broadcast in the table
@@ -233,6 +163,7 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (int64, error) {
 	// Update the main broadcast first
 	newFields := getFilledBroadcastFields(broadcast)
+
 	query := &pb.BroadcastQuery{}
 	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
 	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
@@ -245,77 +176,27 @@ func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (i
 	}
 
 	// Update recipients if necessary
-	if broadcast.Receipients != nil {
-		// Get all recipients
-		currentRecipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
-		if err != nil {
-			fmt.Println("UpdateBroadcast ERROR::", err)
-			return rowsAffected, err
-		}
-
-		// create array of current broadcast recipient ids
-		currentRecIds := make([]int, 0)
-
-		for _, br := range currentRecipients {
-			currentRecIds = append(currentRecIds, int(br.Recipient.UserId))
-		}
-
-		sort.Ints(currentRecIds)
-
-		// Check if the updated recipients exist within the current ones
-		// If they exist, ignore and remove them from the current list.
-		// If they do not exist, we need to add them to the db.
-		// If the current recipient is not within the list of new recipients
-		// delete this rogue recipient.
-
-		// Index of missing recipients from the input broadcast list
-		missingRecIndex := make([]int, 0)
-
-		for i, br := range broadcast.Receipients {
-			found, index := common.BinarySearch(currentRecIds, 0, len(currentRecIds)-1, int(br.Recipient.UserId))
-			if found {
-				fmt.Println("Found updated recipient in current recipient")
-				currentRecIds = append(currentRecIds[:index], currentRecIds[index+1:]...)
-			} else {
-				missingRecIndex = append(missingRecIndex, i)
-			}
-		}
-
-		fmt.Println("Missing Recipients Index:", missingRecIndex)
-		// Add the missing recipients
-		for _, recIndex := range missingRecIndex {
-			_, err := BroadcastReceipientInsert(db, broadcast.Receipients[recIndex], broadcast.BroadcastId, dbLock)
-			if err != nil {
-				fmt.Println("UpdateBroadcast ERROR::", err)
-				return rowsAffected, err
-			}
-		}
-
-		fmt.Println("Deleting Recipients IDs:", currentRecIds)
-		// See if any need to be deleted
-		for _, id := range currentRecIds {
-			_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{BroadcastRecipientsId: int64(id)})
-			if err != nil {
-				fmt.Println("UpdateBroadcast ERROR::", err)
-				return rowsAffected, err
-			}
-		}
+	if broadcast.Recipients != nil {
+		err = updateRecipientsOfBroadcast(db, broadcast, query, dbLock)
 	}
 	return rowsAffected, err
 }
 
-// Update a specific row in the table
-func UpdateBroadcastReceipients(db *sql.DB, tableName string, broadcastReceipient *pb.BroadcastRecipient) (int64, error) {
-	// Update the main broadcast first
-	newFields := getFilledBroadcastRecFields(broadcastReceipient)
-	query := &pb.BroadcastQuery{}
-	addBroadcastFilter(query, pb.BroadcastFilter_RECEIPEIENT_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastReceipient.BroadcastRecipientsId)))
-	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false)
+// Update a specific recipient row in the table
+// This function assumes that the broadcast recipient id is correct.
+// Returns the number of rows affected and any errors.
+// In this case, number of rows affected is either 0 or 1.
+func UpdateBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecipient) (int64, error) {
+	newFields := getFilledBroadcastRecFields(broadcastRecipient)
+	filters := getBroadcastIdFormattedFilter(
+		int(broadcastRecipient.BroadcastRecipientsId),
+		BROADCAST_RECIPIENT_TABLE_NAME,
+	)
 
 	rowsAffected, err := Update(db, BROADCAST_RECIPIENT_TABLE_NAME, newFields, filters)
 
 	if err != nil {
-		fmt.Println("UpdateBroadcastReceipients ERROR::", err)
+		fmt.Println("UpdateBroadcastRecipients ERROR::", err)
 		return rowsAffected, err
 	}
 
@@ -326,20 +207,21 @@ func UpdateBroadcastReceipients(db *sql.DB, tableName string, broadcastReceipien
 // any corresponding recipients.
 // Recipients are deleted based on the cascading rule.
 func DeleteBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
-	// delete main broadcast
-	query := &pb.BroadcastQuery{}
-	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
-	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
+	filters := getBroadcastIdFormattedFilter(
+		int(broadcast.BroadcastId),
+		BROADCAST_DB_TABLE_NAME,
+	)
 
 	rowsAffected, err := Delete(db, BROADCAST_DB_TABLE_NAME, filters)
 	return rowsAffected, err
 }
 
 // Delete a particular broadcast recipient
-func DeleteBroadcastRecipients(db *sql.DB, broadcastReceipient *pb.BroadcastRecipient) (int64, error) {
-	query := &pb.BroadcastQuery{}
-	addBroadcastFilter(query, pb.BroadcastFilter_RECEIPEIENT_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastReceipient.BroadcastRecipientsId)))
-	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false)
+func DeleteBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecipient) (int64, error) {
+	filters := getBroadcastIdFormattedFilter(
+		int(broadcastRecipient.BroadcastRecipientsId),
+		BROADCAST_RECIPIENT_TABLE_NAME,
+	)
 
 	rowsAffected, err := Delete(db, BROADCAST_RECIPIENT_TABLE_NAME, filters)
 	return rowsAffected, err
@@ -348,10 +230,7 @@ func DeleteBroadcastRecipients(db *sql.DB, broadcastReceipient *pb.BroadcastReci
 // Delete all recipients belonging to a particular broadcast
 // Currently not in use.
 func DeleteAllBCRecipientsOfMainBC(db *sql.DB, mainBroadcastID int) (int64, error) {
-	query := &pb.BroadcastQuery{}
-	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(mainBroadcastID))
-	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false)
-
+	filters := getBroadcastIdFormattedFilter(mainBroadcastID, BROADCAST_RECIPIENT_TABLE_NAME)
 	rowsAffected, err := Delete(db, BROADCAST_RECIPIENT_TABLE_NAME, filters)
 	return rowsAffected, err
 }
