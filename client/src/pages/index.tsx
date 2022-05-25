@@ -14,6 +14,11 @@ const Home: NextPage = () => {
 
   const getBroadcasts = async () => {
     const query = new BroadcastQuery();
+    // var stream = broadcastClient.findBroadcasts(query, {});
+
+    // stream.on("data", (response: BulkBroadcasts) => {
+    //   setBroadcasts(response.getBroadcastsList());
+    // });
     await broadcastClient.findBroadcasts(
       query,
       {},
