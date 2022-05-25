@@ -21,7 +21,7 @@ type AdminServicesClient interface {
 	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
-	FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (*BulkUsers, error)
+	FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (AdminServices_FindUsersClient, error)
 }
 
 type adminServicesClient struct {
@@ -59,13 +59,36 @@ func (c *adminServicesClient) DeleteUser(ctx context.Context, in *User, opts ...
 	return out, nil
 }
 
-func (c *adminServicesClient) FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (*BulkUsers, error) {
-	out := new(BulkUsers)
-	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/FindUsers", in, out, opts...)
+func (c *adminServicesClient) FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (AdminServices_FindUsersClient, error) {
+	stream, err := c.cc.NewStream(ctx, &AdminServices_ServiceDesc.Streams[0], "/operations_ecosys.AdminServices/FindUsers", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &adminServicesFindUsersClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type AdminServices_FindUsersClient interface {
+	Recv() (*UsersResponse, error)
+	grpc.ClientStream
+}
+
+type adminServicesFindUsersClient struct {
+	grpc.ClientStream
+}
+
+func (x *adminServicesFindUsersClient) Recv() (*UsersResponse, error) {
+	m := new(UsersResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // AdminServicesServer is the server API for AdminServices service.
@@ -75,7 +98,7 @@ type AdminServicesServer interface {
 	AddUser(context.Context, *User) (*Response, error)
 	UpdateUser(context.Context, *User) (*Response, error)
 	DeleteUser(context.Context, *User) (*Response, error)
-	FindUsers(context.Context, *UserQuery) (*BulkUsers, error)
+	FindUsers(*UserQuery, AdminServices_FindUsersServer) error
 	mustEmbedUnimplementedAdminServicesServer()
 }
 
@@ -92,8 +115,8 @@ func (UnimplementedAdminServicesServer) UpdateUser(context.Context, *User) (*Res
 func (UnimplementedAdminServicesServer) DeleteUser(context.Context, *User) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedAdminServicesServer) FindUsers(context.Context, *UserQuery) (*BulkUsers, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindUsers not implemented")
+func (UnimplementedAdminServicesServer) FindUsers(*UserQuery, AdminServices_FindUsersServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindUsers not implemented")
 }
 func (UnimplementedAdminServicesServer) mustEmbedUnimplementedAdminServicesServer() {}
 
@@ -162,22 +185,25 @@ func _AdminServices_DeleteUser_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AdminServices_FindUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserQuery)
-	if err := dec(in); err != nil {
-		return nil, err
+func _AdminServices_FindUsers_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserQuery)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(AdminServicesServer).FindUsers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/operations_ecosys.AdminServices/FindUsers",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServicesServer).FindUsers(ctx, req.(*UserQuery))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(AdminServicesServer).FindUsers(m, &adminServicesFindUsersServer{stream})
+}
+
+type AdminServices_FindUsersServer interface {
+	Send(*UsersResponse) error
+	grpc.ServerStream
+}
+
+type adminServicesFindUsersServer struct {
+	grpc.ServerStream
+}
+
+func (x *adminServicesFindUsersServer) Send(m *UsersResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // AdminServices_ServiceDesc is the grpc.ServiceDesc for AdminServices service.
@@ -199,12 +225,14 @@ var AdminServices_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteUser",
 			Handler:    _AdminServices_DeleteUser_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "FindUsers",
-			Handler:    _AdminServices_FindUsers_Handler,
+			StreamName:    "FindUsers",
+			Handler:       _AdminServices_FindUsers_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/operations_ecosys.proto",
 }
 
@@ -218,7 +246,7 @@ type BroadcastServicesClient interface {
 	// is part of the broadcast.
 	UpdateBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
 	DeleteBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
-	FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (*BulkBroadcasts, error)
+	FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (BroadcastServices_FindBroadcastsClient, error)
 }
 
 type broadcastServicesClient struct {
@@ -256,13 +284,36 @@ func (c *broadcastServicesClient) DeleteBroadcast(ctx context.Context, in *Broad
 	return out, nil
 }
 
-func (c *broadcastServicesClient) FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (*BulkBroadcasts, error) {
-	out := new(BulkBroadcasts)
-	err := c.cc.Invoke(ctx, "/operations_ecosys.BroadcastServices/FindBroadcasts", in, out, opts...)
+func (c *broadcastServicesClient) FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (BroadcastServices_FindBroadcastsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &BroadcastServices_ServiceDesc.Streams[0], "/operations_ecosys.BroadcastServices/FindBroadcasts", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &broadcastServicesFindBroadcastsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type BroadcastServices_FindBroadcastsClient interface {
+	Recv() (*BroadcastResponse, error)
+	grpc.ClientStream
+}
+
+type broadcastServicesFindBroadcastsClient struct {
+	grpc.ClientStream
+}
+
+func (x *broadcastServicesFindBroadcastsClient) Recv() (*BroadcastResponse, error) {
+	m := new(BroadcastResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // BroadcastServicesServer is the server API for BroadcastServices service.
@@ -275,7 +326,7 @@ type BroadcastServicesServer interface {
 	// is part of the broadcast.
 	UpdateBroadcast(context.Context, *Broadcast) (*Response, error)
 	DeleteBroadcast(context.Context, *Broadcast) (*Response, error)
-	FindBroadcasts(context.Context, *BroadcastQuery) (*BulkBroadcasts, error)
+	FindBroadcasts(*BroadcastQuery, BroadcastServices_FindBroadcastsServer) error
 	mustEmbedUnimplementedBroadcastServicesServer()
 }
 
@@ -292,8 +343,8 @@ func (UnimplementedBroadcastServicesServer) UpdateBroadcast(context.Context, *Br
 func (UnimplementedBroadcastServicesServer) DeleteBroadcast(context.Context, *Broadcast) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBroadcast not implemented")
 }
-func (UnimplementedBroadcastServicesServer) FindBroadcasts(context.Context, *BroadcastQuery) (*BulkBroadcasts, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindBroadcasts not implemented")
+func (UnimplementedBroadcastServicesServer) FindBroadcasts(*BroadcastQuery, BroadcastServices_FindBroadcastsServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindBroadcasts not implemented")
 }
 func (UnimplementedBroadcastServicesServer) mustEmbedUnimplementedBroadcastServicesServer() {}
 
@@ -362,22 +413,25 @@ func _BroadcastServices_DeleteBroadcast_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BroadcastServices_FindBroadcasts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BroadcastQuery)
-	if err := dec(in); err != nil {
-		return nil, err
+func _BroadcastServices_FindBroadcasts_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(BroadcastQuery)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(BroadcastServicesServer).FindBroadcasts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/operations_ecosys.BroadcastServices/FindBroadcasts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BroadcastServicesServer).FindBroadcasts(ctx, req.(*BroadcastQuery))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(BroadcastServicesServer).FindBroadcasts(m, &broadcastServicesFindBroadcastsServer{stream})
+}
+
+type BroadcastServices_FindBroadcastsServer interface {
+	Send(*BroadcastResponse) error
+	grpc.ServerStream
+}
+
+type broadcastServicesFindBroadcastsServer struct {
+	grpc.ServerStream
+}
+
+func (x *broadcastServicesFindBroadcastsServer) Send(m *BroadcastResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // BroadcastServices_ServiceDesc is the grpc.ServiceDesc for BroadcastServices service.
@@ -399,11 +453,13 @@ var BroadcastServices_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteBroadcast",
 			Handler:    _BroadcastServices_DeleteBroadcast_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "FindBroadcasts",
-			Handler:    _BroadcastServices_FindBroadcasts_Handler,
+			StreamName:    "FindBroadcasts",
+			Handler:       _BroadcastServices_FindBroadcasts_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/operations_ecosys.proto",
 }

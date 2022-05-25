@@ -20,7 +20,7 @@ service AdminServices {
     rpc AddUser(User) returns (Response) {}
     rpc UpdateUser(User) returns (Response) {}
     rpc DeleteUser(User) returns (Response) {}
-    rpc FindUsers(UserQuery) returns (BulkUsers) {}
+    rpc FindUsers(UserQuery) returns (stream UsersResponse) {}
 }
 
 service BroadcastServices{
@@ -30,7 +30,7 @@ service BroadcastServices{
     // is part of the broadcast.
     rpc UpdateBroadcast(Broadcast) returns (Response) {}
     rpc DeleteBroadcast(Broadcast) returns (Response) {}
-    rpc FindBroadcasts(BroadcastQuery) returns (BulkBroadcasts) {}
+    rpc FindBroadcasts(BroadcastQuery) returns (stream BroadcastResponse) {}
 }
 
 // Admin
@@ -57,9 +57,9 @@ message User {
 }
 
 // Passing around multiple users in one message. 
-message BulkUsers {
+message UsersResponse {
     Response response = 1;
-    repeated User users = 2;
+    User user = 2;
 }
 
 // Filter the types of broadcasts to be returned. 
@@ -118,9 +118,9 @@ message BroadcastRecipient {
 }
 
 // Passing around multiple broadcasts in one message. 
-message BulkBroadcasts {
+message BroadcastResponse {
     Response response = 1;
-    repeated Broadcast broadcasts = 2;
+    Broadcast broadcast = 2;
 }
 
 // Filter the types of broadcasts to be returned. 

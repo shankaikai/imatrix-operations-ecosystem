@@ -67,20 +67,28 @@ func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, e
 }
 
 // TODO: Add field verification
-func (s *Server) FindUsers(cxt context.Context, query *pb.UserQuery) (*pb.BulkUsers, error) {
+func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUsersServer) error {
 	res := pb.Response{Type: pb.Response_ACK}
-	Users := pb.BulkUsers{Response: &res}
-
 	foundUsers, err := db_pck.GetUsers(
 		s.db,
 		query,
 	)
+
 	if err != nil {
+		userRes := pb.UsersResponse{Response: &res}
 		res.Type = pb.Response_ERROR
 		res.ErrorMessage = err.Error()
+		stream.Send(&userRes)
+
 	} else {
-		Users.Users = foundUsers
+		userRes := pb.UsersResponse{Response: &res}
+		for _, user := range foundUsers {
+			userRes.User = user
+			if err := stream.Send(&userRes); err != nil {
+				return err
+			}
+		}
 	}
 
-	return &Users, nil
+	return nil
 }

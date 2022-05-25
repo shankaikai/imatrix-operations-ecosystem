@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"time"
 
@@ -63,22 +64,22 @@ func ConsolidatedFindBroadcastTest(serverAddr *string, serverPort *int) {
 	FindBroadcastsMultipleFilters(serverAddr, serverPort)
 }
 
-func FindBroadcastsNoFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsNoFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts without filter")
-	return FindBroadcastsTest(serverAddr, serverPort, &pb.BroadcastQuery{Limit: 4})
+	FindBroadcastsTest(serverAddr, serverPort, &pb.BroadcastQuery{Limit: 4})
 }
 
-func FindBroadcastsIdFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsIdFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts id filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "15"}
 	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_BROADCAST_ID}
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsTypeFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsTypeFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts type filter")
 
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: pb.Broadcast_ASSIGNMENT.String()}
@@ -86,10 +87,10 @@ func FindBroadcastsTypeFilter(serverAddr *string, serverPort *int) *pb.BulkBroad
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsTitleFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsTitleFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts title filter")
 
 	com := &pb.Filter{Comparison: pb.Filter_CONTAINS, Value: "name1"}
@@ -97,10 +98,10 @@ func FindBroadcastsTitleFilter(serverAddr *string, serverPort *int) *pb.BulkBroa
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsContentFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsContentFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts contents filter")
 
 	com := &pb.Filter{Comparison: pb.Filter_CONTAINS, Value: "con"}
@@ -108,10 +109,10 @@ func FindBroadcastsContentFilter(serverAddr *string, serverPort *int) *pb.BulkBr
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsCreateDateFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsCreateDateFilter(serverAddr *string, serverPort *int) {
 	creationDateMax := time.Now().AddDate(0, 0, -1)
 
 	fmt.Println("Finding broadcasts creation date filter, max date:", creationDateMax)
@@ -120,10 +121,10 @@ func FindBroadcastsCreateDateFilter(serverAddr *string, serverPort *int) *pb.Bul
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsDeadlineFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsDeadlineFilter(serverAddr *string, serverPort *int) {
 	deadlineMax := time.Now().AddDate(0, 0, 30)
 
 	fmt.Println("Finding broadcasts deadline date filter, max date:", deadlineMax)
@@ -132,40 +133,40 @@ func FindBroadcastsDeadlineFilter(serverAddr *string, serverPort *int) *pb.BulkB
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsCreatorIdFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsCreatorIdFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts creator id filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
 	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_CREATOR_ID}
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsRecipientIdFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsRecipientIdFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts recipient id filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "2"}
 	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_RECEIPEIENT_ID}
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsNumRecFilter(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsNumRecFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts number of recipients filter")
 	com := &pb.Filter{Comparison: pb.Filter_GREATER_EQ, Value: "2"}
 	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_NUM_RECEIPIENTS}
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) *pb.BulkBroadcasts {
+func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts mutiple filter")
 
 	broadcastFilters := make([]*pb.BroadcastFilter, 0)
@@ -192,31 +193,39 @@ func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) *pb.Bulk
 	broadcastFilters = append(broadcastFilters, ncFilter)
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: broadcastFilters}
-	return FindBroadcastsTest(serverAddr, serverPort, query)
+	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
-func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.BroadcastQuery) *pb.BulkBroadcasts {
+func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.BroadcastQuery) {
 	fmt.Println("Finding broadcasts")
 	client, conn := createBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	res, err := client.FindBroadcasts(context.Background(), query)
+	stream, err := client.FindBroadcasts(context.Background(), query)
 	if err != nil {
 		fmt.Println("FindBroadcastsTest ERROR:", err)
-		return res
+		return
 	}
 
-	fmt.Println("Client received response:", res.Response.Type)
+	count := 0
+	for {
+		broadcastRes, err := stream.Recv()
 
-	if res.Response.Type == pb.Response_ERROR {
-		fmt.Println("Client received error response:", res.Response.ErrorMessage)
-	} else {
-		for i, broadcast := range res.Broadcasts {
-			fmt.Println(i, ":", broadcast)
+		if err == io.EOF {
+			break
 		}
-	}
+		if err != nil {
+			fmt.Println("FindBroadcastsTest ERROR:", err)
+		}
 
-	return res
+		fmt.Println("Client received response:", broadcastRes.Response.Type)
+		if broadcastRes.Response.Type == pb.Response_ERROR {
+			continue
+		}
+
+		fmt.Println(count, ":", broadcastRes.Broadcast)
+		count++
+	}
 }
 
 func ConsolidatedUpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {

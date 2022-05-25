@@ -63,9 +63,8 @@ func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 	return &res, nil
 }
 
-func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (*pb.BulkBroadcasts, error) {
+func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
 	res := pb.Response{Type: pb.Response_ACK}
-	broadcasts := pb.BulkBroadcasts{Response: &res}
 
 	foundBroadcasts, err := db_pck.GetBroadcasts(
 		s.db,
@@ -73,11 +72,20 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 	)
 
 	if err != nil {
+		broadcastRes := pb.BroadcastResponse{Response: &res}
 		res.Type = pb.Response_ERROR
 		res.ErrorMessage = err.Error()
+		stream.Send(&broadcastRes)
+
 	} else {
-		broadcasts.Broadcasts = foundBroadcasts
+		broadcastRes := pb.BroadcastResponse{Response: &res}
+		for _, broadcast := range foundBroadcasts {
+			broadcastRes.Broadcast = broadcast
+			if err := stream.Send(&broadcastRes); err != nil {
+				return err
+			}
+		}
 	}
 
-	return &broadcasts, nil
+	return nil
 }

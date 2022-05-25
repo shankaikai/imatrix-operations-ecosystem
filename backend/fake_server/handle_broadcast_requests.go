@@ -2,6 +2,7 @@ package fake_server
 
 import (
 	"fmt"
+	"strconv"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 
@@ -26,13 +27,12 @@ func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 	return &res, nil
 }
 
-func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (*pb.BulkBroadcasts, error) {
+func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
 	fmt.Println("FindBroadcasts")
 
 	res := pb.Response{Type: pb.Response_ACK}
-	broadcasts := pb.BulkBroadcasts{Response: &res}
+	broadcastRes := pb.BroadcastResponse{Response: &res}
 
-	foundBroadcasts := make([]*pb.Broadcast, 0)
 	recipients := make([]*pb.BroadcastRecipient, 0)
 
 	for i := 0; i < 3; i++ {
@@ -55,11 +55,11 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 	}
 
 	for i := 0; i < 3; i++ {
-		foundBroadcasts = append(foundBroadcasts, &pb.Broadcast{
+		broadcast := &pb.Broadcast{
 			BroadcastId:  3,
 			Type:         pb.Broadcast_ANNOUNCEMENT,
-			Title:        "test name",
-			Content:      "email",
+			Title:        "test name " + strconv.Itoa(i),
+			Content:      "email" + strconv.Itoa(i),
 			CreationDate: nil,
 			Deadline:     nil,
 			Creator: &pb.User{
@@ -73,10 +73,13 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 				IsPartTimer:     false,
 			},
 			Recipients: recipients,
-		})
+		}
+		broadcastRes.Broadcast = broadcast
+
+		if err := stream.Send(&broadcastRes); err != nil {
+			return err
+		}
 	}
 
-	broadcasts.Broadcasts = foundBroadcasts
-
-	return &broadcasts, nil
+	return nil
 }
