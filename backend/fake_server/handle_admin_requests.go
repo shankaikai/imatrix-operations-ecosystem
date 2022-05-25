@@ -2,6 +2,7 @@ package fake_server
 
 import (
 	"fmt"
+	"strconv"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 
@@ -26,28 +27,29 @@ func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, e
 	return &res, nil
 }
 
-func (s *Server) FindUsers(cxt context.Context, query *pb.UserQuery) (*pb.BulkUsers, error) {
+func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUsersServer) error {
 	fmt.Println("FindUsers")
 
 	res := pb.Response{Type: pb.Response_ACK}
-	users := pb.BulkUsers{Response: &res}
-
-	foundUsers := make([]*pb.User, 0)
+	userRes := pb.UsersResponse{Response: &res}
 
 	for i := 0; i < 3; i++ {
-		foundUsers = append(foundUsers, &pb.User{
+		user := &pb.User{
 			UserId:          3,
 			UserType:        pb.User_ISPECIALIST,
-			Name:            "test name",
+			Name:            "test name" + strconv.Itoa(i),
 			Email:           "email",
 			PhoneNumber:     "1232",
 			TelegramHandle:  "sfds",
 			UserSecurityImg: "dsfds",
 			IsPartTimer:     false,
-		})
+		}
+		userRes.User = user
+
+		if err := stream.Send(&userRes); err != nil {
+			return err
+		}
 	}
 
-	users.Users = foundUsers
-
-	return &users, nil
+	return nil
 }

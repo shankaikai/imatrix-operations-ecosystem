@@ -1,18 +1,18 @@
+// TODO: Add validation
 package server
 
 import (
+	"fmt"
+
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
 
 	"context"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
-	pk, err := db_pck.BroadcastInsert(
+	pk, err := db_pck.InsertBroadcast(
 		s.db,
 		broadcast,
 		s.dbLock,
@@ -29,16 +29,42 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 }
 
 func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBroadcast not implemented")
+	res := pb.Response{Type: pb.Response_ACK}
+	numAffected, err := db_pck.UpdateBroadcast(
+		s.db,
+		broadcast,
+		s.dbLock,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numAffected, "broadcasts were updated.")
+	}
+
+	return &res, nil
 }
 
 func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteBroadcast not implemented")
+	res := pb.Response{Type: pb.Response_ACK}
+	numDel, err := db_pck.DeleteBroadcast(
+		s.db,
+		broadcast,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numDel, "broadcasts were deleted.")
+	}
+
+	return &res, nil
 }
 
-func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (*pb.BulkBroadcasts, error) {
+func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
 	res := pb.Response{Type: pb.Response_ACK}
-	broadcasts := pb.BulkBroadcasts{Response: &res}
 
 	foundBroadcasts, err := db_pck.GetBroadcasts(
 		s.db,
@@ -46,11 +72,20 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 	)
 
 	if err != nil {
+		broadcastRes := pb.BroadcastResponse{Response: &res}
 		res.Type = pb.Response_ERROR
 		res.ErrorMessage = err.Error()
+		stream.Send(&broadcastRes)
+
 	} else {
-		broadcasts.Broadcasts = foundBroadcasts
+		broadcastRes := pb.BroadcastResponse{Response: &res}
+		for _, broadcast := range foundBroadcasts {
+			broadcastRes.Broadcast = broadcast
+			if err := stream.Send(&broadcastRes); err != nil {
+				return err
+			}
+		}
 	}
 
-	return &broadcasts, nil
+	return nil
 }

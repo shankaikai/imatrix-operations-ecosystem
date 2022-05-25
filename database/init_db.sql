@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `broadcast_recepients` (
     recipient INT NOT NULL, 
     acknowledged BOOLEAN DEFAULT false NOT NULL,
     rejected BOOLEAN DEFAULT false NOT NULL,
-
+	last_replied DATETIME, 
     FOREIGN KEY (related_broadcast)
         REFERENCES `broadcast` (broadcast_id)
         ON UPDATE RESTRICT ON DELETE CASCADE,
