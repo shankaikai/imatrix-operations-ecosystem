@@ -115,6 +115,7 @@ message BroadcastRecipient {
     User recipient = 2;
     bool acknowledged = 3;
     bool rejected = 4;
+    google.protobuf.Timestamp last_replied = 5;
 }
 
 // Passing around multiple broadcasts in one message. 
