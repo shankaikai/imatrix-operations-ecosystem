@@ -2,6 +2,7 @@ package fake_server
 
 import (
 	"fmt"
+	"strconv"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 
@@ -26,18 +27,17 @@ func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 	return &res, nil
 }
 
-func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (*pb.BulkBroadcasts, error) {
+func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
 	fmt.Println("FindBroadcasts")
 
 	res := pb.Response{Type: pb.Response_ACK}
-	broadcasts := pb.BulkBroadcasts{Response: &res}
+	broadcastRes := pb.BroadcastResponse{Response: &res}
 
-	foundBroadcasts := make([]*pb.Broadcast, 0)
-	receipients := make([]*pb.User, 0)
+	recipients := make([]*pb.BroadcastRecipient, 0)
 
 	for i := 0; i < 3; i++ {
-		receipients = append(receipients, &pb.User{
-			UserId:          3,
+		user := &pb.User{
+			UserId:          int64(i),
 			UserType:        pb.User_ISPECIALIST,
 			Name:            "test name",
 			Email:           "email",
@@ -45,23 +45,44 @@ func (s *Server) FindBroadcasts(cxt context.Context, query *pb.BroadcastQuery) (
 			TelegramHandle:  "sfds",
 			UserSecurityImg: "dsfds",
 			IsPartTimer:     false,
+		}
+		recipients = append(recipients, &pb.BroadcastRecipient{
+			BroadcastRecipientsId: int64(i),
+			Recipient:             user,
+			Acknowledged:          i%2 == 0,
+			Rejected:              false,
 		})
 	}
 
 	for i := 0; i < 3; i++ {
-		foundBroadcasts = append(foundBroadcasts, &pb.Broadcast{
+		urgency := []pb.Broadcast_UrgencyType{pb.Broadcast_HIGH, pb.Broadcast_MEDIUM, pb.Broadcast_LOW}
+		broadcast := &pb.Broadcast{
 			BroadcastId:  3,
 			Type:         pb.Broadcast_ANNOUNCEMENT,
-			Title:        "test name",
-			Content:      "email",
+			Title:        "test name " + strconv.Itoa(i),
+			Content:      "email" + strconv.Itoa(i),
 			CreationDate: nil,
 			Deadline:     nil,
-			Creator:      receipients[0],
-			Receipients:  receipients,
-		})
+			Creator: &pb.User{
+				UserId:          1,
+				UserType:        pb.User_ISPECIALIST,
+				Name:            "test name",
+				Email:           "email",
+				PhoneNumber:     "1232",
+				TelegramHandle:  "sfds",
+				UserSecurityImg: "dsfds",
+				IsPartTimer:     false,
+			},
+			Recipients: recipients,
+			Urgency:    urgency[i%3],
+		}
+
+		broadcastRes.Broadcast = broadcast
+
+		if err := stream.Send(&broadcastRes); err != nil {
+			return err
+		}
 	}
 
-	broadcasts.Broadcasts = foundBroadcasts
-
-	return &broadcasts, nil
+	return nil
 }
