@@ -11,7 +11,7 @@ import {
 } from "./../proto/operations_ecosys_pb";
 
 const Home: NextPage = () => {
-  const [broadcast, setBroadcast] = useState<Broadcast>();
+  const [broadcast, setBroadcast] = useState<Broadcast[]>([]);
   const [selectedCard, setSelectedCard] = useState<number>(-1);
 
   const broadcastClient = useBroadcastClient();
@@ -21,8 +21,7 @@ const Home: NextPage = () => {
     var stream = broadcastClient.findBroadcasts(query, {});
 
     stream.on("data", (response: BroadcastResponse) => {
-      console.log(response.getBroadcast());
-      setBroadcast(response.getBroadcast());
+      setBroadcast([...broadcast, response.getBroadcast() as Broadcast]);
     });
   };
 

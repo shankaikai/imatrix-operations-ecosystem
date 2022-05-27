@@ -14,10 +14,6 @@ import * as dayjs from "dayjs";
 import BroadcastItem from "./BroadcastItem";
 import { MoodSmile, AlertTriangle, Paperclip, Send } from "tabler-icons-react";
 
-interface BroadcastMessagesProps {
-  selectedCard: number;
-}
-
 const useStyles = createStyles((theme) => ({
   stack: {
     height: "100vh",
@@ -49,6 +45,10 @@ const mockdata = [
     type: "acknowledgement",
   },
 ];
+
+interface BroadcastMessagesProps {
+  selectedCard: number;
+}
 
 export default function BroadcastMessages(props: BroadcastMessagesProps) {
   const { classes, theme } = useStyles();
