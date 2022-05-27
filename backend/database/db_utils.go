@@ -8,10 +8,12 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -229,4 +231,13 @@ func formatFilterCondition(filter *pb.Filter, fieldName string, encloseVal bool)
 	} else {
 		return fmt.Sprintf("%s %s %s", fieldName, GetFilterComparisonSign(filter.Comparison), filter.Value)
 	}
+}
+
+func DBDatetimeToPB(datetimeString string) (*timestamppb.Timestamp, error) {
+	creationDate, err := time.Parse(DATETIME_FORMAT, datetimeString)
+	if err != nil {
+		return &timestamppb.Timestamp{}, err
+	}
+
+	return &timestamppb.Timestamp{Seconds: creationDate.Unix()}, nil
 }

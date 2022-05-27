@@ -61,6 +61,7 @@ func ConsolidatedFindBroadcastTest(serverAddr *string, serverPort *int) {
 	FindBroadcastsCreatorIdFilter(serverAddr, serverPort)
 	FindBroadcastsRecipientIdFilter(serverAddr, serverPort)
 	FindBroadcastsNumRecFilter(serverAddr, serverPort)
+	FindBroadcastsUrgencyTypeFilter(serverAddr, serverPort)
 	FindBroadcastsMultipleFilters(serverAddr, serverPort)
 }
 
@@ -70,7 +71,7 @@ func FindBroadcastsNoFilter(serverAddr *string, serverPort *int) {
 }
 
 func FindBroadcastsIdFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding broadcasts id filter")
+	fmt.Println("Finding broadcasts id 15 filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "15"}
 	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_BROADCAST_ID}
 
@@ -166,6 +167,16 @@ func FindBroadcastsNumRecFilter(serverAddr *string, serverPort *int) {
 	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
+func FindBroadcastsUrgencyTypeFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding broadcasts medium urgency filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "2"}
+	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_URGENCY}
+
+	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
+
+	FindBroadcastsTest(serverAddr, serverPort, query)
+}
+
 func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts mutiple filter")
 
@@ -229,7 +240,6 @@ func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.Broadcast
 }
 
 func ConsolidatedUpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
-	fmt.Println("unimplemented")
 	UpdateBroadcastBasicFields(serverAddr, serverPort, broadcast)
 	UpdateBroadcastRecipients(serverAddr, serverPort, broadcast)
 }

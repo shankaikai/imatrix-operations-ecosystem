@@ -126,6 +126,7 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 		// related broadcast is not necessary, but for simplicity
 		// and for possible future use, we get it back in the query.
 		relatedBroadcast := ""
+		var lastRepliedString sql.NullString
 
 		// cast each row to a broadcast
 		err = BCRecRows.Scan(
@@ -134,11 +135,20 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 			&recipientId,
 			&recipient.Acknowledged,
 			&recipient.Rejected,
+			&lastRepliedString,
 		)
 
 		if err != nil {
 			fmt.Println("GetBroadcastRecipients ERROR::", err)
 			break
+		}
+
+		if lastRepliedString.Valid {
+			recipient.LastReplied, err = DBDatetimeToPB(lastRepliedString.String)
+			if err != nil {
+				fmt.Println("GetBroadcasts:", err.Error())
+				continue
+			}
 		}
 
 		// TODO think about whether I can store the users in cache rather than
