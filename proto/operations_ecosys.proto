@@ -103,10 +103,17 @@ message Broadcast {
     // as long as the user is identifiable.
     User creator = 7;
     repeated BroadcastRecipient recipients = 8;
-
+    UrgencyType urgency = 9;
+    
     enum BroadcastType{
         ANNOUNCEMENT = 0;
         ASSIGNMENT = 1;
+    }
+
+    enum UrgencyType{
+        LOW = 0;
+        MEDIUM = 1;
+        HIGH = 2;
     }
 }
 
@@ -143,6 +150,7 @@ message BroadcastFilter {
         // Note: Single recipient
         RECEIPEIENT_ID = 7;
         NUM_RECEIPIENTS = 8;
+        URGENCY = 9;
     }
 }
 

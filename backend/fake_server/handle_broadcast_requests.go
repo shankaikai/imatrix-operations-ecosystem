@@ -55,6 +55,7 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 	}
 
 	for i := 0; i < 3; i++ {
+		urgency := []pb.Broadcast_UrgencyType{pb.Broadcast_HIGH, pb.Broadcast_MEDIUM, pb.Broadcast_LOW}
 		broadcast := &pb.Broadcast{
 			BroadcastId:  3,
 			Type:         pb.Broadcast_ANNOUNCEMENT,
@@ -73,7 +74,9 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 				IsPartTimer:     false,
 			},
 			Recipients: recipients,
+			Urgency:    urgency[i%3],
 		}
+
 		broadcastRes.Broadcast = broadcast
 
 		if err := stream.Send(&broadcastRes); err != nil {

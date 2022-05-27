@@ -26,6 +26,7 @@ const (
 	BC_DB_CREATION_DATE = "creation_date"
 	BC_DB_DEADLINE      = "deadline"
 	BC_DB_CREATOR       = "creator"
+	BC_DB_URGENCY       = "urgency"
 
 	// Broadcast recipients table fields
 	// Broadcast table fields
@@ -51,6 +52,7 @@ func getBroadcastTableFields() string {
 		BC_DB_CREATION_DATE,
 		BC_DB_DEADLINE,
 		BC_DB_CREATOR,
+		BC_DB_URGENCY,
 	}
 
 	return strings.Join(broadcastTableFields, ",")
@@ -68,7 +70,8 @@ func orderBroadcastFields(broadcast *pb.Broadcast) string {
 	output += "'" + broadcast.Content + "'" + ", "
 	output += "'" + broadcast.CreationDate.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
 	output += "'" + broadcast.Deadline.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
-	output += "'" + strconv.Itoa(int(broadcast.Creator.UserId)) + "'"
+	output += "'" + strconv.Itoa(int(broadcast.Creator.UserId)) + "'" + ", "
+	output += "'" + getBroadcastDBUrgencyStringFromProto(broadcast.Urgency) + "'"
 
 	return output
 }
@@ -130,6 +133,7 @@ func getFilledBroadcastFields(broadcast *pb.Broadcast) string {
 	if broadcast.Creator != nil {
 		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CREATOR, strconv.Itoa(int(broadcast.Creator.UserId)), true))
 	}
+	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_URGENCY, getBroadcastDBUrgencyStringFromProto(broadcast.Urgency), true))
 
 	return strings.Join(broadcastTableFields, ",")
 }
@@ -174,6 +178,30 @@ func getBroadcastProtoTypeStringFromDB(bcType string) pb.Broadcast_BroadcastType
 		return pb.Broadcast_ANNOUNCEMENT
 	default:
 		return pb.Broadcast_ASSIGNMENT
+	}
+}
+
+// Returns the Broadcast Urgency Type as expected in the DB from the protobuf enum
+func getBroadcastDBUrgencyStringFromProto(bcUrgencyType pb.Broadcast_UrgencyType) string {
+	switch bcUrgencyType {
+	case pb.Broadcast_LOW:
+		return "Low"
+	case pb.Broadcast_MEDIUM:
+		return "Medium"
+	default:
+		return "High"
+	}
+}
+
+// Returns the Broadcast Urgency Type as expected in the protobuf enum from the DB enum
+func getBroadcastUrgencyProtoTypeStringFromDB(bcUrgencyType string) pb.Broadcast_UrgencyType {
+	switch bcUrgencyType {
+	case "Low":
+		return pb.Broadcast_LOW
+	case "Medium":
+		return pb.Broadcast_MEDIUM
+	default:
+		return pb.Broadcast_HIGH
 	}
 }
 
@@ -232,6 +260,9 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 		case pb.BroadcastFilter_NUM_RECEIPIENTS:
 			groupBy = append(groupBy, BC_DB_ID)
 			haveFilters = append(haveFilters, fmt.Sprintf("COUNT(%s) > %s", BC_DB_ID, filter.Comparisons.Value))
+
+		case pb.BroadcastFilter_URGENCY:
+			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_URGENCY, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
 		}
 	}
 
@@ -293,6 +324,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 		creationDateStr := ""
 		deadlineStr := ""
 		recipientUserId := -1
+		urgencyType := ""
 		relatedBroadcast := ""
 		var lastRepliedString sql.NullString
 
@@ -305,6 +337,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 			&creationDateStr,
 			&deadlineStr,
 			&creatorUserId,
+			&urgencyType,
 			&broadcastRecipient.BroadcastRecipientsId,
 			&relatedBroadcast,
 			&recipientUserId,
@@ -330,6 +363,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 			}
 			broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
 			creator, err := idUserByUserId(db, creatorUserId)
+			broadcast.Urgency = getBroadcastUrgencyProtoTypeStringFromDB(urgencyType)
 
 			if err != nil {
 				fmt.Println("GetBroadcasts ERROR:", err)
