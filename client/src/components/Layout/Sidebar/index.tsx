@@ -1,52 +1,27 @@
 import React from "react";
-import { Navbar, Group, Code, ScrollArea, createStyles } from "@mantine/core";
 import {
-  Notes,
-  CalendarStats,
+  Navbar,
+  Group,
+  Code,
+  ScrollArea,
+  createStyles,
+  Text,
+} from "@mantine/core";
+import {
   Gauge,
   PresentationAnalytics,
   FileAnalytics,
   Adjustments,
-  Lock,
 } from "tabler-icons-react";
 import { UserButton } from "../UserButton";
-import { LinksGroup } from "../NavbarLinksGroups";
+import { Links } from "../NavbarLinksGroups";
 // import { Logo } from './Logo';
 
 const mockdata = [
-  { label: "Dashboard", icon: Gauge },
-  {
-    label: "Market news",
-    icon: Notes,
-    initiallyOpened: true,
-    links: [
-      { label: "Overview", link: "/" },
-      { label: "Forecasts", link: "/" },
-      { label: "Outlook", link: "/" },
-      { label: "Real time", link: "/" },
-    ],
-  },
-  {
-    label: "Releases",
-    icon: CalendarStats,
-    links: [
-      { label: "Upcoming releases", link: "/" },
-      { label: "Previous releases", link: "/" },
-      { label: "Releases schedule", link: "/" },
-    ],
-  },
-  { label: "Analytics", icon: PresentationAnalytics },
-  { label: "Contracts", icon: FileAnalytics },
-  { label: "Settings", icon: Adjustments },
-  {
-    label: "Security",
-    icon: Lock,
-    links: [
-      { label: "Enable 2FA", link: "/" },
-      { label: "Change password", link: "/" },
-      { label: "Recovery codes", link: "/" },
-    ],
-  },
+  { label: "Broadcast", icon: Gauge, link: "/broadcasting" },
+  { label: "Rostering", icon: PresentationAnalytics, link: "/rostering" },
+  { label: "Camera", icon: FileAnalytics, link: "/camera" },
+  { label: "Settings", icon: Adjustments, link: "/settings" },
 ];
 
 const useStyles = createStyles((theme) => ({
@@ -55,13 +30,11 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
     paddingBottom: 0,
     height: "vh",
+    width: "380px",
   },
 
   header: {
     padding: theme.spacing.md,
-    paddingTop: 0,
-    marginLeft: -theme.spacing.md,
-    marginRight: -theme.spacing.md,
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
     borderBottom: `1px solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
@@ -74,32 +47,29 @@ const useStyles = createStyles((theme) => ({
   },
 
   linksInner: {
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.xl,
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
   },
 
   footer: {
-    marginLeft: -theme.spacing.md,
-    marginRight: -theme.spacing.md,
     borderTop: `1px solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
     }`,
+    paddingLeft: theme.spacing.xs,
+    paddingRight: theme.spacing.xs,
   },
 }));
 
 export function Sidebar() {
   const { classes } = useStyles();
-  const links = mockdata.map((item) => (
-    <LinksGroup {...item} key={item.label} />
-  ));
+  const links = mockdata.map((item) => <Links {...item} key={item.label} />);
 
   return (
-    <Navbar width={{ sm: 300 }} p="md" className={classes.navbar}>
+    <Navbar className={classes.navbar}>
       <Navbar.Section className={classes.header}>
         <Group position="apart">
           {/* <Logo width={120} /> */}
-          <p>Test</p>
-          <Code sx={{ fontWeight: 700 }}>v3.1.2</Code>
+          <Text size="xl">iMatrix</Text>
         </Group>
       </Navbar.Section>
 

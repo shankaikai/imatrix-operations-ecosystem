@@ -259,13 +259,13 @@ proto.operations_ecosys.AdminServicesPromiseClient.prototype.deleteUser =
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.operations_ecosys.UserQuery,
- *   !proto.operations_ecosys.BulkUsers>}
+ *   !proto.operations_ecosys.UsersResponse>}
  */
 const methodDescriptor_AdminServices_FindUsers = new grpc.web.MethodDescriptor(
   '/operations_ecosys.AdminServices/FindUsers',
-  grpc.web.MethodType.UNARY,
+  grpc.web.MethodType.SERVER_STREAMING,
   proto.operations_ecosys.UserQuery,
-  proto.operations_ecosys.BulkUsers,
+  proto.operations_ecosys.UsersResponse,
   /**
    * @param {!proto.operations_ecosys.UserQuery} request
    * @return {!Uint8Array}
@@ -273,42 +273,37 @@ const methodDescriptor_AdminServices_FindUsers = new grpc.web.MethodDescriptor(
   function(request) {
     return request.serializeBinary();
   },
-  proto.operations_ecosys.BulkUsers.deserializeBinary
+  proto.operations_ecosys.UsersResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.operations_ecosys.UserQuery} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!proto.operations_ecosys.UserQuery} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.operations_ecosys.BulkUsers)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.operations_ecosys.BulkUsers>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.operations_ecosys.UsersResponse>}
  *     The XHR Node Readable Stream
  */
 proto.operations_ecosys.AdminServicesClient.prototype.findUsers =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
       '/operations_ecosys.AdminServices/FindUsers',
       request,
       metadata || {},
-      methodDescriptor_AdminServices_FindUsers,
-      callback);
+      methodDescriptor_AdminServices_FindUsers);
 };
 
 
 /**
- * @param {!proto.operations_ecosys.UserQuery} request The
- *     request proto
+ * @param {!proto.operations_ecosys.UserQuery} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.operations_ecosys.BulkUsers>}
- *     Promise that resolves to the response
+ * @return {!grpc.web.ClientReadableStream<!proto.operations_ecosys.UsersResponse>}
+ *     The XHR Node Readable Stream
  */
 proto.operations_ecosys.AdminServicesPromiseClient.prototype.findUsers =
     function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
+  return this.client_.serverStreaming(this.hostname_ +
       '/operations_ecosys.AdminServices/FindUsers',
       request,
       metadata || {},
@@ -555,13 +550,13 @@ proto.operations_ecosys.BroadcastServicesPromiseClient.prototype.deleteBroadcast
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.operations_ecosys.BroadcastQuery,
- *   !proto.operations_ecosys.BulkBroadcasts>}
+ *   !proto.operations_ecosys.BroadcastResponse>}
  */
 const methodDescriptor_BroadcastServices_FindBroadcasts = new grpc.web.MethodDescriptor(
   '/operations_ecosys.BroadcastServices/FindBroadcasts',
-  grpc.web.MethodType.UNARY,
+  grpc.web.MethodType.SERVER_STREAMING,
   proto.operations_ecosys.BroadcastQuery,
-  proto.operations_ecosys.BulkBroadcasts,
+  proto.operations_ecosys.BroadcastResponse,
   /**
    * @param {!proto.operations_ecosys.BroadcastQuery} request
    * @return {!Uint8Array}
@@ -569,42 +564,37 @@ const methodDescriptor_BroadcastServices_FindBroadcasts = new grpc.web.MethodDes
   function(request) {
     return request.serializeBinary();
   },
-  proto.operations_ecosys.BulkBroadcasts.deserializeBinary
+  proto.operations_ecosys.BroadcastResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.operations_ecosys.BroadcastQuery} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!proto.operations_ecosys.BroadcastQuery} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.operations_ecosys.BulkBroadcasts)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.operations_ecosys.BulkBroadcasts>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.operations_ecosys.BroadcastResponse>}
  *     The XHR Node Readable Stream
  */
 proto.operations_ecosys.BroadcastServicesClient.prototype.findBroadcasts =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
       '/operations_ecosys.BroadcastServices/FindBroadcasts',
       request,
       metadata || {},
-      methodDescriptor_BroadcastServices_FindBroadcasts,
-      callback);
+      methodDescriptor_BroadcastServices_FindBroadcasts);
 };
 
 
 /**
- * @param {!proto.operations_ecosys.BroadcastQuery} request The
- *     request proto
+ * @param {!proto.operations_ecosys.BroadcastQuery} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.operations_ecosys.BulkBroadcasts>}
- *     Promise that resolves to the response
+ * @return {!grpc.web.ClientReadableStream<!proto.operations_ecosys.BroadcastResponse>}
+ *     The XHR Node Readable Stream
  */
 proto.operations_ecosys.BroadcastServicesPromiseClient.prototype.findBroadcasts =
     function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
+  return this.client_.serverStreaming(this.hostname_ +
       '/operations_ecosys.BroadcastServices/FindBroadcasts',
       request,
       metadata || {},

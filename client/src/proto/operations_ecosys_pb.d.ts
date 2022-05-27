@@ -61,31 +61,31 @@ export namespace User {
   export const UserType: UserTypeMap;
 }
 
-export class BulkUsers extends jspb.Message {
+export class UsersResponse extends jspb.Message {
   hasResponse(): boolean;
   clearResponse(): void;
   getResponse(): Response | undefined;
   setResponse(value?: Response): void;
 
-  clearUsersList(): void;
-  getUsersList(): Array<User>;
-  setUsersList(value: Array<User>): void;
-  addUsers(value?: User, index?: number): User;
+  hasUser(): boolean;
+  clearUser(): void;
+  getUser(): User | undefined;
+  setUser(value?: User): void;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): BulkUsers.AsObject;
-  static toObject(includeInstance: boolean, msg: BulkUsers): BulkUsers.AsObject;
+  toObject(includeInstance?: boolean): UsersResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UsersResponse): UsersResponse.AsObject;
   static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
   static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: BulkUsers, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): BulkUsers;
-  static deserializeBinaryFromReader(message: BulkUsers, reader: jspb.BinaryReader): BulkUsers;
+  static serializeBinaryToWriter(message: UsersResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UsersResponse;
+  static deserializeBinaryFromReader(message: UsersResponse, reader: jspb.BinaryReader): UsersResponse;
 }
 
-export namespace BulkUsers {
+export namespace UsersResponse {
   export type AsObject = {
     response?: Response.AsObject,
-    usersList: Array<User.AsObject>,
+    user?: User.AsObject,
   }
 }
 
@@ -181,10 +181,10 @@ export class Broadcast extends jspb.Message {
   getCreator(): User | undefined;
   setCreator(value?: User): void;
 
-  clearReceipientsList(): void;
-  getReceipientsList(): Array<User>;
-  setReceipientsList(value: Array<User>): void;
-  addReceipients(value?: User, index?: number): User;
+  clearRecipientsList(): void;
+  getRecipientsList(): Array<BroadcastRecipient>;
+  setRecipientsList(value: Array<BroadcastRecipient>): void;
+  addRecipients(value?: BroadcastRecipient, index?: number): BroadcastRecipient;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Broadcast.AsObject;
@@ -205,7 +205,7 @@ export namespace Broadcast {
     creationDate?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     deadline?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     creator?: User.AsObject,
-    receipientsList: Array<User.AsObject>,
+    recipientsList: Array<BroadcastRecipient.AsObject>,
   }
 
   export interface BroadcastTypeMap {
@@ -216,31 +216,65 @@ export namespace Broadcast {
   export const BroadcastType: BroadcastTypeMap;
 }
 
-export class BulkBroadcasts extends jspb.Message {
+export class BroadcastRecipient extends jspb.Message {
+  getBroadcastRecipientsId(): number;
+  setBroadcastRecipientsId(value: number): void;
+
+  hasRecipient(): boolean;
+  clearRecipient(): void;
+  getRecipient(): User | undefined;
+  setRecipient(value?: User): void;
+
+  getAcknowledged(): boolean;
+  setAcknowledged(value: boolean): void;
+
+  getRejected(): boolean;
+  setRejected(value: boolean): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): BroadcastRecipient.AsObject;
+  static toObject(includeInstance: boolean, msg: BroadcastRecipient): BroadcastRecipient.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: BroadcastRecipient, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): BroadcastRecipient;
+  static deserializeBinaryFromReader(message: BroadcastRecipient, reader: jspb.BinaryReader): BroadcastRecipient;
+}
+
+export namespace BroadcastRecipient {
+  export type AsObject = {
+    broadcastRecipientsId: number,
+    recipient?: User.AsObject,
+    acknowledged: boolean,
+    rejected: boolean,
+  }
+}
+
+export class BroadcastResponse extends jspb.Message {
   hasResponse(): boolean;
   clearResponse(): void;
   getResponse(): Response | undefined;
   setResponse(value?: Response): void;
 
-  clearBroadcastsList(): void;
-  getBroadcastsList(): Array<Broadcast>;
-  setBroadcastsList(value: Array<Broadcast>): void;
-  addBroadcasts(value?: Broadcast, index?: number): Broadcast;
+  hasBroadcast(): boolean;
+  clearBroadcast(): void;
+  getBroadcast(): Broadcast | undefined;
+  setBroadcast(value?: Broadcast): void;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): BulkBroadcasts.AsObject;
-  static toObject(includeInstance: boolean, msg: BulkBroadcasts): BulkBroadcasts.AsObject;
+  toObject(includeInstance?: boolean): BroadcastResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: BroadcastResponse): BroadcastResponse.AsObject;
   static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
   static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: BulkBroadcasts, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): BulkBroadcasts;
-  static deserializeBinaryFromReader(message: BulkBroadcasts, reader: jspb.BinaryReader): BulkBroadcasts;
+  static serializeBinaryToWriter(message: BroadcastResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): BroadcastResponse;
+  static deserializeBinaryFromReader(message: BroadcastResponse, reader: jspb.BinaryReader): BroadcastResponse;
 }
 
-export namespace BulkBroadcasts {
+export namespace BroadcastResponse {
   export type AsObject = {
     response?: Response.AsObject,
-    broadcastsList: Array<Broadcast.AsObject>,
+    broadcast?: Broadcast.AsObject,
   }
 }
 
@@ -276,8 +310,8 @@ export namespace BroadcastFilter {
     CONTENT: 3;
     CREATION_DATE: 4;
     DEADLINE: 5;
-    CREATOR: 6;
-    RECEIPEIENTS: 7;
+    CREATOR_ID: 6;
+    RECEIPEIENT_ID: 7;
     NUM_RECEIPIENTS: 8;
   }
 

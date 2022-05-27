@@ -5,8 +5,12 @@ const useStyles = createStyles((theme) => ({
   layout: {
     display: "flex",
     flexDirection: "row",
-    height: "vh",
-    width: "vw",
+    height: "100vh",
+    width: "100vw",
+  },
+  content: {
+    background: theme.colors.gray[1],
+    width: "100%",
   },
 }));
 
@@ -20,9 +24,9 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className={classes.layout}>
       <Sidebar />
-      <Container>
+      <div className={classes.content}>
         <main>{children}</main>
-      </Container>
+      </div>
     </div>
   );
 }

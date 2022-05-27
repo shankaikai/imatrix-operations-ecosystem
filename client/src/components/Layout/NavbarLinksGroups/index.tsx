@@ -10,10 +10,10 @@ import {
 } from "@mantine/core";
 import {
   Icon as TablerIcon,
-  CalendarStats,
   ChevronLeft,
   ChevronRight,
 } from "tabler-icons-react";
+import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   control: {
@@ -21,12 +21,15 @@ const useStyles = createStyles((theme) => ({
     display: "block",
     width: "100%",
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-    color: "black",
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
     fontSize: theme.fontSizes.sm,
 
     "&:hover": {
-      backgroundColor: "gray",
-      color: "black",
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[7]
+          : theme.colors.gray[0],
+      color: theme.colorScheme === "dark" ? theme.white : theme.black,
     },
   },
 
@@ -63,38 +66,15 @@ const useStyles = createStyles((theme) => ({
 interface LinksGroupProps {
   icon: TablerIcon;
   label: string;
-  initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
+  link: string;
 }
 
-export function LinksGroup({
-  icon: Icon,
-  label,
-  initiallyOpened,
-  links,
-}: LinksGroupProps) {
+export function Links({ icon: Icon, label, link }: LinksGroupProps) {
   const { classes, theme } = useStyles();
-  const hasLinks = Array.isArray(links);
-  const [opened, setOpened] = useState(initiallyOpened || false);
-  const ChevronIcon = theme.dir === "ltr" ? ChevronRight : ChevronLeft;
-  const items = (hasLinks ? links : []).map((link) => (
-    <Text<"a">
-      component="a"
-      className={classes.link}
-      href={link.link}
-      key={link.label}
-      onClick={(event) => event.preventDefault()}
-    >
-      {link.label}
-    </Text>
-  ));
 
   return (
-    <>
-      <UnstyledButton
-        onClick={() => setOpened((o) => !o)}
-        className={classes.control}
-      >
+    <Link href={link as string}>
+      <UnstyledButton className={classes.control}>
         <Group position="apart" spacing={0}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <ThemeIcon variant="light" size={30}>
@@ -102,20 +82,8 @@ export function LinksGroup({
             </ThemeIcon>
             <Box ml="md">{label}</Box>
           </Box>
-          {hasLinks && (
-            <ChevronIcon
-              className={classes.chevron}
-              size={14}
-              style={{
-                transform: opened
-                  ? `rotate(${theme.dir === "rtl" ? -90 : 90}deg)`
-                  : "none",
-              }}
-            />
-          )}
         </Group>
       </UnstyledButton>
-      {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
-    </>
+    </Link>
   );
 }
