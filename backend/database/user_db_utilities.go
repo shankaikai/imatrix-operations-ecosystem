@@ -93,7 +93,7 @@ func getUserProtoTypeStringFromDB(userType string) pb.User_UserType {
 // added to the end of the string.
 // For example returns: "WHERE id=22 AND num <2 LIMIT 5"
 // Returns the formatted SQL filter string.
-func getFormattedUserFilters(query *pb.UserQuery, needLimit bool) string {
+func getFormattedUserFilters(query *pb.UserQuery, needLimit bool, needOrder bool) string {
 	output := ""
 
 	// Store formatted filter conditions in an array to be joined later
@@ -106,20 +106,11 @@ func getFormattedUserFilters(query *pb.UserQuery, needLimit bool) string {
 		}
 
 		switch filter.Field {
-		case pb.UserFilter_USER_ID:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_ID, true))
-		case pb.UserFilter_TYPE:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_TYPE, true))
-		case pb.UserFilter_NAME:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_NAME, true))
-		case pb.UserFilter_EMAIL:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_EMAIL, true))
-		case pb.UserFilter_PHONE_NUMBER:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_PHONE_NUM, true))
-		case pb.UserFilter_TELEGRAM_HANDLE:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_TELE_HANDLE, true))
+		case pb.UserFilter_USER_ID, pb.UserFilter_TYPE, pb.UserFilter_NAME,
+			pb.UserFilter_EMAIL, pb.UserFilter_PHONE_NUMBER, pb.UserFilter_TELEGRAM_HANDLE:
+			filters = append(filters, formatFilterCondition(filter.Comparisons, userFilterToDBCol(filter.Field), true))
 		case pb.UserFilter_IS_PART_TIMER:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, USER_DB_PART_TIMER, false))
+			filters = append(filters, formatFilterCondition(filter.Comparisons, userFilterToDBCol(filter.Field), false))
 		}
 	}
 
@@ -129,6 +120,16 @@ func getFormattedUserFilters(query *pb.UserQuery, needLimit bool) string {
 	}
 
 	output += strings.Join(filters, " AND ")
+
+	// Add order
+	if needOrder {
+		if query.OrderBy != nil {
+			output += fmt.Sprintf(" %s %s %s", ORDER_BY_KEYWORD, userFilterToDBCol(query.OrderBy.Field), orderByProtoToDB(query.OrderBy.OrderBy))
+		} else {
+			// By default we order users by user id
+			output += fmt.Sprintf(" %s %s %s", ORDER_BY_KEYWORD, userFilterToDBCol(pb.UserFilter_USER_ID), DESC_KEYWORD)
+		}
+	}
 
 	// Add limits if needed
 	if needLimit {
@@ -146,7 +147,7 @@ func getFormattedUserFilters(query *pb.UserQuery, needLimit bool) string {
 func getUserIdFormattedFilter(userId int) string {
 	query := &pb.UserQuery{}
 	addUserFilter(query, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
-	return getFormattedUserFilters(query, false)
+	return getFormattedUserFilters(query, false, false)
 }
 
 // Helper function to add a new filter to the list of existing
@@ -190,4 +191,26 @@ func getFilledUserFields(user *pb.User) string {
 	userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer), false))
 
 	return strings.Join(userTableFields, ",")
+}
+
+func userFilterToDBCol(filterField pb.UserFilter_Field) string {
+	output := ""
+	switch filterField {
+	case pb.UserFilter_USER_ID:
+		output = USER_DB_ID
+	case pb.UserFilter_TYPE:
+		output = USER_DB_TYPE
+	case pb.UserFilter_NAME:
+		output = USER_DB_NAME
+	case pb.UserFilter_EMAIL:
+		output = USER_DB_EMAIL
+	case pb.UserFilter_PHONE_NUMBER:
+		output = USER_DB_PHONE_NUM
+	case pb.UserFilter_TELEGRAM_HANDLE:
+		output = USER_DB_TELE_HANDLE
+	case pb.UserFilter_IS_PART_TIMER:
+		output = USER_DB_PART_TIMER
+	}
+
+	return output
 }

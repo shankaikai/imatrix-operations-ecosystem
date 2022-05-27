@@ -72,7 +72,7 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	outerFields := ALL_COLS
 
 	// Format filters
-	innerFilters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
+	innerFilters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false, false)
 
 	// tables are joined on the main broadcast id
 	onCondition := formatFieldEqVal(BC_DB_ID, BC_REC_DB_RELATED_BC, false)
@@ -83,7 +83,9 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	// will span because of the join, hence limit is the max.
 	// The filter for the outer query is any rows that made it through the
 	// inner query.
-	outerFilter := fmt.Sprintf("%s %s IN (%s) %s %d", WHERE_KEYWORD, BC_DB_ID, innerQuery, LIMIT_KEYWORD, MAX_LIMIT)
+	outerQuery := &pb.BroadcastQuery{Limit: MAX_LIMIT, OrderBy: query.OrderBy}
+	addBroadcastFilter(outerQuery, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_IN, innerQuery)
+	outerFilter := getFormattedBroadcastFilters(outerQuery, BROADCAST_DB_TABLE_NAME, true, true)
 
 	rows, err := QueryLeftJoin(db, BROADCAST_DB_TABLE_NAME, BROADCAST_RECIPIENT_TABLE_NAME, onCondition, outerFields, outerFilter)
 
@@ -92,7 +94,7 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	}
 
 	// convert query rows into broadcasts
-	err = convertDbRowsToBcNBcR(db, &broadcasts, rows, int(query.Limit))
+	err = convertDbRowsToBcNBcR(db, &broadcasts, rows, query)
 
 	return broadcasts, err
 }
@@ -110,7 +112,7 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 	// Format filters
 	// Get for a specific main broadcast
 	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainBroadcastID)))
-	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, true)
+	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, true, true)
 
 	BCRecRows, err := Query(db, BROADCAST_RECIPIENT_TABLE_NAME, fields, filters)
 
@@ -176,7 +178,7 @@ func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (i
 
 	query := &pb.BroadcastQuery{}
 	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
-	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false)
+	filters := getFormattedBroadcastFilters(query, BROADCAST_DB_TABLE_NAME, false, false)
 
 	rowsAffected, err := Update(db, BROADCAST_DB_TABLE_NAME, newFields, filters)
 

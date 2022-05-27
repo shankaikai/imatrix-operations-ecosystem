@@ -36,6 +36,7 @@ const (
 	BC_REC_DB_ACK          = "acknowledged"
 	BC_REC_DB_REJECTION    = "rejected"
 	BC_REC_DB_LAST_REPLIED = "last_replied"
+	BC_REC_DB_AIDS_ID      = "aifs_id"
 )
 
 // UTILITIES
@@ -88,7 +89,7 @@ func getBroadcastRecTableFields() string {
 		BC_REC_DB_RECIPIENT,
 		BC_REC_DB_ACK,
 		BC_REC_DB_REJECTION,
-		// BC_REC_DB_LAST_REPLIED,
+		BC_REC_DB_AIDS_ID,
 	}
 
 	return strings.Join(broadcastRecTableFields, ",")
@@ -105,7 +106,9 @@ func orderBroadcastRecFields(recipeint *pb.BroadcastRecipient, relatedBCId int64
 	output += strconv.Itoa(int(recipeint.Recipient.UserId)) + ","
 
 	// Ack and rejection are fale by default.
-	output += "0, 0"
+	output += "0, 0" + ","
+	output += strconv.Itoa(int(recipeint.AifsId))
+
 	return output
 }
 
@@ -155,8 +158,10 @@ func getFilledBroadcastRecFields(bRec *pb.BroadcastRecipient) string {
 	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_REJECTION, strconv.FormatBool(bRec.Rejected), false))
 
 	if bRec.LastReplied != nil {
-		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_DEADLINE, bRec.LastReplied.AsTime().Format(DATETIME_FORMAT), true))
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_LAST_REPLIED, bRec.LastReplied.AsTime().Format(DATETIME_FORMAT), true))
 	}
+
+	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_AIDS_ID, strconv.Itoa(int(bRec.AifsId)), true))
 
 	return strings.Join(broadcastTableFields, ",")
 }
@@ -223,7 +228,7 @@ func addBroadcastFilter(query *pb.BroadcastQuery, field pb.BroadcastFilter_Field
 // added to the end of the string.
 // For example returns: "WHERE id=22 AND num <2 LIMIT 5"
 // Returns the formatted SQL filter string.
-func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLimit bool) string {
+func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLimit bool, needOrder bool) string {
 	output := ""
 
 	// Get all filters
@@ -232,42 +237,38 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 	haveFilters := make([]string, 0)
 
 	for _, filter := range query.Filters {
+		hasQuotes := true
 		if filter.Comparisons.Comparison == pb.Filter_CONTAINS {
 			filter.Comparisons.Value = FormatLikeQueryValue(filter.Comparisons.Value)
+		} else if filter.Comparisons.Comparison == pb.Filter_IN {
+			filter.Comparisons.Value = FormatInQueryValue(filter.Comparisons.Value)
+			hasQuotes = false
 		}
 		switch filter.Field {
-		case pb.BroadcastFilter_BROADCAST_ID:
-			if table == BROADCAST_DB_TABLE_NAME {
-				whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_ID, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-			} else {
-				whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_REC_DB_RELATED_BC, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-			}
-		case pb.BroadcastFilter_TYPE:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_TYPE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-		case pb.BroadcastFilter_TITLE:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_TITLE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-		case pb.BroadcastFilter_CONTENT:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_CONTENT, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-		case pb.BroadcastFilter_CREATION_DATE:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_CREATION_DATE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-		case pb.BroadcastFilter_DEADLINE:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_DEADLINE, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-		case pb.BroadcastFilter_CREATOR_ID:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_CREATOR, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
-		case pb.BroadcastFilter_RECEIPEIENT_ID:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_REC_DB_RECIPIENT, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
+		case pb.BroadcastFilter_BROADCAST_ID, pb.BroadcastFilter_TYPE, pb.BroadcastFilter_TITLE,
+			pb.BroadcastFilter_CONTENT, pb.BroadcastFilter_CREATION_DATE, pb.BroadcastFilter_DEADLINE,
+			pb.BroadcastFilter_CREATOR_ID, pb.BroadcastFilter_RECEIPEIENT_ID, pb.BroadcastFilter_URGENCY,
+			pb.BroadcastFilter_AIFS_ID:
+			if hasQuotes {
+				whereFilters = append(
 
+					whereFilters, fmt.Sprintf("%s %s '%s'", bcFilterToDBCol(filter.Field, table),
+						GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value),
+				)
+			} else {
+				whereFilters = append(
+					whereFilters, fmt.Sprintf("%s %s %s", bcFilterToDBCol(filter.Field, table),
+						GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value),
+				)
+			}
 		case pb.BroadcastFilter_NUM_RECEIPIENTS:
 			groupBy = append(groupBy, BC_DB_ID)
 			haveFilters = append(haveFilters, fmt.Sprintf("COUNT(%s) > %s", BC_DB_ID, filter.Comparisons.Value))
-
-		case pb.BroadcastFilter_URGENCY:
-			whereFilters = append(whereFilters, fmt.Sprintf("%s %s '%s'", BC_DB_URGENCY, GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value))
 		}
 	}
 
 	if len(whereFilters) > 0 {
-		output += "WHERE "
+		output += WHERE_KEYWORD + " "
 	}
 
 	output += strings.Join(whereFilters, " AND ")
@@ -280,12 +281,22 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 		output += " HAVING " + strings.Join(haveFilters, " AND ")
 	}
 
+	// Add order
+	if needOrder {
+		if query.OrderBy != nil {
+			output += fmt.Sprintf(" %s %s %s", ORDER_BY_KEYWORD, bcFilterToDBCol(query.OrderBy.Field, table), orderByProtoToDB(query.OrderBy.OrderBy))
+		} else if table == BROADCAST_DB_TABLE_NAME {
+			// By default we order broadcasts by the creation date
+			output += fmt.Sprintf(" %s %s %s", ORDER_BY_KEYWORD, bcFilterToDBCol(pb.BroadcastFilter_CREATION_DATE, table), DESC_KEYWORD)
+		}
+	}
+
 	// Add limits
 	if needLimit {
 		if query.Limit == 0 {
 			query.Limit = DEFAULT_LIMIT
 		}
-		output += fmt.Sprintf(" LIMIT %d", query.Limit)
+		output += fmt.Sprintf(" %s %d, %d", LIMIT_KEYWORD, query.Skip, query.Limit)
 	}
 
 	return output
@@ -312,7 +323,7 @@ func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
 // These rows come from the join query of both the broadcast and broadcast
 // recipients table.
 // Modifies the broadcast array in place.
-func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Rows, queryLimit int) error {
+func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Rows, query *pb.BroadcastQuery) error {
 	broadcastMap := make(map[int64]*pb.Broadcast)
 
 	for rows.Next() {
@@ -344,6 +355,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 			&broadcastRecipient.Acknowledged,
 			&broadcastRecipient.Rejected,
 			&lastRepliedString,
+			&broadcastRecipient.AifsId,
 		)
 
 		if err != nil {
@@ -358,7 +370,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 			// Return only the necessary number of broadcasts.
 			// If the number of broadcasts have reached the limit,
 			// do not add new broadcasts.
-			if len(broadcastMap) >= queryLimit {
+			if int64(len(broadcastMap)) >= query.Limit+query.Skip {
 				continue
 			}
 			broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
@@ -410,8 +422,17 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 	}
 
 	// Add all broadcasts to the returning array
+
 	for _, broadcast := range broadcastMap {
 		*broadcasts = append(*broadcasts, broadcast)
+	}
+
+	sort.Slice(*broadcasts, func(i, j int) bool {
+		return (*broadcasts)[i].CreationDate.Seconds > (*broadcasts)[j].CreationDate.Seconds
+	})
+
+	if query.Skip > 0 {
+		*broadcasts = (*broadcasts)[query.Skip:]
 	}
 
 	return nil
@@ -486,5 +507,37 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 func getBroadcastIdFormattedFilter(broadcastId int, table string) string {
 	query := &pb.BroadcastQuery{}
 	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(broadcastId))
-	return getFormattedBroadcastFilters(query, table, false)
+	return getFormattedBroadcastFilters(query, table, false, false)
+}
+
+func bcFilterToDBCol(filterField pb.BroadcastFilter_Field, table string) string {
+	output := ""
+	switch filterField {
+	case pb.BroadcastFilter_BROADCAST_ID:
+		if table == BROADCAST_DB_TABLE_NAME {
+			output = BC_DB_ID
+		} else {
+			output = BC_REC_DB_RELATED_BC
+		}
+	case pb.BroadcastFilter_TYPE:
+		output = BC_DB_TYPE
+	case pb.BroadcastFilter_TITLE:
+		output = BC_DB_TITLE
+	case pb.BroadcastFilter_CONTENT:
+		output = BC_DB_CONTENT
+	case pb.BroadcastFilter_CREATION_DATE:
+		output = BC_DB_CREATION_DATE
+	case pb.BroadcastFilter_DEADLINE:
+		output = BC_DB_DEADLINE
+	case pb.BroadcastFilter_CREATOR_ID:
+		output = BC_DB_CREATOR
+	case pb.BroadcastFilter_RECEIPEIENT_ID:
+		output = BC_REC_DB_RECIPIENT
+	case pb.BroadcastFilter_URGENCY:
+		output = BC_DB_URGENCY
+	case pb.BroadcastFilter_AIFS_ID:
+		output = BC_REC_DB_AIDS_ID
+	}
+
+	return output
 }

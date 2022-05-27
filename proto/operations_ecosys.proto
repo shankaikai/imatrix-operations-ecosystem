@@ -87,6 +87,18 @@ message UserQuery {
     // Limit the number of objects being returned. 
     // If only 5 objects should be shown, limit = 5;
     int64 limit = 2;
+
+    // Skip n rows from the database
+    int64 skip = 3;
+    
+    // Order the queries, by default the order is desc by creation date
+    OrderByUser order_by = 4;
+}
+
+
+message OrderByUser{
+    UserFilter.Field field = 1;
+    OrderBy order_by = 2;
 }
 
 // Broadcasting
@@ -123,7 +135,9 @@ message BroadcastRecipient {
     bool acknowledged = 3;
     bool rejected = 4;
     google.protobuf.Timestamp last_replied = 5;
+    int64 aifs_id = 6;
 }
+
 
 // Passing around multiple broadcasts in one message. 
 message BroadcastResponse {
@@ -151,6 +165,7 @@ message BroadcastFilter {
         RECEIPEIENT_ID = 7;
         NUM_RECEIPIENTS = 8;
         URGENCY = 9;
+        AIFS_ID = 10;
     }
 }
 
@@ -161,7 +176,17 @@ message BroadcastQuery {
     repeated BroadcastFilter filters = 1;
     // Limit the number of objects being returned. 
     // If only 5 objects should be shown, limit = 5;
-    int64 limit = 2;
+    int64 limit = 2; 
+    // Skip n rows from the database
+    int64 skip = 3;
+
+    // Order the queries, by default the order is desc by creation date
+    OrderByBroadcast order_by = 4;
+}
+
+message OrderByBroadcast{
+    BroadcastFilter.Field field = 1;
+    OrderBy order_by = 2;
 }
 
 // Common messages
@@ -194,6 +219,11 @@ message Filter {
         LESSER_EQ = 3;
         LESSER = 4;
         CONTAINS = 5;
+        IN = 6;
     }
 }
 
+enum OrderBy {
+    ASC = 0;
+    DESC = 1;
+}
