@@ -32,7 +32,7 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 	fields := ALL_COLS
 
 	// Format filters
-	filters := getFormattedUserFilters(query, true)
+	filters := getFormattedUserFilters(query, true, true)
 
 	userRows, err := Query(db, USER_DB_TABLE_NAME, fields, filters)
 

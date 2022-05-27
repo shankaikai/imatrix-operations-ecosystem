@@ -21,10 +21,11 @@ func createFakeUser(id int) *pb.User {
 	}
 }
 
-func createFakeBroadcast(id int) *pb.Broadcast {
+func createFakeBroadcast(id int, hasRecipient bool) *pb.Broadcast {
 	recipients := make([]*pb.BroadcastRecipient, 0)
+
 	for i := 1; i < 4; i++ {
-		recipients = append(recipients, createFakeBroadcastRec(i))
+		recipients = append(recipients, createFakeBroadcastRec(i, hasRecipient))
 	}
 
 	return &pb.Broadcast{
@@ -34,18 +35,23 @@ func createFakeBroadcast(id int) *pb.Broadcast {
 		Content:      "content" + strconv.Itoa(id),
 		CreationDate: timestamppb.Now(),
 		Deadline:     &timestamppb.Timestamp{Seconds: int64(time.Now().Add(30).Unix())},
-		Creator:      recipients[0].Recipient,
+		Creator:      createFakeUser(1),
 		Recipients:   recipients,
 		Urgency:      pb.Broadcast_LOW,
 	}
 }
 
-func createFakeBroadcastRec(id int) *pb.BroadcastRecipient {
-	user := createFakeUser(id)
+func createFakeBroadcastRec(id int, hasUser bool) *pb.BroadcastRecipient {
+	var user *pb.User
+	if hasUser {
+		user = createFakeUser(id)
+	}
+
 	return &pb.BroadcastRecipient{
 		BroadcastRecipientsId: int64(id),
 		Recipient:             user,
 		Acknowledged:          false,
 		Rejected:              false,
+		AifsId:                int64(id),
 	}
 }

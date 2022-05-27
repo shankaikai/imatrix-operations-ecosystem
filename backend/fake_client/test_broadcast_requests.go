@@ -15,9 +15,10 @@ import (
 )
 
 func TestBroadcastClient(serverAddr *string, serverPort *int) {
-	broadcast := createFakeBroadcast(1)
+	broadcast := createFakeBroadcast(1, true)
 	pk := InsertBroadcast(serverAddr, serverPort, broadcast)
 	broadcast.BroadcastId = pk
+	InsertBroadcastAIFSID(serverAddr, serverPort)
 
 	ConsolidatedFindBroadcastTest(serverAddr, serverPort)
 	ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
@@ -50,24 +51,48 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	return res.PrimaryKey
 }
 
+func InsertBroadcastAIFSID(serverAddr *string, serverPort *int) int64 {
+	broadcast := createFakeBroadcast(1, false)
+
+	fmt.Println("Inserting Broadcast through AIFS id:", broadcast.Title)
+	client, conn := createBroadcastClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.AddBroadcast(context.Background(), broadcast)
+	if err != nil {
+		fmt.Println("InsertBroadcast ERROR:", err)
+		return -1
+	}
+
+	fmt.Println("Client received response:", res.Type)
+
+	if res.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.ErrorMessage)
+	}
+
+	fmt.Println("Primary key of broadcast with AIFS ID:", res.PrimaryKey)
+	return res.PrimaryKey
+}
+
 func ConsolidatedFindBroadcastTest(serverAddr *string, serverPort *int) {
-	FindBroadcastsNoFilter(serverAddr, serverPort)
-	FindBroadcastsIdFilter(serverAddr, serverPort)
-	FindBroadcastsTypeFilter(serverAddr, serverPort)
-	FindBroadcastsTitleFilter(serverAddr, serverPort)
-	FindBroadcastsContentFilter(serverAddr, serverPort)
-	FindBroadcastsCreateDateFilter(serverAddr, serverPort)
-	FindBroadcastsDeadlineFilter(serverAddr, serverPort)
-	FindBroadcastsCreatorIdFilter(serverAddr, serverPort)
-	FindBroadcastsRecipientIdFilter(serverAddr, serverPort)
-	FindBroadcastsNumRecFilter(serverAddr, serverPort)
-	FindBroadcastsUrgencyTypeFilter(serverAddr, serverPort)
-	FindBroadcastsMultipleFilters(serverAddr, serverPort)
+	// FindBroadcastsNoFilter(serverAddr, serverPort)
+	// FindBroadcastsIdFilter(serverAddr, serverPort)
+	// FindBroadcastsTypeFilter(serverAddr, serverPort)
+	// FindBroadcastsTitleFilter(serverAddr, serverPort)
+	// FindBroadcastsContentFilter(serverAddr, serverPort)
+	// FindBroadcastsCreateDateFilter(serverAddr, serverPort)
+	// FindBroadcastsDeadlineFilter(serverAddr, serverPort)
+	// FindBroadcastsCreatorIdFilter(serverAddr, serverPort)
+	// FindBroadcastsRecipientIdFilter(serverAddr, serverPort)
+	// FindBroadcastsNumRecFilter(serverAddr, serverPort)
+	// FindBroadcastsUrgencyTypeFilter(serverAddr, serverPort)
+	FindBroadcastsAIFSIDFilter(serverAddr, serverPort)
+	// FindBroadcastsMultipleFilters(serverAddr, serverPort)
 }
 
 func FindBroadcastsNoFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts without filter")
-	FindBroadcastsTest(serverAddr, serverPort, &pb.BroadcastQuery{Limit: 4})
+	FindBroadcastsTest(serverAddr, serverPort, &pb.BroadcastQuery{Limit: 4, Skip: 8})
 }
 
 func FindBroadcastsIdFilter(serverAddr *string, serverPort *int) {
@@ -177,6 +202,16 @@ func FindBroadcastsUrgencyTypeFilter(serverAddr *string, serverPort *int) {
 	FindBroadcastsTest(serverAddr, serverPort, query)
 }
 
+func FindBroadcastsAIFSIDFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding broadcasts AIFS ID 2 filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "2"}
+	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_AIFS_ID}
+
+	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
+
+	FindBroadcastsTest(serverAddr, serverPort, query)
+}
+
 func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding broadcasts mutiple filter")
 
@@ -235,6 +270,7 @@ func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.Broadcast
 		}
 
 		fmt.Println(count, ":", broadcastRes.Broadcast)
+		fmt.Println(count, ":", broadcastRes.Broadcast.CreationDate.AsTime().String())
 		count++
 	}
 }

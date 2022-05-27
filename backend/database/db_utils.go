@@ -17,12 +17,15 @@ import (
 )
 
 const (
-	DATETIME_FORMAT = "2006-01-02 15:04:05"
-	DEFAULT_LIMIT   = 10
-	MAX_LIMIT       = 1000
-	ALL_COLS        = "*"
-	WHERE_KEYWORD   = "WHERE"
-	LIMIT_KEYWORD   = "LIMIT"
+	DATETIME_FORMAT  = "2006-01-02 15:04:05"
+	DEFAULT_LIMIT    = 10
+	MAX_LIMIT        = 1000
+	ALL_COLS         = "*"
+	WHERE_KEYWORD    = "WHERE"
+	LIMIT_KEYWORD    = "LIMIT"
+	ORDER_BY_KEYWORD = "ORDER BY"
+	ASC_KEYWORD      = "ASC"
+	DESC_KEYWORD     = "DESC"
 )
 
 // Create an authorised session with the database.
@@ -208,6 +211,8 @@ func GetFilterComparisonSign(compaison pb.Filter_Comparisons) string {
 		return "<"
 	case pb.Filter_CONTAINS:
 		return "LIKE"
+	case pb.Filter_IN:
+		return "IN"
 	default:
 		return "="
 	}
@@ -215,6 +220,10 @@ func GetFilterComparisonSign(compaison pb.Filter_Comparisons) string {
 
 func FormatLikeQueryValue(value string) string {
 	return "%" + value + "%"
+}
+
+func FormatInQueryValue(value string) string {
+	return "(" + value + ")"
 }
 
 func formatFieldEqVal(field string, val string, encloseVal bool) string {
@@ -240,4 +249,11 @@ func DBDatetimeToPB(datetimeString string) (*timestamppb.Timestamp, error) {
 	}
 
 	return &timestamppb.Timestamp{Seconds: creationDate.Unix()}, nil
+}
+
+func orderByProtoToDB(order pb.OrderBy) string {
+	if order == pb.OrderBy_ASC {
+		return ASC_KEYWORD
+	}
+	return DESC_KEYWORD
 }
