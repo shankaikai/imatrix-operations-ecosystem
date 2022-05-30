@@ -75,7 +75,7 @@ func InsertBroadcastAIFSID(serverAddr *string, serverPort *int) int64 {
 }
 
 func ConsolidatedFindBroadcastTest(serverAddr *string, serverPort *int) {
-	// FindBroadcastsNoFilter(serverAddr, serverPort)
+	FindBroadcastsNoFilter(serverAddr, serverPort)
 	// FindBroadcastsIdFilter(serverAddr, serverPort)
 	// FindBroadcastsTypeFilter(serverAddr, serverPort)
 	// FindBroadcastsTitleFilter(serverAddr, serverPort)
@@ -86,7 +86,7 @@ func ConsolidatedFindBroadcastTest(serverAddr *string, serverPort *int) {
 	// FindBroadcastsRecipientIdFilter(serverAddr, serverPort)
 	// FindBroadcastsNumRecFilter(serverAddr, serverPort)
 	// FindBroadcastsUrgencyTypeFilter(serverAddr, serverPort)
-	FindBroadcastsAIFSIDFilter(serverAddr, serverPort)
+	// FindBroadcastsAIFSIDFilter(serverAddr, serverPort)
 	// FindBroadcastsMultipleFilters(serverAddr, serverPort)
 }
 
