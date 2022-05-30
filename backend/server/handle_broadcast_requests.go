@@ -81,7 +81,10 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 		stream.Send(&broadcastRes)
 
 	} else {
+		fmt.Println("FindBroadcasts: Found broadcasts to return")
+		fmt.Println(foundBroadcasts)
 		broadcastRes := pb.BroadcastResponse{Response: &res}
+
 		for _, broadcast := range foundBroadcasts {
 			broadcastRes.Broadcast = broadcast
 			if err := stream.Send(&broadcastRes); err != nil {
