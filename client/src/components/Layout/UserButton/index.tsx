@@ -6,6 +6,7 @@ import {
   Avatar,
   Text,
   createStyles,
+  Divider,
 } from "@mantine/core";
 import { ChevronRight } from "tabler-icons-react";
 
@@ -43,22 +44,25 @@ export function UserButton({
   const { classes } = useStyles();
 
   return (
-    <UnstyledButton className={classes.user} {...others}>
-      <Group>
-        <Avatar src={image} radius="xl" />
+    <div>
+      <Divider />
+      <UnstyledButton className={classes.user} {...others}>
+        <Group>
+          <Avatar src={image} radius="xl" />
 
-        <div style={{ flex: 1 }}>
-          <Text size="sm" weight={500}>
-            {name}
-          </Text>
+          <div style={{ flex: 1 }}>
+            <Text size="sm" weight={500}>
+              {name}
+            </Text>
 
-          <Text color="dimmed" size="xs">
-            {email}
-          </Text>
-        </div>
+            <Text color="dimmed" size="xs">
+              {email}
+            </Text>
+          </div>
 
-        {icon || <ChevronRight size={14} />}
-      </Group>
-    </UnstyledButton>
+          {icon || <ChevronRight size={14} />}
+        </Group>
+      </UnstyledButton>
+    </div>
   );
 }

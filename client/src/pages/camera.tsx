@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 
-const Home: NextPage = () => {
+const Camera: NextPage = () => {
   return (
     <div>
       <h1>Camera</h1>
@@ -8,4 +8,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Camera;
