@@ -1,4 +1,4 @@
-import { AppShell, useMantineColorScheme } from "@mantine/core";
+import { AppShell, ScrollArea, useMantineColorScheme } from "@mantine/core";
 import MainHeader from "./MainHeader";
 import Sidebar from "./Sidebar/Sidebar";
 
@@ -21,8 +21,18 @@ export default function Layout({ children }: LayoutProps) {
           padding: theme.spacing.xs,
         },
       })}
+      fixed
     >
-      {children}
+      <div
+        style={{
+          height: "calc 100vh - 60px",
+          marginLeft: 280,
+          marginTop: 60,
+          position: "relative",
+        }}
+      >
+        {children}
+      </div>
     </AppShell>
   );
 }

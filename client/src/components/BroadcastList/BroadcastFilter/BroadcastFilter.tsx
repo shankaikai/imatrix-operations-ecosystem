@@ -9,20 +9,6 @@ import {
 import { Plus, Search } from "tabler-icons-react";
 import React, { Dispatch, useState } from "react";
 
-const useStyles = createStyles((theme) => ({
-  tabcontainer: {
-    height: "100vh",
-    width: "360px",
-    padding: theme.spacing.xs,
-  },
-  filters: {
-    columnGap: theme.spacing.xs,
-  },
-  stack: {
-    marginTop: theme.spacing.xs,
-  },
-}));
-
 interface BroadcastFilterProps {
   search: string;
   setSearch: Dispatch<string>;
@@ -30,6 +16,7 @@ interface BroadcastFilterProps {
   setSelectValue: Dispatch<string>;
   filterValue: string;
   setFilterValue: Dispatch<string>;
+  setModalOpen: Dispatch<boolean>;
 }
 
 export default function BroadcastFilter({
@@ -39,10 +26,20 @@ export default function BroadcastFilter({
   setSelectValue,
   filterValue,
   setFilterValue,
+  setModalOpen,
 }: BroadcastFilterProps) {
-  const { classes } = useStyles();
+  const handleNewClick = () => {
+    setModalOpen(true);
+  };
+
   return (
-    <Group className={classes.filters} position="apart">
+    <Group
+      spacing="xs"
+      position="apart"
+      sx={{
+        display: "sticky",
+      }}
+    >
       <TextInput
         icon={<Search size={16} />}
         placeholder="Search"
@@ -52,7 +49,12 @@ export default function BroadcastFilter({
         value={search}
         onChange={(event) => setSearch(event.currentTarget.value)}
       />
-      <Button size="xs" radius="xl" leftIcon={<Plus size={14} />}>
+      <Button
+        size="xs"
+        radius="xl"
+        leftIcon={<Plus size={14} />}
+        onClick={handleNewClick}
+      >
         New
       </Button>
       <Group>

@@ -1,45 +1,44 @@
-import { Stack } from "@mantine/core";
+import { Button, Group, ScrollArea, Stack } from "@mantine/core";
 import React from "react";
+import { useBroadcastClient } from "../../helpers/useBroadcastClient";
 import { Broadcast } from "../../proto/operations_ecosys_pb";
 import BroadcastCard from "./BroadcastCard/BroadcastCard";
 
-const mockdata = [
-  {
-    id: 1,
-    imgUrl:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKXW9nkZ9NMKDopl5m6XfT2jIAJamJWko3VpstBIlFDKy4VTVYOx4TVeZ8SpzD1ZGdlAs&usqp=CAU",
-    name: "Test Name",
-    message: "This is a test message!!!",
-    unread: 0,
-  },
-  {
-    id: 2,
-    imgUrl:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKXW9nkZ9NMKDopl5m6XfT2jIAJamJWko3VpstBIlFDKy4VTVYOx4TVeZ8SpzD1ZGdlAs&usqp=CAU",
-    name: "Test Name",
-    message: "This is a longgggggggggggggggg test message!!!",
-    unread: 2,
-  },
-  {
-    id: 3,
-    imgUrl:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKXW9nkZ9NMKDopl5m6XfT2jIAJamJWko3VpstBIlFDKy4VTVYOx4TVeZ8SpzD1ZGdlAs&usqp=CAU",
-    name: "Test Name",
-  },
-];
+interface BroadcastListProps {}
 
-interface BroadcastListProps {
-  broadcastList: Broadcast[];
-}
+export default function BroadcastList({}: BroadcastListProps) {
+  const { broadcasts } = useBroadcastClient();
 
-export default function BroadcastList({ broadcastList }: BroadcastListProps) {
+  const handleLoadMoreClick = () => {
+    console.log(broadcasts);
+  };
+
   // TODO: Iterate through broadcast list and populate this
   return (
-    <Stack>
-      <BroadcastCard />
-      <BroadcastCard />
-      <BroadcastCard />
-      <BroadcastCard />
-    </Stack>
+    <ScrollArea>
+      <Stack>
+        {broadcasts.map((broadcast) => (
+          <BroadcastCard
+            key={broadcast.getBroadcastId()}
+            broadcast={broadcast}
+          />
+        ))}
+        {/* <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} />
+        <BroadcastCard broadcast={new Broadcast()} /> */}
+        <Group position="center">
+          <Button onClick={handleLoadMoreClick}>Load More</Button>
+        </Group>
+      </Stack>
+    </ScrollArea>
   );
 }

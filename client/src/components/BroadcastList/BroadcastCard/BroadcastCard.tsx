@@ -1,6 +1,10 @@
 import {
-  Badge, Card,
-  Group, Text, Tooltip, useMantineTheme
+  Badge,
+  Card,
+  Group,
+  Text,
+  Tooltip,
+  useMantineTheme,
 } from "@mantine/core";
 import React from "react";
 import { Broadcast } from "../../../proto/operations_ecosys_pb";
@@ -15,8 +19,9 @@ const mockdata = [
   },
 ];
 
-export default function BroadcastCard() {
+export default function BroadcastCard({ broadcast }: BroadcastCardProps) {
   const theme = useMantineTheme();
+  const recipients = broadcast.getRecipientsList();
 
   return (
     <Card
@@ -25,8 +30,7 @@ export default function BroadcastCard() {
       sx={{ position: "relative", borderLeft: "5px solid red" }}
     >
       <Group position="apart">
-        <Text>This is a sample message!</Text>
-
+        <Text>{broadcast.getContent()}</Text>
         <Group>
           <Tooltip label={"Xavier, Emily, Hannah"}>
             <Badge variant="filled" color="gray">
@@ -53,7 +57,7 @@ export default function BroadcastCard() {
           right: theme.spacing.lg,
         }}
       >
-        27/5/2022 14:52
+        {broadcast.getCreationDate()}
       </Text>
     </Card>
   );
