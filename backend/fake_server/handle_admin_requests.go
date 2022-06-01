@@ -53,3 +53,47 @@ func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUser
 
 	return nil
 }
+
+// Client
+func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
+	fmt.Println("AddUser")
+	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
+	return &res, nil
+}
+
+func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
+	fmt.Println("UpdateUser")
+	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
+	return &res, nil
+}
+
+func (s *Server) DeleteClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
+	fmt.Println("DeleteUser")
+	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
+	return &res, nil
+}
+
+func (s *Server) FindClients(query *pb.ClientQuery, stream pb.AdminServices_FindClientsServer) error {
+	fmt.Println("FindUsers")
+
+	res := pb.Response{Type: pb.Response_ACK}
+	clientRes := pb.ClientResponse{Response: &res}
+
+	for i := 0; i < 3; i++ {
+		client := &pb.Client{
+			ClientId:             int64(i),
+			Name:                 "test name" + strconv.Itoa(i),
+			Email:                "email" + strconv.Itoa(i),
+			Address:              "address" + strconv.Itoa(i),
+			PhoneNumber:          "1232",
+			NumberOfGuardsNeeded: 3,
+		}
+		clientRes.Client = client
+
+		if err := stream.Send(&clientRes); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

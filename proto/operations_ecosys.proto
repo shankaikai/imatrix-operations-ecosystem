@@ -14,13 +14,18 @@ package operations_ecosys;
 // However, do note that enums and bools have default values, 
 // hence enums and bools should always be filled. 
 
-// TODO: Should change all FindXXX to use streams 
-
 service AdminServices {
+    // User
     rpc AddUser(User) returns (Response) {}
     rpc UpdateUser(User) returns (Response) {}
     rpc DeleteUser(User) returns (Response) {}
     rpc FindUsers(UserQuery) returns (stream UsersResponse) {}
+
+    // Client
+    rpc AddClient(Client) returns (Response) {}
+    rpc UpdateClient(Client) returns (Response) {}
+    rpc DeleteClient(Client) returns (Response) {}
+    rpc FindClients(ClientQuery) returns (stream ClientResponse) {}
 }
 
 service BroadcastServices{
@@ -33,8 +38,22 @@ service BroadcastServices{
     rpc FindBroadcasts(BroadcastQuery) returns (stream BroadcastResponse) {}
 }
 
+service RosterServices{
+    // Add multiple rosters for different AIFS at the same time
+    rpc AddRoster(stream Roster) returns (Response) {}
+    // Note that this update does not update the roster's guard's inner status 
+    // such as the acknowledgement or attended status but only if the guard 
+    // is part of the roster.
+    rpc UpdateRoster(Roster) returns (Response) {}
+    rpc DeleteRoster(Roster) returns (Response) {}
+    rpc FindRosters(RosterQuery) returns (stream RosterResponse) {}
+    rpc GetAvailableUsers(AvailabilityQuery) returns (stream User) {}
+}
+
 // Admin
-// Users 
+/***************************************************************************
+*                              USER MESSAGES                               *
+****************************************************************************/
 // All users who use the operations ecosystem.
 // TODO: decide if we want to have an inactive field for users
 //       so that we don't need to delete users completely. 
@@ -62,7 +81,7 @@ message UsersResponse {
     User user = 2;
 }
 
-// Filter the types of broadcasts to be returned. 
+// Filter the types of users to be returned. 
 message UserFilter {
     Field field = 1;
     Filter comparisons = 2;
@@ -101,21 +120,76 @@ message OrderByUser{
     OrderBy order_by = 2;
 }
 
-// Broadcasting
+/***************************************************************************
+*                              CLIENT MESSAGES                              *
+****************************************************************************/
+
+// All clients who hire the company to protect their compounds. 
+// TODO: decide if we want to have an inactive field for clients
+//       so that we don't need to delete cleints completely. 
+message Client {
+    int64 client_id = 1;
+    string name = 2;
+    string email = 3;
+    string address = 4;
+    string phone_number = 5;
+    int32 number_of_guards_needed = 6;
+}
+
+message ClientResponse {
+    Response response = 1;
+    Client client = 2;
+}
+
+// Filter the types of clients to be returned. 
+message ClientFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        CLIENT_ID = 0;
+    }
+}
+
+// Get specific types clients as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message ClientQuery {
+    repeated ClientFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2;
+
+    // Skip n rows from the database
+    int64 skip = 3;
+    
+    // Order the queries, by default the order is desc by creation date
+    OrderByClient order_by = 4;
+}
+
+
+message OrderByClient{
+    ClientFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
+
+/***************************************************************************
+*                          BROADCASTING MESSAGES                           *
+****************************************************************************/
 // The default fields of a broadcast
 message Broadcast {
     // Broadcast IDs are only useful for the backend database. 
     int64 broadcast_id = 1;
     BroadcastType type = 2;
-    string title = 3;
-    string content = 4;
-    google.protobuf.Timestamp creation_date = 5;
-    google.protobuf.Timestamp deadline = 6;
+    string content = 3;
+    google.protobuf.Timestamp creation_date = 4;
+    google.protobuf.Timestamp deadline = 5;
     // The whole user fields does not need to be filled, 
     // as long as the user is identifiable.
-    User creator = 7;
-    repeated BroadcastRecipient recipients = 8;
-    UrgencyType urgency = 9;
+    User creator = 6;
+    repeated AIFSBroadcastRecipient recipients = 7;
+    UrgencyType urgency = 8;
     
     enum BroadcastType{
         ANNOUNCEMENT = 0;
@@ -127,6 +201,11 @@ message Broadcast {
         MEDIUM = 1;
         HIGH = 2;
     }
+}
+
+message AIFSBroadcastRecipient {
+    repeated BroadcastRecipient recipient =1;
+    int64 aifs_id = 2;
 }
 
 message BroadcastRecipient {
@@ -154,18 +233,18 @@ message BroadcastFilter {
     enum Field{
         BROADCAST_ID = 0;
         TYPE = 1;
-        TITLE = 2;
-        CONTENT = 3;
-        CREATION_DATE = 4;
-        DEADLINE = 5;
+        CONTENT = 2;
+        CREATION_DATE = 3;
+        DEADLINE = 4;
         // Creator and recipient values should 
         // be the user id of these users
-        CREATOR_ID = 6;
+        CREATOR_ID = 5;
         // Note: Single recipient
-        RECEIPEIENT_ID = 7;
-        NUM_RECEIPIENTS = 8;
-        URGENCY = 9;
-        AIFS_ID = 10;
+        RECEIPEIENT_ID = 6;
+        NUM_RECEIPIENTS = 7;
+        URGENCY = 8;
+        AIFS_ID = 9;
+        BROADCAST_RECIPIENT_TABLE_ID = 10;
     }
 }
 
@@ -189,7 +268,115 @@ message OrderByBroadcast{
     OrderBy order_by = 2;
 }
 
-// Common messages
+
+/***************************************************************************
+*                            ROSTERING MESSAGES                            *
+****************************************************************************/
+// The default fields of a roster
+message Roster {
+    // Roster IDs are only useful for the backend database. 
+    int64 rostering_id = 1;
+    int64 aifs_id = 2;
+    google.protobuf.Timestamp start_time = 3;
+    google.protobuf.Timestamp end_time = 4;
+    repeated AIFSClientRoster clients = 5;
+    repeated RosterAssignement guard_assigned = 6;
+}
+
+message AIFSClientRoster {
+    int64 aifs_client_roster_id = 1;
+    Client client = 2;    
+}
+
+message RosterAssignement {
+    int64 roster_assignment_id = 1;
+    // The whole user fields does not need to be filled, 
+    // as long as the user is identifiable.
+    User guard_assigned = 2;
+    google.protobuf.Timestamp custom_start_time = 3;
+    google.protobuf.Timestamp custom_end_time = 4;
+    bool confirmed = 5;
+    bool attended = 6;
+    google.protobuf.Timestamp attendance_time = 7;
+}
+
+
+// Passing around multiple broadcasts in one message. 
+message RosterResponse {
+    Response response = 1;
+    Roster roster = 2;
+}
+
+// Filter the types of broadcasts to be returned. 
+message RosterFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        // TODO
+        ROSTER_ID = 0;
+        ROSTER_ASSIGNMENT_ID = 1;
+        ROSTER_AIFS_CLIENT_ID = 2;
+        AIFS_ID = 3;
+        // Note: single user ID
+        GUARD_ASSIGNED_ID = 4;
+        // Note: single client ID
+        CLIENT_ID = 5;
+        GUARD_ASSIGNMENT_CONFIRMATION = 6;
+        GUARD_ASSIGNMENT_ATTENDED = 7;
+    }
+}
+
+// Get specific types rosters as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message RosterQuery {
+    repeated RosterFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2; 
+    // Skip n rows from the database
+    int64 skip = 3;
+
+    // Order the queries, by default the order is desc by creation date
+    OrderByRoster order_by = 4;
+}
+
+message OrderByRoster{
+    RosterFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
+
+
+/***************************************************************************
+*                 ROSTERING AVAILABILITY MESSAGES                          *
+****************************************************************************/
+
+// Note that this query only checks for users 
+// available for the whole time between a start 
+// and end time.
+
+// TODO: Find out if the user should be available
+// throughout the whole duration. 
+message AvailabilityQuery {
+    google.protobuf.Timestamp start_time = 1;
+    // If end time is null, the time period is taken 
+    // to be from the start time + 12h
+    google.protobuf.Timestamp end_time = 2;
+
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 3; 
+    // Skip n rows from the database
+    int64 skip = 4;
+}
+
+
+/***************************************************************************
+*                              COMMON MESSAGES                              *
+****************************************************************************/
+
 // Generic reponses to add or update requests
 message Response {
     Type type = 1;

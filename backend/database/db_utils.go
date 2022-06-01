@@ -31,6 +31,10 @@ const (
 // The credentials of the database are stored in a .env file.
 func GetDB() *sql.DB {
 	// load .env file
+<<<<<<< HEAD
+=======
+	// envFilePath := filepath.Join("..", ".env")
+>>>>>>> backend_broadcast
 	envFilePath := ".env"
 	err := godotenv.Load(envFilePath)
 

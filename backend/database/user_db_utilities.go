@@ -2,6 +2,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
@@ -213,4 +214,20 @@ func userFilterToDBCol(filterField pb.UserFilter_Field) string {
 	}
 
 	return output
+}
+
+// Get the user corresponding to a particular user id in the db
+func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
+	userQuery := &pb.UserQuery{Limit: 1}
+	addUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
+
+	users, err := GetUsers(db, userQuery)
+
+	user := &pb.User{}
+
+	if err == nil {
+		user = users[0]
+	}
+
+	return user, err
 }

@@ -12,13 +12,13 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
-func TestAdminClient(serverAddr *string, serverPort *int) {
+func TestAdminClientUser(serverAddr *string, serverPort *int) {
 	user := createFakeUser(1)
 	pk := InsertUser(serverAddr, serverPort, user)
 	user.UserId = pk
 	ConsolidatedFindUserTest(serverAddr, serverPort)
 	UpdateUserTest(serverAddr, serverPort, user)
-	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: 4})
+	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
 }
 
 func InsertUser(serverAddr *string, serverPort *int, user *pb.User) int64 {

@@ -21,7 +21,6 @@ const (
 	// Broadcast table fields
 	BC_DB_ID            = "broadcast_id"
 	BC_DB_TYPE          = "type"
-	BC_DB_TITLE         = "title"
 	BC_DB_CONTENT       = "content"
 	BC_DB_CREATION_DATE = "creation_date"
 	BC_DB_DEADLINE      = "deadline"
@@ -48,7 +47,6 @@ const (
 func getBroadcastTableFields() string {
 	broadcastTableFields := []string{
 		BC_DB_TYPE,
-		BC_DB_TITLE,
 		BC_DB_CONTENT,
 		BC_DB_CREATION_DATE,
 		BC_DB_DEADLINE,
@@ -67,7 +65,6 @@ func orderBroadcastFields(broadcast *pb.Broadcast) string {
 	output := ""
 
 	output += "'" + getBroadcastDBTypeStringFromProto(broadcast.Type) + "'" + ", "
-	output += "'" + broadcast.Title + "'" + ", "
 	output += "'" + broadcast.Content + "'" + ", "
 	output += "'" + broadcast.CreationDate.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
 	output += "'" + broadcast.Deadline.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
@@ -121,9 +118,6 @@ func orderBroadcastRecFields(recipeint *pb.BroadcastRecipient, relatedBCId int64
 func getFilledBroadcastFields(broadcast *pb.Broadcast) string {
 	broadcastTableFields := []string{formatFieldEqVal(BC_DB_TYPE, getBroadcastDBTypeStringFromProto(broadcast.Type), true)}
 
-	if len(broadcast.Title) > 0 {
-		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_TITLE, broadcast.Title, true))
-	}
 	if len(broadcast.Content) > 0 {
 		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CONTENT, broadcast.Content, true))
 	}
@@ -245,7 +239,7 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 			hasQuotes = false
 		}
 		switch filter.Field {
-		case pb.BroadcastFilter_BROADCAST_ID, pb.BroadcastFilter_TYPE, pb.BroadcastFilter_TITLE,
+		case pb.BroadcastFilter_BROADCAST_ID, pb.BroadcastFilter_TYPE,
 			pb.BroadcastFilter_CONTENT, pb.BroadcastFilter_CREATION_DATE, pb.BroadcastFilter_DEADLINE,
 			pb.BroadcastFilter_CREATOR_ID, pb.BroadcastFilter_RECEIPEIENT_ID, pb.BroadcastFilter_URGENCY,
 			pb.BroadcastFilter_AIFS_ID:
@@ -302,22 +296,6 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 	return output
 }
 
-// Get the user corresponding to a particular user id in the db
-func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
-	userQuery := &pb.UserQuery{Limit: 1}
-	addUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
-
-	users, err := GetUsers(db, userQuery)
-
-	user := &pb.User{}
-
-	if err == nil {
-		user = users[0]
-	}
-
-	return user, err
-}
-
 // This function converts the returned DB rows into Broadcast objects and
 // their corresponding broadcast recipients.
 // These rows come from the join query of both the broadcast and broadcast
@@ -327,7 +305,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 	broadcastMap := make(map[int64]*pb.Broadcast)
 
 	for rows.Next() {
-		broadcast := &pb.Broadcast{}
+		broadcast := &pb.Broadcast{Recipients: make([]*pb.AIFSBroadcastRecipient, 0)}
 		broadcastRecipient := &pb.BroadcastRecipient{}
 
 		creatorUserId := -1
@@ -343,7 +321,6 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 		err := rows.Scan(
 			&broadcast.BroadcastId,
 			&broadcastType,
-			&broadcast.Title,
 			&broadcast.Content,
 			&creationDateStr,
 			&deadlineStr,
@@ -414,11 +391,24 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 		}
 
 		// Add recipient to broadcast
-		if broadcast.Recipients == nil {
-			broadcast.Recipients = make([]*pb.BroadcastRecipient, 0)
+		foundAifsRecipient := false
+		for _, aifsRecipient := range broadcast.Recipients {
+			if aifsRecipient.AifsId == broadcastRecipient.AifsId {
+				if aifsRecipient.Recipient == nil {
+					aifsRecipient.Recipient = make([]*pb.BroadcastRecipient, 0)
+				}
+				aifsRecipient.Recipient = append(aifsRecipient.Recipient, broadcastRecipient)
+				foundAifsRecipient = true
+			}
 		}
-
-		broadcast.Recipients = append(broadcast.Recipients, broadcastRecipient)
+		if !foundAifsRecipient {
+			newAifsRecipient := &pb.AIFSBroadcastRecipient{
+				AifsId:    broadcastRecipient.AifsId,
+				Recipient: make([]*pb.BroadcastRecipient, 0),
+			}
+			newAifsRecipient.Recipient = append(newAifsRecipient.Recipient, broadcastRecipient)
+			broadcast.Recipients = append(broadcast.Recipients, newAifsRecipient)
+		}
 	}
 
 	// Add all broadcasts to the returning array
@@ -447,7 +437,7 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 	// Get all recipients
 	currentRecipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
 	if err != nil {
-		fmt.Println("UpdateBroadcast ERROR::", err)
+		fmt.Println("updateRecipientsOfBroadcast ERROR::", err)
 		return err
 	}
 
@@ -467,25 +457,34 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 	// delete this rogue recipient.
 
 	// Index of missing recipients from the input broadcast list
-	missingRecIndex := make([]int, 0)
+	// key: aifsBrIndex, value: index array of the broadcast recipient
+	// within the aifsBroadcastRecipient
+	missingRecIndexMap := make(map[int][]int)
 
-	for i, br := range broadcast.Recipients {
-		found, index := common.BinarySearch(currentRecIds, 0, len(currentRecIds)-1, int(br.Recipient.UserId))
-		if found {
-			fmt.Println("Found updated recipient in current recipient")
-			currentRecIds = append(currentRecIds[:index], currentRecIds[index+1:]...)
-		} else {
-			missingRecIndex = append(missingRecIndex, i)
+	for aifsBrIndex, aifsBr := range broadcast.Recipients {
+		for i, br := range aifsBr.Recipient {
+			found, index := common.BinarySearch(currentRecIds, 0, len(currentRecIds)-1, int(br.Recipient.UserId))
+			if found {
+				fmt.Println("Found updated recipient in current recipient")
+				currentRecIds = append(currentRecIds[:index], currentRecIds[index+1:]...)
+			} else {
+				if _, ok := missingRecIndexMap[aifsBrIndex]; !ok {
+					missingRecIndexMap[aifsBrIndex] = make([]int, 0)
+				}
+				missingRecIndexMap[aifsBrIndex] = append(missingRecIndexMap[aifsBrIndex], i)
+			}
 		}
 	}
 
-	fmt.Println("Missing Recipients Index:", missingRecIndex)
+	fmt.Println("Missing Recipients Index Map:", missingRecIndexMap)
 	// Add the missing recipients
-	for _, recIndex := range missingRecIndex {
-		_, err := InsertBroadcastRecipient(db, broadcast.Recipients[recIndex], broadcast.BroadcastId, dbLock)
-		if err != nil {
-			fmt.Println("UpdateBroadcast ERROR::", err)
-			return err
+	for aifsBrIndex, missingRecIndex := range missingRecIndexMap {
+		for _, recIndex := range missingRecIndex {
+			_, err := InsertBroadcastRecipient(db, broadcast.Recipients[aifsBrIndex].Recipient[recIndex], broadcast.BroadcastId, dbLock)
+			if err != nil {
+				fmt.Println("UpdateBroadcast ERROR::", err)
+				return err
+			}
 		}
 	}
 
@@ -521,8 +520,6 @@ func bcFilterToDBCol(filterField pb.BroadcastFilter_Field, table string) string 
 		}
 	case pb.BroadcastFilter_TYPE:
 		output = BC_DB_TYPE
-	case pb.BroadcastFilter_TITLE:
-		output = BC_DB_TITLE
 	case pb.BroadcastFilter_CONTENT:
 		output = BC_DB_CONTENT
 	case pb.BroadcastFilter_CREATION_DATE:

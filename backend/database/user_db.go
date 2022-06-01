@@ -12,10 +12,9 @@ import (
 
 // Insert a new user into the database table.
 // Returns the primary key of the user from the database or any errors.
-func UserInsert(db *sql.DB, user *pb.User, dbLock *sync.Mutex) (int64, error) {
+func InsertUser(db *sql.DB, user *pb.User, dbLock *sync.Mutex) (int64, error) {
 	fmt.Println("Inserting User", user.Name)
 
-	// Create and insert main broadcast first and it's pk
 	fields := getUserTableFields()
 	values := orderUserFields(user)
 	pk, err := Insert(db, USER_DB_TABLE_NAME, fields, values, dbLock)

@@ -15,32 +15,35 @@ import (
 // Corresponding broadcast recipients are added to their
 // respective table as well.
 // Returns the primary key of the main broadcast and errors if any.
-// TODO: decide what should be done if the adding rows for the
-// recipients fail. Should the main broadcast and all others be deleted as well?
 func InsertBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (int64, error) {
-	fmt.Println("Inserting Broadcast", broadcast.BroadcastId, broadcast.Title)
+	fmt.Println("Inserting Broadcast", broadcast.BroadcastId)
 
 	// Create and insert main broadcast first and get it's pk
 	bcTbFields := getBroadcastTableFields()
 	bcValues := orderBroadcastFields(broadcast)
 
-	bc_pk, err := Insert(db, BROADCAST_DB_TABLE_NAME, bcTbFields, bcValues, dbLock)
+	bcPk, err := Insert(db, BROADCAST_DB_TABLE_NAME, bcTbFields, bcValues, dbLock)
 
 	if err != nil {
 		// Do not add recipients if the main broadcast fails
-		return bc_pk, err
+		return bcPk, err
 	}
 
 	// Create broadcast recipients rows for corresponding broadcast
-	for _, recipient := range broadcast.Recipients {
-		_, err = InsertBroadcastRecipient(db, recipient, bc_pk, dbLock)
+	for _, aifsRecipient := range broadcast.Recipients {
+		for _, recipient := range aifsRecipient.Recipient {
+			_, err = InsertBroadcastRecipient(db, recipient, bcPk, dbLock)
 
-		if err != nil {
-			break
+			if err != nil {
+				// Delete the broadcast that was just inserted
+				broadcast.BroadcastId = bcPk
+				DeleteBroadcast(db, broadcast)
+				break
+			}
 		}
 	}
 
-	return bc_pk, err
+	return bcPk, err
 }
 
 // Inserts a new recipient to the database and connects it to the appropriate
@@ -105,8 +108,6 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 	fmt.Println("Getting Broadcasts Recipients...")
 	broadcastRecipients := make([]*pb.BroadcastRecipient, 0)
 
-	//TODO remove comment
-	// fields := BC_REC_DB_ID + "," + getBroadcastRecTableFields()
 	fields := ALL_COLS
 
 	// Format filters
@@ -138,6 +139,7 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 			&recipient.Acknowledged,
 			&recipient.Rejected,
 			&lastRepliedString,
+			&recipient.AifsId,
 		)
 
 		if err != nil {
@@ -230,10 +232,7 @@ func DeleteBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
 
 // Delete a particular broadcast recipient
 func DeleteBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecipient) (int64, error) {
-	filters := getBroadcastIdFormattedFilter(
-		int(broadcastRecipient.BroadcastRecipientsId),
-		BROADCAST_RECIPIENT_TABLE_NAME,
-	)
+	filters := fmt.Sprintf("WHERE %s=%d", BC_REC_DB_ID, broadcastRecipient.BroadcastRecipientsId)
 
 	rowsAffected, err := Delete(db, BROADCAST_RECIPIENT_TABLE_NAME, filters)
 	return rowsAffected, err

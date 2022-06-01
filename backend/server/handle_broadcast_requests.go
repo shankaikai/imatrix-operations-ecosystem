@@ -6,6 +6,7 @@ import (
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"context"
 )
@@ -14,6 +15,11 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 	res := pb.Response{Type: pb.Response_ACK}
 
 	getDefaultRecipients(broadcast)
+
+	// Add creation datetime
+	broadcast.CreationDate = timestamppb.Now()
+	// TODO: define deadline
+	broadcast.Deadline = timestamppb.Now()
 
 	pk, err := db_pck.InsertBroadcast(
 		s.db,
@@ -100,20 +106,19 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 // change the recipients to be actual users
 // Modified the broadcast in place
 func getDefaultRecipients(broadcast *pb.Broadcast) {
-	newRecipients := make([]*pb.BroadcastRecipient, 0)
 	for _, rec := range broadcast.Recipients {
-		// Check if the recipient is an AIFS
-		if rec.Recipient == nil {
-			users := getFakeAIFSDuty(rec.AifsId)
-			for _, user := range users {
-				newRecipients = append(newRecipients, &pb.BroadcastRecipient{
-					Recipient: user,
-					AifsId:    rec.AifsId,
-				})
-			}
+		newRecipients := make([]*pb.BroadcastRecipient, 0)
+
+		users := getFakeAIFSDuty(rec.AifsId)
+		for _, user := range users {
+			newRecipients = append(newRecipients, &pb.BroadcastRecipient{
+				Recipient: user,
+				AifsId:    rec.AifsId,
+			})
 		}
+
+		rec.Recipient = newRecipients
 	}
-	broadcast.Recipients = newRecipients
 }
 
 // TODO get actual roster for AIFS Groups
