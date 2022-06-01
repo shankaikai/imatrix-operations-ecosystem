@@ -172,15 +172,160 @@ export namespace OrderByUser {
   }
 }
 
+export class Client extends jspb.Message {
+  getClientId(): number;
+  setClientId(value: number): Client;
+
+  getName(): string;
+  setName(value: string): Client;
+
+  getEmail(): string;
+  setEmail(value: string): Client;
+
+  getAddress(): string;
+  setAddress(value: string): Client;
+
+  getPhoneNumber(): string;
+  setPhoneNumber(value: string): Client;
+
+  getNumberOfGuardsNeeded(): number;
+  setNumberOfGuardsNeeded(value: number): Client;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Client.AsObject;
+  static toObject(includeInstance: boolean, msg: Client): Client.AsObject;
+  static serializeBinaryToWriter(message: Client, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Client;
+  static deserializeBinaryFromReader(message: Client, reader: jspb.BinaryReader): Client;
+}
+
+export namespace Client {
+  export type AsObject = {
+    clientId: number,
+    name: string,
+    email: string,
+    address: string,
+    phoneNumber: string,
+    numberOfGuardsNeeded: number,
+  }
+}
+
+export class ClientResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): ClientResponse;
+  hasResponse(): boolean;
+  clearResponse(): ClientResponse;
+
+  getClient(): Client | undefined;
+  setClient(value?: Client): ClientResponse;
+  hasClient(): boolean;
+  clearClient(): ClientResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ClientResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ClientResponse): ClientResponse.AsObject;
+  static serializeBinaryToWriter(message: ClientResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ClientResponse;
+  static deserializeBinaryFromReader(message: ClientResponse, reader: jspb.BinaryReader): ClientResponse;
+}
+
+export namespace ClientResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    client?: Client.AsObject,
+  }
+}
+
+export class ClientFilter extends jspb.Message {
+  getField(): ClientFilter.Field;
+  setField(value: ClientFilter.Field): ClientFilter;
+
+  getComparisons(): Filter | undefined;
+  setComparisons(value?: Filter): ClientFilter;
+  hasComparisons(): boolean;
+  clearComparisons(): ClientFilter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ClientFilter.AsObject;
+  static toObject(includeInstance: boolean, msg: ClientFilter): ClientFilter.AsObject;
+  static serializeBinaryToWriter(message: ClientFilter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ClientFilter;
+  static deserializeBinaryFromReader(message: ClientFilter, reader: jspb.BinaryReader): ClientFilter;
+}
+
+export namespace ClientFilter {
+  export type AsObject = {
+    field: ClientFilter.Field,
+    comparisons?: Filter.AsObject,
+  }
+
+  export enum Field { 
+    CLIENT_ID = 0,
+  }
+}
+
+export class ClientQuery extends jspb.Message {
+  getFiltersList(): Array<ClientFilter>;
+  setFiltersList(value: Array<ClientFilter>): ClientQuery;
+  clearFiltersList(): ClientQuery;
+  addFilters(value?: ClientFilter, index?: number): ClientFilter;
+
+  getLimit(): number;
+  setLimit(value: number): ClientQuery;
+
+  getSkip(): number;
+  setSkip(value: number): ClientQuery;
+
+  getOrderBy(): OrderByClient | undefined;
+  setOrderBy(value?: OrderByClient): ClientQuery;
+  hasOrderBy(): boolean;
+  clearOrderBy(): ClientQuery;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ClientQuery.AsObject;
+  static toObject(includeInstance: boolean, msg: ClientQuery): ClientQuery.AsObject;
+  static serializeBinaryToWriter(message: ClientQuery, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ClientQuery;
+  static deserializeBinaryFromReader(message: ClientQuery, reader: jspb.BinaryReader): ClientQuery;
+}
+
+export namespace ClientQuery {
+  export type AsObject = {
+    filtersList: Array<ClientFilter.AsObject>,
+    limit: number,
+    skip: number,
+    orderBy?: OrderByClient.AsObject,
+  }
+}
+
+export class OrderByClient extends jspb.Message {
+  getField(): ClientFilter.Field;
+  setField(value: ClientFilter.Field): OrderByClient;
+
+  getOrderBy(): OrderBy;
+  setOrderBy(value: OrderBy): OrderByClient;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OrderByClient.AsObject;
+  static toObject(includeInstance: boolean, msg: OrderByClient): OrderByClient.AsObject;
+  static serializeBinaryToWriter(message: OrderByClient, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OrderByClient;
+  static deserializeBinaryFromReader(message: OrderByClient, reader: jspb.BinaryReader): OrderByClient;
+}
+
+export namespace OrderByClient {
+  export type AsObject = {
+    field: ClientFilter.Field,
+    orderBy: OrderBy,
+  }
+}
+
 export class Broadcast extends jspb.Message {
   getBroadcastId(): number;
   setBroadcastId(value: number): Broadcast;
 
   getType(): Broadcast.BroadcastType;
   setType(value: Broadcast.BroadcastType): Broadcast;
-
-  getTitle(): string;
-  setTitle(value: string): Broadcast;
 
   getContent(): string;
   setContent(value: string): Broadcast;
@@ -200,10 +345,10 @@ export class Broadcast extends jspb.Message {
   hasCreator(): boolean;
   clearCreator(): Broadcast;
 
-  getRecipientsList(): Array<BroadcastRecipient>;
-  setRecipientsList(value: Array<BroadcastRecipient>): Broadcast;
+  getRecipientsList(): Array<AIFSBroadcastRecipient>;
+  setRecipientsList(value: Array<AIFSBroadcastRecipient>): Broadcast;
   clearRecipientsList(): Broadcast;
-  addRecipients(value?: BroadcastRecipient, index?: number): BroadcastRecipient;
+  addRecipients(value?: AIFSBroadcastRecipient, index?: number): AIFSBroadcastRecipient;
 
   getUrgency(): Broadcast.UrgencyType;
   setUrgency(value: Broadcast.UrgencyType): Broadcast;
@@ -220,12 +365,11 @@ export namespace Broadcast {
   export type AsObject = {
     broadcastId: number,
     type: Broadcast.BroadcastType,
-    title: string,
     content: string,
     creationDate?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     deadline?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     creator?: User.AsObject,
-    recipientsList: Array<BroadcastRecipient.AsObject>,
+    recipientsList: Array<AIFSBroadcastRecipient.AsObject>,
     urgency: Broadcast.UrgencyType,
   }
 
@@ -238,6 +382,30 @@ export namespace Broadcast {
     LOW = 0,
     MEDIUM = 1,
     HIGH = 2,
+  }
+}
+
+export class AIFSBroadcastRecipient extends jspb.Message {
+  getRecipientList(): Array<BroadcastRecipient>;
+  setRecipientList(value: Array<BroadcastRecipient>): AIFSBroadcastRecipient;
+  clearRecipientList(): AIFSBroadcastRecipient;
+  addRecipient(value?: BroadcastRecipient, index?: number): BroadcastRecipient;
+
+  getAifsId(): number;
+  setAifsId(value: number): AIFSBroadcastRecipient;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AIFSBroadcastRecipient.AsObject;
+  static toObject(includeInstance: boolean, msg: AIFSBroadcastRecipient): AIFSBroadcastRecipient.AsObject;
+  static serializeBinaryToWriter(message: AIFSBroadcastRecipient, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AIFSBroadcastRecipient;
+  static deserializeBinaryFromReader(message: AIFSBroadcastRecipient, reader: jspb.BinaryReader): AIFSBroadcastRecipient;
+}
+
+export namespace AIFSBroadcastRecipient {
+  export type AsObject = {
+    recipientList: Array<BroadcastRecipient.AsObject>,
+    aifsId: number,
   }
 }
 
@@ -335,15 +503,15 @@ export namespace BroadcastFilter {
   export enum Field { 
     BROADCAST_ID = 0,
     TYPE = 1,
-    TITLE = 2,
-    CONTENT = 3,
-    CREATION_DATE = 4,
-    DEADLINE = 5,
-    CREATOR_ID = 6,
-    RECEIPEIENT_ID = 7,
-    NUM_RECEIPIENTS = 8,
-    URGENCY = 9,
-    AIFS_ID = 10,
+    CONTENT = 2,
+    CREATION_DATE = 3,
+    DEADLINE = 4,
+    CREATOR_ID = 5,
+    RECEIPEIENT_ID = 6,
+    NUM_RECEIPIENTS = 7,
+    URGENCY = 8,
+    AIFS_ID = 9,
+    BROADCAST_RECIPIENT_TABLE_ID = 10,
   }
 }
 
@@ -400,6 +568,277 @@ export namespace OrderByBroadcast {
   export type AsObject = {
     field: BroadcastFilter.Field,
     orderBy: OrderBy,
+  }
+}
+
+export class Roster extends jspb.Message {
+  getRosteringId(): number;
+  setRosteringId(value: number): Roster;
+
+  getAifsId(): number;
+  setAifsId(value: number): Roster;
+
+  getStartTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setStartTime(value?: google_protobuf_timestamp_pb.Timestamp): Roster;
+  hasStartTime(): boolean;
+  clearStartTime(): Roster;
+
+  getEndTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setEndTime(value?: google_protobuf_timestamp_pb.Timestamp): Roster;
+  hasEndTime(): boolean;
+  clearEndTime(): Roster;
+
+  getClientsList(): Array<AIFSClientRoster>;
+  setClientsList(value: Array<AIFSClientRoster>): Roster;
+  clearClientsList(): Roster;
+  addClients(value?: AIFSClientRoster, index?: number): AIFSClientRoster;
+
+  getGuardAssignedList(): Array<RosterAssignement>;
+  setGuardAssignedList(value: Array<RosterAssignement>): Roster;
+  clearGuardAssignedList(): Roster;
+  addGuardAssigned(value?: RosterAssignement, index?: number): RosterAssignement;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Roster.AsObject;
+  static toObject(includeInstance: boolean, msg: Roster): Roster.AsObject;
+  static serializeBinaryToWriter(message: Roster, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Roster;
+  static deserializeBinaryFromReader(message: Roster, reader: jspb.BinaryReader): Roster;
+}
+
+export namespace Roster {
+  export type AsObject = {
+    rosteringId: number,
+    aifsId: number,
+    startTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    endTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    clientsList: Array<AIFSClientRoster.AsObject>,
+    guardAssignedList: Array<RosterAssignement.AsObject>,
+  }
+}
+
+export class AIFSClientRoster extends jspb.Message {
+  getAifsClientRosterId(): number;
+  setAifsClientRosterId(value: number): AIFSClientRoster;
+
+  getClient(): Client | undefined;
+  setClient(value?: Client): AIFSClientRoster;
+  hasClient(): boolean;
+  clearClient(): AIFSClientRoster;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AIFSClientRoster.AsObject;
+  static toObject(includeInstance: boolean, msg: AIFSClientRoster): AIFSClientRoster.AsObject;
+  static serializeBinaryToWriter(message: AIFSClientRoster, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AIFSClientRoster;
+  static deserializeBinaryFromReader(message: AIFSClientRoster, reader: jspb.BinaryReader): AIFSClientRoster;
+}
+
+export namespace AIFSClientRoster {
+  export type AsObject = {
+    aifsClientRosterId: number,
+    client?: Client.AsObject,
+  }
+}
+
+export class RosterAssignement extends jspb.Message {
+  getRosterAssignmentId(): number;
+  setRosterAssignmentId(value: number): RosterAssignement;
+
+  getGuardAssigned(): User | undefined;
+  setGuardAssigned(value?: User): RosterAssignement;
+  hasGuardAssigned(): boolean;
+  clearGuardAssigned(): RosterAssignement;
+
+  getCustomStartTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setCustomStartTime(value?: google_protobuf_timestamp_pb.Timestamp): RosterAssignement;
+  hasCustomStartTime(): boolean;
+  clearCustomStartTime(): RosterAssignement;
+
+  getCustomEndTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setCustomEndTime(value?: google_protobuf_timestamp_pb.Timestamp): RosterAssignement;
+  hasCustomEndTime(): boolean;
+  clearCustomEndTime(): RosterAssignement;
+
+  getConfirmed(): boolean;
+  setConfirmed(value: boolean): RosterAssignement;
+
+  getAttended(): boolean;
+  setAttended(value: boolean): RosterAssignement;
+
+  getAttendanceTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setAttendanceTime(value?: google_protobuf_timestamp_pb.Timestamp): RosterAssignement;
+  hasAttendanceTime(): boolean;
+  clearAttendanceTime(): RosterAssignement;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RosterAssignement.AsObject;
+  static toObject(includeInstance: boolean, msg: RosterAssignement): RosterAssignement.AsObject;
+  static serializeBinaryToWriter(message: RosterAssignement, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RosterAssignement;
+  static deserializeBinaryFromReader(message: RosterAssignement, reader: jspb.BinaryReader): RosterAssignement;
+}
+
+export namespace RosterAssignement {
+  export type AsObject = {
+    rosterAssignmentId: number,
+    guardAssigned?: User.AsObject,
+    customStartTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    customEndTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    confirmed: boolean,
+    attended: boolean,
+    attendanceTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+  }
+}
+
+export class RosterResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): RosterResponse;
+  hasResponse(): boolean;
+  clearResponse(): RosterResponse;
+
+  getRoster(): Roster | undefined;
+  setRoster(value?: Roster): RosterResponse;
+  hasRoster(): boolean;
+  clearRoster(): RosterResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RosterResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RosterResponse): RosterResponse.AsObject;
+  static serializeBinaryToWriter(message: RosterResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RosterResponse;
+  static deserializeBinaryFromReader(message: RosterResponse, reader: jspb.BinaryReader): RosterResponse;
+}
+
+export namespace RosterResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    roster?: Roster.AsObject,
+  }
+}
+
+export class RosterFilter extends jspb.Message {
+  getField(): RosterFilter.Field;
+  setField(value: RosterFilter.Field): RosterFilter;
+
+  getComparisons(): Filter | undefined;
+  setComparisons(value?: Filter): RosterFilter;
+  hasComparisons(): boolean;
+  clearComparisons(): RosterFilter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RosterFilter.AsObject;
+  static toObject(includeInstance: boolean, msg: RosterFilter): RosterFilter.AsObject;
+  static serializeBinaryToWriter(message: RosterFilter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RosterFilter;
+  static deserializeBinaryFromReader(message: RosterFilter, reader: jspb.BinaryReader): RosterFilter;
+}
+
+export namespace RosterFilter {
+  export type AsObject = {
+    field: RosterFilter.Field,
+    comparisons?: Filter.AsObject,
+  }
+
+  export enum Field { 
+    ROSTER_ID = 0,
+    ROSTER_ASSIGNMENT_ID = 1,
+    ROSTER_AIFS_CLIENT_ID = 2,
+    AIFS_ID = 3,
+    GUARD_ASSIGNED_ID = 4,
+    CLIENT_ID = 5,
+    GUARD_ASSIGNMENT_CONFIRMATION = 6,
+    GUARD_ASSIGNMENT_ATTENDED = 7,
+  }
+}
+
+export class RosterQuery extends jspb.Message {
+  getFiltersList(): Array<RosterFilter>;
+  setFiltersList(value: Array<RosterFilter>): RosterQuery;
+  clearFiltersList(): RosterQuery;
+  addFilters(value?: RosterFilter, index?: number): RosterFilter;
+
+  getLimit(): number;
+  setLimit(value: number): RosterQuery;
+
+  getSkip(): number;
+  setSkip(value: number): RosterQuery;
+
+  getOrderBy(): OrderByRoster | undefined;
+  setOrderBy(value?: OrderByRoster): RosterQuery;
+  hasOrderBy(): boolean;
+  clearOrderBy(): RosterQuery;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RosterQuery.AsObject;
+  static toObject(includeInstance: boolean, msg: RosterQuery): RosterQuery.AsObject;
+  static serializeBinaryToWriter(message: RosterQuery, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RosterQuery;
+  static deserializeBinaryFromReader(message: RosterQuery, reader: jspb.BinaryReader): RosterQuery;
+}
+
+export namespace RosterQuery {
+  export type AsObject = {
+    filtersList: Array<RosterFilter.AsObject>,
+    limit: number,
+    skip: number,
+    orderBy?: OrderByRoster.AsObject,
+  }
+}
+
+export class OrderByRoster extends jspb.Message {
+  getField(): RosterFilter.Field;
+  setField(value: RosterFilter.Field): OrderByRoster;
+
+  getOrderBy(): OrderBy;
+  setOrderBy(value: OrderBy): OrderByRoster;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OrderByRoster.AsObject;
+  static toObject(includeInstance: boolean, msg: OrderByRoster): OrderByRoster.AsObject;
+  static serializeBinaryToWriter(message: OrderByRoster, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OrderByRoster;
+  static deserializeBinaryFromReader(message: OrderByRoster, reader: jspb.BinaryReader): OrderByRoster;
+}
+
+export namespace OrderByRoster {
+  export type AsObject = {
+    field: RosterFilter.Field,
+    orderBy: OrderBy,
+  }
+}
+
+export class AvailabilityQuery extends jspb.Message {
+  getStartTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setStartTime(value?: google_protobuf_timestamp_pb.Timestamp): AvailabilityQuery;
+  hasStartTime(): boolean;
+  clearStartTime(): AvailabilityQuery;
+
+  getEndTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setEndTime(value?: google_protobuf_timestamp_pb.Timestamp): AvailabilityQuery;
+  hasEndTime(): boolean;
+  clearEndTime(): AvailabilityQuery;
+
+  getLimit(): number;
+  setLimit(value: number): AvailabilityQuery;
+
+  getSkip(): number;
+  setSkip(value: number): AvailabilityQuery;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AvailabilityQuery.AsObject;
+  static toObject(includeInstance: boolean, msg: AvailabilityQuery): AvailabilityQuery.AsObject;
+  static serializeBinaryToWriter(message: AvailabilityQuery, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AvailabilityQuery;
+  static deserializeBinaryFromReader(message: AvailabilityQuery, reader: jspb.BinaryReader): AvailabilityQuery;
+}
+
+export namespace AvailabilityQuery {
+  export type AsObject = {
+    startTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    endTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    limit: number,
+    skip: number,
   }
 }
 
