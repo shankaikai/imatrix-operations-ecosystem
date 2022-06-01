@@ -67,6 +67,11 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 	fmt.Println("Getting Broadcasts...")
 	broadcasts := make([]*pb.Broadcast, 0)
 
+	// Set default limit if needed
+	if query.Limit == 0 {
+		query.Limit = DEFAULT_LIMIT
+	}
+
 	// Join the broadcast and recipient tables in order to
 	// easily filter conditions relating to both tables together.
 	// Conditions that are specified in the broadcast query

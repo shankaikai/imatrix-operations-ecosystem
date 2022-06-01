@@ -11,6 +11,7 @@ import {
   Broadcast,
   BroadcastQuery,
   BroadcastRecipient,
+  BroadcastResponse,
 } from "../proto/operations_ecosys_pb";
 
 interface BroadcastContextInterface {
@@ -49,10 +50,11 @@ export function BroadcastProvider({ children }: BroadcastProviderProps) {
     const query = new BroadcastQuery();
     query.setSkip(broadcasts.length);
 
-    const stream = client.findBroadcasts(query, {});
+    const stream = client.findBroadcasts(query);
 
     // On every data received, add it to the state
-    stream.on("data", (response) => {
+    stream.on("data", (response: BroadcastResponse) => {
+      console.log(response);
       console.log(response.getBroadcast());
       setBroadcasts((oldState) => [...oldState, response.getBroadcast()!]);
     });

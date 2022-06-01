@@ -9,22 +9,23 @@ services:
       - "10000:10000"
       - "8080:8080"
       - "8001:8001"
-
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    stdin_open: true
-    ports:
-      - "3000:3000"
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    stdin_open: true
-    ports:
       - "9090:9090"
-      - "29139:29139"
-    env_file:
-      - .env
+
+  # client:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   stdin_open: true
+  #   ports:
+  #     - "3000:3000"
+
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   stdin_open: true
+  #   ports:
+  #     - "9090:9090"
+  #     - "29139:29139"
+  #   env_file:
+  #     - .env
