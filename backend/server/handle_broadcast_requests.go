@@ -6,6 +6,7 @@ import (
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"context"
 )
@@ -14,6 +15,11 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 	res := pb.Response{Type: pb.Response_ACK}
 
 	getDefaultRecipients(broadcast)
+
+	// Add creation datetime
+	broadcast.CreationDate = timestamppb.Now()
+	// TODO: define deadline
+	broadcast.Deadline = timestamppb.Now()
 
 	pk, err := db_pck.InsertBroadcast(
 		s.db,
