@@ -25,5 +25,6 @@ services:
     stdin_open: true
     ports:
       - "9090:9090"
+      - "29139:29139"
     env_file:
       - .env
