@@ -16,7 +16,7 @@ import (
 // respective table as well.
 // Returns the primary key of the main broadcast and errors if any.
 func InsertBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (int64, error) {
-	fmt.Println("Inserting Broadcast", broadcast.BroadcastId, broadcast.Title)
+	fmt.Println("Inserting Broadcast", broadcast.BroadcastId)
 
 	// Create and insert main broadcast first and get it's pk
 	bcTbFields := getBroadcastTableFields()
@@ -139,6 +139,7 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 			&recipient.Acknowledged,
 			&recipient.Rejected,
 			&lastRepliedString,
+			&recipient.AifsId,
 		)
 
 		if err != nil {

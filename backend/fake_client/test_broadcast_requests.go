@@ -34,7 +34,7 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 		}
 	}
 
-	fmt.Println("Inserting Broadcast:", broadcast.Title)
+	fmt.Println("Inserting Broadcast:", broadcast.BroadcastId)
 	client, conn := createBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
@@ -56,7 +56,7 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 func InsertBroadcastAIFSID(serverAddr *string, serverPort *int) int64 {
 	broadcast := createFakeBroadcast(1, false)
 
-	fmt.Println("Inserting Broadcast through AIFS id:", broadcast.Title)
+	fmt.Println("Inserting Broadcast through AIFS id:", broadcast.BroadcastId)
 	client, conn := createBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
@@ -80,7 +80,6 @@ func ConsolidatedFindBroadcastTest(serverAddr *string, serverPort *int) {
 	FindBroadcastsNoFilter(serverAddr, serverPort)
 	// FindBroadcastsIdFilter(serverAddr, serverPort)
 	// FindBroadcastsTypeFilter(serverAddr, serverPort)
-	// FindBroadcastsTitleFilter(serverAddr, serverPort)
 	// FindBroadcastsContentFilter(serverAddr, serverPort)
 	// FindBroadcastsCreateDateFilter(serverAddr, serverPort)
 	// FindBroadcastsDeadlineFilter(serverAddr, serverPort)
@@ -112,17 +111,6 @@ func FindBroadcastsTypeFilter(serverAddr *string, serverPort *int) {
 
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: pb.Broadcast_ASSIGNMENT.String()}
 	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_TYPE}
-
-	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
-
-	FindBroadcastsTest(serverAddr, serverPort, query)
-}
-
-func FindBroadcastsTitleFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding broadcasts title filter")
-
-	com := &pb.Filter{Comparison: pb.Filter_CONTAINS, Value: "name1"}
-	filter := &pb.BroadcastFilter{Comparisons: com, Field: pb.BroadcastFilter_TITLE}
 
 	query := &pb.BroadcastQuery{Limit: 4, Filters: []*pb.BroadcastFilter{filter}}
 
@@ -324,7 +312,7 @@ func UpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broa
 }
 
 func DeleteBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
-	fmt.Println("Deleting Broadcast:", broadcast.BroadcastId, broadcast.Title)
+	fmt.Println("Deleting Broadcast:", broadcast.BroadcastId)
 	client, conn := createBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 

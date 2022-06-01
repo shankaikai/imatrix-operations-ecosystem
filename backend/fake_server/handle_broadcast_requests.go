@@ -71,7 +71,6 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 		broadcast := &pb.Broadcast{
 			BroadcastId:  3,
 			Type:         pb.Broadcast_ANNOUNCEMENT,
-			Title:        "test name " + strconv.Itoa(i),
 			Content:      "email" + strconv.Itoa(i),
 			CreationDate: nil,
 			Deadline:     nil,

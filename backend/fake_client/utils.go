@@ -49,7 +49,6 @@ func createFakeBroadcast(id int, hasRecipient bool) *pb.Broadcast {
 	return &pb.Broadcast{
 		BroadcastId:  int64(id),
 		Type:         pb.Broadcast_ANNOUNCEMENT,
-		Title:        "title name" + strconv.Itoa(id),
 		Content:      "content" + strconv.Itoa(id),
 		CreationDate: timestamppb.Now(),
 		Deadline:     &timestamppb.Timestamp{Seconds: int64(time.Now().Add(30).Unix())},

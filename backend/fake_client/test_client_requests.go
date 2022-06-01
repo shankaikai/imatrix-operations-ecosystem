@@ -14,7 +14,7 @@ func TestAdminClientClient(serverAddr *string, serverPort *int) {
 	client.ClientId = pk
 	ConsolidatedFindClientTest(serverAddr, serverPort)
 	UpdateClientTest(serverAddr, serverPort, client)
-	DeleteClientTest(serverAddr, serverPort, &pb.Client{ClientId: 4})
+	DeleteClientTest(serverAddr, serverPort, &pb.Client{ClientId: 90})
 }
 
 func InsertClient(serverAddr *string, serverPort *int, client *pb.Client) int64 {

@@ -182,15 +182,14 @@ message Broadcast {
     // Broadcast IDs are only useful for the backend database. 
     int64 broadcast_id = 1;
     BroadcastType type = 2;
-    string title = 3;
-    string content = 4;
-    google.protobuf.Timestamp creation_date = 5;
-    google.protobuf.Timestamp deadline = 6;
+    string content = 3;
+    google.protobuf.Timestamp creation_date = 4;
+    google.protobuf.Timestamp deadline = 5;
     // The whole user fields does not need to be filled, 
     // as long as the user is identifiable.
-    User creator = 7;
-    repeated AIFSBroadcastRecipient recipients = 8;
-    UrgencyType urgency = 9;
+    User creator = 6;
+    repeated AIFSBroadcastRecipient recipients = 7;
+    UrgencyType urgency = 8;
     
     enum BroadcastType{
         ANNOUNCEMENT = 0;
@@ -234,19 +233,18 @@ message BroadcastFilter {
     enum Field{
         BROADCAST_ID = 0;
         TYPE = 1;
-        TITLE = 2;
-        CONTENT = 3;
-        CREATION_DATE = 4;
-        DEADLINE = 5;
+        CONTENT = 2;
+        CREATION_DATE = 3;
+        DEADLINE = 4;
         // Creator and recipient values should 
         // be the user id of these users
-        CREATOR_ID = 6;
+        CREATOR_ID = 5;
         // Note: Single recipient
-        RECEIPEIENT_ID = 7;
-        NUM_RECEIPIENTS = 8;
-        URGENCY = 9;
-        AIFS_ID = 10;
-        BROADCAST_RECIPIENT_TABLE_ID = 11;
+        RECEIPEIENT_ID = 6;
+        NUM_RECEIPIENTS = 7;
+        URGENCY = 8;
+        AIFS_ID = 9;
+        BROADCAST_RECIPIENT_TABLE_ID = 10;
     }
 }
 

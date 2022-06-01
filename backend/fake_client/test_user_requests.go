@@ -18,7 +18,7 @@ func TestAdminClientUser(serverAddr *string, serverPort *int) {
 	user.UserId = pk
 	ConsolidatedFindUserTest(serverAddr, serverPort)
 	UpdateUserTest(serverAddr, serverPort, user)
-	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: 4})
+	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
 }
 
 func InsertUser(serverAddr *string, serverPort *int, user *pb.User) int64 {
