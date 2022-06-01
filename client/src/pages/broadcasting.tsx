@@ -1,4 +1,4 @@
-import { Modal, Stack } from "@mantine/core";
+import { Modal, ScrollArea, Stack } from "@mantine/core";
 import type { NextPage } from "next";
 import { useState } from "react";
 import BroadcastFilter from "../components/BroadcastList/BroadcastFilter/BroadcastFilter";
@@ -20,18 +20,10 @@ const Broadcasting: NextPage = () => {
         onClose={() => setModalOpen(false)}
         title="Broadcast Details"
       >
-        <NewBroadcast />
+        <NewBroadcast setModelOpen={setModalOpen} />
       </Modal>
       <Stack spacing="xs">
-        <BroadcastFilter
-          search={search}
-          setSearch={setSearch}
-          selectValue={selectValue}
-          setSelectValue={setSelectValue}
-          filterValue={filterValue}
-          setFilterValue={setFilterValue}
-          setModalOpen={setModalOpen}
-        />
+        <BroadcastFilter setModalOpen={setModalOpen} />
         <BroadcastList />
       </Stack>
     </BroadcastProvider>

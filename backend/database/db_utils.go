@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"path/filepath"
 	"sync"
 	"time"
 
@@ -32,7 +31,7 @@ const (
 // The credentials of the database are stored in a .env file.
 func GetDB() *sql.DB {
 	// load .env file
-	envFilePath := filepath.Join("..", ".env")
+	envFilePath := ".env"
 	err := godotenv.Load(envFilePath)
 
 	if err != nil {

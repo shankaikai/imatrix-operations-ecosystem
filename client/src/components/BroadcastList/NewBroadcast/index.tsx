@@ -1,23 +1,53 @@
-import {
-  Button,
-  Group,
-  MultiSelect,
-  Stack, Textarea
-} from "@mantine/core";
-import React, { useState } from "react";
+import { Button, Group, MultiSelect, Stack, Textarea } from "@mantine/core";
+import React, { Dispatch, useState } from "react";
 import { Send } from "tabler-icons-react";
+import { submitNewBroadcast } from "../../../helpers/useBroadcastClient";
 
-export default function NewBroadcast() {
+interface NewBroadcastProps {
+  setModelOpen: Dispatch<boolean>;
+}
+
+export default function NewBroadcast({ setModelOpen }: NewBroadcastProps) {
   const [recipient, setRecipient] = useState<string[]>(["All"]);
-  const [urgency, setUrgency] = useState<string[]>(["All"]);
+  const [urgency, setUrgency] = useState<string[]>([]);
+  const [message, setMessage] = useState<string>("");
+
+  const handleSubmit = async () => {
+    console.log("Submitting new broadcast");
+
+    await submitNewBroadcast({
+      recipient,
+      urgency,
+      message,
+    });
+
+    // TODO: Loading overlay before closing modal
+    setModelOpen(false);
+  };
 
   return (
     <form>
       <Stack>
         <MultiSelect
-          data={["All", "AIFS 1", "AIFS 2", "AIFS 3"]}
+          data={[
+            {
+              label: "All",
+              value: "all",
+            },
+            {
+              label: "AIFS 1",
+              value: "1",
+            },
+            {
+              label: "AIFS 2",
+              value: "2",
+            },
+            {
+              label: "AIFS 3",
+              value: "3",
+            },
+          ]}
           label="Recipients"
-          defaultValue={["All"]}
           clearButtonLabel="Clear selection"
           clearable
           value={recipient}
@@ -30,6 +60,8 @@ export default function NewBroadcast() {
           clearButtonLabel="Clear selection"
           clearable
           maxSelectedValues={1}
+          value={urgency}
+          onChange={setUrgency}
         />
         <Textarea
           label="Message"
@@ -37,9 +69,11 @@ export default function NewBroadcast() {
           autosize
           minRows={2}
           maxRows={5}
+          value={message}
+          onChange={(event) => setMessage(event.currentTarget.value)}
         />
         <Group position="center">
-          <Button leftIcon={<Send size={16} />} >
+          <Button leftIcon={<Send size={16} />} onClick={handleSubmit}>
             Submit
           </Button>
         </Group>

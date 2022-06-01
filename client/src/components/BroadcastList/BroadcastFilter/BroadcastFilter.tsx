@@ -1,33 +1,24 @@
-import {
-  Group,
-  TextInput,
-  Select,
-  createStyles,
-  Text,
-  Button,
-} from "@mantine/core";
+import { Button, Group, Select, Text, TextInput } from "@mantine/core";
+import React, { Dispatch } from "react";
 import { Plus, Search } from "tabler-icons-react";
-import React, { Dispatch, useState } from "react";
+import { useBroadcastClient } from "../../../helpers/useBroadcastClient";
 
 interface BroadcastFilterProps {
-  search: string;
-  setSearch: Dispatch<string>;
-  selectValue: string;
-  setSelectValue: Dispatch<string>;
-  filterValue: string;
-  setFilterValue: Dispatch<string>;
   setModalOpen: Dispatch<boolean>;
 }
 
 export default function BroadcastFilter({
-  search,
-  setSearch,
-  selectValue,
-  setSelectValue,
-  filterValue,
-  setFilterValue,
   setModalOpen,
 }: BroadcastFilterProps) {
+  const {
+    search,
+    setSearch,
+    selectValue,
+    setSelectValue,
+    filterValue,
+    setFilterValue,
+  } = useBroadcastClient();
+
   const handleNewClick = () => {
     setModalOpen(true);
   };
@@ -40,15 +31,18 @@ export default function BroadcastFilter({
         display: "sticky",
       }}
     >
-      <TextInput
-        icon={<Search size={16} />}
-        placeholder="Search"
-        radius="lg"
-        size="xs"
-        style={{ flex: "1 1 auto" }}
-        value={search}
-        onChange={(event) => setSearch(event.currentTarget.value)}
-      />
+      {setSearch && (
+        <TextInput
+          icon={<Search size={16} />}
+          placeholder="Search"
+          radius="lg"
+          size="xs"
+          style={{ flex: "1 1 auto" }}
+          value={search}
+          onChange={(event) => setSearch(event.currentTarget.value)}
+        />
+      )}
+
       <Button
         size="xs"
         radius="xl"

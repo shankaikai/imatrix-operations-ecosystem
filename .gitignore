@@ -1,5 +1,8 @@
 .env
 
+# backend
+backend/.env
+
 # client
 client/.next
 client/srcnode_modules

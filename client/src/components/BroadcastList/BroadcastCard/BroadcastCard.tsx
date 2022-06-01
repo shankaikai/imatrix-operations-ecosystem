@@ -8,6 +8,7 @@ import {
 } from "@mantine/core";
 import React from "react";
 import { Broadcast } from "../../../proto/operations_ecosys_pb";
+import AcknowledgementToolTip from "./AcknowledgementToolTip";
 
 interface BroadcastCardProps {
   broadcast: Broadcast;
@@ -32,21 +33,9 @@ export default function BroadcastCard({ broadcast }: BroadcastCardProps) {
       <Group position="apart">
         <Text>{broadcast.getContent()}</Text>
         <Group>
-          <Tooltip label={"Xavier, Emily, Hannah"}>
-            <Badge variant="filled" color="gray">
-              AIFS 1
-            </Badge>
-          </Tooltip>
-          <Tooltip label={"Xavier, Emily, Hannah"}>
-            <Badge variant="filled" color="gray">
-              AIFS 2
-            </Badge>
-          </Tooltip>
-          <Tooltip label={"Xavier, Emily, Hannah"}>
-            <Badge variant="filled" color="green">
-              AIFS 3
-            </Badge>
-          </Tooltip>
+          <AcknowledgementToolTip />
+          <AcknowledgementToolTip />
+          <AcknowledgementToolTip />
         </Group>
       </Group>
       <Text
