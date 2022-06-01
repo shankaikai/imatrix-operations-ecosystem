@@ -762,7 +762,7 @@ func (c *rosterServicesClient) GetAvailableUsers(ctx context.Context, in *Availa
 }
 
 type RosterServices_GetAvailableUsersClient interface {
-	Recv() (*User, error)
+	Recv() (*EmployeeEvaluationResponse, error)
 	grpc.ClientStream
 }
 
@@ -770,8 +770,8 @@ type rosterServicesGetAvailableUsersClient struct {
 	grpc.ClientStream
 }
 
-func (x *rosterServicesGetAvailableUsersClient) Recv() (*User, error) {
-	m := new(User)
+func (x *rosterServicesGetAvailableUsersClient) Recv() (*EmployeeEvaluationResponse, error) {
+	m := new(EmployeeEvaluationResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -918,7 +918,7 @@ func _RosterServices_GetAvailableUsers_Handler(srv interface{}, stream grpc.Serv
 }
 
 type RosterServices_GetAvailableUsersServer interface {
-	Send(*User) error
+	Send(*EmployeeEvaluationResponse) error
 	grpc.ServerStream
 }
 
@@ -926,7 +926,7 @@ type rosterServicesGetAvailableUsersServer struct {
 	grpc.ServerStream
 }
 
-func (x *rosterServicesGetAvailableUsersServer) Send(m *User) error {
+func (x *rosterServicesGetAvailableUsersServer) Send(m *EmployeeEvaluationResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 

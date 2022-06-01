@@ -47,7 +47,7 @@ service RosterServices{
     rpc UpdateRoster(Roster) returns (Response) {}
     rpc DeleteRoster(Roster) returns (Response) {}
     rpc FindRosters(RosterQuery) returns (stream RosterResponse) {}
-    rpc GetAvailableUsers(AvailabilityQuery) returns (stream User) {}
+    rpc GetAvailableUsers(AvailabilityQuery) returns (stream EmployeeEvaluationResponse) {}
 }
 
 // Admin
@@ -348,7 +348,6 @@ message OrderByRoster{
     OrderBy order_by = 2;
 }
 
-
 /***************************************************************************
 *                 ROSTERING AVAILABILITY MESSAGES                          *
 ****************************************************************************/
@@ -372,6 +371,23 @@ message AvailabilityQuery {
     int64 skip = 4;
 }
 
+/***************************************************************************
+*                ROSTERING EMPLOYEE EVALUATION MESSAGES                    *
+****************************************************************************/
+message EmployeeEvaluationResponse {
+    Response response = 1;
+    EmployeeEvaluation employee = 2;
+}
+
+message EmployeeEvaluation {
+    User employee = 1;
+    float employee_score = 2;
+
+    // This is used if it is needed to determine 
+    // if the employee is available within a previously 
+    // specified time.
+    bool is_available = 3; 
+}
 
 /***************************************************************************
 *                              COMMON MESSAGES                              *

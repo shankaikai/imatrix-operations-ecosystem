@@ -111,6 +111,11 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	// Join the roster and assignment tables in order to
 	// easily filter conditions relating to both tables together.
 
+	// Set default query limits if needed
+	if query.Limit == 0 {
+		query.Limit = DEFAULT_LIMIT
+	}
+
 	// We ignore any filters to do with the client aifs table first
 	requestedLimit := query.Limit
 	clientQueries := removeRosteringClientQueries(query)

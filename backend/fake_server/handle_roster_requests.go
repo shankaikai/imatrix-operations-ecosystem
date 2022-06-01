@@ -2,6 +2,7 @@ package fake_server
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 
 	pb "capstone.operations_ecosystem/backend/proto"
@@ -10,10 +11,21 @@ import (
 	"context"
 )
 
-func (s *Server) AddRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+func (s *Server) AddRoster(stream pb.RosterServices_AddRosterServer) error {
 	fmt.Println("AddRoster")
 	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
-	return &res, nil
+
+	for {
+		_, err := stream.Recv()
+
+		if err == io.EOF {
+			return stream.SendAndClose(&res)
+		}
+
+		if err != nil {
+			return err
+		}
+	}
 }
 
 func (s *Server) UpdateRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
@@ -81,6 +93,44 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 		rosterRes.Roster = roster
 
 		if err := stream.Send(&rosterRes); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.RosterServices_GetAvailableUsersServer) error {
+	fmt.Println("GetAvailableUsers")
+
+	res := pb.Response{Type: pb.Response_ACK}
+	employeeEvalRes := pb.EmployeeEvaluationResponse{Response: &res}
+
+	employees := make([]*pb.User, 0)
+
+	for i := 0; i < 3; i++ {
+		employees = append(employees, &pb.User{
+			UserId:          int64(i),
+			UserType:        pb.User_ISPECIALIST,
+			Name:            "test name",
+			Email:           "email",
+			PhoneNumber:     "1232",
+			TelegramHandle:  "sfds",
+			UserSecurityImg: "dsfds",
+			IsPartTimer:     false,
+		})
+	}
+
+	for i := 0; i < 3; i++ {
+		employeeEval := &pb.EmployeeEvaluation{
+			Employee:      employees[i],
+			IsAvailable:   true,
+			EmployeeScore: float32((i + 1) * 4),
+		}
+
+		employeeEvalRes.Employee = employeeEval
+
+		if err := stream.Send(&employeeEvalRes); err != nil {
 			return err
 		}
 	}

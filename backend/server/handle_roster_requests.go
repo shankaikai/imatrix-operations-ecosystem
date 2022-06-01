@@ -1,97 +1,145 @@
 // TODO: Add validation
 package server
 
-// func (s *Server) AddRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
-// 	res := pb.Response{Type: pb.Response_ACK}
+import (
+	"context"
+	"fmt"
+	"io"
 
-// 	getDefaultRecipients(broadcast)
+	db_pck "capstone.operations_ecosystem/backend/database"
+	pb "capstone.operations_ecosystem/backend/proto"
+)
 
-// 	// Add creation datetime
-// 	broadcast.CreationDate = timestamppb.Now()
-// 	// TODO: define deadline
-// 	broadcast.Deadline = timestamppb.Now()
+func (s *Server) AddRoster(stream pb.RosterServices_AddRosterServer) error {
+	fmt.Println("AddRoster")
+	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 
-// 	pk, err := db_pck.InsertBroadcast(
-// 		s.db,
-// 		broadcast,
-// 		s.dbLock,
-// 	)
+	for {
+		roster, err := stream.Recv()
 
-// 	if err != nil {
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 	}
+		if err == io.EOF {
+			return stream.SendAndClose(&res)
+		}
 
-// 	res.PrimaryKey = int64(pk)
+		if err != nil {
+			return err
+		}
 
-// 	return &res, nil
-// }
+		pk, err := db_pck.InsertRoster(
+			s.db,
+			roster,
+			s.dbLock,
+		)
 
-// func (s *Server) UpdateRoster(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-// 	res := pb.Response{Type: pb.Response_ACK}
-// 	numAffected, err := db_pck.UpdateBroadcast(
-// 		s.db,
-// 		broadcast,
-// 		s.dbLock,
-// 	)
+		if err != nil {
+			res.Type = pb.Response_ERROR
+			res.ErrorMessage = err.Error()
+		}
 
-// 	if err != nil {
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 	} else {
-// 		fmt.Println(numAffected, "broadcasts were updated.")
-// 	}
+		res.PrimaryKey = int64(pk)
+	}
+}
 
-// 	return &res, nil
-// }
+func (s *Server) UpdateRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+	res := pb.Response{Type: pb.Response_ACK}
+	numAffected, err := db_pck.UpdateRoster(
+		s.db,
+		roster,
+		s.dbLock,
+	)
 
-// func (s *Server) DeleteRoster(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-// 	res := pb.Response{Type: pb.Response_ACK}
-// 	numDel, err := db_pck.DeleteBroadcast(
-// 		s.db,
-// 		broadcast,
-// 	)
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numAffected, "rosters were updated.")
+	}
 
-// 	if err != nil {
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 	} else {
-// 		fmt.Println(numDel, "broadcasts were deleted.")
-// 	}
+	return &res, nil
+}
 
-// 	return &res, nil
-// }
+func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+	res := pb.Response{Type: pb.Response_ACK}
+	numDel, err := db_pck.DeleteRoster(
+		s.db,
+		roster,
+	)
 
-// func (s *Server) FindRosters(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
-// 	res := pb.Response{Type: pb.Response_ACK}
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numDel, "rosters were deleted.")
+	}
 
-// 	foundBroadcasts, err := db_pck.GetBroadcasts(
-// 		s.db,
-// 		query,
-// 	)
+	return &res, nil
+}
 
-// 	if err != nil {
-// 		broadcastRes := pb.BroadcastResponse{Response: &res}
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 		stream.Send(&broadcastRes)
+func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_FindRostersServer) error {
+	res := pb.Response{Type: pb.Response_ACK}
 
-// 	} else {
-// 		fmt.Println("FindBroadcasts: Found broadcasts to return")
-// 		fmt.Println(foundBroadcasts)
-// 		broadcastRes := pb.BroadcastResponse{Response: &res}
+	foundRosters, err := db_pck.GetRosters(
+		s.db,
+		query,
+	)
 
-// 		for _, broadcast := range foundBroadcasts {
-// 			broadcastRes.Broadcast = broadcast
-// 			if err := stream.Send(&broadcastRes); err != nil {
-// 				return err
-// 			}
-// 		}
-// 	}
+	if err != nil {
+		rosterRes := pb.RosterResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		stream.Send(&rosterRes)
 
-// 	return nil
-// }
+	} else {
+		fmt.Println("FindBroadcasts: Found broadcasts to return")
 
-// func GetAvailableUsers() {
+		rosterRes := pb.RosterResponse{Response: &res}
 
-// }
+		for _, roster := range foundRosters {
+			rosterRes.Roster = roster
+			if err := stream.Send(&rosterRes); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// TODO
+func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.RosterServices_GetAvailableUsersServer) error {
+	fmt.Println("GetAvailableUsers")
+
+	res := pb.Response{Type: pb.Response_ACK}
+	employeeEvalRes := pb.EmployeeEvaluationResponse{Response: &res}
+
+	employees := make([]*pb.User, 0)
+
+	for i := 0; i < 3; i++ {
+		employees = append(employees, &pb.User{
+			UserId:          int64(i),
+			UserType:        pb.User_ISPECIALIST,
+			Name:            "test name",
+			Email:           "email",
+			PhoneNumber:     "1232",
+			TelegramHandle:  "sfds",
+			UserSecurityImg: "dsfds",
+			IsPartTimer:     false,
+		})
+	}
+
+	for i := 0; i < 3; i++ {
+		employeeEval := &pb.EmployeeEvaluation{
+			Employee:      employees[i],
+			IsAvailable:   true,
+			EmployeeScore: float32((i + 1) * 4),
+		}
+
+		employeeEvalRes.Employee = employeeEval
+
+		if err := stream.Send(&employeeEvalRes); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
