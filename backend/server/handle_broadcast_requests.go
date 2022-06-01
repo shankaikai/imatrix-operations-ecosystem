@@ -100,20 +100,19 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 // change the recipients to be actual users
 // Modified the broadcast in place
 func getDefaultRecipients(broadcast *pb.Broadcast) {
-	newRecipients := make([]*pb.BroadcastRecipient, 0)
 	for _, rec := range broadcast.Recipients {
-		// Check if the recipient is an AIFS
-		if rec.Recipient == nil {
-			users := getFakeAIFSDuty(rec.AifsId)
-			for _, user := range users {
-				newRecipients = append(newRecipients, &pb.BroadcastRecipient{
-					Recipient: user,
-					AifsId:    rec.AifsId,
-				})
-			}
+		newRecipients := make([]*pb.BroadcastRecipient, 0)
+
+		users := getFakeAIFSDuty(rec.AifsId)
+		for _, user := range users {
+			newRecipients = append(newRecipients, &pb.BroadcastRecipient{
+				Recipient: user,
+				AifsId:    rec.AifsId,
+			})
 		}
+
+		rec.Recipient = newRecipients
 	}
-	broadcast.Recipients = newRecipients
 }
 
 // TODO get actual roster for AIFS Groups

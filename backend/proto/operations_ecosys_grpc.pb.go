@@ -18,10 +18,16 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminServicesClient interface {
+	// User
 	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (AdminServices_FindUsersClient, error)
+	// Client
+	AddClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
+	UpdateClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
+	DeleteClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
+	FindClients(ctx context.Context, in *ClientQuery, opts ...grpc.CallOption) (AdminServices_FindClientsClient, error)
 }
 
 type adminServicesClient struct {
@@ -91,14 +97,79 @@ func (x *adminServicesFindUsersClient) Recv() (*UsersResponse, error) {
 	return m, nil
 }
 
+func (c *adminServicesClient) AddClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/AddClient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServicesClient) UpdateClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/UpdateClient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServicesClient) DeleteClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/DeleteClient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServicesClient) FindClients(ctx context.Context, in *ClientQuery, opts ...grpc.CallOption) (AdminServices_FindClientsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &AdminServices_ServiceDesc.Streams[1], "/operations_ecosys.AdminServices/FindClients", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &adminServicesFindClientsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type AdminServices_FindClientsClient interface {
+	Recv() (*ClientResponse, error)
+	grpc.ClientStream
+}
+
+type adminServicesFindClientsClient struct {
+	grpc.ClientStream
+}
+
+func (x *adminServicesFindClientsClient) Recv() (*ClientResponse, error) {
+	m := new(ClientResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // AdminServicesServer is the server API for AdminServices service.
 // All implementations must embed UnimplementedAdminServicesServer
 // for forward compatibility
 type AdminServicesServer interface {
+	// User
 	AddUser(context.Context, *User) (*Response, error)
 	UpdateUser(context.Context, *User) (*Response, error)
 	DeleteUser(context.Context, *User) (*Response, error)
 	FindUsers(*UserQuery, AdminServices_FindUsersServer) error
+	// Client
+	AddClient(context.Context, *Client) (*Response, error)
+	UpdateClient(context.Context, *Client) (*Response, error)
+	DeleteClient(context.Context, *Client) (*Response, error)
+	FindClients(*ClientQuery, AdminServices_FindClientsServer) error
 	mustEmbedUnimplementedAdminServicesServer()
 }
 
@@ -117,6 +188,18 @@ func (UnimplementedAdminServicesServer) DeleteUser(context.Context, *User) (*Res
 }
 func (UnimplementedAdminServicesServer) FindUsers(*UserQuery, AdminServices_FindUsersServer) error {
 	return status.Errorf(codes.Unimplemented, "method FindUsers not implemented")
+}
+func (UnimplementedAdminServicesServer) AddClient(context.Context, *Client) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddClient not implemented")
+}
+func (UnimplementedAdminServicesServer) UpdateClient(context.Context, *Client) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateClient not implemented")
+}
+func (UnimplementedAdminServicesServer) DeleteClient(context.Context, *Client) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteClient not implemented")
+}
+func (UnimplementedAdminServicesServer) FindClients(*ClientQuery, AdminServices_FindClientsServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindClients not implemented")
 }
 func (UnimplementedAdminServicesServer) mustEmbedUnimplementedAdminServicesServer() {}
 
@@ -206,6 +289,81 @@ func (x *adminServicesFindUsersServer) Send(m *UsersResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _AdminServices_AddClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Client)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServicesServer).AddClient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.AdminServices/AddClient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServicesServer).AddClient(ctx, req.(*Client))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminServices_UpdateClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Client)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServicesServer).UpdateClient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.AdminServices/UpdateClient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServicesServer).UpdateClient(ctx, req.(*Client))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminServices_DeleteClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Client)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServicesServer).DeleteClient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.AdminServices/DeleteClient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServicesServer).DeleteClient(ctx, req.(*Client))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminServices_FindClients_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ClientQuery)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AdminServicesServer).FindClients(m, &adminServicesFindClientsServer{stream})
+}
+
+type AdminServices_FindClientsServer interface {
+	Send(*ClientResponse) error
+	grpc.ServerStream
+}
+
+type adminServicesFindClientsServer struct {
+	grpc.ServerStream
+}
+
+func (x *adminServicesFindClientsServer) Send(m *ClientResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // AdminServices_ServiceDesc is the grpc.ServiceDesc for AdminServices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -225,11 +383,28 @@ var AdminServices_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteUser",
 			Handler:    _AdminServices_DeleteUser_Handler,
 		},
+		{
+			MethodName: "AddClient",
+			Handler:    _AdminServices_AddClient_Handler,
+		},
+		{
+			MethodName: "UpdateClient",
+			Handler:    _AdminServices_UpdateClient_Handler,
+		},
+		{
+			MethodName: "DeleteClient",
+			Handler:    _AdminServices_DeleteClient_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "FindUsers",
 			Handler:       _AdminServices_FindUsers_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "FindClients",
+			Handler:       _AdminServices_FindClients_Handler,
 			ServerStreams: true,
 		},
 	},
@@ -458,6 +633,333 @@ var BroadcastServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "FindBroadcasts",
 			Handler:       _BroadcastServices_FindBroadcasts_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "proto/operations_ecosys.proto",
+}
+
+// RosterServicesClient is the client API for RosterServices service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type RosterServicesClient interface {
+	// Add multiple rosters for different AIFS at the same time
+	AddRoster(ctx context.Context, opts ...grpc.CallOption) (RosterServices_AddRosterClient, error)
+	// Note that this update does not update the roster's guard's inner status
+	// such as the acknowledgement or attended status but only if the guard
+	// is part of the roster.
+	UpdateRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error)
+	DeleteRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error)
+	FindRosters(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRostersClient, error)
+	GetAvailableUsers(ctx context.Context, in *AvailabilityQuery, opts ...grpc.CallOption) (RosterServices_GetAvailableUsersClient, error)
+}
+
+type rosterServicesClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewRosterServicesClient(cc grpc.ClientConnInterface) RosterServicesClient {
+	return &rosterServicesClient{cc}
+}
+
+func (c *rosterServicesClient) AddRoster(ctx context.Context, opts ...grpc.CallOption) (RosterServices_AddRosterClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[0], "/operations_ecosys.RosterServices/AddRoster", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &rosterServicesAddRosterClient{stream}
+	return x, nil
+}
+
+type RosterServices_AddRosterClient interface {
+	Send(*Roster) error
+	CloseAndRecv() (*Response, error)
+	grpc.ClientStream
+}
+
+type rosterServicesAddRosterClient struct {
+	grpc.ClientStream
+}
+
+func (x *rosterServicesAddRosterClient) Send(m *Roster) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *rosterServicesAddRosterClient) CloseAndRecv() (*Response, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(Response)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *rosterServicesClient) UpdateRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.RosterServices/UpdateRoster", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rosterServicesClient) DeleteRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.RosterServices/DeleteRoster", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rosterServicesClient) FindRosters(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRostersClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[1], "/operations_ecosys.RosterServices/FindRosters", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &rosterServicesFindRostersClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type RosterServices_FindRostersClient interface {
+	Recv() (*RosterResponse, error)
+	grpc.ClientStream
+}
+
+type rosterServicesFindRostersClient struct {
+	grpc.ClientStream
+}
+
+func (x *rosterServicesFindRostersClient) Recv() (*RosterResponse, error) {
+	m := new(RosterResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *rosterServicesClient) GetAvailableUsers(ctx context.Context, in *AvailabilityQuery, opts ...grpc.CallOption) (RosterServices_GetAvailableUsersClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[2], "/operations_ecosys.RosterServices/GetAvailableUsers", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &rosterServicesGetAvailableUsersClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type RosterServices_GetAvailableUsersClient interface {
+	Recv() (*User, error)
+	grpc.ClientStream
+}
+
+type rosterServicesGetAvailableUsersClient struct {
+	grpc.ClientStream
+}
+
+func (x *rosterServicesGetAvailableUsersClient) Recv() (*User, error) {
+	m := new(User)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// RosterServicesServer is the server API for RosterServices service.
+// All implementations must embed UnimplementedRosterServicesServer
+// for forward compatibility
+type RosterServicesServer interface {
+	// Add multiple rosters for different AIFS at the same time
+	AddRoster(RosterServices_AddRosterServer) error
+	// Note that this update does not update the roster's guard's inner status
+	// such as the acknowledgement or attended status but only if the guard
+	// is part of the roster.
+	UpdateRoster(context.Context, *Roster) (*Response, error)
+	DeleteRoster(context.Context, *Roster) (*Response, error)
+	FindRosters(*RosterQuery, RosterServices_FindRostersServer) error
+	GetAvailableUsers(*AvailabilityQuery, RosterServices_GetAvailableUsersServer) error
+	mustEmbedUnimplementedRosterServicesServer()
+}
+
+// UnimplementedRosterServicesServer must be embedded to have forward compatible implementations.
+type UnimplementedRosterServicesServer struct {
+}
+
+func (UnimplementedRosterServicesServer) AddRoster(RosterServices_AddRosterServer) error {
+	return status.Errorf(codes.Unimplemented, "method AddRoster not implemented")
+}
+func (UnimplementedRosterServicesServer) UpdateRoster(context.Context, *Roster) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoster not implemented")
+}
+func (UnimplementedRosterServicesServer) DeleteRoster(context.Context, *Roster) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRoster not implemented")
+}
+func (UnimplementedRosterServicesServer) FindRosters(*RosterQuery, RosterServices_FindRostersServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindRosters not implemented")
+}
+func (UnimplementedRosterServicesServer) GetAvailableUsers(*AvailabilityQuery, RosterServices_GetAvailableUsersServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAvailableUsers not implemented")
+}
+func (UnimplementedRosterServicesServer) mustEmbedUnimplementedRosterServicesServer() {}
+
+// UnsafeRosterServicesServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to RosterServicesServer will
+// result in compilation errors.
+type UnsafeRosterServicesServer interface {
+	mustEmbedUnimplementedRosterServicesServer()
+}
+
+func RegisterRosterServicesServer(s grpc.ServiceRegistrar, srv RosterServicesServer) {
+	s.RegisterService(&RosterServices_ServiceDesc, srv)
+}
+
+func _RosterServices_AddRoster_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RosterServicesServer).AddRoster(&rosterServicesAddRosterServer{stream})
+}
+
+type RosterServices_AddRosterServer interface {
+	SendAndClose(*Response) error
+	Recv() (*Roster, error)
+	grpc.ServerStream
+}
+
+type rosterServicesAddRosterServer struct {
+	grpc.ServerStream
+}
+
+func (x *rosterServicesAddRosterServer) SendAndClose(m *Response) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *rosterServicesAddRosterServer) Recv() (*Roster, error) {
+	m := new(Roster)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _RosterServices_UpdateRoster_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Roster)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RosterServicesServer).UpdateRoster(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.RosterServices/UpdateRoster",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RosterServicesServer).UpdateRoster(ctx, req.(*Roster))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RosterServices_DeleteRoster_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Roster)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RosterServicesServer).DeleteRoster(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.RosterServices/DeleteRoster",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RosterServicesServer).DeleteRoster(ctx, req.(*Roster))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RosterServices_FindRosters_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(RosterQuery)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RosterServicesServer).FindRosters(m, &rosterServicesFindRostersServer{stream})
+}
+
+type RosterServices_FindRostersServer interface {
+	Send(*RosterResponse) error
+	grpc.ServerStream
+}
+
+type rosterServicesFindRostersServer struct {
+	grpc.ServerStream
+}
+
+func (x *rosterServicesFindRostersServer) Send(m *RosterResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _RosterServices_GetAvailableUsers_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(AvailabilityQuery)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RosterServicesServer).GetAvailableUsers(m, &rosterServicesGetAvailableUsersServer{stream})
+}
+
+type RosterServices_GetAvailableUsersServer interface {
+	Send(*User) error
+	grpc.ServerStream
+}
+
+type rosterServicesGetAvailableUsersServer struct {
+	grpc.ServerStream
+}
+
+func (x *rosterServicesGetAvailableUsersServer) Send(m *User) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// RosterServices_ServiceDesc is the grpc.ServiceDesc for RosterServices service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var RosterServices_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "operations_ecosys.RosterServices",
+	HandlerType: (*RosterServicesServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "UpdateRoster",
+			Handler:    _RosterServices_UpdateRoster_Handler,
+		},
+		{
+			MethodName: "DeleteRoster",
+			Handler:    _RosterServices_DeleteRoster_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "AddRoster",
+			Handler:       _RosterServices_AddRoster_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "FindRosters",
+			Handler:       _RosterServices_FindRosters_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetAvailableUsers",
+			Handler:       _RosterServices_GetAvailableUsers_Handler,
 			ServerStreams: true,
 		},
 	},

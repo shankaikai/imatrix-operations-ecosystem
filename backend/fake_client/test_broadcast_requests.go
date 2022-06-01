@@ -29,7 +29,9 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	// Ensure that there are users first, if there are users already existing,
 	// the returned users will be different, but its ok.
 	for i := 0; i < len(broadcast.Recipients); i++ {
-		InsertUser(serverAddr, serverPort, broadcast.Recipients[0].Recipient)
+		for j := 0; j < len(broadcast.Recipients[i].Recipient); j++ {
+			InsertUser(serverAddr, serverPort, broadcast.Recipients[i].Recipient[j].Recipient)
+		}
 	}
 
 	fmt.Println("Inserting Broadcast:", broadcast.Title)
@@ -298,7 +300,7 @@ func UpdateBroadcastRecipients(serverAddr *string, serverPort *int, broadcast *p
 	}
 
 	// replace one of the recipients with someone else
-	updateBroadcast.Recipients[0].Recipient.UserId = 6
+	updateBroadcast.Recipients[0].Recipient[0].Recipient.UserId = 6
 
 	UpdateBroadcastTest(serverAddr, serverPort, &updateBroadcast)
 }

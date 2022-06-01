@@ -302,22 +302,6 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 	return output
 }
 
-// Get the user corresponding to a particular user id in the db
-func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
-	userQuery := &pb.UserQuery{Limit: 1}
-	addUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
-
-	users, err := GetUsers(db, userQuery)
-
-	user := &pb.User{}
-
-	if err == nil {
-		user = users[0]
-	}
-
-	return user, err
-}
-
 // This function converts the returned DB rows into Broadcast objects and
 // their corresponding broadcast recipients.
 // These rows come from the join query of both the broadcast and broadcast
@@ -327,7 +311,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 	broadcastMap := make(map[int64]*pb.Broadcast)
 
 	for rows.Next() {
-		broadcast := &pb.Broadcast{}
+		broadcast := &pb.Broadcast{Recipients: make([]*pb.AIFSBroadcastRecipient, 0)}
 		broadcastRecipient := &pb.BroadcastRecipient{}
 
 		creatorUserId := -1
@@ -414,11 +398,24 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 		}
 
 		// Add recipient to broadcast
-		if broadcast.Recipients == nil {
-			broadcast.Recipients = make([]*pb.BroadcastRecipient, 0)
+		foundAifsRecipient := false
+		for _, aifsRecipient := range broadcast.Recipients {
+			if aifsRecipient.AifsId == broadcastRecipient.AifsId {
+				if aifsRecipient.Recipient == nil {
+					aifsRecipient.Recipient = make([]*pb.BroadcastRecipient, 0)
+				}
+				aifsRecipient.Recipient = append(aifsRecipient.Recipient, broadcastRecipient)
+				foundAifsRecipient = true
+			}
 		}
-
-		broadcast.Recipients = append(broadcast.Recipients, broadcastRecipient)
+		if !foundAifsRecipient {
+			newAifsRecipient := &pb.AIFSBroadcastRecipient{
+				AifsId:    broadcastRecipient.AifsId,
+				Recipient: make([]*pb.BroadcastRecipient, 0),
+			}
+			newAifsRecipient.Recipient = append(newAifsRecipient.Recipient, broadcastRecipient)
+			broadcast.Recipients = append(broadcast.Recipients, newAifsRecipient)
+		}
 	}
 
 	// Add all broadcasts to the returning array
@@ -447,7 +444,7 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 	// Get all recipients
 	currentRecipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
 	if err != nil {
-		fmt.Println("UpdateBroadcast ERROR::", err)
+		fmt.Println("updateRecipientsOfBroadcast ERROR::", err)
 		return err
 	}
 
@@ -467,25 +464,34 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 	// delete this rogue recipient.
 
 	// Index of missing recipients from the input broadcast list
-	missingRecIndex := make([]int, 0)
+	// key: aifsid, value: index array of the broadcast recipient
+	// within the aifsBroadcastRecipient
+	missingRecIndexMap := make(map[int64][]int)
 
-	for i, br := range broadcast.Recipients {
-		found, index := common.BinarySearch(currentRecIds, 0, len(currentRecIds)-1, int(br.Recipient.UserId))
-		if found {
-			fmt.Println("Found updated recipient in current recipient")
-			currentRecIds = append(currentRecIds[:index], currentRecIds[index+1:]...)
-		} else {
-			missingRecIndex = append(missingRecIndex, i)
+	for _, aifsBr := range broadcast.Recipients {
+		for i, br := range aifsBr.Recipient {
+			found, index := common.BinarySearch(currentRecIds, 0, len(currentRecIds)-1, int(br.Recipient.UserId))
+			if found {
+				fmt.Println("Found updated recipient in current recipient")
+				currentRecIds = append(currentRecIds[:index], currentRecIds[index+1:]...)
+			} else {
+				if _, ok := missingRecIndexMap[aifsBr.AifsId]; !ok {
+					missingRecIndexMap[aifsBr.AifsId] = make([]int, 0)
+				}
+				missingRecIndexMap[aifsBr.AifsId] = append(missingRecIndexMap[aifsBr.AifsId], i)
+			}
 		}
 	}
 
-	fmt.Println("Missing Recipients Index:", missingRecIndex)
+	fmt.Println("Missing Recipients Index Map:", missingRecIndexMap)
 	// Add the missing recipients
-	for _, recIndex := range missingRecIndex {
-		_, err := InsertBroadcastRecipient(db, broadcast.Recipients[recIndex], broadcast.BroadcastId, dbLock)
-		if err != nil {
-			fmt.Println("UpdateBroadcast ERROR::", err)
-			return err
+	for aifsId, missingRecIndex := range missingRecIndexMap {
+		for _, recIndex := range missingRecIndex {
+			_, err := InsertBroadcastRecipient(db, broadcast.Recipients[aifsId].Recipient[recIndex], broadcast.BroadcastId, dbLock)
+			if err != nil {
+				fmt.Println("UpdateBroadcast ERROR::", err)
+				return err
+			}
 		}
 	}
 
