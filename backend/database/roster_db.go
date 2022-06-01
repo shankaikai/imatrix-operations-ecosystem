@@ -172,6 +172,9 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 		// and for possible future use, we get it back in the query.
 		relatedRoster := ""
 
+		// confirmation is nullable
+		var confirmation sql.NullBool
+
 		// Datetimes
 		startTimeString := ""
 		endTimeString := ""
@@ -184,7 +187,7 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 			&guardId,
 			&startTimeString,
 			&endTimeString,
-			&assignment.Confirmed,
+			&confirmation,
 			&assignment.Attended,
 			&attendanceTimeString,
 		)
@@ -214,6 +217,13 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 			}
 		}
 
+		if confirmation.Valid {
+			assignment.Confirmed = confirmation.Bool
+			if err != nil {
+				fmt.Println("GetRosterAssingments:", err.Error())
+				continue
+			}
+		}
 		// TODO think about whether I can store the users in cache rather than
 		// get the same few users over and over
 		assignment.GuardAssigned, err = idUserByUserId(db, guardId)

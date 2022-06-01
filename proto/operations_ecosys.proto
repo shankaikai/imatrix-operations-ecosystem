@@ -130,10 +130,11 @@ message OrderByUser{
 message Client {
     int64 client_id = 1;
     string name = 2;
-    string email = 3;
-    string address = 4;
-    string phone_number = 5;
-    int32 number_of_guards_needed = 6;
+    string abbreviation = 3;
+    string email = 4;
+    string address = 5;
+    int64 postal_code = 6;
+    string phone_number = 7;
 }
 
 message ClientResponse {

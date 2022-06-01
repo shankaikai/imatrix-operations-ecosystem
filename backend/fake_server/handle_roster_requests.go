@@ -70,12 +70,13 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 		aifsClientRoster = append(aifsClientRoster, &pb.AIFSClientRoster{
 			AifsClientRosterId: int64(i),
 			Client: &pb.Client{
-				ClientId:             int64(i),
-				Name:                 "test name" + strconv.Itoa(i),
-				Email:                "email" + strconv.Itoa(i),
-				Address:              "address" + strconv.Itoa(i),
-				PhoneNumber:          "1232",
-				NumberOfGuardsNeeded: 3,
+				ClientId:     int64(i),
+				Name:         "test name" + strconv.Itoa(i),
+				Abbreviation: "ABC" + strconv.Itoa(i),
+				Email:        "email" + strconv.Itoa(i),
+				Address:      "address" + strconv.Itoa(i),
+				PostalCode:   434343,
+				PhoneNumber:  "1232",
 			},
 		})
 	}

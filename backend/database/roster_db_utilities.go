@@ -313,6 +313,9 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		// Redundant Strings
 		relatedRoster := ""
 
+		// confirmation can be null
+		var confirmation sql.NullBool
+
 		// Datetimes
 		startTimeString := ""
 		endTimeString := ""
@@ -393,6 +396,14 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			rosterAssignment.AttendanceTime, err = DBDatetimeToPB(attendanceTimeString.String)
 			if err != nil {
 				fmt.Println("GetRosters:", err.Error())
+				continue
+			}
+		}
+
+		if confirmation.Valid {
+			rosterAssignment.Confirmed = confirmation.Bool
+			if err != nil {
+				fmt.Println("GetRosterAssingments:", err.Error())
 				continue
 			}
 		}

@@ -8,7 +8,7 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
-func TestAdminClientClient(serverAddr *string, serverPort *int) {
+func TestRosteringClient(serverAddr *string, serverPort *int) {
 	client := createFakeClient(1)
 	// pk := InsertClient(serverAddr, serverPort, client)
 	client.ClientId = 1 //pk
@@ -17,7 +17,7 @@ func TestAdminClientClient(serverAddr *string, serverPort *int) {
 	DeleteClientTest(serverAddr, serverPort, &pb.Client{ClientId: 90})
 }
 
-func InsertClient(serverAddr *string, serverPort *int, client *pb.Client) int64 {
+func InsertRoster(serverAddr *string, serverPort *int, client *pb.Client) int64 {
 	fmt.Println("Inserting client:", client.Name)
 	grpcClient, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()
@@ -37,18 +37,18 @@ func InsertClient(serverAddr *string, serverPort *int, client *pb.Client) int64 
 	return res.PrimaryKey
 }
 
-func ConsolidatedFindClientTest(serverAddr *string, serverPort *int) {
+func ConsolidatedFindRosterTest(serverAddr *string, serverPort *int) {
 	FindClientsNoFilter(serverAddr, serverPort)
 	FindClientIdFilter(serverAddr, serverPort)
 	// FindClientMultipleFilters(serverAddr, serverPort)
 }
 
-func FindClientsNoFilter(serverAddr *string, serverPort *int) {
+func FindRostersNoFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding clients without filter")
 	FindClientsTest(serverAddr, serverPort, &pb.ClientQuery{Limit: 5})
 }
 
-func FindClientIdFilter(serverAddr *string, serverPort *int) {
+func FindRosterIdFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding client id filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
 	filter := &pb.ClientFilter{Comparisons: com, Field: pb.ClientFilter_CLIENT_ID}
@@ -58,7 +58,7 @@ func FindClientIdFilter(serverAddr *string, serverPort *int) {
 	FindClientsTest(serverAddr, serverPort, query)
 }
 
-func FindClientsMultipleFilters(serverAddr *string, serverPort *int) {
+func FindRostersMultipleFilters(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding client mutiple filter")
 
 	clientFilters := make([]*pb.ClientFilter, 0)
@@ -69,7 +69,7 @@ func FindClientsMultipleFilters(serverAddr *string, serverPort *int) {
 	FindClientsTest(serverAddr, serverPort, query)
 }
 
-func FindClientsTest(serverAddr *string, serverPort *int, query *pb.ClientQuery) {
+func FindRostersTest(serverAddr *string, serverPort *int, query *pb.ClientQuery) {
 	fmt.Println("Finding clients...")
 	grpcClient, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()
@@ -102,7 +102,7 @@ func FindClientsTest(serverAddr *string, serverPort *int, query *pb.ClientQuery)
 	}
 }
 
-func UpdateClientTest(serverAddr *string, serverPort *int, client *pb.Client) {
+func UpdateRosterTest(serverAddr *string, serverPort *int, client *pb.Client) {
 	updatedClient := &pb.Client{
 		ClientId:     client.ClientId,
 		Name:         "Some new name",
@@ -127,7 +127,7 @@ func UpdateClientTest(serverAddr *string, serverPort *int, client *pb.Client) {
 	}
 }
 
-func DeleteClientTest(serverAddr *string, serverPort *int, client *pb.Client) {
+func DeleteRosterTest(serverAddr *string, serverPort *int, client *pb.Client) {
 	fmt.Println("Deleting client:", client.Name)
 	grpcClient, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()

@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `schedule_detail` (
     guard_assigned INT NOT NULL,
 	custom_start_time DATETIME NOT NULL, 
 	custom_end_time DATETIME NOT NULL, 
-	confirmation BOOLEAN DEFAULT false NOT NULL,
+	confirmation BOOLEAN,
 	attended BOOLEAN DEFAULT false NOT NULL,
 	attendance_time DATETIME, 
 

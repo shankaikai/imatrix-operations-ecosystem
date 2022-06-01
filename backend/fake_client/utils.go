@@ -23,12 +23,13 @@ func createFakeUser(id int) *pb.User {
 
 func createFakeClient(id int) *pb.Client {
 	return &pb.Client{
-		ClientId:             int64(id),
-		Name:                 "test name" + strconv.Itoa(id),
-		Email:                "email" + strconv.Itoa(id),
-		Address:              "address" + strconv.Itoa(id),
-		PhoneNumber:          "1232",
-		NumberOfGuardsNeeded: 3,
+		ClientId:     int64(id),
+		Name:         "test name" + strconv.Itoa(id),
+		Abbreviation: "ABC" + strconv.Itoa(id),
+		Email:        "email" + strconv.Itoa(id),
+		Address:      "address" + strconv.Itoa(id),
+		PostalCode:   int64(123213 + id),
+		PhoneNumber:  "1232",
 	}
 }
 
