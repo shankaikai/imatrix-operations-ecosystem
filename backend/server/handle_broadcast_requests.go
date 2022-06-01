@@ -94,7 +94,6 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 
 		for _, broadcast := range foundBroadcasts {
 			broadcastRes.Broadcast = broadcast
-			broadcast.Recipients = broadcast.Recipients[:1]
 			if err := stream.Send(&broadcastRes); err != nil {
 				return err
 			}
