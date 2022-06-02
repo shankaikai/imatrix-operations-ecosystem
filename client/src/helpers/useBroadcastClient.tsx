@@ -8,10 +8,12 @@ import {
 } from "react";
 import { BroadcastServicesClient } from "../proto/Operations_ecosysServiceClientPb";
 import {
+  AIFSBroadcastRecipient,
   Broadcast,
   BroadcastQuery,
   BroadcastRecipient,
   BroadcastResponse,
+  User,
 } from "../proto/operations_ecosys_pb";
 
 interface BroadcastContextInterface {
@@ -39,7 +41,7 @@ interface BroadcastProviderProps {
 
 export function BroadcastProvider({ children }: BroadcastProviderProps) {
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState("");
   const [selectValue, setSelectValue] = useState("latest");
   const [filterValue, setFilterValue] = useState("all");
 
@@ -54,8 +56,6 @@ export function BroadcastProvider({ children }: BroadcastProviderProps) {
 
     // On every data received, add it to the state
     stream.on("data", (response: BroadcastResponse) => {
-      console.log(response);
-      console.log(response.getBroadcast());
       setBroadcasts((oldState) => [...oldState, response.getBroadcast()!]);
     });
   };
@@ -117,26 +117,36 @@ export async function submitNewBroadcast({
     High: Broadcast.UrgencyType.HIGH,
   };
 
-  var recipientList: BroadcastRecipient[] = [];
+  var recipientList: AIFSBroadcastRecipient[] = [];
+
+  console.log(recipient);
 
   if (recipient.includes("all")) {
     for (var id of [1, 2, 3]) {
-      const broadcastRecipient = new BroadcastRecipient();
+      const broadcastRecipient = new AIFSBroadcastRecipient();
       broadcastRecipient.setAifsId(id);
       recipientList.push(broadcastRecipient);
     }
   } else {
     for (var user of recipient) {
-      const broadcastRecipient = new BroadcastRecipient();
+      const broadcastRecipient = new AIFSBroadcastRecipient();
       broadcastRecipient.setAifsId(parseInt(user));
       recipientList.push(broadcastRecipient);
     }
   }
 
+  console.log(recipientList);
   // TODO: Discuss recipient logic
   broadcast.setRecipientsList(recipientList);
   broadcast.setUrgency(urgencyMap[urgency[0]]);
   broadcast.setContent(message);
+  broadcast.setType(Broadcast.BroadcastType.ANNOUNCEMENT);
+  // TODO: Change to user context
+  const creator = new User();
+  creator.setUserId(2);
+  broadcast.setCreator(creator);
+
+  console.log(broadcast);
 
   await client
     .addBroadcast(broadcast, {})

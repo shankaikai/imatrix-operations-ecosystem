@@ -1,23 +1,22 @@
-import React from "react";
+import {
+  Avatar,
+  Badge,
+  Group,
+  Indicator,
+  Popover,
+  Stack,
+  Text,
+} from "@mantine/core";
+import React, { useState } from "react";
+import { AIFSRecipient } from "../../../../helpers/recipientsFormatter";
 
 interface AcknowledgementToolTipProps {
-  AIFS: BroadcastRecipient[];
+  data: AIFSRecipient;
 }
 
-import { useState } from "react";
-import {
-  Popover,
-  Badge,
-  Image,
-  Text,
-  Stack,
-  Group,
-  Avatar,
-  Indicator,
-} from "@mantine/core";
-import { BroadcastRecipient } from "../../../../proto/operations_ecosys_pb";
-
-export default function AcknowledgementToolTip() {
+export default function AcknowledgementToolTip({
+  data,
+}: AcknowledgementToolTipProps) {
   const [opened, setOpened] = useState(false);
 
   return (
@@ -36,42 +35,32 @@ export default function AcknowledgementToolTip() {
           onMouseEnter={() => setOpened(true)}
           onMouseLeave={() => setOpened(false)}
           variant="filled"
-          color="gray"
+          color={data.allAcknowledged ? "green" : "gray"}
         >
-          AIFS 1
+          {data.id}
         </Badge>
       }
     >
       <Stack>
         <Group position="apart">
-          <Text size="sm">AIFS 1</Text>
-          <Text size="sm">Location</Text>
+          <Text size="sm">{data.id}</Text>
+          <Text size="sm">{data.location}</Text>
         </Group>
         <Group>
-          <Stack align="center" spacing="xs">
-            <Indicator color="green" offset={5} withBorder size={14}>
-              <Avatar radius="xl" />
-            </Indicator>
-            <Text size="xs">Name</Text>
-            <Text size="xs">HP: 91119999</Text>
-          </Stack>
-          <Stack align="center" spacing="xs">
-            <Indicator color="green" offset={5} withBorder size={14}>
-              <Avatar radius="xl" />
-            </Indicator>
-            <Text size="xs">Name</Text>
-            <Text size="xs">HP: 91119999</Text>
-          </Stack>
-          <Stack align="center" spacing="xs">
-            <Indicator color="green" offset={5} withBorder size={14}>
-              <Avatar
-                radius="xl"
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=250&q=80"
-              />
-            </Indicator>
-            <Text size="xs">Name</Text>
-            <Text size="xs">HP: 91119999</Text>
-          </Stack>
+          {data.users.map((user) => (
+            <Stack key={user.id} align="center" spacing="xs">
+              <Indicator
+                color={user.acknowledged ? "green" : "red"}
+                offset={5}
+                withBorder
+                size={14}
+              >
+                <Avatar radius="xl" src={user.img} />
+              </Indicator>
+              <Text size="xs">{user.name}</Text>
+              <Text size="xs">HP: {user.phone}</Text>
+            </Stack>
+          ))}
         </Group>
       </Stack>
     </Popover>
