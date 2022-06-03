@@ -31,11 +31,11 @@ func main() {
 }
 
 // TODO:
-// Test rostering as is
-// Change rostering to users with scores DONE on Proto
-// roster confirmation only send back NOT FALSE
+// roster client query joins
+// roster client test find rosters
+// Add scores to the users returned during find roster
+// roster db is assigned col
+// roster confirmation only send back assigned
 // roster do not delete changed rosters
 // roster send guards available that are not assigned
-// roster db is assigned col
-// roster client query joins
 // user page

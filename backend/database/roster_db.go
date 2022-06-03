@@ -109,8 +109,8 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	fmt.Println("Getting Rosters...")
 	rosters := make([]*pb.Roster, 0)
 
-	// Join the roster and assignment tables in order to
-	// easily filter conditions relating to both tables together.
+	// Join the roster and assignment tables and aifs client tables
+	// in order to easily filter conditions relating to all tables
 
 	// Set default query limits if needed
 	if query.Limit == 0 {
@@ -119,19 +119,21 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 
 	// We ignore any filters to do with the client aifs table first
 	requestedLimit := query.Limit
-	clientQueries := removeRosteringClientQueries(query)
 
 	fields := ALL_COLS
 
 	// tables are joined on the main roster id
-	onCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_ASGN_DB_RELATED_ROSTER, false)
+	fistOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_ASGN_DB_RELATED_ROSTER, false)
+	secondOnCondition := formatFieldEqVal(ROSTER_DB_ID, AIFS_CLIENT_DB_ID, false)
 
 	// Format filters
 	// temporarily give the query limit the max
 	query.Limit = MAX_LIMIT
 	filters := getFormattedRosterFilters(query, ROSTER_DB_TABLE_NAME, true, true)
 
-	rows, err := QueryLeftJoin(db, ROSTER_DB_TABLE_NAME, ROSTER_ASSIGNMENT_DB_TABLE_NAME, onCondition, fields, filters)
+	rows, err := QueryThreeTablesLeftJoin(db, ROSTER_DB_TABLE_NAME,
+		ROSTER_ASSIGNMENT_DB_TABLE_NAME, ROSTER_AIFS_CLIENT_DB_TABLE_NAME,
+		fistOnCondition, secondOnCondition, fields, filters)
 
 	if err != nil {
 		return rosters, err
@@ -140,7 +142,7 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	// convert query rows into rosters
 	// give back the query the original limit
 	query.Limit = requestedLimit
-	err = convertDbRowsToFullRoster(db, &rosters, rows, query, clientQueries)
+	err = convertDbRowsToFullRoster(db, &rosters, rows, query)
 
 	return rosters, err
 }
@@ -282,7 +284,7 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 			break
 		}
 
-		aifsClient.Client, err = idClientByClientId(db, clientId)
+		aifsClient.Client, err = IdClientByClientId(db, clientId)
 		if err != nil {
 			fmt.Println("GetRosterAIFSClient:", err)
 			continue

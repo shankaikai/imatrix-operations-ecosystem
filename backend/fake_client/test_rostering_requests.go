@@ -13,13 +13,13 @@ import (
 )
 
 func TestRosteringClient(serverAddr *string, serverPort *int) {
-	rosters := make([]*pb.Roster, 0)
-	for i := 1; i < 4; i++ {
-		rosters = append(rosters, createFakeRoster(i))
-	}
+	// rosters := make([]*pb.Roster, 0)
+	// for i := 1; i < 4; i++ {
+	// 	rosters = append(rosters, createFakeRoster(i))
+	// }
 
 	// pk := InsertRoster(serverAddr, serverPort, rosters)
-	rosters[2].RosteringId = 4 //pk
+	// rosters[2].RosteringId = 4 //pk
 
 	ConsolidatedFindRosterTest(serverAddr, serverPort)
 	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
@@ -68,7 +68,7 @@ func ConsolidatedFindRosterTest(serverAddr *string, serverPort *int) {
 	FindRosterAifsClientIdFilter(serverAddr, serverPort)
 	FindRosterAifsIdFilter(serverAddr, serverPort)
 	FindRosterGuardIdFilter(serverAddr, serverPort)
-	// FindRosterClientIdFilter(serverAddr, serverPort)
+	FindRosterClientIdFilter(serverAddr, serverPort)
 	FindRosterGuardConfirmationFilter(serverAddr, serverPort)
 	FindRosterGuardAttendedFilter(serverAddr, serverPort)
 	FindRostersMultipleFilters(serverAddr, serverPort)
@@ -120,7 +120,7 @@ func FindRosterAifsIdFilter(serverAddr *string, serverPort *int) {
 }
 
 func FindRosterGuardIdFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding roster aifs id filter")
+	fmt.Println("Finding roster guard id filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
 	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_GUARD_ASSIGNED_ID}
 
@@ -130,7 +130,7 @@ func FindRosterGuardIdFilter(serverAddr *string, serverPort *int) {
 }
 
 func FindRosterClientIdFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding roster aifs id filter")
+	fmt.Println("Finding roster client id filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
 	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_CLIENT_ID}
 
@@ -140,7 +140,7 @@ func FindRosterClientIdFilter(serverAddr *string, serverPort *int) {
 }
 
 func FindRosterGuardConfirmationFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding roster aifs id filter")
+	fmt.Println("Finding roster guard confirmation filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
 	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_GUARD_ASSIGNMENT_CONFIRMATION}
 
@@ -150,7 +150,7 @@ func FindRosterGuardConfirmationFilter(serverAddr *string, serverPort *int) {
 }
 
 func FindRosterGuardAttendedFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding roster aifs id filter")
+	fmt.Println("Finding roster guard attended filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
 	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_GUARD_ASSIGNMENT_ATTENDED}
 
@@ -165,6 +165,15 @@ func FindRostersMultipleFilters(serverAddr *string, serverPort *int) {
 	rosterFilters := make([]*pb.RosterFilter, 0)
 
 	// Add filters here when there are more filters
+	// client id
+	cidCom := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	cidFilter := &pb.RosterFilter{Comparisons: cidCom, Field: pb.RosterFilter_CLIENT_ID}
+	rosterFilters = append(rosterFilters, cidFilter)
+
+	// guard id
+	gcidCom := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	gidFilter := &pb.RosterFilter{Comparisons: gcidCom, Field: pb.RosterFilter_GUARD_ASSIGNED_ID}
+	rosterFilters = append(rosterFilters, gidFilter)
 
 	query := &pb.RosterQuery{Limit: 4, Filters: rosterFilters}
 	FindRostersTest(serverAddr, serverPort, query)

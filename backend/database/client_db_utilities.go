@@ -173,7 +173,7 @@ func clientFilterToDBCol(filterField pb.ClientFilter_Field) string {
 }
 
 // Get the client corresponding to a particular client id in the db
-func idClientByClientId(db *sql.DB, clientId int) (*pb.Client, error) {
+func IdClientByClientId(db *sql.DB, clientId int) (*pb.Client, error) {
 	clientQuery := &pb.ClientQuery{Limit: 1}
 	AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
 

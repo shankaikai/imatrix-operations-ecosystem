@@ -302,18 +302,22 @@ func getFormattedRosterFilters(query *pb.RosterQuery, table string, needLimit bo
 // These rows come from the join query of both the roster and roster
 // recipients table.
 // Modifies the roster array in place.
-func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows, query *pb.RosterQuery, clientRosterQueries *pb.RosterQuery) error {
+func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows, query *pb.RosterQuery) error {
 	rosterMap := make(map[int64]*pb.Roster)
 
-	// TODO dont forget to get the clients in the end
-
 	for rows.Next() {
-		roster := &pb.Roster{}
+		roster := &pb.Roster{
+			GuardAssigned: make([]*pb.RosterAssignement, 0),
+			Clients:       make([]*pb.AIFSClientRoster, 0),
+		}
 		rosterAssignment := &pb.RosterAssignement{}
 		employeeEval := &pb.EmployeeEvaluation{}
 		rosterAssignment.GuardAssigned = employeeEval
 
+		aifsClient := &pb.AIFSClientRoster{}
+
 		assignedUserId := -1
+		clientId := -1
 
 		// Redundant Strings
 		relatedRoster := ""
@@ -346,6 +350,10 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			&rosterAssignment.Confirmed,
 			&rosterAssignment.Attended,
 			&attendanceTimeString,
+
+			// Client Details
+			&aifsClient.AifsClientRosterId,
+			&clientId,
 		)
 
 		if err != nil {
@@ -378,69 +386,42 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			rosterMap[roster.RosteringId] = roster
 		}
 
-		rosterAssignment.GuardAssigned.Employee, err = idUserByUserId(db, assignedUserId)
-		if err != nil {
-			fmt.Println("GetRosters:", err.Error())
-			continue
-		}
-
-		// Add Datetimes
-		rosterAssignment.CustomStartTime, err = DBDatetimeToPB(customStartTimeString)
-		if err != nil {
-			fmt.Println("GetRosters:", err.Error())
-			continue
-		}
-		rosterAssignment.CustomEndTime, err = DBDatetimeToPB(customEndTimeString)
-
-		if err != nil {
-			fmt.Println("GetRosters:", err.Error())
-			continue
-		}
-
-		if attendanceTimeString.Valid {
-			rosterAssignment.AttendanceTime, err = DBDatetimeToPB(attendanceTimeString.String)
-			if err != nil {
-				fmt.Println("GetRosters:", err.Error())
-				continue
+		// Check if there is already a guard assignment for this roster
+		guardAssignmentExists := false
+		for _, existingAssigned := range roster.GuardAssigned {
+			if existingAssigned.RosterAssignmentId == rosterAssignment.RosterAssignmentId {
+				guardAssignmentExists = true
+				break
 			}
 		}
 
-		if confirmation.Valid {
-			rosterAssignment.Confirmed = confirmation.Bool
-			if err != nil {
-				fmt.Println("GetRosterAssingments:", err.Error())
-				continue
+		if !guardAssignmentExists {
+			convertFromDbRosterAssignment(db, rosterAssignment, assignedUserId,
+				customStartTimeString, customEndTimeString,
+				attendanceTimeString, confirmation)
+			// Add assignment to roster
+			roster.GuardAssigned = append(roster.GuardAssigned, rosterAssignment)
+		}
+
+		// Check if there is already a client aifs assignment for this roster
+		clientExists := false
+		for _, existingClient := range roster.Clients {
+			if existingClient.AifsClientRosterId == aifsClient.AifsClientRosterId {
+				clientExists = true
+				break
 			}
 		}
 
-		// Add assignment to roster
-		if roster.GuardAssigned == nil {
-			roster.GuardAssigned = make([]*pb.RosterAssignement, 0)
+		if !clientExists {
+			convertFromDbRosterAifsClient(db, aifsClient, clientId)
+			// Add assignment to roster
+			roster.Clients = append(roster.Clients, aifsClient)
 		}
-
-		roster.GuardAssigned = append(roster.GuardAssigned, rosterAssignment)
 	}
 
 	// Add all rosters to the returning array
 	for _, roster := range rosterMap {
 		*rosters = append(*rosters, roster)
-	}
-
-	// Get the clients based on the client filters
-	if clientRosterQueries == nil {
-		for _, roster := range *rosters {
-			clients, err := GetRosterAIFSClient(db, &pb.RosterQuery{}, roster.RosteringId)
-			if err != nil {
-				fmt.Println("GetRosters:", err.Error())
-				return err
-			}
-			roster.Clients = clients
-		}
-	} else {
-		// TODO think about this
-		// if i dont care about limits and skips, everything is fine. but urg
-		// Get clients
-		// Join clients with current rosters
 	}
 
 	sort.Slice(*rosters, func(i, j int) bool {
@@ -451,6 +432,62 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		*rosters = (*rosters)[query.Skip:]
 	}
 
+	return nil
+}
+
+// modifies the roster Assignment in place
+func convertFromDbRosterAssignment(db *sql.DB, rosterAssignment *pb.RosterAssignement, assignedUserId int,
+	customStartTimeString string, customEndTimeString string,
+	attendanceTimeString sql.NullString, confirmation sql.NullBool) error {
+
+	var err error
+	rosterAssignment.GuardAssigned.Employee, err = idUserByUserId(db, assignedUserId)
+
+	if err != nil {
+		fmt.Println("convertFromDbRosterAssignment:", err.Error())
+		return err
+	}
+
+	// Add Datetimes
+	rosterAssignment.CustomStartTime, err = DBDatetimeToPB(customStartTimeString)
+	if err != nil {
+		fmt.Println("convertFromDbRosterAssignment:", err.Error())
+		return err
+	}
+	rosterAssignment.CustomEndTime, err = DBDatetimeToPB(customEndTimeString)
+
+	if err != nil {
+		fmt.Println("convertFromDbRosterAssignment:", err.Error())
+		return err
+	}
+
+	if attendanceTimeString.Valid {
+		rosterAssignment.AttendanceTime, err = DBDatetimeToPB(attendanceTimeString.String)
+		if err != nil {
+			fmt.Println("convertFromDbRosterAssignment:", err.Error())
+			return err
+		}
+	}
+
+	if confirmation.Valid {
+		rosterAssignment.Confirmed = confirmation.Bool
+		if err != nil {
+			fmt.Println("convertFromDbRosterAssignment:", err.Error())
+			return err
+		}
+	}
+
+	return nil
+}
+
+func convertFromDbRosterAifsClient(db *sql.DB, aifsClient *pb.AIFSClientRoster, clientId int) error {
+	var err error
+	aifsClient.Client, err = IdClientByClientId(db, clientId)
+
+	if err != nil {
+		fmt.Println("convertFromDbRosterAifsClient:", err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -663,7 +700,8 @@ func checkRosterExists(db *sql.DB, roster *pb.Roster) (int64, error) {
 // Removes any undesirable client queries from the original query
 // in place.
 // Returns the removed client queries in a new RosterQuery.
-func removeRosteringClientQueries(rosterQuery *pb.RosterQuery) *pb.RosterQuery {
+// unused for now
+func RemoveRosteringClientQueries(rosterQuery *pb.RosterQuery) *pb.RosterQuery {
 	var clientQueries *pb.RosterQuery
 	foundIndexes := make([]int, 0)
 

@@ -138,6 +138,46 @@ func createLeftJoinQuery(leftTableName string, rightTableName string,
 
 }
 
+// Get all the rows from 2 joined table that meets specifications.
+// fields must be a the exact names of the table columns, separated
+// be commas. E.g. "name, cost, creator"
+// filters must include the filter keyword that is being used
+// such as WHERE, LIMIT, ORDER BY, GROUP BY, HAVING
+// filters can be an empty string but there should be a LIMIT.
+func QueryThreeTablesLeftJoin(db *sql.DB, firstTableName string, secondTableName string,
+	thirdTableName string, firstOnCondition string, secondOnCondition string,
+	fields string, filters string) (*sql.Rows, error) {
+	fmt.Println("Making left join query to tables", firstTableName, secondTableName, thirdTableName)
+
+	query := createLeftJoinThreeTablesQuery(firstTableName, secondTableName, thirdTableName, firstOnCondition, secondOnCondition, fields, filters)
+
+	fmt.Println(query)
+
+	results, err := db.Query(query)
+	if err != nil {
+		fmt.Println("QUERY ERROR:", err)
+	}
+
+	return results, err
+}
+
+func createLeftJoinThreeTablesQuery(firstTableName string, secondTableName string,
+	thirdTableName string, firstOnCondition string, secondOnCondition string,
+	fields string, filters string) string {
+	fmt.Println("Creating left join query to tables", firstTableName, secondTableName, thirdTableName)
+	query := fmt.Sprintf("SELECT %s FROM %s LEFT JOIN %s ON %s LEFT JOIN %s ON %s %s",
+		fields,
+		firstTableName,
+		secondTableName,
+		firstOnCondition,
+		thirdTableName,
+		secondOnCondition,
+		filters,
+	)
+	return query
+
+}
+
 // Update a specific row in the table
 // newFields must be a the exact names of the table columns with their new values,
 // separated be commas. E.g. "name='mark', cost='22', creator='2'"
