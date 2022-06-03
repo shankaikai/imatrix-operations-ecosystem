@@ -15,7 +15,7 @@ const (
 // will be custom -inf for
 func BinarySearch(list []int, left int, right int, key int) (bool, int) {
 	fmt.Println("Binary Search", left, right, key, list)
-	if right < left {
+	if right <= left {
 		return false, CUSTOM_NEG_INF
 	}
 

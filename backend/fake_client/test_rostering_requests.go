@@ -4,143 +4,297 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 
 	pb "capstone.operations_ecosystem/backend/proto"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func TestRosteringClient(serverAddr *string, serverPort *int) {
-	client := createFakeClient(1)
-	// pk := InsertClient(serverAddr, serverPort, client)
-	client.ClientId = 1 //pk
-	ConsolidatedFindClientTest(serverAddr, serverPort)
-	UpdateClientTest(serverAddr, serverPort, client)
-	DeleteClientTest(serverAddr, serverPort, &pb.Client{ClientId: 90})
+	rosters := make([]*pb.Roster, 0)
+	for i := 1; i < 4; i++ {
+		rosters = append(rosters, createFakeRoster(i))
+	}
+
+	// pk := InsertRoster(serverAddr, serverPort, rosters)
+	rosters[2].RosteringId = 4 //pk
+
+	ConsolidatedFindRosterTest(serverAddr, serverPort)
+	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
+
+	// DeleteRosterTest(serverAddr, serverPort, &pb.Roster{RosteringId: 9})
 }
 
-func InsertRoster(serverAddr *string, serverPort *int, client *pb.Client) int64 {
-	fmt.Println("Inserting client:", client.Name)
-	grpcClient, conn := createAdminClient(serverAddr, serverPort)
+func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int64 {
+	grpcClient, conn := createRosterClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	res, err := grpcClient.AddClient(context.Background(), client)
+	stream, err := grpcClient.AddRoster(context.Background())
 	if err != nil {
-		fmt.Println("InsertClient ERROR:", err)
+		fmt.Println("InsertRoster ERROR:", err)
 		return -1
 	}
 
-	fmt.Println("Client received response:", res.Type)
+	for _, roster := range rosters {
+		fmt.Println("Inserting roster:", roster.RosteringId)
+		if err := stream.Send(roster); err != nil {
+			fmt.Println("InsertRoster ERROR:", err)
+			return -1
+		}
+	}
+
+	res, err := stream.CloseAndRecv()
+
+	if err != nil {
+		fmt.Println("InsertRoster ERROR:", err)
+		return -1
+	}
+
+	fmt.Println("Roster received response:", res.Type)
 
 	if res.Type == pb.Response_ERROR {
-		fmt.Println("Client received error response:", res.ErrorMessage)
+		fmt.Println("Roster received error response:", res.ErrorMessage)
 	}
 
 	return res.PrimaryKey
 }
 
 func ConsolidatedFindRosterTest(serverAddr *string, serverPort *int) {
-	FindClientsNoFilter(serverAddr, serverPort)
-	FindClientIdFilter(serverAddr, serverPort)
-	// FindClientMultipleFilters(serverAddr, serverPort)
+	FindRostersNoFilter(serverAddr, serverPort)
+	FindRosterIdFilter(serverAddr, serverPort)
+	FindRosterAssignmentFilter(serverAddr, serverPort)
+	FindRosterAifsClientIdFilter(serverAddr, serverPort)
+	FindRosterAifsIdFilter(serverAddr, serverPort)
+	FindRosterGuardIdFilter(serverAddr, serverPort)
+	// FindRosterClientIdFilter(serverAddr, serverPort)
+	FindRosterGuardConfirmationFilter(serverAddr, serverPort)
+	FindRosterGuardAttendedFilter(serverAddr, serverPort)
+	FindRostersMultipleFilters(serverAddr, serverPort)
 }
 
 func FindRostersNoFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding clients without filter")
-	FindClientsTest(serverAddr, serverPort, &pb.ClientQuery{Limit: 5})
+	fmt.Println("Finding rosters without filter")
+	FindRostersTest(serverAddr, serverPort, &pb.RosterQuery{Limit: 5})
 }
 
 func FindRosterIdFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding client id filter")
+	fmt.Println("Finding roster id filter")
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
-	filter := &pb.ClientFilter{Comparisons: com, Field: pb.ClientFilter_CLIENT_ID}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_ROSTER_ID}
 
-	query := &pb.ClientQuery{Limit: 4, Filters: []*pb.ClientFilter{filter}}
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
 
-	FindClientsTest(serverAddr, serverPort, query)
+	FindRostersTest(serverAddr, serverPort, query)
+}
+
+func FindRosterAssignmentFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding roster assignment id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_ROSTER_ASSIGNMENT_ID}
+
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
+
+	FindRostersTest(serverAddr, serverPort, query)
+}
+
+func FindRosterAifsClientIdFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding roster aifs client id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_ROSTER_AIFS_CLIENT_ID}
+
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
+
+	FindRostersTest(serverAddr, serverPort, query)
+}
+
+func FindRosterAifsIdFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding roster aifs id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_AIFS_ID}
+
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
+
+	FindRostersTest(serverAddr, serverPort, query)
+}
+
+func FindRosterGuardIdFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding roster aifs id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_GUARD_ASSIGNED_ID}
+
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
+
+	FindRostersTest(serverAddr, serverPort, query)
+}
+
+func FindRosterClientIdFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding roster aifs id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_CLIENT_ID}
+
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
+
+	FindRostersTest(serverAddr, serverPort, query)
+}
+
+func FindRosterGuardConfirmationFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding roster aifs id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_GUARD_ASSIGNMENT_CONFIRMATION}
+
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
+
+	FindRostersTest(serverAddr, serverPort, query)
+}
+
+func FindRosterGuardAttendedFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding roster aifs id filter")
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_GUARD_ASSIGNMENT_ATTENDED}
+
+	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
+
+	FindRostersTest(serverAddr, serverPort, query)
 }
 
 func FindRostersMultipleFilters(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding client mutiple filter")
+	fmt.Println("Finding roster mutiple filter")
 
-	clientFilters := make([]*pb.ClientFilter, 0)
+	rosterFilters := make([]*pb.RosterFilter, 0)
 
 	// Add filters here when there are more filters
 
-	query := &pb.ClientQuery{Limit: 4, Filters: clientFilters}
-	FindClientsTest(serverAddr, serverPort, query)
+	query := &pb.RosterQuery{Limit: 4, Filters: rosterFilters}
+	FindRostersTest(serverAddr, serverPort, query)
 }
 
-func FindRostersTest(serverAddr *string, serverPort *int, query *pb.ClientQuery) {
-	fmt.Println("Finding clients...")
-	grpcClient, conn := createAdminClient(serverAddr, serverPort)
+func FindRostersTest(serverAddr *string, serverPort *int, query *pb.RosterQuery) {
+	fmt.Println("Finding rosters...")
+	grpcRoster, conn := createRosterClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	stream, err := grpcClient.FindClients(context.Background(), query)
+	stream, err := grpcRoster.FindRosters(context.Background(), query)
 
 	if err != nil {
-		fmt.Println("FindClientsNoFilter ERROR:", err)
+		fmt.Println("FindRostersNoFilter ERROR:", err)
 		return
 	}
 
 	count := 0
 	for {
-		clientRes, err := stream.Recv()
+		rosterRes, err := stream.Recv()
 
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			fmt.Println("FindClientsNoFilter ERROR:", err)
+			fmt.Println("FindRostersNoFilter ERROR:", err)
 		}
 
-		fmt.Println("Client received response:", clientRes.Response.Type)
-		if clientRes.Response.Type == pb.Response_ERROR {
+		fmt.Println("Roster received response:", rosterRes.Response.Type)
+		if rosterRes.Response.Type == pb.Response_ERROR {
 			continue
 		}
 
-		fmt.Println(count, ":", clientRes.Client)
+		fmt.Println(count, ":", rosterRes.Roster)
 		count++
 	}
 }
 
-func UpdateRosterTest(serverAddr *string, serverPort *int, client *pb.Client) {
-	updatedClient := &pb.Client{
-		ClientId:     client.ClientId,
-		Name:         "Some new name",
-		Abbreviation: "DEF",
+func ConsolidatedUpdateRosterTest(serverAddr *string, serverPort *int, roster *pb.Roster) {
+	UpdateRosterBasicFields(serverAddr, serverPort, roster)
+	UpdateRosterAssignments(serverAddr, serverPort, roster)
+	UpdateRosterAifsClients(serverAddr, serverPort, roster)
+}
+
+func UpdateRosterBasicFields(serverAddr *string, serverPort *int, roster *pb.Roster) {
+	fmt.Println("Roster Update time id:", roster.RosteringId, "Before time: ", roster.StartTime.String())
+
+	updatedRoster := &pb.Roster{
+		RosteringId: roster.RosteringId,
+		StartTime:   &timestamppb.Timestamp{Seconds: roster.StartTime.Seconds - 100},
 	}
 
-	fmt.Println("Updating client:", client.ClientId)
+	UpdateRosterTest(serverAddr, serverPort, updatedRoster)
+}
 
-	grpcClient, conn := createAdminClient(serverAddr, serverPort)
+func UpdateRosterAssignments(serverAddr *string, serverPort *int, roster *pb.Roster) {
+	fmt.Println("Test Update roster assignments")
+
+	updatedRoster := &pb.Roster{
+		RosteringId:   roster.RosteringId,
+		GuardAssigned: roster.GuardAssigned,
+	}
+
+	// replace one of the guards with someone else
+	updatedRoster.GuardAssigned[0].GuardAssigned.Employee.UserId = 6
+
+	UpdateRosterTest(serverAddr, serverPort, updatedRoster)
+}
+
+func UpdateRosterAifsClients(serverAddr *string, serverPort *int, roster *pb.Roster) {
+	fmt.Println("Test Update roster aifs clients")
+
+	updatedRoster := &pb.Roster{
+		RosteringId: roster.RosteringId,
+		Clients:     roster.Clients,
+	}
+
+	// replace one of the clients with another
+	updatedRoster.Clients[0].Client.ClientId = 4
+
+	UpdateRosterTest(serverAddr, serverPort, updatedRoster)
+}
+
+func UpdateRosterTest(serverAddr *string, serverPort *int, roster *pb.Roster) {
+	fmt.Println("Updating roster:", roster.RosteringId)
+
+	grpcRoster, conn := createRosterClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	res, err := grpcClient.UpdateClient(context.Background(), updatedClient)
+	res, err := grpcRoster.UpdateRoster(context.Background(), roster)
 	if err != nil {
-		fmt.Println("UpdateClientTest ERROR:", err)
+		fmt.Println("UpdateRosterTest ERROR:", err)
 		return
 	}
 
-	fmt.Println("Client received response:", res.Type)
+	fmt.Println("Roster received response:", res.Type)
 
 	if res.Type == pb.Response_ERROR {
-		fmt.Println("Client received error response:", res.ErrorMessage)
+		fmt.Println("Roster received error response:", res.ErrorMessage)
 	}
 }
 
-func DeleteRosterTest(serverAddr *string, serverPort *int, client *pb.Client) {
-	fmt.Println("Deleting client:", client.Name)
-	grpcClient, conn := createAdminClient(serverAddr, serverPort)
+func DeleteRosterTest(serverAddr *string, serverPort *int, roster *pb.Roster) {
+	fmt.Println("Deleting roster:", roster.RosteringId)
+	grpcRoster, conn := createRosterClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	res, err := grpcClient.DeleteClient(context.Background(), client)
+	res, err := grpcRoster.DeleteRoster(context.Background(), roster)
 	if err != nil {
-		fmt.Println("DeleteClientTest ERROR:", err)
+		fmt.Println("DeleteRosterTest ERROR:", err)
 		return
 	}
 
-	fmt.Println("Client received response:", res.Type)
+	fmt.Println("Roster received response:", res.Type)
 
 	if res.Type == pb.Response_ERROR {
-		fmt.Println("Client received error response:", res.ErrorMessage)
+		fmt.Println("Roster received error response:", res.ErrorMessage)
 	}
+}
+
+func createRosterClient(serverAddr *string, serverPort *int) (pb.RosterServicesClient, *grpc.ClientConn) {
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", *serverAddr, *serverPort), opts...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client := pb.NewRosterServicesClient(conn)
+
+	return client, conn
 }

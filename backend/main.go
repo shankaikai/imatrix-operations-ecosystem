@@ -24,7 +24,18 @@ func main() {
 		server.InitServer(serverAddrFlag, serverPortFlag)
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
-		client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
+		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
 		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
+		client.TestRosteringClient(serverAddrFlag, serverPortFlag)
 	}
 }
+
+// TODO:
+// Test rostering as is
+// Change rostering to users with scores DONE on Proto
+// roster confirmation only send back NOT FALSE
+// roster do not delete changed rosters
+// roster send guards available that are not assigned
+// roster db is assigned col
+// roster client query joins
+// user page

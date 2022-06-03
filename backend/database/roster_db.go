@@ -22,7 +22,7 @@ func InsertRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 	fmt.Println("Checking if Roster for this AIFS and time already exists...", "AIFS:", roster.AifsId, roster.StartTime)
 
 	// Do not add the roster if it already exists
-	existingPk, err := checkRosterExists(roster)
+	existingPk, err := checkRosterExists(db, roster)
 	if err != nil {
 		// Do not add the rest if the main roster fails
 		return -1, err
@@ -104,6 +104,7 @@ func InsertAIFSClientRoster(db *sql.DB, aifsClient *pb.AIFSClientRoster, mainRos
 
 // Get all the roster rows in a table that meets specifications.
 // Returns an array of rosters and any errors.
+// TODO: return roster assignments that are not false confirmation
 func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	fmt.Println("Getting Rosters...")
 	rosters := make([]*pb.Roster, 0)
@@ -166,6 +167,9 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 	// convert query rows into rosters assignments
 	for rows.Next() {
 		assignment := &pb.RosterAssignement{}
+		employeeEval := &pb.EmployeeEvaluation{}
+		assignment.GuardAssigned = employeeEval
+
 		// fields that cannot be auto converted
 		guardId := -1
 		// related roster is not necessary, but for simplicity
@@ -226,7 +230,7 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 		}
 		// TODO think about whether I can store the users in cache rather than
 		// get the same few users over and over
-		assignment.GuardAssigned, err = idUserByUserId(db, guardId)
+		assignment.GuardAssigned.Employee, err = idUserByUserId(db, guardId)
 		if err != nil {
 			fmt.Println("GetRosterAssingments:", err)
 			continue
@@ -298,16 +302,19 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, error) {
 	// Update the main roster first
 	newFields := getFilledRosterFields(roster)
-
 	query := &pb.RosterQuery{}
 	addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.RosteringId)))
 	filters := getFormattedRosterFilters(query, ROSTER_DB_TABLE_NAME, false, false)
 
-	rowsAffected, err := Update(db, ROSTER_DB_TABLE_NAME, newFields, filters)
+	var err error
+	rowsAffected := int64(0)
 
-	if err != nil {
-		fmt.Println("UpdateRoster ERROR::", err)
-		return rowsAffected, err
+	if len(newFields) > 0 {
+		rowsAffected, err = Update(db, ROSTER_DB_TABLE_NAME, newFields, filters)
+		if err != nil {
+			fmt.Println("UpdateRoster ERROR::", err)
+			return rowsAffected, err
+		}
 	}
 
 	// Update assignments if necessary
@@ -395,6 +402,7 @@ func DeleteRosterAIFSClient(db *sql.DB, aifsClient *pb.AIFSClientRoster) (int64,
 		ROSTER_AIFS_CLIENT_DB_TABLE_NAME, false,
 	)
 
+	fmt.Println("fsdfds filters", filters)
 	rowsAffected, err := Delete(db, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, filters)
 	return rowsAffected, err
 }

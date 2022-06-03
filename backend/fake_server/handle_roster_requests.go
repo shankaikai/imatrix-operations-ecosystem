@@ -60,9 +60,16 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 			UserSecurityImg: "dsfds",
 			IsPartTimer:     false,
 		}
+
+		employeeEval := &pb.EmployeeEvaluation{
+			Employee:      user,
+			EmployeeScore: float32(5 - 0.01*float32(i)),
+			IsAvailable:   true,
+		}
+
 		assignments = append(assignments, &pb.RosterAssignement{
 			RosterAssignmentId: int64(i),
-			GuardAssigned:      user,
+			GuardAssigned:      employeeEval,
 			CustomStartTime:    nil,
 			CustomEndTime:      nil,
 		})

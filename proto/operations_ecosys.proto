@@ -19,6 +19,7 @@ service AdminServices {
     rpc AddUser(User) returns (Response) {}
     rpc UpdateUser(User) returns (Response) {}
     rpc DeleteUser(User) returns (Response) {}
+    // TODO change user response to have user scoring and stuff
     rpc FindUsers(UserQuery) returns (stream UsersResponse) {}
 
     // Client
@@ -293,7 +294,7 @@ message RosterAssignement {
     int64 roster_assignment_id = 1;
     // The whole user fields does not need to be filled, 
     // as long as the user is identifiable.
-    User guard_assigned = 2;
+    EmployeeEvaluation guard_assigned = 2;
     google.protobuf.Timestamp custom_start_time = 3;
     google.protobuf.Timestamp custom_end_time = 4;
     bool confirmed = 5;
@@ -315,7 +316,6 @@ message RosterFilter {
 
     // More fields can be added in the future. 
     enum Field{
-        // TODO
         ROSTER_ID = 0;
         ROSTER_ASSIGNMENT_ID = 1;
         ROSTER_AIFS_CLIENT_ID = 2;
@@ -326,6 +326,8 @@ message RosterFilter {
         CLIENT_ID = 5;
         GUARD_ASSIGNMENT_CONFIRMATION = 6;
         GUARD_ASSIGNMENT_ATTENDED = 7;
+        START_TIME = 8;
+        END_TIME = 9;
     }
 }
 

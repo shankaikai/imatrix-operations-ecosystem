@@ -3,6 +3,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"io"
 
@@ -21,6 +22,12 @@ func (s *Server) AddRoster(stream pb.RosterServices_AddRosterServer) error {
 			return stream.SendAndClose(&res)
 		}
 
+		if err != nil {
+			return err
+		}
+
+		// Fill up the blank values of the pb message
+		err = s.insertDefaultRosterValues(roster)
 		if err != nil {
 			return err
 		}
@@ -140,6 +147,73 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 			return err
 		}
 	}
+
+	return nil
+}
+
+// Adds the default values for the roster
+func (s *Server) insertDefaultRosterValues(roster *pb.Roster) error {
+	if roster.Clients == nil {
+		err := fillDefaultClients(roster, s.db)
+		if err != nil {
+			return err
+		}
+	}
+
+	// fill up custom time
+	for _, assignment := range roster.GuardAssigned {
+		if assignment.CustomStartTime == nil {
+			assignment.CustomStartTime = roster.StartTime
+		}
+		if assignment.CustomEndTime == nil {
+			assignment.CustomEndTime = roster.EndTime
+		}
+	}
+
+	return nil
+}
+
+func fillDefaultClients(roster *pb.Roster, db *sql.DB) error {
+	clientQuery := &pb.ClientQuery{}
+	aifsClientRosters := make([]*pb.AIFSClientRoster, 0)
+	var clients []*pb.Client
+	var err error
+
+	switch roster.AifsId {
+	case 1:
+		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
+			pb.Filter_EQUAL, "1")
+		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
+			pb.Filter_EQUAL, "2")
+		clients, err = db_pck.GetClients(db, clientQuery)
+		if err != nil {
+			return err
+		}
+	case 2:
+		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
+			pb.Filter_EQUAL, "3")
+		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
+			pb.Filter_EQUAL, "4")
+		clients, err = db_pck.GetClients(db, clientQuery)
+		if err != nil {
+			return err
+		}
+	default:
+		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
+			pb.Filter_EQUAL, "5")
+		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
+			pb.Filter_EQUAL, "6")
+		clients, err = db_pck.GetClients(db, clientQuery)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, client := range clients {
+		aifsClientRosters = append(aifsClientRosters, &pb.AIFSClientRoster{Client: client})
+	}
+
+	roster.Clients = aifsClientRosters
 
 	return nil
 }

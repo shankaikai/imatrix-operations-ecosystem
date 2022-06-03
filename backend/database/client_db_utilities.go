@@ -113,14 +113,14 @@ func getFormattedClientFilters(query *pb.ClientQuery, needLimit bool, needOrder 
 // the only condition is a matching client id.
 func getClientIdFormattedFilter(clientId int) string {
 	query := &pb.ClientQuery{}
-	addClientFilter(query, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
+	AddClientFilter(query, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
 	return getFormattedClientFilters(query, false, false)
 }
 
 // Helper function to add a new filter to the list of existing
 // filters in a user query struct.
 // Modifies the user query parameter directly.
-func addClientFilter(query *pb.ClientQuery, field pb.ClientFilter_Field,
+func AddClientFilter(query *pb.ClientQuery, field pb.ClientFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
 	if query.Filters == nil {
@@ -175,7 +175,7 @@ func clientFilterToDBCol(filterField pb.ClientFilter_Field) string {
 // Get the client corresponding to a particular client id in the db
 func idClientByClientId(db *sql.DB, clientId int) (*pb.Client, error) {
 	clientQuery := &pb.ClientQuery{Limit: 1}
-	addClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
+	AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
 
 	clients, err := GetClients(db, clientQuery)
 

@@ -66,7 +66,7 @@ func orderRosterFields(roster *pb.Roster) string {
 
 	output += "'" + strconv.Itoa(int(roster.AifsId)) + "'" + ", "
 	output += "'" + roster.StartTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
-	output += "'" + roster.EndTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
+	output += "'" + roster.EndTime.AsTime().Format(DATETIME_FORMAT) + "'"
 
 	return output
 }
@@ -98,12 +98,12 @@ func orderRosterAsgnFields(rosterAssignment *pb.RosterAssignement, relatedRoster
 	output := ""
 
 	output += strconv.Itoa(int(relatedRosterId)) + ","
-	output += strconv.Itoa(int(rosterAssignment.GuardAssigned.UserId)) + ","
+	output += strconv.Itoa(int(rosterAssignment.GuardAssigned.Employee.UserId)) + ","
 	output += "'" + rosterAssignment.CustomStartTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
 	output += "'" + rosterAssignment.CustomEndTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
 
 	// confirmation and attended are false by default.
-	output += "0, 0" + ","
+	output += "0, 0"
 
 	return output
 }
@@ -168,7 +168,9 @@ func getFilledRosterASGNFields(rosterAssignment *pb.RosterAssignement) string {
 	rosterTableFields := []string{}
 
 	if rosterAssignment.GuardAssigned != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_GUARD_ASSIGNED, strconv.Itoa(int(rosterAssignment.GuardAssigned.UserId)), true))
+		if rosterAssignment.GuardAssigned.Employee != nil {
+			rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_GUARD_ASSIGNED, strconv.Itoa(int(rosterAssignment.GuardAssigned.Employee.UserId)), true))
+		}
 	}
 	if rosterAssignment.CustomStartTime != nil {
 		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_START_TIME, rosterAssignment.CustomStartTime.AsTime().Format(DATETIME_FORMAT), true))
@@ -239,7 +241,8 @@ func getFormattedRosterFilters(query *pb.RosterQuery, table string, needLimit bo
 		}
 		switch filter.Field {
 		case pb.RosterFilter_ROSTER_ID, pb.RosterFilter_AIFS_ID, pb.RosterFilter_GUARD_ASSIGNED_ID,
-			pb.RosterFilter_CLIENT_ID, pb.RosterFilter_ROSTER_ASSIGNMENT_ID:
+			pb.RosterFilter_CLIENT_ID, pb.RosterFilter_ROSTER_ASSIGNMENT_ID, pb.RosterFilter_START_TIME,
+			pb.RosterFilter_END_TIME, pb.RosterFilter_ROSTER_AIFS_CLIENT_ID:
 			if hasQuotes {
 				whereFilters = append(
 					whereFilters, fmt.Sprintf("%s %s '%s'", rosterFilterToDBCol(filter.Field, table),
@@ -307,6 +310,8 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 	for rows.Next() {
 		roster := &pb.Roster{}
 		rosterAssignment := &pb.RosterAssignement{}
+		employeeEval := &pb.EmployeeEvaluation{}
+		rosterAssignment.GuardAssigned = employeeEval
 
 		assignedUserId := -1
 
@@ -373,7 +378,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			rosterMap[roster.RosteringId] = roster
 		}
 
-		rosterAssignment.GuardAssigned, err = idUserByUserId(db, assignedUserId)
+		rosterAssignment.GuardAssigned.Employee, err = idUserByUserId(db, assignedUserId)
 		if err != nil {
 			fmt.Println("GetRosters:", err.Error())
 			continue
@@ -421,14 +426,21 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		*rosters = append(*rosters, roster)
 	}
 
-	// Get the clients
-	for _, roster := range *rosters {
-		clients, err := GetRosterAIFSClient(db, &pb.RosterQuery{}, roster.RosteringId)
-		if err != nil {
-			fmt.Println("GetRosters:", err.Error())
-			return err
+	// Get the clients based on the client filters
+	if clientRosterQueries == nil {
+		for _, roster := range *rosters {
+			clients, err := GetRosterAIFSClient(db, &pb.RosterQuery{}, roster.RosteringId)
+			if err != nil {
+				fmt.Println("GetRosters:", err.Error())
+				return err
+			}
+			roster.Clients = clients
 		}
-		roster.Clients = clients
+	} else {
+		// TODO think about this
+		// if i dont care about limits and skips, everything is fine. but urg
+		// Get clients
+		// Join clients with current rosters
 	}
 
 	sort.Slice(*rosters, func(i, j int) bool {
@@ -459,7 +471,7 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, query *pb.RosterQu
 	currentAsgnIds := make([]int, 0)
 
 	for _, asgn := range currentAssignments {
-		currentAsgnIds = append(currentAsgnIds, int(asgn.GuardAssigned.UserId))
+		currentAsgnIds = append(currentAsgnIds, int(asgn.GuardAssigned.Employee.UserId))
 	}
 
 	sort.Ints(currentAsgnIds)
@@ -474,7 +486,7 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, query *pb.RosterQu
 	missingAsgnIndex := make([]int, 0)
 
 	for i, asgn := range roster.GuardAssigned {
-		found, index := common.BinarySearch(currentAsgnIds, 0, len(currentAsgnIds)-1, int(asgn.GuardAssigned.UserId))
+		found, index := common.BinarySearch(currentAsgnIds, 0, len(currentAsgnIds)-1, int(asgn.GuardAssigned.Employee.UserId))
 		if found {
 			fmt.Println("Found updated recipient in current recipient")
 			currentAsgnIds = append(currentAsgnIds[:index], currentAsgnIds[index+1:]...)
@@ -611,16 +623,41 @@ func rosterFilterToDBCol(filterField pb.RosterFilter_Field, table string) string
 		output = ROSTER_ASGN_DB_ID
 	case pb.RosterFilter_ROSTER_AIFS_CLIENT_ID:
 		output = AIFS_CLIENT_DB_ID
+	case pb.RosterFilter_START_TIME:
+		if table == ROSTER_DB_TABLE_NAME {
+			output = ROSTER_DB_START_TIME
+		} else if table == ROSTER_AIFS_CLIENT_DB_TABLE_NAME {
+			output = ROSTER_ASGN_DB_START_TIME
+		}
+	case pb.RosterFilter_END_TIME:
+		if table == ROSTER_DB_TABLE_NAME {
+			output = ROSTER_DB_END_TIME
+		} else if table == ROSTER_AIFS_CLIENT_DB_TABLE_NAME {
+			output = ROSTER_ASGN_DB_END_TIME
+		}
 	}
 
 	return output
 }
 
-// TODO check if roster exists
 // Returns the pk of the roster that already exists or -1
 // if no such roster exists.
-func checkRosterExists(roster *pb.Roster) (int64, error) {
-	return 1, nil
+func checkRosterExists(db *sql.DB, roster *pb.Roster) (int64, error) {
+	query := &pb.RosterQuery{}
+	addRosterFilter(query, pb.RosterFilter_AIFS_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.AifsId)))
+	addRosterFilter(query, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, roster.StartTime.AsTime().Format(DATETIME_FORMAT))
+	addRosterFilter(query, pb.RosterFilter_END_TIME, pb.Filter_EQUAL, roster.EndTime.AsTime().Format(DATETIME_FORMAT))
+	rosters, err := GetRosters(db, query)
+
+	if err != nil {
+		return -1, nil
+	}
+
+	if len(rosters) > 0 {
+		return rosters[0].RosteringId, nil
+	}
+
+	return -1, nil
 }
 
 // Removes any undesirable client queries from the original query

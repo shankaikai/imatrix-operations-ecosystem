@@ -22,6 +22,7 @@ type AdminServicesClient interface {
 	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
+	// TODO change user response to have user scoring and stuff
 	FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (AdminServices_FindUsersClient, error)
 	// Client
 	AddClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
@@ -164,6 +165,7 @@ type AdminServicesServer interface {
 	AddUser(context.Context, *User) (*Response, error)
 	UpdateUser(context.Context, *User) (*Response, error)
 	DeleteUser(context.Context, *User) (*Response, error)
+	// TODO change user response to have user scoring and stuff
 	FindUsers(*UserQuery, AdminServices_FindUsersServer) error
 	// Client
 	AddClient(context.Context, *Client) (*Response, error)
