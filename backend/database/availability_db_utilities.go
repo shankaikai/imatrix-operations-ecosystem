@@ -29,7 +29,7 @@ const (
 
 	// The limit for availability should be much higher
 	// than the actual default to accomodate for the number of guards
-	AVAILABILITY_DEFAULT_LIMIT = 100
+	AVAILABILITY_DEFAULT_LIMIT = 1000
 )
 
 type Availability struct {

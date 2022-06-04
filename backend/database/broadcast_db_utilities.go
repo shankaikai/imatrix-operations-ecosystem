@@ -66,8 +66,8 @@ func orderBroadcastFields(broadcast *pb.Broadcast) string {
 
 	output += "'" + getBroadcastDBTypeStringFromProto(broadcast.Type) + "'" + ", "
 	output += "'" + broadcast.Content + "'" + ", "
-	output += "'" + broadcast.CreationDate.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
-	output += "'" + broadcast.Deadline.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
+	output += "'" + broadcast.CreationDate.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
+	output += "'" + broadcast.Deadline.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
 	output += "'" + strconv.Itoa(int(broadcast.Creator.UserId)) + "'" + ", "
 	output += "'" + getBroadcastDBUrgencyStringFromProto(broadcast.Urgency) + "'"
 
@@ -122,10 +122,10 @@ func getFilledBroadcastFields(broadcast *pb.Broadcast) string {
 		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CONTENT, broadcast.Content, true))
 	}
 	if broadcast.CreationDate != nil {
-		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CREATION_DATE, broadcast.CreationDate.AsTime().Format(DATETIME_FORMAT), true))
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CREATION_DATE, broadcast.CreationDate.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 	if broadcast.Deadline != nil {
-		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_DEADLINE, broadcast.Deadline.AsTime().Format(DATETIME_FORMAT), true))
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_DEADLINE, broadcast.Deadline.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 	if broadcast.Creator != nil {
 		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CREATOR, strconv.Itoa(int(broadcast.Creator.UserId)), true))
@@ -152,7 +152,7 @@ func getFilledBroadcastRecFields(bRec *pb.BroadcastRecipient) string {
 	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_REJECTION, strconv.FormatBool(bRec.Rejected), false))
 
 	if bRec.LastReplied != nil {
-		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_LAST_REPLIED, bRec.LastReplied.AsTime().Format(DATETIME_FORMAT), true))
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_LAST_REPLIED, bRec.LastReplied.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 
 	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_AIDS_ID, strconv.Itoa(int(bRec.AifsId)), true))

@@ -122,18 +122,31 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 	res := pb.Response{Type: pb.Response_ACK}
 	employeeEvalRes := pb.EmployeeEvaluationResponse{Response: &res}
 
-	employeeEvals, err := s.GetAvailableIspecialistsWithScore(query)
+	availEmployeeEvals, unavailEmployeeEvals, err := s.GetAvailableIspecialistsWithScore(query)
 
 	if err != nil {
 		return err
 	}
 
 	// Sort the available Ispecialists according to score desc
-	sort.Slice(employeeEvals, func(i, j int) bool {
-		return employeeEvals[i].EmployeeScore < employeeEvals[j].EmployeeScore
+	sort.Slice(availEmployeeEvals, func(i, j int) bool {
+		return availEmployeeEvals[i].EmployeeScore > availEmployeeEvals[j].EmployeeScore
 	})
 
-	for _, employeeEval := range employeeEvals {
+	sort.Slice(unavailEmployeeEvals, func(i, j int) bool {
+		return unavailEmployeeEvals[i].EmployeeScore > unavailEmployeeEvals[j].EmployeeScore
+	})
+
+	// Send the available ones first
+	for _, employeeEval := range availEmployeeEvals {
+		employeeEvalRes.Employee = employeeEval
+
+		if err := stream.Send(&employeeEvalRes); err != nil {
+			return err
+		}
+	}
+
+	for _, employeeEval := range unavailEmployeeEvals {
 		employeeEvalRes.Employee = employeeEval
 
 		if err := stream.Send(&employeeEvalRes); err != nil {

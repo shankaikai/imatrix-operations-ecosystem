@@ -67,8 +67,8 @@ func orderRosterFields(roster *pb.Roster) string {
 	output := ""
 
 	output += "'" + strconv.Itoa(int(roster.AifsId)) + "'" + ", "
-	output += "'" + roster.StartTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
-	output += "'" + roster.EndTime.AsTime().Format(DATETIME_FORMAT) + "'"
+	output += "'" + roster.StartTime.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
+	output += "'" + roster.EndTime.AsTime().Format(common.DATETIME_FORMAT) + "'"
 
 	return output
 }
@@ -102,8 +102,8 @@ func orderRosterAsgnFields(rosterAssignment *pb.RosterAssignement, relatedRoster
 
 	output += strconv.Itoa(int(relatedRosterId)) + ","
 	output += strconv.Itoa(int(rosterAssignment.GuardAssigned.Employee.UserId)) + ","
-	output += "'" + rosterAssignment.CustomStartTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
-	output += "'" + rosterAssignment.CustomEndTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
+	output += "'" + rosterAssignment.CustomStartTime.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
+	output += "'" + rosterAssignment.CustomEndTime.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
 
 	// confirmation and attended are false by default.
 	output += "0, 0" + ", "
@@ -154,10 +154,10 @@ func getFilledRosterFields(roster *pb.Roster) string {
 		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_AIFS_ID, strconv.Itoa(int(roster.AifsId)), true))
 	}
 	if roster.StartTime != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_START_TIME, roster.StartTime.AsTime().Format(DATETIME_FORMAT), true))
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_START_TIME, roster.StartTime.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 	if roster.EndTime != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_END_TIME, roster.EndTime.AsTime().Format(DATETIME_FORMAT), true))
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_END_TIME, roster.EndTime.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 
 	return strings.Join(rosterTableFields, ",")
@@ -178,17 +178,17 @@ func getFilledRosterASGNFields(rosterAssignment *pb.RosterAssignement) string {
 		}
 	}
 	if rosterAssignment.CustomStartTime != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_START_TIME, rosterAssignment.CustomStartTime.AsTime().Format(DATETIME_FORMAT), true))
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_START_TIME, rosterAssignment.CustomStartTime.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 	if rosterAssignment.CustomEndTime != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_END_TIME, rosterAssignment.CustomEndTime.AsTime().Format(DATETIME_FORMAT), true))
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_END_TIME, rosterAssignment.CustomEndTime.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 
 	rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_CONFIRMATION, strconv.FormatBool(rosterAssignment.Confirmed), false))
 	rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_ATTENDED, strconv.FormatBool(rosterAssignment.Attended), false))
 
 	if rosterAssignment.AttendanceTime != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_ATTENDED_TIME, rosterAssignment.AttendanceTime.AsTime().Format(DATETIME_FORMAT), true))
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_ATTENDED_TIME, rosterAssignment.AttendanceTime.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 
 	rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_IS_ASSIGNED, strconv.FormatBool(rosterAssignment.IsAssigned), false))
@@ -436,7 +436,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 	}
 
 	sort.Slice(*rosters, func(i, j int) bool {
-		return (*rosters)[i].AifsId > (*rosters)[j].AifsId
+		return (*rosters)[i].AifsId < (*rosters)[j].AifsId
 	})
 
 	if query.Skip > 0 {
@@ -689,13 +689,13 @@ func rosterFilterToDBCol(filterField pb.RosterFilter_Field, table string) string
 	case pb.RosterFilter_START_TIME:
 		if table == ROSTER_DB_TABLE_NAME {
 			output = ROSTER_DB_START_TIME
-		} else if table == ROSTER_AIFS_CLIENT_DB_TABLE_NAME {
+		} else if table == ROSTER_ASSIGNMENT_DB_TABLE_NAME {
 			output = ROSTER_ASGN_DB_START_TIME
 		}
 	case pb.RosterFilter_END_TIME:
 		if table == ROSTER_DB_TABLE_NAME {
 			output = ROSTER_DB_END_TIME
-		} else if table == ROSTER_AIFS_CLIENT_DB_TABLE_NAME {
+		} else if table == ROSTER_ASSIGNMENT_DB_TABLE_NAME {
 			output = ROSTER_ASGN_DB_END_TIME
 		}
 	case pb.RosterFilter_IS_ASSIGNED:
@@ -710,8 +710,8 @@ func rosterFilterToDBCol(filterField pb.RosterFilter_Field, table string) string
 func checkRosterExists(db *sql.DB, roster *pb.Roster) (int64, error) {
 	query := &pb.RosterQuery{}
 	AddRosterFilter(query, pb.RosterFilter_AIFS_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.AifsId)))
-	AddRosterFilter(query, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, roster.StartTime.AsTime().Format(DATETIME_FORMAT))
-	AddRosterFilter(query, pb.RosterFilter_END_TIME, pb.Filter_EQUAL, roster.EndTime.AsTime().Format(DATETIME_FORMAT))
+	AddRosterFilter(query, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, roster.StartTime.AsTime().Format(common.DATETIME_FORMAT))
+	AddRosterFilter(query, pb.RosterFilter_END_TIME, pb.Filter_EQUAL, roster.EndTime.AsTime().Format(common.DATETIME_FORMAT))
 	rosters, err := GetRosters(db, query)
 
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -16,7 +17,6 @@ import (
 )
 
 const (
-	DATETIME_FORMAT  = "2006-01-02 15:04:05"
 	DEFAULT_LIMIT    = 10
 	MAX_LIMIT        = 1000
 	ALL_COLS         = "*"
@@ -285,7 +285,7 @@ func formatFilterCondition(filter *pb.Filter, fieldName string, encloseVal bool)
 }
 
 func DBDatetimeToPB(datetimeString string) (*timestamppb.Timestamp, error) {
-	creationDate, err := time.Parse(DATETIME_FORMAT, datetimeString)
+	creationDate, err := time.Parse(common.DATETIME_FORMAT, datetimeString)
 	if err != nil {
 		return &timestamppb.Timestamp{}, err
 	}

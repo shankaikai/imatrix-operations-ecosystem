@@ -20,7 +20,7 @@ func GetAvailability(db *sql.DB, query *pb.AvailabilityQuery) ([]*Availability, 
 	// Format filters
 	filters := getFormattedAvailabilityFilters(query, true, true)
 
-	availRows, err := Query(db, CLIENT_DB_TABLE_NAME, fields, filters)
+	availRows, err := Query(db, AVAILABILITY_DB_TABLE_NAME, fields, filters)
 
 	if err != nil {
 		return availabilities, err

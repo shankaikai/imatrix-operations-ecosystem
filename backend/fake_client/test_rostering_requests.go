@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/grpc"
@@ -18,13 +19,15 @@ func TestRosteringClient(serverAddr *string, serverPort *int) {
 	// 	rosters = append(rosters, createFakeRoster(i))
 	// }
 
-	// pk := InsertRoster(serverAddr, serverPort, rosters)
+	// // pk := InsertRoster(serverAddr, serverPort, rosters)
 	// rosters[2].RosteringId = 4 //pk
 
-	ConsolidatedFindRosterTest(serverAddr, serverPort)
+	// ConsolidatedFindRosterTest(serverAddr, serverPort)
 	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
 
 	// DeleteRosterTest(serverAddr, serverPort, &pb.Roster{RosteringId: 9})
+	// FindRosterIdFilter(serverAddr, serverPort)
+	ConsolidatedGetAvailableUsersTest(serverAddr, serverPort)
 }
 
 func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int64 {
@@ -81,7 +84,7 @@ func FindRostersNoFilter(serverAddr *string, serverPort *int) {
 
 func FindRosterIdFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding roster id filter")
-	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "18"}
 	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_ROSTER_ID}
 
 	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
@@ -294,6 +297,91 @@ func DeleteRosterTest(serverAddr *string, serverPort *int, roster *pb.Roster) {
 	}
 }
 
+func ConsolidatedGetAvailableUsersTest(serverAddr *string, serverPort *int) {
+	getAvailableUsersTestNoRoster(serverAddr, serverPort)
+	// getAvailableUsersTestWithRoster(serverAddr, serverPort)
+}
+
+func getAvailableUsersTestNoRoster(serverAddr *string, serverPort *int) {
+	// Give a fictional time in 2022 Jan
+	startTimeTime := time.Date(2022, 1, 25, 18, 0, 0, 0, time.UTC)
+	endTimeTime := time.Date(2022, 1, 26, 6, 0, 0, 0, time.UTC)
+	startTime := &timestamppb.Timestamp{Seconds: startTimeTime.Unix()}
+	endTime := &timestamppb.Timestamp{Seconds: endTimeTime.Unix()}
+
+	availQuery := &pb.AvailabilityQuery{StartTime: startTime, EndTime: endTime}
+
+	fmt.Println(availQuery)
+	year, week := startTimeTime.ISOWeek()
+	fmt.Println("start year, week, day", year, week, startTimeTime.Weekday())
+	year, week = endTimeTime.ISOWeek()
+	fmt.Println("end year, week, day", year, week, endTimeTime.Weekday())
+
+	GetAvailableUsersTest(serverAddr, serverPort, availQuery)
+}
+
+func getAvailableUsersTestWithRoster(serverAddr *string, serverPort *int) {
+	// create a roster for Aug 1 2022 from 6pm to 6am the next day
+	startTimeTime := time.Date(2022, 8, 1, 18, 0, 0, 0, time.UTC)
+	endTimeTime := time.Date(2022, 8, 2, 6, 0, 0, 0, time.UTC)
+	startTime := &timestamppb.Timestamp{Seconds: startTimeTime.Unix()}
+	endTime := &timestamppb.Timestamp{Seconds: endTimeTime.Unix()}
+
+	year, week := startTimeTime.ISOWeek()
+	fmt.Println("start year, week, day", year, week, startTimeTime.Weekday())
+	year, week = endTimeTime.ISOWeek()
+	fmt.Println("end year, week, day", year, week, endTimeTime.Weekday())
+
+	rosters := make([]*pb.Roster, 0)
+	for i := 1; i < 4; i++ {
+		roster := createFakeRoster(i)
+		roster.StartTime = startTime
+		roster.EndTime = endTime
+		for _, assignment := range roster.GuardAssigned {
+			assignment.CustomStartTime = startTime
+			assignment.CustomEndTime = endTime
+		}
+		rosters = append(rosters, roster)
+	}
+
+	InsertRoster(serverAddr, serverPort, rosters)
+
+	availQuery := &pb.AvailabilityQuery{StartTime: startTime, EndTime: endTime}
+	GetAvailableUsersTest(serverAddr, serverPort, availQuery)
+}
+
+func GetAvailableUsersTest(serverAddr *string, serverPort *int, query *pb.AvailabilityQuery) {
+	fmt.Println("Finding Available Users ...")
+	grpcRoster, conn := createRosterClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	stream, err := grpcRoster.GetAvailableUsers(context.Background(), query)
+
+	if err != nil {
+		fmt.Println("GetAvailableUsersTest ERROR:", err)
+		return
+	}
+
+	count := 0
+	for {
+		availabilityRes, err := stream.Recv()
+
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			fmt.Println("GetAvailableUsersTest ERROR:", err)
+		}
+
+		fmt.Println("Availability check received response:", availabilityRes.Response.Type)
+		if availabilityRes.Response.Type == pb.Response_ERROR {
+			continue
+		}
+
+		fmt.Println(count, ":", availabilityRes.Employee)
+		count++
+	}
+}
 func createRosterClient(serverAddr *string, serverPort *int) (pb.RosterServicesClient, *grpc.ClientConn) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
