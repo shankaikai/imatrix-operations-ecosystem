@@ -234,7 +234,7 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 		hasQuotes := true
 		if filter.Comparisons.Comparison == pb.Filter_CONTAINS {
 			filter.Comparisons.Value = FormatLikeQueryValue(filter.Comparisons.Value)
-		} else if filter.Comparisons.Comparison == pb.Filter_IN {
+		} else if filter.Comparisons.Comparison == pb.Filter_IN || filter.Comparisons.Comparison == pb.Filter_NOT_IN {
 			filter.Comparisons.Value = FormatInQueryValue(filter.Comparisons.Value)
 			hasQuotes = false
 		}

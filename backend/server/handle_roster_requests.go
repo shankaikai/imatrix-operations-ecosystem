@@ -3,9 +3,9 @@ package server
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"io"
+	"sort"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
@@ -85,6 +85,9 @@ func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Respo
 func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_FindRostersServer) error {
 	res := pb.Response{Type: pb.Response_ACK}
 
+	// Only find rosters assignments that are still assigned
+	db_pck.AddRosterFilter(query, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
+
 	foundRosters, err := db_pck.GetRosters(
 		s.db,
 		query,
@@ -112,108 +115,31 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 	return nil
 }
 
-// TODO
+// Send back all the available users that are not yet assigned for the particular day
 func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.RosterServices_GetAvailableUsersServer) error {
 	fmt.Println("GetAvailableUsers")
 
 	res := pb.Response{Type: pb.Response_ACK}
 	employeeEvalRes := pb.EmployeeEvaluationResponse{Response: &res}
 
-	employees := make([]*pb.User, 0)
+	employeeEvals, err := s.GetAvailableIspecialistsWithScore(query)
 
-	for i := 0; i < 3; i++ {
-		employees = append(employees, &pb.User{
-			UserId:          int64(i),
-			UserType:        pb.User_ISPECIALIST,
-			Name:            "test name",
-			Email:           "email",
-			PhoneNumber:     "1232",
-			TelegramHandle:  "sfds",
-			UserSecurityImg: "dsfds",
-			IsPartTimer:     false,
-		})
+	if err != nil {
+		return err
 	}
 
-	for i := 0; i < 3; i++ {
-		employeeEval := &pb.EmployeeEvaluation{
-			Employee:      employees[i],
-			IsAvailable:   true,
-			EmployeeScore: float32((i + 1) * 4),
-		}
+	// Sort the available Ispecialists according to score desc
+	sort.Slice(employeeEvals, func(i, j int) bool {
+		return employeeEvals[i].EmployeeScore < employeeEvals[j].EmployeeScore
+	})
 
+	for _, employeeEval := range employeeEvals {
 		employeeEvalRes.Employee = employeeEval
 
 		if err := stream.Send(&employeeEvalRes); err != nil {
 			return err
 		}
 	}
-
-	return nil
-}
-
-// Adds the default values for the roster
-func (s *Server) insertDefaultRosterValues(roster *pb.Roster) error {
-	if roster.Clients == nil {
-		err := fillDefaultClients(roster, s.db)
-		if err != nil {
-			return err
-		}
-	}
-
-	// fill up custom time
-	for _, assignment := range roster.GuardAssigned {
-		if assignment.CustomStartTime == nil {
-			assignment.CustomStartTime = roster.StartTime
-		}
-		if assignment.CustomEndTime == nil {
-			assignment.CustomEndTime = roster.EndTime
-		}
-	}
-
-	return nil
-}
-
-func fillDefaultClients(roster *pb.Roster, db *sql.DB) error {
-	clientQuery := &pb.ClientQuery{}
-	aifsClientRosters := make([]*pb.AIFSClientRoster, 0)
-	var clients []*pb.Client
-	var err error
-
-	switch roster.AifsId {
-	case 1:
-		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
-			pb.Filter_EQUAL, "1")
-		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
-			pb.Filter_EQUAL, "2")
-		clients, err = db_pck.GetClients(db, clientQuery)
-		if err != nil {
-			return err
-		}
-	case 2:
-		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
-			pb.Filter_EQUAL, "3")
-		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
-			pb.Filter_EQUAL, "4")
-		clients, err = db_pck.GetClients(db, clientQuery)
-		if err != nil {
-			return err
-		}
-	default:
-		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
-			pb.Filter_EQUAL, "5")
-		db_pck.AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID,
-			pb.Filter_EQUAL, "6")
-		clients, err = db_pck.GetClients(db, clientQuery)
-		if err != nil {
-			return err
-		}
-	}
-
-	for _, client := range clients {
-		aifsClientRosters = append(aifsClientRosters, &pb.AIFSClientRoster{Client: client})
-	}
-
-	roster.Clients = aifsClientRosters
 
 	return nil
 }

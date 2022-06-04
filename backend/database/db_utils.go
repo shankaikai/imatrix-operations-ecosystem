@@ -253,6 +253,8 @@ func GetFilterComparisonSign(compaison pb.Filter_Comparisons) string {
 		return "LIKE"
 	case pb.Filter_IN:
 		return "IN"
+	case pb.Filter_NOT_IN:
+		return "NOT IN"
 	default:
 		return "="
 	}

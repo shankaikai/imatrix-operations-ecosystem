@@ -11,6 +11,7 @@ import (
 
 	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
+	rs "capstone.operations_ecosystem/backend/rating_system"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -34,6 +35,7 @@ const (
 	ROSTER_ASGN_DB_CONFIRMATION   = "confirmation"
 	ROSTER_ASGN_DB_ATTENDED       = "attended"
 	ROSTER_ASGN_DB_ATTENDED_TIME  = "attendance_time"
+	ROSTER_ASGN_DB_IS_ASSIGNED    = "is_assigned"
 
 	// AIFS Client Schedule table fields
 	AIFS_CLIENT_DB_ID             = "aifs_client_schedule_id"
@@ -85,6 +87,7 @@ func getRosterAsgnTableFields() string {
 		ROSTER_ASGN_DB_END_TIME,
 		ROSTER_ASGN_DB_CONFIRMATION,
 		ROSTER_ASGN_DB_ATTENDED,
+		ROSTER_ASGN_DB_IS_ASSIGNED,
 	}
 
 	return strings.Join(rosterRecTableFields, ",")
@@ -103,7 +106,9 @@ func orderRosterAsgnFields(rosterAssignment *pb.RosterAssignement, relatedRoster
 	output += "'" + rosterAssignment.CustomEndTime.AsTime().Format(DATETIME_FORMAT) + "'" + ", "
 
 	// confirmation and attended are false by default.
-	output += "0, 0"
+	output += "0, 0" + ", "
+	// is assigned is false by default.
+	output += "1"
 
 	return output
 }
@@ -186,6 +191,8 @@ func getFilledRosterASGNFields(rosterAssignment *pb.RosterAssignement) string {
 		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_ATTENDED_TIME, rosterAssignment.AttendanceTime.AsTime().Format(DATETIME_FORMAT), true))
 	}
 
+	rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_IS_ASSIGNED, strconv.FormatBool(rosterAssignment.IsAssigned), false))
+
 	return strings.Join(rosterTableFields, ",")
 }
 
@@ -208,7 +215,7 @@ func getFilledAIFSClientFields(aifsClient *pb.AIFSClientRoster) string {
 // Helper function to add a new filter to the list of existing
 // filters in a roster query struct.
 // Modifies the roster query parameter directly.
-func addRosterFilter(query *pb.RosterQuery, field pb.RosterFilter_Field,
+func AddRosterFilter(query *pb.RosterQuery, field pb.RosterFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
 	if query.Filters == nil {
@@ -254,7 +261,8 @@ func getFormattedRosterFilters(query *pb.RosterQuery, table string, needLimit bo
 						GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value),
 				)
 			}
-		case pb.RosterFilter_GUARD_ASSIGNMENT_CONFIRMATION, pb.RosterFilter_GUARD_ASSIGNMENT_ATTENDED:
+		case pb.RosterFilter_GUARD_ASSIGNMENT_CONFIRMATION, pb.RosterFilter_GUARD_ASSIGNMENT_ATTENDED,
+			pb.RosterFilter_IS_ASSIGNED:
 			whereFilters = append(
 				whereFilters, fmt.Sprintf("%s %s %s", rosterFilterToDBCol(filter.Field, table),
 					GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value),
@@ -320,7 +328,8 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		clientId := -1
 
 		// Redundant Strings
-		relatedRoster := ""
+		assignmentRelatedRoster := ""
+		clientRelatedRoster := ""
 
 		// confirmation can be null
 		var confirmation sql.NullBool
@@ -343,16 +352,18 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 
 			// Roster Details
 			&rosterAssignment.RosterAssignmentId,
-			&relatedRoster,
+			&assignmentRelatedRoster,
 			&assignedUserId,
 			&customStartTimeString,
 			&customEndTimeString,
 			&rosterAssignment.Confirmed,
 			&rosterAssignment.Attended,
 			&attendanceTimeString,
+			&rosterAssignment.IsAssigned,
 
 			// Client Details
 			&aifsClient.AifsClientRosterId,
+			&clientRelatedRoster,
 			&clientId,
 		)
 
@@ -477,6 +488,13 @@ func convertFromDbRosterAssignment(db *sql.DB, rosterAssignment *pb.RosterAssign
 		}
 	}
 
+	// Get the user scores
+	rosterAssignment.GuardAssigned.EmployeeScore, err = rs.GetUserScore(rosterAssignment.GuardAssigned.Employee)
+	if err != nil {
+		fmt.Println("convertFromDbRosterAssignment:", err.Error())
+		return err
+	}
+
 	return nil
 }
 
@@ -496,8 +514,10 @@ func convertFromDbRosterAifsClient(db *sql.DB, aifsClient *pb.AIFSClientRoster, 
 // recipients are and make the necessary changes so that the
 // recipients of the main roster will corresponds to the new
 // list that is needed. Ie, it inserts and deletes recipients at will.
-func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, query *pb.RosterQuery, dbLock *sync.Mutex) error {
-	// Get all assignments
+func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) error {
+	// Get all current assignments that are assigned
+	query := &pb.RosterQuery{}
+	AddRosterFilter(query, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
 	currentAssignments, err := GetRosterAssingments(db, query, roster.RosteringId)
 	if err != nil {
 		fmt.Println("updateAssignmentsOfRoster ERROR::", err)
@@ -542,10 +562,16 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, query *pb.RosterQu
 		}
 	}
 
-	fmt.Println("Deleting Assignment IDs:", currentAsgnIds)
-	// See if any need to be deleted
+	fmt.Println("Removing is_assigned flag for Assignment IDs:", currentAsgnIds)
+	// See if any need to be removed
 	for _, id := range currentAsgnIds {
-		_, err := DeleteRosterAssignment(db, &pb.RosterAssignement{RosterAssignmentId: int64(id)})
+		// change the is_assigned flag to false
+		_, err := UpdateRosterAssignments(db, &pb.RosterAssignement{
+			RosterAssignmentId: int64(id),
+			Confirmed:          false,
+			Attended:           false,
+			IsAssigned:         false,
+		})
 		if err != nil {
 			fmt.Println("UpdateRoster ERROR::", err)
 			return err
@@ -560,9 +586,9 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, query *pb.RosterQu
 // recipients are and make the necessary changes so that the
 // recipients of the main roster will corresponds to the new
 // list that is needed. Ie, it inserts and deletes recipients at will.
-func updateClientsOfRoster(db *sql.DB, roster *pb.Roster, query *pb.RosterQuery, dbLock *sync.Mutex) error {
+func updateClientsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) error {
 	// Get all recipients
-	currentClients, err := GetRosterAIFSClient(db, query, roster.RosteringId)
+	currentClients, err := GetRosterAIFSClient(db, &pb.RosterQuery{}, roster.RosteringId)
 	if err != nil {
 		fmt.Println("updateClientsOfRoster ERROR::", err)
 		return err
@@ -624,12 +650,12 @@ func updateClientsOfRoster(db *sql.DB, roster *pb.Roster, query *pb.RosterQuery,
 func getRosterIdFormattedFilter(rosterId int, table string, isMainRosterId bool) string {
 	query := &pb.RosterQuery{}
 	if isMainRosterId {
-		addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(rosterId))
+		AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(rosterId))
 	} else {
 		if table == ROSTER_ASSIGNMENT_DB_TABLE_NAME {
-			addRosterFilter(query, pb.RosterFilter_ROSTER_ASSIGNMENT_ID, pb.Filter_EQUAL, strconv.Itoa(rosterId))
+			AddRosterFilter(query, pb.RosterFilter_ROSTER_ASSIGNMENT_ID, pb.Filter_EQUAL, strconv.Itoa(rosterId))
 		} else {
-			addRosterFilter(query, pb.RosterFilter_ROSTER_AIFS_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(rosterId))
+			AddRosterFilter(query, pb.RosterFilter_ROSTER_AIFS_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(rosterId))
 		}
 	}
 	return getFormattedRosterFilters(query, table, false, false)
@@ -672,6 +698,8 @@ func rosterFilterToDBCol(filterField pb.RosterFilter_Field, table string) string
 		} else if table == ROSTER_AIFS_CLIENT_DB_TABLE_NAME {
 			output = ROSTER_ASGN_DB_END_TIME
 		}
+	case pb.RosterFilter_IS_ASSIGNED:
+		output = ROSTER_ASGN_DB_IS_ASSIGNED
 	}
 
 	return output
@@ -681,9 +709,9 @@ func rosterFilterToDBCol(filterField pb.RosterFilter_Field, table string) string
 // if no such roster exists.
 func checkRosterExists(db *sql.DB, roster *pb.Roster) (int64, error) {
 	query := &pb.RosterQuery{}
-	addRosterFilter(query, pb.RosterFilter_AIFS_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.AifsId)))
-	addRosterFilter(query, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, roster.StartTime.AsTime().Format(DATETIME_FORMAT))
-	addRosterFilter(query, pb.RosterFilter_END_TIME, pb.Filter_EQUAL, roster.EndTime.AsTime().Format(DATETIME_FORMAT))
+	AddRosterFilter(query, pb.RosterFilter_AIFS_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.AifsId)))
+	AddRosterFilter(query, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, roster.StartTime.AsTime().Format(DATETIME_FORMAT))
+	AddRosterFilter(query, pb.RosterFilter_END_TIME, pb.Filter_EQUAL, roster.EndTime.AsTime().Format(DATETIME_FORMAT))
 	rosters, err := GetRosters(db, query)
 
 	if err != nil {

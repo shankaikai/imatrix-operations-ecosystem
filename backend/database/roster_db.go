@@ -123,8 +123,8 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	fields := ALL_COLS
 
 	// tables are joined on the main roster id
-	fistOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_ASGN_DB_RELATED_ROSTER, false)
-	secondOnCondition := formatFieldEqVal(ROSTER_DB_ID, AIFS_CLIENT_DB_ID, false)
+	fistOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_ASSIGNMENT_DB_TABLE_NAME+"."+ROSTER_ASGN_DB_RELATED_ROSTER, false)
+	secondOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_AIFS_CLIENT_DB_TABLE_NAME+"."+AIFS_CLIENT_DB_RELATED_ROSTER, false)
 
 	// Format filters
 	// temporarily give the query limit the max
@@ -156,8 +156,11 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 	fields := ALL_COLS
 
 	// Format filters
-	// Get for a specific main roster
-	addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
+	// Get for a specific main roster if needed
+	if mainRosterID != -1 {
+		AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
+	}
+
 	filters := getFormattedRosterFilters(query, ROSTER_ASSIGNMENT_DB_TABLE_NAME, true, true)
 
 	rows, err := Query(db, ROSTER_ASSIGNMENT_DB_TABLE_NAME, fields, filters)
@@ -196,6 +199,7 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 			&confirmation,
 			&assignment.Attended,
 			&attendanceTimeString,
+			&assignment.IsAssigned,
 		)
 
 		if err != nil {
@@ -254,7 +258,7 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 
 	// Format filters
 	// Get for a specific main roster
-	addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
+	AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
 	filters := getFormattedRosterFilters(query, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, true, true)
 
 	rows, err := Query(db, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, fields, filters)
@@ -304,9 +308,11 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, error) {
 	// Update the main roster first
 	newFields := getFilledRosterFields(roster)
-	query := &pb.RosterQuery{}
-	addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.RosteringId)))
-	filters := getFormattedRosterFilters(query, ROSTER_DB_TABLE_NAME, false, false)
+
+	filters := getRosterIdFormattedFilter(
+		int(roster.RosteringId),
+		ROSTER_DB_TABLE_NAME, true,
+	)
 
 	var err error
 	rowsAffected := int64(0)
@@ -321,12 +327,12 @@ func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 
 	// Update assignments if necessary
 	if roster.GuardAssigned != nil {
-		err = updateAssignmentsOfRoster(db, roster, query, dbLock)
+		err = updateAssignmentsOfRoster(db, roster, dbLock)
 	}
 
 	// Update clients if necessary
 	if roster.Clients != nil {
-		err = updateClientsOfRoster(db, roster, query, dbLock)
+		err = updateClientsOfRoster(db, roster, dbLock)
 	}
 
 	return rowsAffected, err
@@ -336,7 +342,7 @@ func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 // This function assumes that the roster recipient id is correct.
 // Returns the number of rows affected and any errors.
 // In this case, number of rows affected is either 0 or 1.
-func UpdateRosterRecipients(db *sql.DB, rosterAssignment *pb.RosterAssignement) (int64, error) {
+func UpdateRosterAssignments(db *sql.DB, rosterAssignment *pb.RosterAssignement) (int64, error) {
 	newFields := getFilledRosterASGNFields(rosterAssignment)
 	filters := getRosterIdFormattedFilter(
 		int(rosterAssignment.RosterAssignmentId),

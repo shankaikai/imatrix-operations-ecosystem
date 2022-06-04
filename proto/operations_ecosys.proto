@@ -300,6 +300,9 @@ message RosterAssignement {
     bool confirmed = 5;
     bool attended = 6;
     google.protobuf.Timestamp attendance_time = 7;
+    // If the assignment is part of the current assignment
+    // or if it was previously assigned and is now removed
+    bool is_assigned = 8;
 }
 
 
@@ -309,7 +312,7 @@ message RosterResponse {
     Roster roster = 2;
 }
 
-// Filter the types of broadcasts to be returned. 
+// Filter the types of rosters to be returned. 
 message RosterFilter {
     Field field = 1;
     Filter comparisons = 2;
@@ -328,6 +331,7 @@ message RosterFilter {
         GUARD_ASSIGNMENT_ATTENDED = 7;
         START_TIME = 8;
         END_TIME = 9;
+        IS_ASSIGNED = 10;
     }
 }
 
@@ -372,6 +376,44 @@ message AvailabilityQuery {
     int64 limit = 3; 
     // Skip n rows from the database
     int64 skip = 4;
+
+    // The client has no current need to fill this up.
+    repeated AvailabilityFilter filters = 5;
+    OrderByQuery order_by = 6;
+}
+
+message OrderByQuery{
+    AvailabilityFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
+
+
+
+// Filter the types of availabilty to be returned. 
+message AvailabilityFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        AVAILABILITY_ID = 0;
+        // Week of the year
+        WEEK = 1;
+        YEAR = 2;
+        // Note: single user ID
+        GUARD_ID = 3;
+
+        // Day of the week to look at
+        // The values for these fields in Filter comparisons
+        // should be an empty string
+        SUN = 4;
+        MON = 5;
+        TUES = 6;
+        WED = 7;
+        THURS = 8;
+        FRI = 9;
+        SAT = 10;
+    }
 }
 
 /***************************************************************************
@@ -426,6 +468,7 @@ message Filter {
         LESSER = 4;
         CONTAINS = 5;
         IN = 6;
+        NOT_IN = 7;
     }
 }
 
