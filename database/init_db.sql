@@ -121,6 +121,7 @@ CREATE TABLE IF NOT EXISTS `availability` (
 	thursday JSON,
 	friday JSON,
 	saturday JSON,
+	next_sunday JSON,
     
 	FOREIGN KEY (guard) 
 		REFERENCES `user` (user_id)

@@ -14,17 +14,18 @@ const (
 	AVAILABILITY_DB_TABLE_NAME = "availability"
 
 	// Availability table fields
-	AVAILABILITY_DB_ID    = "availability_id"
-	AVAILABILITY_DB_WEEK  = "week"
-	AVAILABILITY_DB_YEAR  = "year"
-	AVAILABILITY_DB_GUARD = "guard"
-	AVAILABILITY_DB_SUN   = "sunday"
-	AVAILABILITY_DB_MON   = "monday"
-	AVAILABILITY_DB_TUES  = "tuesday"
-	AVAILABILITY_DB_WED   = "wednesday"
-	AVAILABILITY_DB_THURS = "thursday"
-	AVAILABILITY_DB_FRI   = "friday"
-	AVAILABILITY_DB_SAT   = "saturday"
+	AVAILABILITY_DB_ID       = "availability_id"
+	AVAILABILITY_DB_WEEK     = "week"
+	AVAILABILITY_DB_YEAR     = "year"
+	AVAILABILITY_DB_GUARD    = "guard"
+	AVAILABILITY_DB_SUN      = "sunday"
+	AVAILABILITY_DB_MON      = "monday"
+	AVAILABILITY_DB_TUES     = "tuesday"
+	AVAILABILITY_DB_WED      = "wednesday"
+	AVAILABILITY_DB_THURS    = "thursday"
+	AVAILABILITY_DB_FRI      = "friday"
+	AVAILABILITY_DB_SAT      = "saturday"
+	AVAILABILITY_DB_NEXT_SUN = "next_sunday"
 
 	// The limit for availability should be much higher
 	// than the actual default to accomodate for the number of guards
@@ -43,6 +44,7 @@ type Availability struct {
 	Thurs           sql.NullString
 	Fri             sql.NullString
 	Sat             sql.NullString
+	NextSun         sql.NullString
 }
 
 // Converts the filters in the availability query array into a formatted where clause
@@ -71,7 +73,7 @@ func getFormattedAvailabilityFilters(query *pb.AvailabilityQuery, needLimit bool
 		case pb.AvailabilityFilter_SUN, pb.AvailabilityFilter_MON,
 			pb.AvailabilityFilter_TUES, pb.AvailabilityFilter_WED,
 			pb.AvailabilityFilter_THURS, pb.AvailabilityFilter_FRI,
-			pb.AvailabilityFilter_SAT:
+			pb.AvailabilityFilter_SAT, pb.AvailabilityFilter_NEXT_SUN:
 			filters = append(filters, fmt.Sprintf("%s IS NOT NULL", availabilityFilterToDBCol(filter.Field)))
 		}
 	}
@@ -144,6 +146,8 @@ func availabilityFilterToDBCol(filterField pb.AvailabilityFilter_Field) string {
 		output = AVAILABILITY_DB_FRI
 	case pb.AvailabilityFilter_SAT:
 		output = AVAILABILITY_DB_SAT
+	case pb.AvailabilityFilter_NEXT_SUN:
+		output = AVAILABILITY_DB_NEXT_SUN
 
 	}
 

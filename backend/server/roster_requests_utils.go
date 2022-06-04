@@ -103,7 +103,12 @@ func (s *Server) updateAvailability(query *pb.AvailabilityQuery, employeeEvals [
 
 	// add day NOT NULL to the availability filter
 	db_pck.AddAvailabilityFilter(query, getDayAvailabilityQueryEnum(query.StartTime.AsTime()), pb.Filter_EQUAL, "")
-
+	// if the start day is sat, the end day will be next sun
+	if query.StartTime.AsTime().Day() == int(time.Saturday) {
+		db_pck.AddAvailabilityFilter(query, pb.AvailabilityFilter_NEXT_SUN, pb.Filter_EQUAL, "")
+	} else {
+		db_pck.AddAvailabilityFilter(query, getDayAvailabilityQueryEnum(query.StartTime.AsTime()), pb.Filter_EQUAL, "")
+	}
 	// Get all availability for users who are available on that day
 	availabilities, err := db_pck.GetAvailability(s.db, query)
 	if err != nil {
@@ -152,25 +157,39 @@ func getDayAvailabilityQueryEnum(date time.Time) pb.AvailabilityFilter_Field {
 // Returns if the particular person is available
 // based on their json array time
 func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.AvailabilityQuery) bool {
-	availArrayString := ""
+	availStartArrayString := ""
+	endArrayString := ""
+
 	switch availQuery.StartTime.AsTime().Day() {
 	case 0:
-		availArrayString = availability.Sun.String
+		availStartArrayString = availability.Sun.String
+		endArrayString = availability.Mon.String
 	case 1:
-		availArrayString = availability.Mon.String
+		availStartArrayString = availability.Mon.String
+		endArrayString = availability.Tues.String
+
 	case 2:
-		availArrayString = availability.Tues.String
+		availStartArrayString = availability.Tues.String
+		endArrayString = availability.Wed.String
+
 	case 3:
-		availArrayString = availability.Wed.String
+		availStartArrayString = availability.Wed.String
+		endArrayString = availability.Thurs.String
+
 	case 4:
-		availArrayString = availability.Thurs.String
+		availStartArrayString = availability.Thurs.String
+		endArrayString = availability.Fri.String
+
 	case 5:
-		availArrayString = availability.Fri.String
+		availStartArrayString = availability.Fri.String
+		endArrayString = availability.Sat.String
+
 	default:
-		availArrayString = availability.Sat.String
+		availStartArrayString = availability.Sat.String
+		endArrayString = availability.NextSun.String
 	}
 
-	fmt.Println("Availability string", availArrayString)
+	fmt.Println("Availability string", availStartArrayString, endArrayString)
 	//TODO actually check this
 	return true
 }

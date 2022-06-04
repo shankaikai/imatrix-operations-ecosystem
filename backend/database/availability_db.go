@@ -44,6 +44,7 @@ func GetAvailability(db *sql.DB, query *pb.AvailabilityQuery) ([]*Availability, 
 				&availability.Thurs,
 				&availability.Fri,
 				&availability.Sat,
+				&availability.NextSun,
 			)
 
 			if err != nil {

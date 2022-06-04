@@ -413,6 +413,7 @@ message AvailabilityFilter {
         THURS = 8;
         FRI = 9;
         SAT = 10;
+        NEXT_SUN = 11;
     }
 }
 
