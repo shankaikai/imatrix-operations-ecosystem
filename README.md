@@ -3,7 +3,7 @@ Capstone Project
 
 ## Set up
 1. Create a local .env file using the structure in `.env_skeleton`. Ask for help if necessary. 
-
+2. Run `pip install -r requirements.txt`
 ## Frontend
 ### Protocol Buffer Generation
 ```
