@@ -11,6 +11,7 @@ class MainMenu(TelegramMenu):
     def __init__(self, parent = None, name = "", triggerWords = []):
         super().__init__(parent, name, triggerWords)
         self.name = "Main Menu"
+        
     def handler(self, update:Update, context:CallbackContext):
         cKeyboardVals = [
             [KeyboardButton(text="Attendance")],
