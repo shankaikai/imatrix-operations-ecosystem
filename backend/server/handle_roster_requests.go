@@ -148,6 +148,11 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 	res := pb.Response{Type: pb.Response_ACK}
 	employeeEvalRes := pb.EmployeeEvaluationResponse{Response: &res}
 
+	err := getDefaultEndTime(query)
+	if err != nil {
+		return err
+	}
+
 	availEmployeeEvals, unavailEmployeeEvals, err := s.GetAvailableIspecialistsWithScore(query)
 
 	if err != nil {

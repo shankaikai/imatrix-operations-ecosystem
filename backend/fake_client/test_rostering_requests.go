@@ -307,18 +307,19 @@ func ConsolidatedGetAvailableUsersTest(serverAddr *string, serverPort *int) {
 
 func getAvailableUsersTestNoRoster(serverAddr *string, serverPort *int) {
 	// Give a fictional time in 2022 Jan
-	startTimeTime := time.Date(2022, 1, 25, 18, 0, 0, 0, time.UTC)
-	endTimeTime := time.Date(2022, 1, 26, 6, 0, 0, 0, time.UTC)
-	startTime := &timestamppb.Timestamp{Seconds: startTimeTime.Unix()}
-	endTime := &timestamppb.Timestamp{Seconds: endTimeTime.Unix()}
+	startTime := time.Date(2022, 1, 25, 18, 0, 0, 0, time.UTC)
+	endTime := time.Date(2022, 1, 26, 6, 0, 0, 0, time.UTC)
 
-	availQuery := &pb.AvailabilityQuery{StartTime: startTime, EndTime: endTime}
+	availQuery := &pb.AvailabilityQuery{
+		StartTime: startTime.Format(common.DATETIME_FORMAT),
+		EndTime:   endTime.Format(common.DATETIME_FORMAT),
+	}
 
 	fmt.Println(availQuery)
-	year, week := startTimeTime.ISOWeek()
-	fmt.Println("start year, week, day", year, week, startTimeTime.Weekday())
-	year, week = endTimeTime.ISOWeek()
-	fmt.Println("end year, week, day", year, week, endTimeTime.Weekday())
+	year, week := startTime.ISOWeek()
+	fmt.Println("start year, week, day", year, week, startTime.Weekday())
+	year, week = endTime.ISOWeek()
+	fmt.Println("end year, week, day", year, week, endTime.Weekday())
 
 	GetAvailableUsersTest(serverAddr, serverPort, availQuery)
 }
@@ -349,7 +350,10 @@ func getAvailableUsersTestWithRoster(serverAddr *string, serverPort *int) {
 
 	InsertRoster(serverAddr, serverPort, rosters)
 
-	availQuery := &pb.AvailabilityQuery{StartTime: startTime, EndTime: endTime}
+	availQuery := &pb.AvailabilityQuery{
+		StartTime: startTimeTime.Format(common.DATETIME_FORMAT),
+		EndTime:   endTimeTime.Format(common.DATETIME_FORMAT),
+	}
 	GetAvailableUsersTest(serverAddr, serverPort, availQuery)
 }
 
