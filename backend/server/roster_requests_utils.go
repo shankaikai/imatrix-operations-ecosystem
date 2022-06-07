@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -157,11 +158,13 @@ func (s *Server) updateAvailability(query *pb.AvailabilityQuery,
 		}
 	}
 
+	sort.Ints(availableUserIds)
+
 	for _, eval := range employeeEvals {
 		// binary search is employee is in the available list
 		isAvail, _ := common.BinarySearch(availableUserIds, 0, len(availableUserIds)-1, int(eval.Employee.UserId))
 		eval.IsAvailable = isAvail
-
+		fmt.Println(isAvail)
 		if isAvail {
 			*availEmployeeEvals = append(*availEmployeeEvals, eval)
 		} else {

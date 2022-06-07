@@ -16,7 +16,7 @@ type ScoreStruct struct {
 
 // TODO: Ask Emily for the calculation
 func GetUserScore(user *pb.User) (float32, error) {
-	return float32(user.UserId), nil
+	return float32(100 - user.UserId), nil
 }
 
 func GetUserScoreFromChan(user *pb.User, userChan chan ScoreStruct, channelId int) {
