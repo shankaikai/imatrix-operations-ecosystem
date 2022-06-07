@@ -28,6 +28,7 @@ interface RosteringContextInterface {
   selectedDate?: Date;
   setSelectedDate?: Dispatch<Date>;
   guardsAssigned: User.AsObject[][];
+  setGuardsAssigned?: Dispatch<User.AsObject[][]>;
 }
 
 const RosteringContext = createContext<RosteringContextInterface>({
@@ -55,11 +56,14 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     setRosterDates(dates);
   };
 
+  const resetStates = () => {
+    setRosterBaskets(() => []);
+    // setGuardsAssigned(() => [[]]);
+  };
+
   // Get basket data
   const updateRosterBaskets = () => {
     console.log("getAIFSColumns called");
-
-    setRosterBaskets(() => []);
 
     const client = getRosterClient();
     const filter = new RosterFilter();
@@ -73,7 +77,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
     const stream = client.findRosters(query);
     stream.on("data", (response: RosterResponse) => {
-      console.log(response.toObject());
+      // console.log(response.toObject());
       const responseRoster = response.getRoster()?.toObject();
       const responseAssignedGuard = response
         .getRoster()
@@ -82,16 +86,16 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         ?.getEmployee()
         ?.toObject();
 
+      setRosterBaskets((prevBaskets) => {
+        return [...prevBaskets, responseRoster!];
+      });
+
       setGuardsAssigned((prevGuards) => {
         let newGuards = prevGuards;
         responseRoster &&
           responseAssignedGuard &&
           newGuards.splice(responseRoster.aifsId, 0, [responseAssignedGuard]);
         return newGuards;
-      });
-
-      setRosterBaskets((prevBaskets) => {
-        return [...prevBaskets, responseRoster!];
       });
     });
   };
@@ -102,10 +106,12 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const client = getRosterClient();
 
     const query = new AvailabilityQuery();
-    // query.setStartTime(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+    console.log(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+    query.setStartTime(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
     const stream = client.getAvailableUsers(query);
 
     stream.on("data", (response: EmployeeEvaluationResponse) => {
+      // console.log(response);
       const employeeResponse = response
         .getEmployee()
         ?.getEmployee()
@@ -123,6 +129,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   }, [offset]);
 
   useEffect(() => {
+    resetStates();
     updateRosterBaskets();
     getAvailableGuards();
   }, [selectedDate]);
@@ -142,6 +149,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         setSelectedDate,
         rosterBaskets,
         guardsAssigned,
+        setGuardsAssigned,
       }}
     >
       {children}

@@ -829,15 +829,11 @@ export namespace OrderByRoster {
 }
 
 export class AvailabilityQuery extends jspb.Message {
-  getStartTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setStartTime(value?: google_protobuf_timestamp_pb.Timestamp): AvailabilityQuery;
-  hasStartTime(): boolean;
-  clearStartTime(): AvailabilityQuery;
+  getStartTime(): string;
+  setStartTime(value: string): AvailabilityQuery;
 
-  getEndTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setEndTime(value?: google_protobuf_timestamp_pb.Timestamp): AvailabilityQuery;
-  hasEndTime(): boolean;
-  clearEndTime(): AvailabilityQuery;
+  getEndTime(): string;
+  setEndTime(value: string): AvailabilityQuery;
 
   getLimit(): number;
   setLimit(value: number): AvailabilityQuery;
@@ -865,8 +861,8 @@ export class AvailabilityQuery extends jspb.Message {
 
 export namespace AvailabilityQuery {
   export type AsObject = {
-    startTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-    endTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    startTime: string,
+    endTime: string,
     limit: number,
     skip: number,
     filtersList: Array<AvailabilityFilter.AsObject>,

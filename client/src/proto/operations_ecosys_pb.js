@@ -6728,8 +6728,8 @@ proto.operations_ecosys.AvailabilityQuery.prototype.toObject = function(opt_incl
  */
 proto.operations_ecosys.AvailabilityQuery.toObject = function(includeInstance, msg) {
   var f, obj = {
-    startTime: (f = msg.getStartTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
-    endTime: (f = msg.getEndTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    startTime: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    endTime: jspb.Message.getFieldWithDefault(msg, 2, ""),
     limit: jspb.Message.getFieldWithDefault(msg, 3, 0),
     skip: jspb.Message.getFieldWithDefault(msg, 4, 0),
     filtersList: jspb.Message.toObjectList(msg.getFiltersList(),
@@ -6772,13 +6772,11 @@ proto.operations_ecosys.AvailabilityQuery.deserializeBinaryFromReader = function
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new google_protobuf_timestamp_pb.Timestamp;
-      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      var value = /** @type {string} */ (reader.readString());
       msg.setStartTime(value);
       break;
     case 2:
-      var value = new google_protobuf_timestamp_pb.Timestamp;
-      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      var value = /** @type {string} */ (reader.readString());
       msg.setEndTime(value);
       break;
     case 3:
@@ -6829,19 +6827,17 @@ proto.operations_ecosys.AvailabilityQuery.prototype.serializeBinary = function()
 proto.operations_ecosys.AvailabilityQuery.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getStartTime();
-  if (f != null) {
-    writer.writeMessage(
+  if (f.length > 0) {
+    writer.writeString(
       1,
-      f,
-      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+      f
     );
   }
   f = message.getEndTime();
-  if (f != null) {
-    writer.writeMessage(
+  if (f.length > 0) {
+    writer.writeString(
       2,
-      f,
-      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+      f
     );
   }
   f = message.getLimit();
@@ -6878,76 +6874,38 @@ proto.operations_ecosys.AvailabilityQuery.serializeBinaryToWriter = function(mes
 
 
 /**
- * optional google.protobuf.Timestamp start_time = 1;
- * @return {?proto.google.protobuf.Timestamp}
+ * optional string start_time = 1;
+ * @return {string}
  */
 proto.operations_ecosys.AvailabilityQuery.prototype.getStartTime = function() {
-  return /** @type{?proto.google.protobuf.Timestamp} */ (
-    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 1));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @param {string} value
  * @return {!proto.operations_ecosys.AvailabilityQuery} returns this
-*/
+ */
 proto.operations_ecosys.AvailabilityQuery.prototype.setStartTime = function(value) {
-  return jspb.Message.setWrapperField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
- * @return {!proto.operations_ecosys.AvailabilityQuery} returns this
- */
-proto.operations_ecosys.AvailabilityQuery.prototype.clearStartTime = function() {
-  return this.setStartTime(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.operations_ecosys.AvailabilityQuery.prototype.hasStartTime = function() {
-  return jspb.Message.getField(this, 1) != null;
-};
-
-
-/**
- * optional google.protobuf.Timestamp end_time = 2;
- * @return {?proto.google.protobuf.Timestamp}
+ * optional string end_time = 2;
+ * @return {string}
  */
 proto.operations_ecosys.AvailabilityQuery.prototype.getEndTime = function() {
-  return /** @type{?proto.google.protobuf.Timestamp} */ (
-    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 2));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @param {string} value
  * @return {!proto.operations_ecosys.AvailabilityQuery} returns this
-*/
+ */
 proto.operations_ecosys.AvailabilityQuery.prototype.setEndTime = function(value) {
-  return jspb.Message.setWrapperField(this, 2, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.operations_ecosys.AvailabilityQuery} returns this
- */
-proto.operations_ecosys.AvailabilityQuery.prototype.clearEndTime = function() {
-  return this.setEndTime(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.operations_ecosys.AvailabilityQuery.prototype.hasEndTime = function() {
-  return jspb.Message.getField(this, 2) != null;
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
