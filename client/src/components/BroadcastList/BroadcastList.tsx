@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import getFilteredBroadcasts from "../../helpers/getFilteredBroadcasts";
 import recipientFormatter from "../../helpers/recipientsFormatter";
-import { useBroadcastClient } from "../../helpers/useBroadcastClient";
+import { useBroadcast } from "../../helpers/useBroadcastClient";
 import { Broadcast } from "../../proto/operations_ecosys_pb";
 import BroadcastCard from "./BroadcastCard/BroadcastCard";
 
@@ -17,7 +17,7 @@ interface BroadcastListProps {}
 
 export default function BroadcastList({}: BroadcastListProps) {
   const { broadcasts, search, selectValue, filterValue, updateBroadcasts } =
-    useBroadcastClient();
+    useBroadcast();
 
   const handleLoadMoreClick = () => {
     // console.log(broadcasts);

@@ -1,7 +1,7 @@
 import { Button, Group, Select, Text, TextInput } from "@mantine/core";
 import React, { Dispatch } from "react";
 import { Plus, Search } from "tabler-icons-react";
-import { useBroadcastClient } from "../../../helpers/useBroadcastClient";
+import { useBroadcast } from "../../../helpers/useBroadcastClient";
 
 interface BroadcastFilterProps {
   setModalOpen: Dispatch<boolean>;
@@ -17,7 +17,7 @@ export default function BroadcastFilter({
     setSelectValue,
     filterValue,
     setFilterValue,
-  } = useBroadcastClient();
+  } = useBroadcast();
 
   const handleNewClick = () => {
     setModalOpen(true);

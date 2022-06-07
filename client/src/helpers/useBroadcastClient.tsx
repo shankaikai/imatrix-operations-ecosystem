@@ -1,4 +1,3 @@
-import { resolve } from "path";
 import {
   createContext,
   Dispatch,
@@ -11,7 +10,6 @@ import {
   AIFSBroadcastRecipient,
   Broadcast,
   BroadcastQuery,
-  BroadcastRecipient,
   BroadcastResponse,
   User,
 } from "../proto/operations_ecosys_pb";
@@ -89,7 +87,7 @@ export function getBroadcastClient(): BroadcastServicesClient {
   return new BroadcastServicesClient("http://localhost:8080", null, {});
 }
 
-export function useBroadcastClient() {
+export function useBroadcast() {
   return useContext(BroadcastContext);
 }
 
