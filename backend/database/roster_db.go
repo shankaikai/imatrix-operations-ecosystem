@@ -5,12 +5,16 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
+	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Insert a new roster into the database table.
@@ -22,7 +26,7 @@ func InsertRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 	fmt.Println("Checking if Roster for this AIFS and time already exists...", "AIFS:", roster.AifsId, roster.StartTime)
 
 	// Do not add the roster if it already exists
-	existingPk, err := checkRosterExists(roster)
+	existingPk, err := checkRosterExists(db, roster)
 	if err != nil {
 		// Do not add the rest if the main roster fails
 		return -1, err
@@ -108,24 +112,31 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	fmt.Println("Getting Rosters...")
 	rosters := make([]*pb.Roster, 0)
 
-	// Join the roster and assignment tables in order to
-	// easily filter conditions relating to both tables together.
+	// Join the roster and assignment tables and aifs client tables
+	// in order to easily filter conditions relating to all tables
+
+	// Set default query limits if needed
+	if query.Limit == 0 {
+		query.Limit = DEFAULT_LIMIT
+	}
 
 	// We ignore any filters to do with the client aifs table first
 	requestedLimit := query.Limit
-	clientQueries := removeRosteringClientQueries(query)
 
 	fields := ALL_COLS
 
 	// tables are joined on the main roster id
-	onCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_ASGN_DB_RELATED_ROSTER, false)
+	fistOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_ASSIGNMENT_DB_TABLE_NAME+"."+ROSTER_ASGN_DB_RELATED_ROSTER, false)
+	secondOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_AIFS_CLIENT_DB_TABLE_NAME+"."+AIFS_CLIENT_DB_RELATED_ROSTER, false)
 
 	// Format filters
 	// temporarily give the query limit the max
 	query.Limit = MAX_LIMIT
 	filters := getFormattedRosterFilters(query, ROSTER_DB_TABLE_NAME, true, true)
 
-	rows, err := QueryLeftJoin(db, ROSTER_DB_TABLE_NAME, ROSTER_ASSIGNMENT_DB_TABLE_NAME, onCondition, fields, filters)
+	rows, err := QueryThreeTablesLeftJoin(db, ROSTER_DB_TABLE_NAME,
+		ROSTER_ASSIGNMENT_DB_TABLE_NAME, ROSTER_AIFS_CLIENT_DB_TABLE_NAME,
+		fistOnCondition, secondOnCondition, fields, filters)
 
 	if err != nil {
 		return rosters, err
@@ -134,7 +145,54 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	// convert query rows into rosters
 	// give back the query the original limit
 	query.Limit = requestedLimit
-	err = convertDbRowsToFullRoster(db, &rosters, rows, query, clientQueries)
+	err = convertDbRowsToFullRoster(db, &rosters, rows, query)
+
+	return rosters, err
+}
+
+func GetDefaultRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
+	fmt.Println("Getting Default Rosters...")
+
+	rosters := make([]*pb.Roster, 0)
+
+	startTimeString := ""
+
+	for _, query := range query.Filters {
+		if query.Field == pb.RosterFilter_START_TIME {
+			startTimeString = query.Comparisons.Value
+			break
+		}
+	}
+
+	startTime, err := time.Parse(common.DATETIME_FORMAT, startTimeString)
+	if err != nil {
+		fmt.Println("GetDefaultRosters ERROR:", err)
+		return rosters, err
+	}
+
+	dayOfWeek := startTime.Weekday()
+
+	defaultAifsRosterIds, err := GetDefaultRosterDetails(db, &pb.RosterQuery{}, int(dayOfWeek))
+	if err != nil {
+		return rosters, err
+	}
+	idStringArray := make([]string, 0)
+	for _, id := range defaultAifsRosterIds {
+		idStringArray = append(idStringArray, strconv.Itoa(id))
+	}
+
+	query = &pb.RosterQuery{}
+	AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_IN, strings.Join(idStringArray, ","))
+
+	rosters, err = GetRosters(db, query)
+
+	// Set start and end time correctly, also set as default
+	for _, roster := range rosters {
+		roster.StartTime = &timestamppb.Timestamp{Seconds: startTime.Unix()}
+		// Shifts are 12 hours long
+		roster.EndTime = &timestamppb.Timestamp{Seconds: startTime.Add(time.Hour * 12).Unix()}
+		roster.IsDefault = true
+	}
 
 	return rosters, err
 }
@@ -148,8 +206,11 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 	fields := ALL_COLS
 
 	// Format filters
-	// Get for a specific main roster
-	addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
+	// Get for a specific main roster if needed
+	if mainRosterID != -1 {
+		AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
+	}
+
 	filters := getFormattedRosterFilters(query, ROSTER_ASSIGNMENT_DB_TABLE_NAME, true, true)
 
 	rows, err := Query(db, ROSTER_ASSIGNMENT_DB_TABLE_NAME, fields, filters)
@@ -161,11 +222,17 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 	// convert query rows into rosters assignments
 	for rows.Next() {
 		assignment := &pb.RosterAssignement{}
+		employeeEval := &pb.EmployeeEvaluation{}
+		assignment.GuardAssigned = employeeEval
+
 		// fields that cannot be auto converted
 		guardId := -1
 		// related roster is not necessary, but for simplicity
 		// and for possible future use, we get it back in the query.
 		relatedRoster := ""
+
+		// confirmation is nullable
+		var confirmation sql.NullBool
 
 		// Datetimes
 		startTimeString := ""
@@ -179,9 +246,10 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 			&guardId,
 			&startTimeString,
 			&endTimeString,
-			&assignment.Confirmed,
+			&confirmation,
 			&assignment.Attended,
 			&attendanceTimeString,
+			&assignment.IsAssigned,
 		)
 
 		if err != nil {
@@ -209,9 +277,16 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 			}
 		}
 
+		if confirmation.Valid {
+			assignment.Confirmed = confirmation.Bool
+			if err != nil {
+				fmt.Println("GetRosterAssingments:", err.Error())
+				continue
+			}
+		}
 		// TODO think about whether I can store the users in cache rather than
 		// get the same few users over and over
-		assignment.GuardAssigned, err = idUserByUserId(db, guardId)
+		assignment.GuardAssigned.Employee, err = idUserByUserId(db, guardId)
 		if err != nil {
 			fmt.Println("GetRosterAssingments:", err)
 			continue
@@ -233,7 +308,7 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 
 	// Format filters
 	// Get for a specific main roster
-	addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
+	AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainRosterID)))
 	filters := getFormattedRosterFilters(query, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, true, true)
 
 	rows, err := Query(db, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, fields, filters)
@@ -256,6 +331,7 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 			&aifsClient.AifsClientRosterId,
 			&relatedRoster,
 			&clientId,
+			&aifsClient.PatrolOrder,
 		)
 
 		if err != nil {
@@ -263,7 +339,7 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 			break
 		}
 
-		aifsClient.Client, err = idClientByClientId(db, clientId)
+		aifsClient.Client, err = IdClientByClientId(db, clientId)
 		if err != nil {
 			fmt.Println("GetRosterAIFSClient:", err)
 			continue
@@ -275,6 +351,49 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 	return aifsClients, err
 }
 
+// Get the default roster ids for the default 3 aifs
+func GetDefaultRosterDetails(db *sql.DB, query *pb.RosterQuery, dayOfWeek int) ([]int, error) {
+	fmt.Println("GetDefaultRosterDetails...")
+	scheduleIds := make([]int, 3)
+
+	fields := ALL_COLS
+
+	// Format filters
+	// Get for a specific day of week
+	query.Limit = 1
+	AddRosterFilter(query, pb.RosterFilter_DEFAULT_ROSTERING_DAY_OF_WEEK, pb.Filter_EQUAL, strconv.Itoa(dayOfWeek))
+	filters := getFormattedRosterFilters(query, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, true, true)
+
+	rows, err := Query(db, ROSTER_DEFAULT_DB_TABLE_NAME, fields, filters)
+
+	if err != nil {
+		fmt.Println("GetDefaultRosterDetails ERROR:", err)
+		return scheduleIds, err
+	}
+
+	// convert query rows into roster aifs clients
+	for rows.Next() {
+		// unnecessary fields
+		defaultRosteringId := -1
+
+		// cast each row to a roster
+		err = rows.Scan(
+			&defaultRosteringId,
+			&dayOfWeek,
+			&scheduleIds[0],
+			&scheduleIds[1],
+			&scheduleIds[2],
+		)
+
+		if err != nil {
+			fmt.Println("GetDefaultRosterDetails ERROR::", err)
+			break
+		}
+	}
+
+	return scheduleIds, nil
+}
+
 // Update a specific roster in the table
 // Only fields that have been filled in the roster object will be updated.
 // Note that this update does not update the roster's guards's inner status
@@ -284,25 +403,30 @@ func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 	// Update the main roster first
 	newFields := getFilledRosterFields(roster)
 
-	query := &pb.RosterQuery{}
-	addRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.RosteringId)))
-	filters := getFormattedRosterFilters(query, ROSTER_DB_TABLE_NAME, false, false)
+	filters := getRosterIdFormattedFilter(
+		int(roster.RosteringId),
+		ROSTER_DB_TABLE_NAME, true,
+	)
 
-	rowsAffected, err := Update(db, ROSTER_DB_TABLE_NAME, newFields, filters)
+	var err error
+	rowsAffected := int64(0)
 
-	if err != nil {
-		fmt.Println("UpdateRoster ERROR::", err)
-		return rowsAffected, err
+	if len(newFields) > 0 {
+		rowsAffected, err = Update(db, ROSTER_DB_TABLE_NAME, newFields, filters)
+		if err != nil {
+			fmt.Println("UpdateRoster ERROR::", err)
+			return rowsAffected, err
+		}
 	}
 
 	// Update assignments if necessary
 	if roster.GuardAssigned != nil {
-		err = updateAssignmentsOfRoster(db, roster, query, dbLock)
+		err = updateAssignmentsOfRoster(db, roster, dbLock)
 	}
 
 	// Update clients if necessary
 	if roster.Clients != nil {
-		err = updateClientsOfRoster(db, roster, query, dbLock)
+		err = updateClientsOfRoster(db, roster, dbLock)
 	}
 
 	return rowsAffected, err
@@ -312,7 +436,7 @@ func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 // This function assumes that the roster recipient id is correct.
 // Returns the number of rows affected and any errors.
 // In this case, number of rows affected is either 0 or 1.
-func UpdateRosterRecipients(db *sql.DB, rosterAssignment *pb.RosterAssignement) (int64, error) {
+func UpdateRosterAssignments(db *sql.DB, rosterAssignment *pb.RosterAssignement) (int64, error) {
 	newFields := getFilledRosterASGNFields(rosterAssignment)
 	filters := getRosterIdFormattedFilter(
 		int(rosterAssignment.RosterAssignmentId),
@@ -380,6 +504,7 @@ func DeleteRosterAIFSClient(db *sql.DB, aifsClient *pb.AIFSClientRoster) (int64,
 		ROSTER_AIFS_CLIENT_DB_TABLE_NAME, false,
 	)
 
+	fmt.Println("fsdfds filters", filters)
 	rowsAffected, err := Delete(db, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, filters)
 	return rowsAffected, err
 }

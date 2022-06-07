@@ -1,97 +1,184 @@
 // TODO: Add validation
 package server
 
-// func (s *Server) AddRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
-// 	res := pb.Response{Type: pb.Response_ACK}
+import (
+	"context"
+	"fmt"
+	"io"
+	"sort"
 
-// 	getDefaultRecipients(broadcast)
+	db_pck "capstone.operations_ecosystem/backend/database"
+	pb "capstone.operations_ecosystem/backend/proto"
+)
 
-// 	// Add creation datetime
-// 	broadcast.CreationDate = timestamppb.Now()
-// 	// TODO: define deadline
-// 	broadcast.Deadline = timestamppb.Now()
+func (s *Server) AddRoster(stream pb.RosterServices_AddRosterServer) error {
+	fmt.Println("AddRoster")
+	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 
-// 	pk, err := db_pck.InsertBroadcast(
-// 		s.db,
-// 		broadcast,
-// 		s.dbLock,
-// 	)
+	for {
+		roster, err := stream.Recv()
 
-// 	if err != nil {
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 	}
+		if err == io.EOF {
+			return stream.SendAndClose(&res)
+		}
 
-// 	res.PrimaryKey = int64(pk)
+		if err != nil {
+			return err
+		}
 
-// 	return &res, nil
-// }
+		// Fill up the blank values of the pb message
+		err = s.insertDefaultRosterValues(roster)
+		if err != nil {
+			return err
+		}
 
-// func (s *Server) UpdateRoster(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-// 	res := pb.Response{Type: pb.Response_ACK}
-// 	numAffected, err := db_pck.UpdateBroadcast(
-// 		s.db,
-// 		broadcast,
-// 		s.dbLock,
-// 	)
+		pk, err := db_pck.InsertRoster(
+			s.db,
+			roster,
+			s.dbLock,
+		)
 
-// 	if err != nil {
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 	} else {
-// 		fmt.Println(numAffected, "broadcasts were updated.")
-// 	}
+		if err != nil {
+			res.Type = pb.Response_ERROR
+			res.ErrorMessage = err.Error()
+		}
 
-// 	return &res, nil
-// }
+		res.PrimaryKey = int64(pk)
+	}
+}
 
-// func (s *Server) DeleteRoster(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-// 	res := pb.Response{Type: pb.Response_ACK}
-// 	numDel, err := db_pck.DeleteBroadcast(
-// 		s.db,
-// 		broadcast,
-// 	)
+func (s *Server) UpdateRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+	res := pb.Response{Type: pb.Response_ACK}
+	numAffected, err := db_pck.UpdateRoster(
+		s.db,
+		roster,
+		s.dbLock,
+	)
 
-// 	if err != nil {
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 	} else {
-// 		fmt.Println(numDel, "broadcasts were deleted.")
-// 	}
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numAffected, "rosters were updated.")
+	}
 
-// 	return &res, nil
-// }
+	return &res, nil
+}
 
-// func (s *Server) FindRosters(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
-// 	res := pb.Response{Type: pb.Response_ACK}
+func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+	res := pb.Response{Type: pb.Response_ACK}
+	numDel, err := db_pck.DeleteRoster(
+		s.db,
+		roster,
+	)
 
-// 	foundBroadcasts, err := db_pck.GetBroadcasts(
-// 		s.db,
-// 		query,
-// 	)
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numDel, "rosters were deleted.")
+	}
 
-// 	if err != nil {
-// 		broadcastRes := pb.BroadcastResponse{Response: &res}
-// 		res.Type = pb.Response_ERROR
-// 		res.ErrorMessage = err.Error()
-// 		stream.Send(&broadcastRes)
+	return &res, nil
+}
 
-// 	} else {
-// 		fmt.Println("FindBroadcasts: Found broadcasts to return")
-// 		fmt.Println(foundBroadcasts)
-// 		broadcastRes := pb.BroadcastResponse{Response: &res}
+func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_FindRostersServer) error {
+	res := pb.Response{Type: pb.Response_ACK}
 
-// 		for _, broadcast := range foundBroadcasts {
-// 			broadcastRes.Broadcast = broadcast
-// 			if err := stream.Send(&broadcastRes); err != nil {
-// 				return err
-// 			}
-// 		}
-// 	}
+	// Ensure that the start time is found
+	err := validateStartTime(query)
 
-// 	return nil
-// }
+	if err != nil {
+		rosterRes := pb.RosterResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		stream.Send(&rosterRes)
+		return nil
+	}
 
-// func GetAvailableUsers() {
+	// Only find rosters assignments that are still assigned
+	db_pck.AddRosterFilter(query, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
 
-// }
+	foundRosters, err := db_pck.GetRosters(
+		s.db,
+		query,
+	)
+
+	if err != nil {
+		rosterRes := pb.RosterResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		stream.Send(&rosterRes)
+		return nil
+	}
+
+	if len(foundRosters) > 0 {
+		fmt.Println("FindRosters: Found rosters to return")
+	} else {
+		// Get default rosters for that particular day
+		foundRosters, err = db_pck.GetDefaultRosters(
+			s.db,
+			query,
+		)
+
+		if err != nil {
+			rosterRes := pb.RosterResponse{Response: &res}
+			res.Type = pb.Response_ERROR
+			res.ErrorMessage = err.Error()
+			stream.Send(&rosterRes)
+			return nil
+		}
+	}
+
+	for _, roster := range foundRosters {
+		rosterRes := pb.RosterResponse{Response: &res}
+		rosterRes.Roster = roster
+		if err := stream.Send(&rosterRes); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Send back all the available users that are not yet assigned for the particular day
+func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.RosterServices_GetAvailableUsersServer) error {
+	fmt.Println("GetAvailableUsers")
+
+	res := pb.Response{Type: pb.Response_ACK}
+	employeeEvalRes := pb.EmployeeEvaluationResponse{Response: &res}
+
+	availEmployeeEvals, unavailEmployeeEvals, err := s.GetAvailableIspecialistsWithScore(query)
+
+	if err != nil {
+		return err
+	}
+
+	// Sort the available Ispecialists according to score desc
+	sort.Slice(availEmployeeEvals, func(i, j int) bool {
+		return availEmployeeEvals[i].EmployeeScore > availEmployeeEvals[j].EmployeeScore
+	})
+
+	sort.Slice(unavailEmployeeEvals, func(i, j int) bool {
+		return unavailEmployeeEvals[i].EmployeeScore > unavailEmployeeEvals[j].EmployeeScore
+	})
+
+	// Send the available ones first
+	for _, employeeEval := range availEmployeeEvals {
+		employeeEvalRes.Employee = employeeEval
+
+		if err := stream.Send(&employeeEvalRes); err != nil {
+			return err
+		}
+	}
+
+	for _, employeeEval := range unavailEmployeeEvals {
+		employeeEvalRes.Employee = employeeEval
+
+		if err := stream.Send(&employeeEvalRes); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

@@ -4,14 +4,12 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "capstone.operations_ecosystem/backend/proto"
+	telec "capstone.operations_ecosystem/backend/telegram_client"
 )
 
 func TestBroadcastClient(serverAddr *string, serverPort *int) {
@@ -35,7 +33,7 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	}
 
 	fmt.Println("Inserting Broadcast:", broadcast.BroadcastId)
-	client, conn := createBroadcastClient(serverAddr, serverPort)
+	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.AddBroadcast(context.Background(), broadcast)
@@ -57,7 +55,7 @@ func InsertBroadcastAIFSID(serverAddr *string, serverPort *int) int64 {
 	broadcast := createFakeBroadcast(1, false)
 
 	fmt.Println("Inserting Broadcast through AIFS id:", broadcast.BroadcastId)
-	client, conn := createBroadcastClient(serverAddr, serverPort)
+	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.AddBroadcast(context.Background(), broadcast)
@@ -234,7 +232,7 @@ func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) {
 
 func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.BroadcastQuery) {
 	fmt.Println("Finding broadcasts")
-	client, conn := createBroadcastClient(serverAddr, serverPort)
+	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	stream, err := client.FindBroadcasts(context.Background(), query)
@@ -295,7 +293,7 @@ func UpdateBroadcastRecipients(serverAddr *string, serverPort *int, broadcast *p
 
 func UpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
 	fmt.Println("Updating Broadcast...")
-	client, conn := createBroadcastClient(serverAddr, serverPort)
+	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.UpdateBroadcast(context.Background(), broadcast)
@@ -313,7 +311,7 @@ func UpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broa
 
 func DeleteBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
 	fmt.Println("Deleting Broadcast:", broadcast.BroadcastId)
-	client, conn := createBroadcastClient(serverAddr, serverPort)
+	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.DeleteBroadcast(context.Background(), broadcast)
@@ -327,18 +325,4 @@ func DeleteBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	if res.Type == pb.Response_ERROR {
 		fmt.Println("Client received error response:", res.ErrorMessage)
 	}
-}
-
-func createBroadcastClient(serverAddr *string, serverPort *int) (pb.BroadcastServicesClient, *grpc.ClientConn) {
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", *serverAddr, *serverPort), opts...)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	client := pb.NewBroadcastServicesClient(conn)
-
-	return client, conn
 }

@@ -25,6 +25,15 @@ func main() {
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
-		client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
+		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
+		client.TestRosteringClient(serverAddrFlag, serverPortFlag)
 	}
 }
+
+// TODO:
+// Add scores to the users returned during find roster  	UNTESTED
+// roster db is assigned col 								UNTESTED
+// roster confirmation only send back assigned				UNTESTED
+// roster do not delete changed rosters 					UNTESTED
+// roster send guards available that are not assigned
+// user page

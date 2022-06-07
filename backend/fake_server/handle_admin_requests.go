@@ -81,12 +81,13 @@ func (s *Server) FindClients(query *pb.ClientQuery, stream pb.AdminServices_Find
 
 	for i := 0; i < 3; i++ {
 		client := &pb.Client{
-			ClientId:             int64(i),
-			Name:                 "test name" + strconv.Itoa(i),
-			Email:                "email" + strconv.Itoa(i),
-			Address:              "address" + strconv.Itoa(i),
-			PhoneNumber:          "1232",
-			NumberOfGuardsNeeded: 3,
+			ClientId:     int64(i),
+			Name:         "test name" + strconv.Itoa(i),
+			Abbreviation: "ABC" + strconv.Itoa(i),
+			Email:        "email" + strconv.Itoa(i),
+			Address:      "address" + strconv.Itoa(i),
+			PostalCode:   int64(343443 + i),
+			PhoneNumber:  "1232",
 		}
 		clientRes.Client = client
 

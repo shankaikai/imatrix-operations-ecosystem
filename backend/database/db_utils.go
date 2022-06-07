@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -16,7 +17,6 @@ import (
 )
 
 const (
-	DATETIME_FORMAT  = "2006-01-02 15:04:05"
 	DEFAULT_LIMIT    = 10
 	MAX_LIMIT        = 1000
 	ALL_COLS         = "*"
@@ -138,6 +138,46 @@ func createLeftJoinQuery(leftTableName string, rightTableName string,
 
 }
 
+// Get all the rows from 2 joined table that meets specifications.
+// fields must be a the exact names of the table columns, separated
+// be commas. E.g. "name, cost, creator"
+// filters must include the filter keyword that is being used
+// such as WHERE, LIMIT, ORDER BY, GROUP BY, HAVING
+// filters can be an empty string but there should be a LIMIT.
+func QueryThreeTablesLeftJoin(db *sql.DB, firstTableName string, secondTableName string,
+	thirdTableName string, firstOnCondition string, secondOnCondition string,
+	fields string, filters string) (*sql.Rows, error) {
+	fmt.Println("Making left join query to tables", firstTableName, secondTableName, thirdTableName)
+
+	query := createLeftJoinThreeTablesQuery(firstTableName, secondTableName, thirdTableName, firstOnCondition, secondOnCondition, fields, filters)
+
+	fmt.Println(query)
+
+	results, err := db.Query(query)
+	if err != nil {
+		fmt.Println("QUERY ERROR:", err)
+	}
+
+	return results, err
+}
+
+func createLeftJoinThreeTablesQuery(firstTableName string, secondTableName string,
+	thirdTableName string, firstOnCondition string, secondOnCondition string,
+	fields string, filters string) string {
+	fmt.Println("Creating left join query to tables", firstTableName, secondTableName, thirdTableName)
+	query := fmt.Sprintf("SELECT %s FROM %s LEFT JOIN %s ON %s LEFT JOIN %s ON %s %s",
+		fields,
+		firstTableName,
+		secondTableName,
+		firstOnCondition,
+		thirdTableName,
+		secondOnCondition,
+		filters,
+	)
+	return query
+
+}
+
 // Update a specific row in the table
 // newFields must be a the exact names of the table columns with their new values,
 // separated be commas. E.g. "name='mark', cost='22', creator='2'"
@@ -213,6 +253,8 @@ func GetFilterComparisonSign(compaison pb.Filter_Comparisons) string {
 		return "LIKE"
 	case pb.Filter_IN:
 		return "IN"
+	case pb.Filter_NOT_IN:
+		return "NOT IN"
 	default:
 		return "="
 	}
@@ -243,7 +285,7 @@ func formatFilterCondition(filter *pb.Filter, fieldName string, encloseVal bool)
 }
 
 func DBDatetimeToPB(datetimeString string) (*timestamppb.Timestamp, error) {
-	creationDate, err := time.Parse(DATETIME_FORMAT, datetimeString)
+	creationDate, err := time.Parse(common.DATETIME_FORMAT, datetimeString)
 	if err != nil {
 		return &timestamppb.Timestamp{}, err
 	}

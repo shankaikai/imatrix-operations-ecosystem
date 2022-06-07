@@ -48,10 +48,11 @@ func GetClients(db *sql.DB, query *pb.ClientQuery) ([]*pb.Client, error) {
 			err = clientRows.Scan(
 				&client.ClientId,
 				&client.Name,
+				&client.Abbreviation,
 				&client.Email,
 				&client.Address,
+				&client.PostalCode,
 				&client.PhoneNumber,
-				&client.NumberOfGuardsNeeded,
 			)
 
 			if err != nil {

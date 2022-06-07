@@ -15,12 +15,13 @@ const (
 	CLIENT_DB_TABLE_NAME = "client"
 
 	// Client table fields
-	CLIENT_DB_ID         = "client_id"
-	CLIENT_DB_NAME       = "name"
-	CLIENT_DB_EMAIL      = "email"
-	CLIENT_DB_ADDR       = "address"
-	CLIENT_DB_PHONE_NUM  = "phone_number"
-	CLIENT_DB_NUM_GUARDS = "number_of_guards_needed"
+	CLIENT_DB_ID        = "client_id"
+	CLIENT_DB_NAME      = "name"
+	CLIENT_DB_ABBR      = "abbreviation"
+	CLIENT_DB_EMAIL     = "email"
+	CLIENT_DB_ADDR      = "address"
+	CLIENT_DB_POSTAL    = "postal_code"
+	CLIENT_DB_PHONE_NUM = "phone_number"
 )
 
 // Returns the fields of the client table
@@ -30,10 +31,11 @@ const (
 func getClientTableFields() string {
 	clientTableFields := []string{
 		CLIENT_DB_NAME,
+		CLIENT_DB_ABBR,
 		CLIENT_DB_EMAIL,
 		CLIENT_DB_ADDR,
+		CLIENT_DB_POSTAL,
 		CLIENT_DB_PHONE_NUM,
-		CLIENT_DB_NUM_GUARDS,
 	}
 
 	return strings.Join(clientTableFields, ",")
@@ -47,10 +49,11 @@ func orderClientFields(client *pb.Client) string {
 	output := ""
 
 	output += "'" + client.Name + "'" + ", "
+	output += "'" + client.Abbreviation + "'" + ", "
 	output += "'" + client.Email + "'" + ", "
 	output += "'" + client.Address + "'" + ", "
-	output += "'" + client.PhoneNumber + "'" + ", "
-	output += "'" + strconv.Itoa(int(client.NumberOfGuardsNeeded)) + "'"
+	output += "'" + strconv.Itoa(int(client.PostalCode)) + "'" + ", "
+	output += "'" + client.PhoneNumber + "'"
 
 	return output
 }
@@ -110,14 +113,14 @@ func getFormattedClientFilters(query *pb.ClientQuery, needLimit bool, needOrder 
 // the only condition is a matching client id.
 func getClientIdFormattedFilter(clientId int) string {
 	query := &pb.ClientQuery{}
-	addClientFilter(query, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
+	AddClientFilter(query, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
 	return getFormattedClientFilters(query, false, false)
 }
 
 // Helper function to add a new filter to the list of existing
 // filters in a user query struct.
 // Modifies the user query parameter directly.
-func addClientFilter(query *pb.ClientQuery, field pb.ClientFilter_Field,
+func AddClientFilter(query *pb.ClientQuery, field pb.ClientFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
 	if query.Filters == nil {
@@ -139,17 +142,21 @@ func getFilledClientFields(client *pb.Client) string {
 	if len(client.Name) > 0 {
 		clientTableFields = append(clientTableFields, formatFieldEqVal(CLIENT_DB_NAME, client.Name, true))
 	}
+	if len(client.Abbreviation) > 0 {
+		clientTableFields = append(clientTableFields, formatFieldEqVal(CLIENT_DB_ABBR, client.Abbreviation, true))
+	}
 	if len(client.Email) > 0 {
 		clientTableFields = append(clientTableFields, formatFieldEqVal(CLIENT_DB_EMAIL, client.Email, true))
 	}
 	if len(client.Address) > 0 {
 		clientTableFields = append(clientTableFields, formatFieldEqVal(CLIENT_DB_ADDR, client.Address, true))
 	}
+	if client.PostalCode > 0 {
+		clientTableFields = append(clientTableFields, formatFieldEqVal(CLIENT_DB_POSTAL, strconv.Itoa(int(client.PostalCode)), true))
+	}
+
 	if len(client.PhoneNumber) > 0 {
 		clientTableFields = append(clientTableFields, formatFieldEqVal(CLIENT_DB_PHONE_NUM, client.PhoneNumber, true))
-	}
-	if client.NumberOfGuardsNeeded > 0 {
-		clientTableFields = append(clientTableFields, formatFieldEqVal(CLIENT_DB_NUM_GUARDS, strconv.Itoa(int(client.NumberOfGuardsNeeded)), true))
 	}
 
 	return strings.Join(clientTableFields, ",")
@@ -166,9 +173,9 @@ func clientFilterToDBCol(filterField pb.ClientFilter_Field) string {
 }
 
 // Get the client corresponding to a particular client id in the db
-func idClientByClientId(db *sql.DB, clientId int) (*pb.Client, error) {
+func IdClientByClientId(db *sql.DB, clientId int) (*pb.Client, error) {
 	clientQuery := &pb.ClientQuery{Limit: 1}
-	addClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
+	AddClientFilter(clientQuery, pb.ClientFilter_CLIENT_ID, pb.Filter_EQUAL, strconv.Itoa(clientId))
 
 	clients, err := GetClients(db, clientQuery)
 

@@ -101,15 +101,24 @@ func getFormattedUserFilters(query *pb.UserQuery, needLimit bool, needOrder bool
 	filters := make([]string, 0)
 
 	for _, filter := range query.Filters {
+		hasQuotes := true
+
 		// Values for contains have to be reformatted
 		if filter.Comparisons.Comparison == pb.Filter_CONTAINS {
 			filter.Comparisons.Value = FormatLikeQueryValue(filter.Comparisons.Value)
+		} else if filter.Comparisons.Comparison == pb.Filter_IN || filter.Comparisons.Comparison == pb.Filter_NOT_IN {
+			filter.Comparisons.Value = FormatInQueryValue(filter.Comparisons.Value)
+			hasQuotes = false
 		}
 
 		switch filter.Field {
 		case pb.UserFilter_USER_ID, pb.UserFilter_TYPE, pb.UserFilter_NAME,
 			pb.UserFilter_EMAIL, pb.UserFilter_PHONE_NUMBER, pb.UserFilter_TELEGRAM_HANDLE:
-			filters = append(filters, formatFilterCondition(filter.Comparisons, userFilterToDBCol(filter.Field), true))
+			if hasQuotes {
+				filters = append(filters, formatFilterCondition(filter.Comparisons, userFilterToDBCol(filter.Field), true))
+			} else {
+				filters = append(filters, formatFilterCondition(filter.Comparisons, userFilterToDBCol(filter.Field), false))
+			}
 		case pb.UserFilter_IS_PART_TIMER:
 			filters = append(filters, formatFilterCondition(filter.Comparisons, userFilterToDBCol(filter.Field), false))
 		}
@@ -147,14 +156,14 @@ func getFormattedUserFilters(query *pb.UserQuery, needLimit bool, needOrder bool
 // the only condition is a matching user id.
 func getUserIdFormattedFilter(userId int) string {
 	query := &pb.UserQuery{}
-	addUserFilter(query, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
+	AddUserFilter(query, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
 	return getFormattedUserFilters(query, false, false)
 }
 
 // Helper function to add a new filter to the list of existing
 // filters in a user query struct.
 // Modifies the user query parameter directly.
-func addUserFilter(query *pb.UserQuery, field pb.UserFilter_Field,
+func AddUserFilter(query *pb.UserQuery, field pb.UserFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
 	if query.Filters == nil {
@@ -219,7 +228,7 @@ func userFilterToDBCol(filterField pb.UserFilter_Field) string {
 // Get the user corresponding to a particular user id in the db
 func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
 	userQuery := &pb.UserQuery{Limit: 1}
-	addUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
+	AddUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
 
 	users, err := GetUsers(db, userQuery)
 

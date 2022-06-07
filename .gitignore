@@ -7,3 +7,6 @@ backend/.env
 client/.next
 client/srcnode_modules
 client/package-lock.json
+
+#Capstone_TeleBot
+__pycache__

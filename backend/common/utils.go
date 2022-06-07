@@ -6,7 +6,9 @@ package common
 import "fmt"
 
 const (
-	CUSTOM_NEG_INF = -999999999999
+	CUSTOM_NEG_INF  = -999999999999
+	DATETIME_FORMAT = "2006-01-02 15:04:05"
+	TIME_FORMAT     = "15:04:05"
 )
 
 // Checks if an element (key) exists within a sorted list
@@ -25,7 +27,7 @@ func BinarySearch(list []int, left int, right int, key int) (bool, int) {
 		return true, mid
 	}
 	if key < list[mid] {
-		return BinarySearch(list, left, mid, key)
+		return BinarySearch(list, left, mid-1, key)
 	} else {
 		return BinarySearch(list, mid+1, right, key)
 	}

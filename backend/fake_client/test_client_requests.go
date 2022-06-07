@@ -10,8 +10,8 @@ import (
 
 func TestAdminClientClient(serverAddr *string, serverPort *int) {
 	client := createFakeClient(1)
-	pk := InsertClient(serverAddr, serverPort, client)
-	client.ClientId = pk
+	// pk := InsertClient(serverAddr, serverPort, client)
+	client.ClientId = 1 //pk
 	ConsolidatedFindClientTest(serverAddr, serverPort)
 	UpdateClientTest(serverAddr, serverPort, client)
 	DeleteClientTest(serverAddr, serverPort, &pb.Client{ClientId: 90})
@@ -104,9 +104,9 @@ func FindClientsTest(serverAddr *string, serverPort *int, query *pb.ClientQuery)
 
 func UpdateClientTest(serverAddr *string, serverPort *int, client *pb.Client) {
 	updatedClient := &pb.Client{
-		ClientId:             client.ClientId,
-		Name:                 "Some new name",
-		NumberOfGuardsNeeded: 4,
+		ClientId:     client.ClientId,
+		Name:         "Some new name",
+		Abbreviation: "DEF",
 	}
 
 	fmt.Println("Updating client:", client.ClientId)
