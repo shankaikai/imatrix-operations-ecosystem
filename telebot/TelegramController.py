@@ -10,6 +10,8 @@ from telegram.ext import MessageHandler, Filters
 from telegram.files.photosize import PhotoSize
 from telegram import File as tFile
 
+from Admin import users
+
 import os.path
 import time
 
@@ -59,9 +61,14 @@ class TelegramController:
                     break
             self.catchAllHandler(update, context)
     def startHandler(self, update: Update, context: CallbackContext):
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
-        self.RootMenu.handler(update, context)
-        pass
+        # Save chat id
+        saved_chat_id = users.updateUserChatId(update.effective_chat.username, update.effective_chat.id)
+        if saved_chat_id:
+            context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
+            self.RootMenu.handler(update, context)
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, text="You are not authorised to use this bot. Please contact your administator if you believe otherwise.")
+        
     def attachmentHandler(self, update:Update, context:CallbackContext):
         self.CurrentMenu.attachmentHandler(update, context)
         pass

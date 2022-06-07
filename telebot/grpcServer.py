@@ -16,5 +16,6 @@ def serve():
       bc_server.BroadcastServicesServicer(), server)
   server.add_insecure_port('[::]:'+ str(GRPC_PORT))
   server.start()
-  server.wait_for_termination()
+  # server.wait_for_termination()
+  return server
 

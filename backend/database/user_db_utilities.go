@@ -15,14 +15,15 @@ const (
 	USER_DB_TABLE_NAME = "user"
 
 	// User table fields
-	USER_DB_ID          = "user_id"
-	USER_DB_TYPE        = "user_type"
-	USER_DB_NAME        = "name"
-	USER_DB_EMAIL       = "email"
-	USER_DB_PHONE_NUM   = "phone_number"
-	USER_DB_TELE_HANDLE = "telegram_handle"
-	USER_DB_IMG         = "user_security_img"
-	USER_DB_PART_TIMER  = "is_part_timer"
+	USER_DB_ID           = "user_id"
+	USER_DB_TYPE         = "user_type"
+	USER_DB_NAME         = "name"
+	USER_DB_EMAIL        = "email"
+	USER_DB_PHONE_NUM    = "phone_number"
+	USER_DB_TELE_HANDLE  = "telegram_handle"
+	USER_DB_IMG          = "user_security_img"
+	USER_DB_PART_TIMER   = "is_part_timer"
+	USER_DB_TELE_CHAT_ID = "tele_chat_id"
 )
 
 // Returns the fields of the user table
@@ -38,6 +39,7 @@ func getUserTableFields() string {
 		USER_DB_TELE_HANDLE,
 		USER_DB_IMG,
 		USER_DB_PART_TIMER,
+		USER_DB_TELE_CHAT_ID,
 	}
 
 	return strings.Join(userTableFields, ",")
@@ -56,7 +58,8 @@ func orderUserFields(user *pb.User) string {
 	output += "'" + user.PhoneNumber + "'" + ", "
 	output += "'" + user.TelegramHandle + "'" + ", "
 	output += "'" + user.UserSecurityImg + "'" + ", "
-	output += strconv.FormatBool(user.IsPartTimer)
+	output += strconv.FormatBool(user.IsPartTimer) + ", "
+	output += "'" + strconv.Itoa(int(user.TeleChatId)) + "'"
 
 	return output
 }
@@ -199,6 +202,10 @@ func getFilledUserFields(user *pb.User) string {
 	}
 
 	userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer), false))
+
+	if user.TeleChatId > 0 {
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_TELE_CHAT_ID, strconv.Itoa(int(user.TeleChatId)), true))
+	}
 
 	return strings.Join(userTableFields, ",")
 }

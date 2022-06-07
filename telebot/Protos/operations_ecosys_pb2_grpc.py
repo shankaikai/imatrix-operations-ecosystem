@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from Protos import operations_ecosys_pb2 as operations__ecosys__pb2
+from . import operations_ecosys_pb2 as operations__ecosys__pb2
 
 
 class AdminServicesStub(object):
