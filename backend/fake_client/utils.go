@@ -33,7 +33,7 @@ func createFakeClient(id int) *pb.Client {
 	}
 }
 
-func createFakeBroadcast(id int, hasRecipient bool) *pb.Broadcast {
+func CreateFakeBroadcast(id int, hasRecipient bool) *pb.Broadcast {
 	recipients := make([]*pb.BroadcastRecipient, 0)
 	aifsRecipients := make([]*pb.AIFSBroadcastRecipient, 0)
 	for i := 1; i < 6; i++ {

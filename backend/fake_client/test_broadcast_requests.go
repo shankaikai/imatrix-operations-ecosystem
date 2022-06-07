@@ -13,7 +13,7 @@ import (
 )
 
 func TestBroadcastClient(serverAddr *string, serverPort *int) {
-	broadcast := createFakeBroadcast(1, true)
+	broadcast := CreateFakeBroadcast(1, true)
 	pk := InsertBroadcast(serverAddr, serverPort, broadcast)
 	broadcast.BroadcastId = pk
 	InsertBroadcastAIFSID(serverAddr, serverPort)
@@ -52,7 +52,7 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 }
 
 func InsertBroadcastAIFSID(serverAddr *string, serverPort *int) int64 {
-	broadcast := createFakeBroadcast(1, false)
+	broadcast := CreateFakeBroadcast(1, false)
 
 	fmt.Println("Inserting Broadcast through AIFS id:", broadcast.BroadcastId)
 	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)

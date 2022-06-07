@@ -1,6 +1,6 @@
 from __future__ import annotations
 import contextvars
-from turtle import update
+# from turtle import update
 from setuptools import Command
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext

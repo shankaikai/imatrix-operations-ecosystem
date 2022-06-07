@@ -61,8 +61,8 @@ func (s *Server) getUnassignedIspecialists(query *pb.AvailabilityQuery) ([]*pb.U
 	// still assigned
 	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
 	// Start and end times of roster
-	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_START_TIME, pb.Filter_GREATER_EQ, query.StartTime.AsTime().Format(common.DATETIME_FORMAT))
-	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_END_TIME, pb.Filter_LESSER_EQ, query.EndTime.AsTime().Format(common.DATETIME_FORMAT))
+	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_START_TIME, pb.Filter_GREATER_EQ, query.StartTime)
+	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_END_TIME, pb.Filter_LESSER_EQ, query.EndTime)
 	rosterAssignements, err := db_pck.GetRosterAssingments(s.db, rosterAssignmentQuery, -1)
 
 	if err != nil {
@@ -72,7 +72,7 @@ func (s *Server) getUnassignedIspecialists(query *pb.AvailabilityQuery) ([]*pb.U
 	// Check if found assignments is empty, if so get the default users for that day
 	if len(rosterAssignements) == 0 {
 		defaultRosterQuery := &pb.RosterQuery{Limit: 5}
-		db_pck.AddRosterFilter(defaultRosterQuery, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, query.StartTime.AsTime().Format(common.DATETIME_FORMAT))
+		db_pck.AddRosterFilter(defaultRosterQuery, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, query.StartTime)
 		defaultRosters, err := db_pck.GetDefaultRosters(s.db, defaultRosterQuery)
 		if err != nil {
 			return unassignedUsers, err
@@ -124,20 +124,33 @@ func (s *Server) updateAvailability(query *pb.AvailabilityQuery,
 	employeeEvals []*pb.EmployeeEvaluation, availEmployeeEvals *[]*pb.EmployeeEvaluation,
 	unavailEmployeeEvals *[]*pb.EmployeeEvaluation) error {
 	// Add week and year to the availability filter
-	year, week := query.StartTime.AsTime().ISOWeek()
+	startTime, err := time.Parse(common.DATETIME_FORMAT, query.StartTime)
+
+	if err != nil {
+		fmt.Println("updateAvailability ERROR:", err)
+		return err
+	}
+
+	endTime, err := time.Parse(common.DATETIME_FORMAT, query.EndTime)
+	if err != nil {
+		fmt.Println("updateAvailability ERROR:", err)
+		return err
+	}
+
+	year, week := startTime.ISOWeek()
 	db_pck.AddAvailabilityFilter(query, pb.AvailabilityFilter_YEAR, pb.Filter_EQUAL, strconv.Itoa(year))
 	db_pck.AddAvailabilityFilter(query, pb.AvailabilityFilter_WEEK, pb.Filter_EQUAL, strconv.Itoa(week))
 
 	// add day NOT NULL to the availability filter
-	fmt.Println("queryStarttime", query.StartTime.AsTime())
-	db_pck.AddAvailabilityFilter(query, getDayAvailabilityQueryEnum(query.StartTime.AsTime()), pb.Filter_EQUAL, "")
+
+	db_pck.AddAvailabilityFilter(query, getDayAvailabilityQueryEnum(startTime), pb.Filter_EQUAL, "")
 	// check if the end time is on a diff day
-	if query.EndTime.AsTime().Weekday() != query.StartTime.AsTime().Weekday() {
+	if endTime.Weekday() != startTime.Weekday() {
 		// if the start day is sat, the end day will be next sun
-		if query.StartTime.AsTime().Weekday() == time.Saturday {
+		if startTime.Weekday() == time.Saturday {
 			db_pck.AddAvailabilityFilter(query, pb.AvailabilityFilter_NEXT_SUN, pb.Filter_EQUAL, "")
 		} else {
-			db_pck.AddAvailabilityFilter(query, getDayAvailabilityQueryEnum(query.EndTime.AsTime()), pb.Filter_EQUAL, "")
+			db_pck.AddAvailabilityFilter(query, getDayAvailabilityQueryEnum(endTime), pb.Filter_EQUAL, "")
 		}
 	}
 
@@ -210,6 +223,19 @@ func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.A
 	_ = json.Unmarshal([]byte(availEndArrayString), &endAvailArray)
 
 	var sameDayEndTime time.Time
+	startTimeQuery, err := time.Parse(common.DATETIME_FORMAT, availQuery.StartTime)
+
+	if err != nil {
+		fmt.Println("updateAvailability ERROR:", err)
+		return false
+	}
+
+	endTimeQuery, err := time.Parse(common.DATETIME_FORMAT, availQuery.EndTime)
+
+	if err != nil {
+		fmt.Println("updateAvailability ERROR:", err)
+		return false
+	}
 
 	for _, timeRange := range startAvailArray {
 		// expect eg "18:00:00-23:59:59"
@@ -231,12 +257,12 @@ func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.A
 		}
 
 		// check if the start time before the particular start time
-		if startTime.Hour() > availQuery.StartTime.AsTime().Hour() {
+		if startTime.Hour() > startTimeQuery.Hour() {
 			continue
 		}
 
 		// check if the end of the range is after the specified end time
-		if endTime.Hour() >= availQuery.EndTime.AsTime().Hour() {
+		if endTime.Hour() >= endTimeQuery.Hour() {
 			startAvail = true
 			sameDayEndTime = endTime
 			fmt.Println("found starting availablity", startTime, endTime)
@@ -246,12 +272,12 @@ func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.A
 
 	// Check for ending times
 	// if on same day, check that the end time of the same index is ok
-	if availQuery.StartTime.AsTime().Day() == availQuery.EndTime.AsTime().Day() {
-		if sameDayEndTime.Hour() > availQuery.EndTime.AsTime().Hour() {
+	if startTimeQuery.Day() == endTimeQuery.Day() {
+		if sameDayEndTime.Hour() > endTimeQuery.Hour() {
 			endAvail = true
-		} else if sameDayEndTime.Hour() == availQuery.EndTime.AsTime().Hour() {
+		} else if sameDayEndTime.Hour() == endTimeQuery.Hour() {
 			// check min
-			endAvail = sameDayEndTime.Minute() >= availQuery.EndTime.AsTime().Minute()
+			endAvail = sameDayEndTime.Minute() >= endTimeQuery.Minute()
 		}
 	} else {
 		// next day
@@ -278,13 +304,13 @@ func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.A
 				continue
 			}
 			// if it is, check that the end time is after the specified end time or eq
-			if endTime.Hour() > availQuery.EndTime.AsTime().Hour() {
+			if endTime.Hour() > endTimeQuery.Hour() {
 				endAvail = true
 				fmt.Println("found ending availablity", startTime, endTime)
 				break
-			} else if endTime.Hour() == availQuery.EndTime.AsTime().Hour() {
+			} else if endTime.Hour() == endTimeQuery.Hour() {
 				// check min
-				endAvail = endTime.Minute() >= availQuery.EndTime.AsTime().Minute()
+				endAvail = endTime.Minute() >= endTimeQuery.Minute()
 				fmt.Println("found ending availablity", startTime, endTime)
 				break
 			}
@@ -297,49 +323,63 @@ func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.A
 // return start and end time strings for a particular availability
 // given the start and end datetimes
 func getStartEndTimeStrings(availability *db_pck.Availability, availQuery *pb.AvailabilityQuery) (string, string) {
-	availStartArrayString := ""
-	availEndArrayString := ""
+	availStartArrayString := "[]"
+	availEndArrayString := "[]"
 
-	switch availQuery.StartTime.AsTime().Weekday() {
+	startTime, err := time.Parse(common.DATETIME_FORMAT, availQuery.StartTime)
+
+	if err != nil {
+		fmt.Println("updateAvailability ERROR:", err)
+		return availStartArrayString, availEndArrayString
+	}
+
+	endTime, err := time.Parse(common.DATETIME_FORMAT, availQuery.EndTime)
+
+	if err != nil {
+		fmt.Println("updateAvailability ERROR:", err)
+		return availStartArrayString, availEndArrayString
+	}
+
+	switch startTime.Weekday() {
 	case 0:
 		availStartArrayString = availability.Sun.String
-		if availQuery.EndTime.AsTime().Weekday() != availQuery.StartTime.AsTime().Weekday() {
+		if endTime.Weekday() != startTime.Weekday() {
 			availEndArrayString = availability.Mon.String
 		}
 	case 1:
 		availStartArrayString = availability.Mon.String
-		if availQuery.EndTime.AsTime().Weekday() != availQuery.StartTime.AsTime().Weekday() {
+		if endTime.Weekday() != startTime.Weekday() {
 			availEndArrayString = availability.Tues.String
 		}
 	case 2:
 		availStartArrayString = availability.Tues.String
-		if availQuery.EndTime.AsTime().Weekday() != availQuery.StartTime.AsTime().Weekday() {
+		if endTime.Weekday() != startTime.Weekday() {
 			availEndArrayString = availability.Wed.String
 		}
 	case 3:
 		availStartArrayString = availability.Wed.String
-		if availQuery.EndTime.AsTime().Weekday() != availQuery.StartTime.AsTime().Weekday() {
+		if endTime.Weekday() != startTime.Weekday() {
 			availEndArrayString = availability.Thurs.String
 		}
 	case 4:
 		availStartArrayString = availability.Thurs.String
-		if availQuery.EndTime.AsTime().Weekday() != availQuery.StartTime.AsTime().Weekday() {
+		if endTime.Weekday() != startTime.Weekday() {
 			availEndArrayString = availability.Fri.String
 		}
 	case 5:
 		availStartArrayString = availability.Fri.String
-		if availQuery.EndTime.AsTime().Weekday() != availQuery.StartTime.AsTime().Weekday() {
+		if endTime.Weekday() != startTime.Weekday() {
 			availEndArrayString = availability.Sat.String
 		}
 	default:
 		availStartArrayString = availability.Sat.String
-		if availQuery.EndTime.AsTime().Weekday() != availQuery.StartTime.AsTime().Weekday() {
+		if endTime.Weekday() != startTime.Weekday() {
 			availEndArrayString = availability.NextSun.String
 		}
 	}
 
 	// same day
-	if availQuery.EndTime.AsTime().Weekday() == availQuery.StartTime.AsTime().Weekday() {
+	if endTime.Weekday() == startTime.Weekday() {
 		availEndArrayString = availStartArrayString
 	}
 
@@ -433,5 +473,17 @@ func validateStartTime(query *pb.RosterQuery) error {
 		return status.Errorf(codes.InvalidArgument, err.Error()+". Note: start time must be in the format:"+common.DATETIME_FORMAT)
 	}
 
+	return nil
+}
+
+func getDefaultEndTime(query *pb.AvailabilityQuery) error {
+	if len(query.EndTime) == 0 {
+		startTime, err := time.Parse(common.DATETIME_FORMAT, query.StartTime)
+		if err != nil {
+			fmt.Println("getDefaultEndTime ERROR:", err)
+			return err
+		}
+		query.EndTime = startTime.Add(time.Hour * 12).Format(common.DATETIME_FORMAT)
+	}
 	return nil
 }

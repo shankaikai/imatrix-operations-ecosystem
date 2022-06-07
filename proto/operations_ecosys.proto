@@ -374,10 +374,10 @@ message OrderByRoster{
 // TODO: Find out if the user should be available
 // throughout the whole duration. 
 message AvailabilityQuery {
-    google.protobuf.Timestamp start_time = 1;
+    string start_time = 1;
     // If end time is null, the time period is taken 
     // to be from the start time + 12h
-    google.protobuf.Timestamp end_time = 2;
+    string end_time = 2;
 
     // Limit the number of objects being returned. 
     // If only 5 objects should be shown, limit = 5;

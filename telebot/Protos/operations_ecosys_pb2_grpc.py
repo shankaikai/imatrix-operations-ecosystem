@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import operations_ecosys_pb2 as operations__ecosys__pb2
+from Protos import operations_ecosys_pb2 as operations__ecosys__pb2
 
 
 class AdminServicesStub(object):
@@ -347,6 +347,11 @@ class BroadcastServicesStub(object):
                 request_serializer=operations__ecosys__pb2.BroadcastQuery.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.BroadcastResponse.FromString,
                 )
+        self.UpdateBroadcastRecipient = channel.unary_unary(
+                '/operations_ecosys.BroadcastServices/UpdateBroadcastRecipient',
+                request_serializer=operations__ecosys__pb2.BroadcastRecipient.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.Response.FromString,
+                )
 
 
 class BroadcastServicesServicer(object):
@@ -379,6 +384,13 @@ class BroadcastServicesServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdateBroadcastRecipient(self, request, context):
+        """Updating of broadcast recipients
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_BroadcastServicesServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -401,6 +413,11 @@ def add_BroadcastServicesServicer_to_server(servicer, server):
                     servicer.FindBroadcasts,
                     request_deserializer=operations__ecosys__pb2.BroadcastQuery.FromString,
                     response_serializer=operations__ecosys__pb2.BroadcastResponse.SerializeToString,
+            ),
+            'UpdateBroadcastRecipient': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateBroadcastRecipient,
+                    request_deserializer=operations__ecosys__pb2.BroadcastRecipient.FromString,
+                    response_serializer=operations__ecosys__pb2.Response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -477,6 +494,23 @@ class BroadcastServices(object):
         return grpc.experimental.unary_stream(request, target, '/operations_ecosys.BroadcastServices/FindBroadcasts',
             operations__ecosys__pb2.BroadcastQuery.SerializeToString,
             operations__ecosys__pb2.BroadcastResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateBroadcastRecipient(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.BroadcastServices/UpdateBroadcastRecipient',
+            operations__ecosys__pb2.BroadcastRecipient.SerializeToString,
+            operations__ecosys__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
