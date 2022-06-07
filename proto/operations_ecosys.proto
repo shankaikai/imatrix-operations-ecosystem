@@ -37,6 +37,9 @@ service BroadcastServices{
     rpc UpdateBroadcast(Broadcast) returns (Response) {}
     rpc DeleteBroadcast(Broadcast) returns (Response) {}
     rpc FindBroadcasts(BroadcastQuery) returns (stream BroadcastResponse) {}
+
+    // Updating of broadcast recipients
+    rpc UpdateBroadcastRecipient(BroadcastRecipient) returns (Response) {}
 }
 
 service RosterServices{
@@ -283,11 +286,15 @@ message Roster {
     google.protobuf.Timestamp end_time = 4;
     repeated AIFSClientRoster clients = 5;
     repeated RosterAssignement guard_assigned = 6;
+
+    // The roster is not actually in the database
+    bool is_default = 7;
 }
 
 message AIFSClientRoster {
     int64 aifs_client_roster_id = 1;
     Client client = 2;    
+    int64 patrol_order = 3;
 }
 
 message RosterAssignement {
@@ -332,6 +339,7 @@ message RosterFilter {
         START_TIME = 8;
         END_TIME = 9;
         IS_ASSIGNED = 10;
+        DEFAULT_ROSTERING_DAY_OF_WEEK = 11;
     }
 }
 

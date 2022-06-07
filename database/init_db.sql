@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS `schedule`;
 DROP TABLE IF EXISTS `schedule_detail`;
 DROP TABLE IF EXISTS `aifs_client_schedule`;
 DROP TABLE IF EXISTS `availability`;
+DROP TABLE IF EXISTS `default_rostering`;
 
 -- Create Tables
 -- Admin Tables 
@@ -106,6 +107,25 @@ CREATE TABLE IF NOT EXISTS `aifs_client_schedule` (
         ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (related_client) 
 		REFERENCES `user` (user_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `default_rostering` (
+    default_rostering_id INT PRIMARY KEY AUTO_INCREMENT,
+    day_of_week INT NOT NULL,
+    aifs1_schedule INT NOT NULL,
+    aifs2_schedule INT NOT NULL,
+    aifs3_schedule INT NOT NULL,
+    related_client INT NOT NULL,
+ 
+    FOREIGN KEY (aifs1_schedule)
+        REFERENCES `schedule` (schedule_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE,
+	FOREIGN KEY (aifs2_schedule)
+        REFERENCES `schedule` (schedule_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE,
+	FOREIGN KEY (aifs3_schedule)
+        REFERENCES `schedule` (schedule_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 

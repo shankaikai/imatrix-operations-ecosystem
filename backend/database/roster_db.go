@@ -5,12 +5,16 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
+	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Insert a new roster into the database table.
@@ -104,7 +108,6 @@ func InsertAIFSClientRoster(db *sql.DB, aifsClient *pb.AIFSClientRoster, mainRos
 
 // Get all the roster rows in a table that meets specifications.
 // Returns an array of rosters and any errors.
-// TODO: return roster assignments that are not false confirmation
 func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	fmt.Println("Getting Rosters...")
 	rosters := make([]*pb.Roster, 0)
@@ -143,6 +146,53 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	// give back the query the original limit
 	query.Limit = requestedLimit
 	err = convertDbRowsToFullRoster(db, &rosters, rows, query)
+
+	return rosters, err
+}
+
+func GetDefaultRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
+	fmt.Println("Getting Default Rosters...")
+
+	rosters := make([]*pb.Roster, 0)
+
+	startTimeString := ""
+
+	for _, query := range query.Filters {
+		if query.Field == pb.RosterFilter_START_TIME {
+			startTimeString = query.Comparisons.Value
+			break
+		}
+	}
+
+	startTime, err := time.Parse(common.DATETIME_FORMAT, startTimeString)
+	if err != nil {
+		fmt.Println("GetDefaultRosters ERROR:", err)
+		return rosters, err
+	}
+
+	dayOfWeek := startTime.Weekday()
+
+	defaultAifsRosterIds, err := GetDefaultRosterDetails(db, &pb.RosterQuery{}, int(dayOfWeek))
+	if err != nil {
+		return rosters, err
+	}
+	idStringArray := make([]string, 0)
+	for _, id := range defaultAifsRosterIds {
+		idStringArray = append(idStringArray, strconv.Itoa(id))
+	}
+
+	query = &pb.RosterQuery{}
+	AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_IN, strings.Join(idStringArray, ","))
+
+	rosters, err = GetRosters(db, query)
+
+	// Set start and end time correctly, also set as default
+	for _, roster := range rosters {
+		roster.StartTime = &timestamppb.Timestamp{Seconds: startTime.Unix()}
+		// Shifts are 12 hours long
+		roster.EndTime = &timestamppb.Timestamp{Seconds: startTime.Add(time.Hour * 12).Unix()}
+		roster.IsDefault = true
+	}
 
 	return rosters, err
 }
@@ -281,6 +331,7 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 			&aifsClient.AifsClientRosterId,
 			&relatedRoster,
 			&clientId,
+			&aifsClient.PatrolOrder,
 		)
 
 		if err != nil {
@@ -298,6 +349,49 @@ func GetRosterAIFSClient(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) 
 	}
 
 	return aifsClients, err
+}
+
+// Get the default roster ids for the default 3 aifs
+func GetDefaultRosterDetails(db *sql.DB, query *pb.RosterQuery, dayOfWeek int) ([]int, error) {
+	fmt.Println("GetDefaultRosterDetails...")
+	scheduleIds := make([]int, 3)
+
+	fields := ALL_COLS
+
+	// Format filters
+	// Get for a specific day of week
+	query.Limit = 1
+	AddRosterFilter(query, pb.RosterFilter_DEFAULT_ROSTERING_DAY_OF_WEEK, pb.Filter_EQUAL, strconv.Itoa(dayOfWeek))
+	filters := getFormattedRosterFilters(query, ROSTER_AIFS_CLIENT_DB_TABLE_NAME, true, true)
+
+	rows, err := Query(db, ROSTER_DEFAULT_DB_TABLE_NAME, fields, filters)
+
+	if err != nil {
+		fmt.Println("GetDefaultRosterDetails ERROR:", err)
+		return scheduleIds, err
+	}
+
+	// convert query rows into roster aifs clients
+	for rows.Next() {
+		// unnecessary fields
+		defaultRosteringId := -1
+
+		// cast each row to a roster
+		err = rows.Scan(
+			&defaultRosteringId,
+			&dayOfWeek,
+			&scheduleIds[0],
+			&scheduleIds[1],
+			&scheduleIds[2],
+		)
+
+		if err != nil {
+			fmt.Println("GetDefaultRosterDetails ERROR::", err)
+			break
+		}
+	}
+
+	return scheduleIds, nil
 }
 
 // Update a specific roster in the table

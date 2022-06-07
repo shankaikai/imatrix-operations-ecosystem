@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -14,19 +15,18 @@ import (
 )
 
 func TestRosteringClient(serverAddr *string, serverPort *int) {
-	// rosters := make([]*pb.Roster, 0)
-	// for i := 1; i < 4; i++ {
-	// 	rosters = append(rosters, createFakeRoster(i))
-	// }
+	rosters := make([]*pb.Roster, 0)
+	for i := 1; i < 4; i++ {
+		rosters = append(rosters, createFakeRoster(i))
+	}
 
-	// // pk := InsertRoster(serverAddr, serverPort, rosters)
-	// rosters[2].RosteringId = 4 //pk
+	// pk := InsertRoster(serverAddr, serverPort, rosters)
+	rosters[2].RosteringId = 4 //pk
 
-	// ConsolidatedFindRosterTest(serverAddr, serverPort)
+	ConsolidatedFindRosterTest(serverAddr, serverPort)
 	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
 
 	// DeleteRosterTest(serverAddr, serverPort, &pb.Roster{RosteringId: 9})
-	// FindRosterIdFilter(serverAddr, serverPort)
 	ConsolidatedGetAvailableUsersTest(serverAddr, serverPort)
 }
 
@@ -65,27 +65,24 @@ func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int
 }
 
 func ConsolidatedFindRosterTest(serverAddr *string, serverPort *int) {
-	FindRostersNoFilter(serverAddr, serverPort)
-	FindRosterIdFilter(serverAddr, serverPort)
-	FindRosterAssignmentFilter(serverAddr, serverPort)
-	FindRosterAifsClientIdFilter(serverAddr, serverPort)
-	FindRosterAifsIdFilter(serverAddr, serverPort)
-	FindRosterGuardIdFilter(serverAddr, serverPort)
-	FindRosterClientIdFilter(serverAddr, serverPort)
-	FindRosterGuardConfirmationFilter(serverAddr, serverPort)
-	FindRosterGuardAttendedFilter(serverAddr, serverPort)
+	FindRosterStartTimeFilter(serverAddr, serverPort)
+
+	// FindRosterAssignmentFilter(serverAddr, serverPort)
+	// FindRosterAifsClientIdFilter(serverAddr, serverPort)
+	// FindRosterAifsIdFilter(serverAddr, serverPort)
+	// FindRosterGuardIdFilter(serverAddr, serverPort)
+	// FindRosterClientIdFilter(serverAddr, serverPort)
+	// FindRosterGuardConfirmationFilter(serverAddr, serverPort)
+	// FindRosterGuardAttendedFilter(serverAddr, serverPort)
 	FindRostersMultipleFilters(serverAddr, serverPort)
 }
 
-func FindRostersNoFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding rosters without filter")
-	FindRostersTest(serverAddr, serverPort, &pb.RosterQuery{Limit: 5})
-}
+func FindRosterStartTimeFilter(serverAddr *string, serverPort *int) {
+	fmt.Println("Finding Roster Start time filter")
+	startTime := time.Date(2022, 6, 21, 18, 0, 0, 0, time.UTC)
 
-func FindRosterIdFilter(serverAddr *string, serverPort *int) {
-	fmt.Println("Finding roster id filter")
-	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "18"}
-	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_ROSTER_ID}
+	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: startTime.Format(common.DATETIME_FORMAT)}
+	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_START_TIME}
 
 	query := &pb.RosterQuery{Limit: 4, Filters: []*pb.RosterFilter{filter}}
 
@@ -168,6 +165,12 @@ func FindRostersMultipleFilters(serverAddr *string, serverPort *int) {
 	rosterFilters := make([]*pb.RosterFilter, 0)
 
 	// Add filters here when there are more filters
+	startTime := time.Date(2022, 6, 21, 18, 0, 0, 0, time.UTC)
+
+	startTimecom := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: startTime.Format(common.DATETIME_FORMAT)}
+	startTimeFilter := &pb.RosterFilter{Comparisons: startTimecom, Field: pb.RosterFilter_START_TIME}
+	rosterFilters = append(rosterFilters, startTimeFilter)
+
 	// client id
 	cidCom := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: "1"}
 	cidFilter := &pb.RosterFilter{Comparisons: cidCom, Field: pb.RosterFilter_CLIENT_ID}
@@ -322,8 +325,8 @@ func getAvailableUsersTestNoRoster(serverAddr *string, serverPort *int) {
 
 func getAvailableUsersTestWithRoster(serverAddr *string, serverPort *int) {
 	// create a roster for Aug 1 2022 from 6pm to 6am the next day
-	startTimeTime := time.Date(2022, 8, 1, 18, 0, 0, 0, time.UTC)
-	endTimeTime := time.Date(2022, 8, 2, 6, 0, 0, 0, time.UTC)
+	startTimeTime := time.Date(2022, 4, 22, 18, 0, 0, 0, time.UTC)
+	endTimeTime := time.Date(2022, 4, 22, 6, 0, 0, 0, time.UTC)
 	startTime := &timestamppb.Timestamp{Seconds: startTimeTime.Unix()}
 	endTime := &timestamppb.Timestamp{Seconds: endTimeTime.Unix()}
 
@@ -371,6 +374,7 @@ func GetAvailableUsersTest(serverAddr *string, serverPort *int, query *pb.Availa
 		}
 		if err != nil {
 			fmt.Println("GetAvailableUsersTest ERROR:", err)
+			continue
 		}
 
 		fmt.Println("Availability check received response:", availabilityRes.Response.Type)

@@ -85,6 +85,17 @@ func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Respo
 func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_FindRostersServer) error {
 	res := pb.Response{Type: pb.Response_ACK}
 
+	// Ensure that the start time is found
+	err := validateStartTime(query)
+
+	if err != nil {
+		rosterRes := pb.RosterResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		stream.Send(&rosterRes)
+		return nil
+	}
+
 	// Only find rosters assignments that are still assigned
 	db_pck.AddRosterFilter(query, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
 
@@ -98,17 +109,32 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 		res.Type = pb.Response_ERROR
 		res.ErrorMessage = err.Error()
 		stream.Send(&rosterRes)
+		return nil
+	}
 
+	if len(foundRosters) > 0 {
+		fmt.Println("FindRosters: Found rosters to return")
 	} else {
-		fmt.Println("FindBroadcasts: Found broadcasts to return")
+		// Get default rosters for that particular day
+		foundRosters, err = db_pck.GetDefaultRosters(
+			s.db,
+			query,
+		)
 
+		if err != nil {
+			rosterRes := pb.RosterResponse{Response: &res}
+			res.Type = pb.Response_ERROR
+			res.ErrorMessage = err.Error()
+			stream.Send(&rosterRes)
+			return nil
+		}
+	}
+
+	for _, roster := range foundRosters {
 		rosterRes := pb.RosterResponse{Response: &res}
-
-		for _, roster := range foundRosters {
-			rosterRes.Roster = roster
-			if err := stream.Send(&rosterRes); err != nil {
-				return err
-			}
+		rosterRes.Roster = roster
+		if err := stream.Send(&rosterRes); err != nil {
+			return err
 		}
 	}
 

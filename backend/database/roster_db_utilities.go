@@ -19,7 +19,7 @@ const (
 	ROSTER_DB_TABLE_NAME             = "schedule"
 	ROSTER_ASSIGNMENT_DB_TABLE_NAME  = "schedule_detail"
 	ROSTER_AIFS_CLIENT_DB_TABLE_NAME = "aifs_client_schedule"
-
+	ROSTER_DEFAULT_DB_TABLE_NAME     = "default_rostering"
 	// Roster table fields
 	ROSTER_DB_ID         = "schedule_id"
 	ROSTER_DB_AIFS_ID    = "aifs_id"
@@ -41,6 +41,14 @@ const (
 	AIFS_CLIENT_DB_ID             = "aifs_client_schedule_id"
 	AIFS_CLIENT_DB_RELATED_ROSTER = "schedule"
 	AIFS_CLIENT_DB_RELATED_CLIENT = "related_client"
+	AIFS_CLIENT_DB_PATROL_ORDER   = "patrol_order"
+
+	// Default Rostering table fields
+	DEFAULT_ROSTERING_DB_ID             = "default_rostering_id"
+	DEFAULT_ROSTERING_DB_DAY_OF_WEEK    = "day_of_week"
+	DEFAULT_ROSTERING_DB_AIFS1_SCHEDULE = "aifs1_schedule"
+	DEFAULT_ROSTERING_DB_AIFS2_SCHEDULE = "aifs2_schedule"
+	DEFAULT_ROSTERING_DB_AIFS3_SCHEDULE = "aifs3_schedule"
 )
 
 // UTILITIES
@@ -123,6 +131,7 @@ func getAIFSClientTableFields() string {
 	aifsClientTableFields := []string{
 		AIFS_CLIENT_DB_RELATED_ROSTER,
 		AIFS_CLIENT_DB_RELATED_CLIENT,
+		AIFS_CLIENT_DB_PATROL_ORDER,
 	}
 
 	return strings.Join(aifsClientTableFields, ",")
@@ -136,7 +145,8 @@ func orderAIFSClientFields(aifsClient *pb.AIFSClientRoster, relatedRosterId int6
 	output := ""
 
 	output += strconv.Itoa(int(relatedRosterId)) + ","
-	output += strconv.Itoa(int(aifsClient.Client.ClientId))
+	output += strconv.Itoa(int(aifsClient.Client.ClientId)) + ","
+	output += strconv.Itoa(int(aifsClient.PatrolOrder))
 
 	return output
 }
@@ -209,6 +219,10 @@ func getFilledAIFSClientFields(aifsClient *pb.AIFSClientRoster) string {
 		rosterTableFields = append(rosterTableFields, formatFieldEqVal(AIFS_CLIENT_DB_RELATED_CLIENT, strconv.Itoa(int(aifsClient.Client.ClientId)), true))
 	}
 
+	if aifsClient.PatrolOrder != 0 {
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(AIFS_CLIENT_DB_PATROL_ORDER, strconv.Itoa(int(aifsClient.PatrolOrder)), true))
+	}
+
 	return strings.Join(rosterTableFields, ",")
 }
 
@@ -249,7 +263,7 @@ func getFormattedRosterFilters(query *pb.RosterQuery, table string, needLimit bo
 		switch filter.Field {
 		case pb.RosterFilter_ROSTER_ID, pb.RosterFilter_AIFS_ID, pb.RosterFilter_GUARD_ASSIGNED_ID,
 			pb.RosterFilter_CLIENT_ID, pb.RosterFilter_ROSTER_ASSIGNMENT_ID, pb.RosterFilter_START_TIME,
-			pb.RosterFilter_END_TIME, pb.RosterFilter_ROSTER_AIFS_CLIENT_ID:
+			pb.RosterFilter_END_TIME, pb.RosterFilter_ROSTER_AIFS_CLIENT_ID, pb.RosterFilter_DEFAULT_ROSTERING_DAY_OF_WEEK:
 			if hasQuotes {
 				whereFilters = append(
 					whereFilters, fmt.Sprintf("%s %s '%s'", rosterFilterToDBCol(filter.Field, table),
@@ -365,6 +379,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			&aifsClient.AifsClientRosterId,
 			&clientRelatedRoster,
 			&clientId,
+			&aifsClient.PatrolOrder,
 		)
 
 		if err != nil {
@@ -438,6 +453,13 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 	sort.Slice(*rosters, func(i, j int) bool {
 		return (*rosters)[i].AifsId < (*rosters)[j].AifsId
 	})
+
+	// sort the aifs patrol order
+	for _, roster := range *rosters {
+		sort.Slice(roster.Clients, func(i, j int) bool {
+			return roster.Clients[i].PatrolOrder < roster.Clients[j].PatrolOrder
+		})
+	}
 
 	if query.Skip > 0 {
 		*rosters = (*rosters)[query.Skip:]
@@ -700,6 +722,8 @@ func rosterFilterToDBCol(filterField pb.RosterFilter_Field, table string) string
 		}
 	case pb.RosterFilter_IS_ASSIGNED:
 		output = ROSTER_ASGN_DB_IS_ASSIGNED
+	case pb.RosterFilter_DEFAULT_ROSTERING_DAY_OF_WEEK:
+		output = DEFAULT_ROSTERING_DB_DAY_OF_WEEK
 	}
 
 	return output

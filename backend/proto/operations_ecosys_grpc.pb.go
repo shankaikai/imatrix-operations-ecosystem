@@ -424,6 +424,8 @@ type BroadcastServicesClient interface {
 	UpdateBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
 	DeleteBroadcast(ctx context.Context, in *Broadcast, opts ...grpc.CallOption) (*Response, error)
 	FindBroadcasts(ctx context.Context, in *BroadcastQuery, opts ...grpc.CallOption) (BroadcastServices_FindBroadcastsClient, error)
+	// Updating of broadcast recipients
+	UpdateBroadcastRecipient(ctx context.Context, in *BroadcastRecipient, opts ...grpc.CallOption) (*Response, error)
 }
 
 type broadcastServicesClient struct {
@@ -493,6 +495,15 @@ func (x *broadcastServicesFindBroadcastsClient) Recv() (*BroadcastResponse, erro
 	return m, nil
 }
 
+func (c *broadcastServicesClient) UpdateBroadcastRecipient(ctx context.Context, in *BroadcastRecipient, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.BroadcastServices/UpdateBroadcastRecipient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BroadcastServicesServer is the server API for BroadcastServices service.
 // All implementations must embed UnimplementedBroadcastServicesServer
 // for forward compatibility
@@ -504,6 +515,8 @@ type BroadcastServicesServer interface {
 	UpdateBroadcast(context.Context, *Broadcast) (*Response, error)
 	DeleteBroadcast(context.Context, *Broadcast) (*Response, error)
 	FindBroadcasts(*BroadcastQuery, BroadcastServices_FindBroadcastsServer) error
+	// Updating of broadcast recipients
+	UpdateBroadcastRecipient(context.Context, *BroadcastRecipient) (*Response, error)
 	mustEmbedUnimplementedBroadcastServicesServer()
 }
 
@@ -522,6 +535,9 @@ func (UnimplementedBroadcastServicesServer) DeleteBroadcast(context.Context, *Br
 }
 func (UnimplementedBroadcastServicesServer) FindBroadcasts(*BroadcastQuery, BroadcastServices_FindBroadcastsServer) error {
 	return status.Errorf(codes.Unimplemented, "method FindBroadcasts not implemented")
+}
+func (UnimplementedBroadcastServicesServer) UpdateBroadcastRecipient(context.Context, *BroadcastRecipient) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBroadcastRecipient not implemented")
 }
 func (UnimplementedBroadcastServicesServer) mustEmbedUnimplementedBroadcastServicesServer() {}
 
@@ -611,6 +627,24 @@ func (x *broadcastServicesFindBroadcastsServer) Send(m *BroadcastResponse) error
 	return x.ServerStream.SendMsg(m)
 }
 
+func _BroadcastServices_UpdateBroadcastRecipient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BroadcastRecipient)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BroadcastServicesServer).UpdateBroadcastRecipient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.BroadcastServices/UpdateBroadcastRecipient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BroadcastServicesServer).UpdateBroadcastRecipient(ctx, req.(*BroadcastRecipient))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BroadcastServices_ServiceDesc is the grpc.ServiceDesc for BroadcastServices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -629,6 +663,10 @@ var BroadcastServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteBroadcast",
 			Handler:    _BroadcastServices_DeleteBroadcast_Handler,
+		},
+		{
+			MethodName: "UpdateBroadcastRecipient",
+			Handler:    _BroadcastServices_UpdateBroadcastRecipient_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

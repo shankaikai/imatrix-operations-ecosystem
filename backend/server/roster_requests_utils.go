@@ -12,6 +12,8 @@ import (
 	"capstone.operations_ecosystem/backend/common"
 	db_pck "capstone.operations_ecosystem/backend/database"
 	rs "capstone.operations_ecosystem/backend/rating_system"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 )
@@ -28,18 +30,21 @@ func (s *Server) GetAvailableIspecialistsWithScore(query *pb.AvailabilityQuery) 
 	// First get all users who are not yet assigned
 	unassignedUsers, err := s.getUnassignedIspecialists(query)
 	if err != nil {
+		fmt.Println("getUnassignedIspecialists err here", err)
 		return availEmployeeEvals, unavailEmployeeEvals, err
 	}
 
 	// Get the scores for all these users
 	err = getParallelEmployeeScores(unassignedUsers, &employeeEvals)
 	if err != nil {
+		fmt.Println("getParallelEmployeeScores err here", err)
 		return availEmployeeEvals, unavailEmployeeEvals, err
 	}
 
 	// Find out which of these users are available
 	err = s.updateAvailability(query, employeeEvals, &availEmployeeEvals, &unavailEmployeeEvals)
 	if err != nil {
+		fmt.Println("updateAvailability err here", err)
 		return availEmployeeEvals, unavailEmployeeEvals, err
 	}
 
@@ -61,6 +66,19 @@ func (s *Server) getUnassignedIspecialists(query *pb.AvailabilityQuery) ([]*pb.U
 
 	if err != nil {
 		return unassignedUsers, err
+	}
+
+	// Check if found assignments is empty, if so get the default users for that day
+	if len(rosterAssignements) == 0 {
+		defaultRosterQuery := &pb.RosterQuery{Limit: 5}
+		db_pck.AddRosterFilter(defaultRosterQuery, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, query.StartTime.AsTime().Format(common.DATETIME_FORMAT))
+		defaultRosters, err := db_pck.GetDefaultRosters(s.db, defaultRosterQuery)
+		if err != nil {
+			return unassignedUsers, err
+		}
+		for _, defaultRoster := range defaultRosters {
+			rosterAssignements = append(rosterAssignements, defaultRoster.GuardAssigned...)
+		}
 	}
 
 	// Create a string list of all the assigned users
@@ -199,11 +217,13 @@ func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.A
 		// parse string to actual time
 		startTime, err := time.Parse(common.TIME_FORMAT, start)
 		if err != nil {
+			fmt.Println("checkAvailabilityTiming ERROR:", err)
 			continue
 		}
 
 		endTime, err := time.Parse(common.TIME_FORMAT, end)
 		if err != nil {
+			fmt.Println("checkAvailabilityTiming ERROR:", err)
 			continue
 		}
 
@@ -241,11 +261,13 @@ func checkAvailabilityTiming(availability *db_pck.Availability, availQuery *pb.A
 			// parse string to actual time
 			startTime, err := time.Parse(common.TIME_FORMAT, start)
 			if err != nil {
+				fmt.Println("checkAvailabilityTiming ERROR:", err)
 				continue
 			}
 
 			endTime, err := time.Parse(common.TIME_FORMAT, end)
 			if err != nil {
+				fmt.Println("checkAvailabilityTiming ERROR:", err)
 				continue
 			}
 			// if next day, check that the start time for the next day is 00:00:00
@@ -384,6 +406,29 @@ func fillDefaultClients(roster *pb.Roster, db *sql.DB) error {
 	}
 
 	roster.Clients = aifsClientRosters
+
+	return nil
+}
+
+func validateStartTime(query *pb.RosterQuery) error {
+	foundStartTime := true
+	startTimeString := ""
+	for _, query := range query.Filters {
+		if query.Field == pb.RosterFilter_START_TIME {
+			startTimeString = query.Comparisons.Value
+			foundStartTime = true
+			break
+		}
+	}
+
+	if !foundStartTime {
+		return status.Errorf(codes.NotFound, "start time must be set in roster query")
+	}
+
+	_, err := time.Parse(common.DATETIME_FORMAT, startTimeString)
+	if err != nil {
+		return status.Errorf(codes.InvalidArgument, err.Error()+". Note: start time must be in the format:"+common.DATETIME_FORMAT)
+	}
 
 	return nil
 }
