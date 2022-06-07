@@ -8,28 +8,33 @@ import {
 } from "react";
 import { RosterServicesClient } from "../proto/Operations_ecosysServiceClientPb";
 import {
+  AvailabilityQuery,
+  EmployeeEvaluationResponse,
   Filter,
   Roster,
   RosterFilter,
   RosterQuery,
   RosterResponse,
+  User,
 } from "../proto/operations_ecosys_pb";
 import getRosterDates from "./getRosterDates";
 
 interface RosteringContextInterface {
-  rosterBaskets: Roster[];
+  rosterBaskets: Roster.AsObject[];
   rosterDates: Date[];
   setRosterDates?: Dispatch<Date[]>;
   offset: number;
   setOffset?: Dispatch<number>;
   selectedDate?: Date;
   setSelectedDate?: Dispatch<Date>;
+  guardsAssigned: User.AsObject[][];
 }
 
 const RosteringContext = createContext<RosteringContextInterface>({
   rosterDates: [],
   offset: 0,
   rosterBaskets: [],
+  guardsAssigned: [[]],
 });
 
 interface RosteringProviderProps {
@@ -41,8 +46,9 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   const [offset, setOffset] = useState<number>(0);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  const [rosterBaskets, setRosterBaskets] = useState<Roster[]>([]);
-  const [availableBaskets, setAvailableBaskets] = useState();
+  const [rosterBaskets, setRosterBaskets] = useState<Roster.AsObject[]>([]);
+
+  const [guardsAssigned, setGuardsAssigned] = useState<User.AsObject[][]>([[]]);
 
   const updateRosterDates = () => {
     const dates = getRosterDates(offset);
@@ -68,11 +74,46 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const stream = client.findRosters(query);
     stream.on("data", (response: RosterResponse) => {
       console.log(response.toObject());
-      const responseRoster = response.getRoster();
+      const responseRoster = response.getRoster()?.toObject();
+      const responseAssignedGuard = response
+        .getRoster()
+        ?.getGuardAssignedList()[0]
+        .getGuardAssigned()
+        ?.getEmployee()
+        ?.toObject();
+
+      setGuardsAssigned((prevGuards) => {
+        let newGuards = prevGuards;
+        responseRoster &&
+          responseAssignedGuard &&
+          newGuards.splice(responseRoster.aifsId, 0, [responseAssignedGuard]);
+        return newGuards;
+      });
 
       setRosterBaskets((prevBaskets) => {
-        console.log(prevBaskets);
         return [...prevBaskets, responseRoster!];
+      });
+    });
+  };
+
+  const getAvailableGuards = () => {
+    console.log("getAvailableGuards called");
+
+    const client = getRosterClient();
+
+    const query = new AvailabilityQuery();
+    // query.setStartTime(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+    const stream = client.getAvailableUsers(query);
+
+    stream.on("data", (response: EmployeeEvaluationResponse) => {
+      const employeeResponse = response
+        .getEmployee()
+        ?.getEmployee()
+        ?.toObject();
+      setGuardsAssigned((prevGuards) => {
+        let newGuards = prevGuards;
+        employeeResponse && newGuards[0].push(employeeResponse);
+        return newGuards;
       });
     });
   };
@@ -83,7 +124,12 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
   useEffect(() => {
     updateRosterBaskets();
+    getAvailableGuards();
   }, [selectedDate]);
+
+  useEffect(() => {
+    console.log(guardsAssigned);
+  });
 
   return (
     <RosteringContext.Provider
@@ -95,6 +141,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         selectedDate,
         setSelectedDate,
         rosterBaskets,
+        guardsAssigned,
       }}
     >
       {children}
@@ -110,3 +157,5 @@ export function getRosterClient(): RosterServicesClient {
 export function useRostering() {
   return useContext(RosteringContext);
 }
+
+export function submitNewRoster() {}
