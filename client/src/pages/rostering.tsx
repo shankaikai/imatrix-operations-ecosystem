@@ -1,13 +1,12 @@
 import { Group, ScrollArea, Stack, Text } from "@mantine/core";
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useEffect } from "react";
 import {
   DragDropContext,
   Draggable,
-  DropResult,
   Droppable,
+  DropResult,
 } from "react-beautiful-dnd";
-import RosterAvailability from "../components/Rostering/RosterAvailability";
 import RosterBasket from "../components/Rostering/RosterBasket";
 import RosterDateBar from "../components/Rostering/RosterDateBar";
 import RosterGuard from "../components/Rostering/RosterGuard";
@@ -39,18 +38,14 @@ const guards = [
 const Rostering: NextPage = () => {
   const { rosterBaskets } = useRostering();
 
-  const [aifs1, setAifs1] = useState([]);
-
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination) return;
-
-    const items = Array.from(aifs1);
-    const [newOrder] = items.splice(source.index, 1);
-    items.splice(destination.index, 0, newOrder);
-
-    setAifs1(items);
   };
+
+  useEffect(() => {
+    console.log("rosterBaskets:", rosterBaskets);
+  }, [rosterBaskets]);
 
   return (
     <RosteringProvider>
@@ -63,14 +58,13 @@ const Rostering: NextPage = () => {
           <Group position="apart" align="flex-start">
             <ScrollArea sx={{ width: "50%" }}>
               <Stack>
-                {rosterBaskets &&
-                  rosterBaskets.map((basket, index) => (
-                    <RosterBasket
-                      key={basket.aifsId}
-                      basket={basket}
-                      index={index}
-                    />
-                  ))}
+                {rosterBaskets.map((basket, index) => (
+                  <RosterBasket
+                    key={basket.getAifsId()}
+                    basket={basket.toObject()}
+                    index={index}
+                  />
+                ))}
               </Stack>
             </ScrollArea>
             <Droppable droppableId="guardStack">

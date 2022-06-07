@@ -38,14 +38,6 @@ export default function BroadcastList({}: BroadcastListProps) {
     );
   }, [broadcasts, search, selectValue, filterValue]);
 
-  // mockBroadcast.setCreationDate(Date.now());
-
-  const b = new Broadcast();
-  b.setContent("This is mock broadcast");
-  const c = new Broadcast();
-  c.setContent("This is mock broadcast 2");
-
-  // TODO: Iterate through broadcast list and filter
   return (
     <ScrollArea
       sx={{

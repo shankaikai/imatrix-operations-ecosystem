@@ -17,7 +17,7 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
         <Group>
           <Text>{`AIFS ${basket.aifsId}`}</Text>
         </Group>
-        <Droppable droppableId={index.toString()}>
+        <Droppable droppableId={(index + 1).toString()}>
           {(provided, snapshot) => (
             <div
               style={{

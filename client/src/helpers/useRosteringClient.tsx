@@ -17,18 +17,19 @@ import {
 import getRosterDates from "./getRosterDates";
 
 interface RosteringContextInterface {
+  rosterBaskets: Roster[];
   rosterDates: Date[];
   setRosterDates?: Dispatch<Date[]>;
   offset: number;
   setOffset?: Dispatch<number>;
   selectedDate?: Date;
   setSelectedDate?: Dispatch<Date>;
-  rosterBaskets?: Roster.AsObject[];
 }
 
 const RosteringContext = createContext<RosteringContextInterface>({
   rosterDates: [],
   offset: 0,
+  rosterBaskets: [],
 });
 
 interface RosteringProviderProps {
@@ -40,31 +41,39 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   const [offset, setOffset] = useState<number>(0);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  const [rosterBaskets, setRosterBaskets] = useState<Roster.AsObject[]>([]);
+  const [rosterBaskets, setRosterBaskets] = useState<Roster[]>([]);
+  const [availableBaskets, setAvailableBaskets] = useState();
 
   const updateRosterDates = () => {
     const dates = getRosterDates(offset);
-    console.log("dates:", dates);
     setRosterDates(dates);
   };
 
   // Get basket data
-  const getAIFSColumns = () => {
+  const updateRosterBaskets = () => {
     console.log("getAIFSColumns called");
+
+    setRosterBaskets(() => []);
+
     const client = getRosterClient();
     const filter = new RosterFilter();
     filter.setField(RosterFilter.Field.START_TIME);
     const filterDate = new Filter();
     filterDate.setValue(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+    filterDate.setComparison(Filter.Comparisons.EQUAL);
     filter.setComparisons(filterDate);
     const query = new RosterQuery();
     query.addFilters(filter);
+
     const stream = client.findRosters(query);
     stream.on("data", (response: RosterResponse) => {
-      setRosterBaskets((oldState) => [
-        ...oldState,
-        response.toObject().roster!,
-      ]);
+      console.log(response.toObject());
+      const responseRoster = response.getRoster();
+
+      setRosterBaskets((prevBaskets) => {
+        console.log(prevBaskets);
+        return [...prevBaskets, responseRoster!];
+      });
     });
   };
 
@@ -73,7 +82,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   }, [offset]);
 
   useEffect(() => {
-    getAIFSColumns();
+    updateRosterBaskets();
   }, [selectedDate]);
 
   return (
