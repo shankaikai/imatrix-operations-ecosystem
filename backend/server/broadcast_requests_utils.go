@@ -1,6 +1,12 @@
 package server
 
 import (
+	"fmt"
+	"strconv"
+
+	db_pck "capstone.operations_ecosystem/backend/database"
+	tclient "capstone.operations_ecosystem/backend/telegram_client"
+
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
@@ -48,4 +54,20 @@ func getAIFSDuty(aifsId int64) []*pb.User {
 	}
 
 	return users
+}
+
+func (s *Server) sendNewBroadcastToTele(broadcastId int64) {
+	query := &pb.BroadcastQuery{Limit: 1}
+	db_pck.AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastId)))
+	broadcasts, err := db_pck.GetBroadcasts(s.db, query)
+
+	if err != nil {
+		fmt.Println("sendNewBroadcastToTele ERROR:", err)
+	}
+
+	if len(broadcasts) == 0 {
+		fmt.Println("sendNewBroadcastToTele: No broadcast found for id", broadcastId)
+	}
+
+	tclient.InsertBroadcast(s.teleServerAddr, s.teleServerPort, broadcasts[0])
 }

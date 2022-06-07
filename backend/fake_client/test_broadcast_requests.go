@@ -16,21 +16,21 @@ func TestBroadcastClient(serverAddr *string, serverPort *int) {
 	broadcast := CreateFakeBroadcast(1, true)
 	pk := InsertBroadcast(serverAddr, serverPort, broadcast)
 	broadcast.BroadcastId = pk
-	InsertBroadcastAIFSID(serverAddr, serverPort)
+	// InsertBroadcastAIFSID(serverAddr, serverPort)
 
-	ConsolidatedFindBroadcastTest(serverAddr, serverPort)
-	ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
-	DeleteBroadcast(serverAddr, serverPort, &pb.Broadcast{BroadcastId: 5})
+	// ConsolidatedFindBroadcastTest(serverAddr, serverPort)
+	// ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
+	// DeleteBroadcast(serverAddr, serverPort, &pb.Broadcast{BroadcastId: 5})
 }
 
 func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) int64 {
 	// Ensure that there are users first, if there are users already existing,
 	// the returned users will be different, but its ok.
-	for i := 0; i < len(broadcast.Recipients); i++ {
-		for j := 0; j < len(broadcast.Recipients[i].Recipient); j++ {
-			InsertUser(serverAddr, serverPort, broadcast.Recipients[i].Recipient[j].Recipient)
-		}
-	}
+	// for i := 0; i < len(broadcast.Recipients); i++ {
+	// 	for j := 0; j < len(broadcast.Recipients[i].Recipient); j++ {
+	// 		InsertUser(serverAddr, serverPort, broadcast.Recipients[i].Recipient[j].Recipient)
+	// 	}
+	// }
 
 	fmt.Println("Inserting Broadcast:", broadcast.BroadcastId)
 	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)

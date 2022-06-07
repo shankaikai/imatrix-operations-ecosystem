@@ -207,7 +207,7 @@ func getBroadcastUrgencyProtoTypeStringFromDB(bcUrgencyType string) pb.Broadcast
 // Helper function to add a new filter to the list of existing
 // filters in a broadcast query struct.
 // Modifies the broadcast query parameter directly.
-func addBroadcastFilter(query *pb.BroadcastQuery, field pb.BroadcastFilter_Field,
+func AddBroadcastFilter(query *pb.BroadcastQuery, field pb.BroadcastFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
 	if query.Filters == nil {
@@ -505,7 +505,7 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 // the only condition is a matching broadcast id.
 func getBroadcastIdFormattedFilter(broadcastId int, table string) string {
 	query := &pb.BroadcastQuery{}
-	addBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(broadcastId))
+	AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(broadcastId))
 	return getFormattedBroadcastFilters(query, table, false, false)
 }
 
