@@ -1,24 +1,23 @@
 import { Card, Group, Stack, Text, useMantineTheme } from "@mantine/core";
 import React, { useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
+import { Roster } from "../../../proto/operations_ecosys_pb";
 
 interface RosterCardProps {
-  title: string;
+  basket: Roster.AsObject;
+  index: number;
 }
 
-export default function RosterBasket({ title }: RosterCardProps) {
+export default function RosterBasket({ basket, index }: RosterCardProps) {
   const theme = useMantineTheme();
-  const [count, setCount] = useState(0);
-  const [basket, setBasket] = useState([]);
 
   return (
     <Card>
       <Stack>
-        <Group position="apart">
-          <Text>{title}</Text>
-          <Text>{count}/3</Text>
+        <Group>
+          <Text>{`AIFS ${basket.aifsId}`}</Text>
         </Group>
-        <Droppable droppableId={title}>
+        <Droppable droppableId={index.toString()}>
           {(provided, snapshot) => (
             <div
               style={{

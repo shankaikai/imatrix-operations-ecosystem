@@ -11,7 +11,7 @@ import RosterAvailability from "../components/Rostering/RosterAvailability";
 import RosterBasket from "../components/Rostering/RosterBasket";
 import RosterDateBar from "../components/Rostering/RosterDateBar";
 import RosterGuard from "../components/Rostering/RosterGuard";
-import { RosteringProvider } from "../helpers/useRosteringClient";
+import { RosteringProvider, useRostering } from "../helpers/useRosteringClient";
 
 const aifs = ["AIFS 1 (AMKC)", "AIFS 2 (BKP)", "AIFS 3 (PKC)"];
 
@@ -37,6 +37,8 @@ const guards = [
 ];
 
 const Rostering: NextPage = () => {
+  const { rosterBaskets } = useRostering();
+
   const [aifs1, setAifs1] = useState([]);
 
   const onDragEnd = (result: DropResult) => {
@@ -59,11 +61,16 @@ const Rostering: NextPage = () => {
             Rostering
           </Text>
           <Group position="apart" align="flex-start">
-            <ScrollArea sx={{ width: "40%" }}>
+            <ScrollArea sx={{ width: "50%" }}>
               <Stack>
-                {aifs.map((aif) => (
-                  <RosterBasket key={aif} title={aif} />
-                ))}
+                {rosterBaskets &&
+                  rosterBaskets.map((basket, index) => (
+                    <RosterBasket
+                      key={basket.aifsId}
+                      basket={basket}
+                      index={index}
+                    />
+                  ))}
               </Stack>
             </ScrollArea>
             <Droppable droppableId="guardStack">

@@ -5,7 +5,7 @@ export default function getRosterDates(offset: number): Date[] {
   const dates = [];
   for (let d = offset; d < offset + 6; d++) {
     const day = new Date();
-    day.setDate(today.getDate() - today.getDay() + d + 1);
+    day.setDate(today.getDate() - today.getDay() + d + 2);
     dates.push(day);
   }
   return dates;

@@ -17,7 +17,7 @@ export default function RosterDateBar() {
     setOffset && setOffset(offset + 6);
   };
 
-  const handleDateClick = (date: number) => {
+  const handleDateClick = (date: Date) => {
     setSelectedDate && setSelectedDate(date);
   };
 
@@ -33,9 +33,11 @@ export default function RosterDateBar() {
       {rosterDates.map((date) => (
         <Button
           key={date.getDate()}
-          variant={date.getDate() === selectedDate ? "filled" : "light"}
+          variant={
+            date.getDate() === selectedDate?.getDate() ? "filled" : "light"
+          }
           color="gray"
-          onClick={() => handleDateClick(date.getDate())}
+          onClick={() => handleDateClick(date)}
         >
           {dayjs(date).format("D MMM")}
         </Button>

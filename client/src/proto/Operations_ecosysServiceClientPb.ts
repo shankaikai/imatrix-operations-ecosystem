@@ -509,6 +509,49 @@ export class BroadcastServicesClient {
       this.methodDescriptorFindBroadcasts);
   }
 
+  methodDescriptorUpdateBroadcastRecipient = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.BroadcastServices/UpdateBroadcastRecipient',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.BroadcastRecipient,
+    operations_ecosys_pb.Response,
+    (request: operations_ecosys_pb.BroadcastRecipient) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.Response.deserializeBinary
+  );
+
+  updateBroadcastRecipient(
+    request: operations_ecosys_pb.BroadcastRecipient,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
+
+  updateBroadcastRecipient(
+    request: operations_ecosys_pb.BroadcastRecipient,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
+
+  updateBroadcastRecipient(
+    request: operations_ecosys_pb.BroadcastRecipient,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.BroadcastServices/UpdateBroadcastRecipient',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateBroadcastRecipient,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.BroadcastServices/UpdateBroadcastRecipient',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateBroadcastRecipient);
+  }
+
 }
 
 export class RosterServicesClient {
@@ -642,16 +685,16 @@ export class RosterServicesClient {
     '/operations_ecosys.RosterServices/GetAvailableUsers',
     grpcWeb.MethodType.SERVER_STREAMING,
     operations_ecosys_pb.AvailabilityQuery,
-    operations_ecosys_pb.User,
+    operations_ecosys_pb.EmployeeEvaluationResponse,
     (request: operations_ecosys_pb.AvailabilityQuery) => {
       return request.serializeBinary();
     },
-    operations_ecosys_pb.User.deserializeBinary
+    operations_ecosys_pb.EmployeeEvaluationResponse.deserializeBinary
   );
 
   getAvailableUsers(
     request: operations_ecosys_pb.AvailabilityQuery,
-    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<operations_ecosys_pb.User> {
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<operations_ecosys_pb.EmployeeEvaluationResponse> {
     return this.client_.serverStreaming(
       this.hostname_ +
         '/operations_ecosys.RosterServices/GetAvailableUsers',

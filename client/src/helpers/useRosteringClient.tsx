@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   createContext,
   Dispatch,
@@ -5,6 +6,14 @@ import {
   useEffect,
   useState,
 } from "react";
+import { RosterServicesClient } from "../proto/Operations_ecosysServiceClientPb";
+import {
+  Filter,
+  Roster,
+  RosterFilter,
+  RosterQuery,
+  RosterResponse,
+} from "../proto/operations_ecosys_pb";
 import getRosterDates from "./getRosterDates";
 
 interface RosteringContextInterface {
@@ -12,8 +21,9 @@ interface RosteringContextInterface {
   setRosterDates?: Dispatch<Date[]>;
   offset: number;
   setOffset?: Dispatch<number>;
-  selectedDate?: number;
-  setSelectedDate?: Dispatch<number>;
+  selectedDate?: Date;
+  setSelectedDate?: Dispatch<Date>;
+  rosterBaskets?: Roster.AsObject[];
 }
 
 const RosteringContext = createContext<RosteringContextInterface>({
@@ -28,22 +38,43 @@ interface RosteringProviderProps {
 export function RosteringProvider({ children }: RosteringProviderProps) {
   const [rosterDates, setRosterDates] = useState<Date[]>([]);
   const [offset, setOffset] = useState<number>(0);
-  const [selectedDate, setSelectedDate] = useState<number>(
-    new Date().getDate()
-  );
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  const [droppableDivs, setDroppableDivs] = useState([
-    
-  ]);
+  const [rosterBaskets, setRosterBaskets] = useState<Roster.AsObject[]>([]);
 
   const updateRosterDates = () => {
     const dates = getRosterDates(offset);
+    console.log("dates:", dates);
     setRosterDates(dates);
+  };
+
+  // Get basket data
+  const getAIFSColumns = () => {
+    console.log("getAIFSColumns called");
+    const client = getRosterClient();
+    const filter = new RosterFilter();
+    filter.setField(RosterFilter.Field.START_TIME);
+    const filterDate = new Filter();
+    filterDate.setValue(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+    filter.setComparisons(filterDate);
+    const query = new RosterQuery();
+    query.addFilters(filter);
+    const stream = client.findRosters(query);
+    stream.on("data", (response: RosterResponse) => {
+      setRosterBaskets((oldState) => [
+        ...oldState,
+        response.toObject().roster!,
+      ]);
+    });
   };
 
   useEffect(() => {
     updateRosterDates();
   }, [offset]);
+
+  useEffect(() => {
+    getAIFSColumns();
+  }, [selectedDate]);
 
   return (
     <RosteringContext.Provider
@@ -54,11 +85,17 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         setOffset,
         selectedDate,
         setSelectedDate,
+        rosterBaskets,
       }}
     >
       {children}
     </RosteringContext.Provider>
   );
+}
+
+export function getRosterClient(): RosterServicesClient {
+  // TODO: add the envoy address into .env
+  return new RosterServicesClient("http://localhost:8080", null, {});
 }
 
 export function useRostering() {
