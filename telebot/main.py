@@ -1,6 +1,6 @@
 from __future__ import annotations
 import contextvars
-from turtle import update
+# from turtle import update
 from setuptools import Command
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext
@@ -15,6 +15,7 @@ import time
 
 from TelegramController import TelegramController, TelegramMenu
 from Menus import MainMenu, AttendanceMenu, ReportMenu, SOSMenu, HelpMenu
+from grpcServer import serve
 
 from dotenv import load_dotenv
 
@@ -53,5 +54,7 @@ dispatcher.add_handler(start_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(attachment_handler)
 
+# Start grpc server
+serve()
 updater.start_polling()
 updater.idle()
