@@ -42,7 +42,7 @@ interface RosteringProviderProps {
   children: JSX.Element | JSX.Element[];
 }
 
-interface RosteringGuardsList {
+export interface RosteringGuardsList {
   [key: string]: User.AsObject[][];
 }
 export function RosteringProvider({ children }: RosteringProviderProps) {
@@ -177,4 +177,6 @@ export function useRostering() {
   return useContext(RosteringContext);
 }
 
-export function submitNewRoster() {}
+export function submitNewRoster() {
+  const client = getRosterClient();
+}

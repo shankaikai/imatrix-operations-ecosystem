@@ -1,34 +1,32 @@
+import { Group, ScrollArea, Stack, Text } from "@mantine/core";
 import type { NextPage } from "next";
-import RosterContainer from "../components/Rostering/RosterContainer";
+import React from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import RosterAvailability from "../components/Rostering/RosterAvailability";
+import RosterBasketsLists from "../components/Rostering/RosterBasketsList";
+import RosterDateBar from "../components/Rostering/RosterDateBar";
 import { RosteringProvider } from "../helpers/useRosteringClient";
-
-// const aifs = ["AIFS 1 (AMKC)", "AIFS 2 (BKP)", "AIFS 3 (PKC)"];
-
-// const guards = [
-//   {
-//     id: 1,
-//     name: "Guard1",
-//     img: "https://www.khaosodenglish.com/wp-content/uploads/2020/02/guard-copy.jpg",
-//     phone: "92818838",
-//   },
-//   {
-//     id: 2,
-//     name: "Guard2",
-//     img: "https://www.khaosodenglish.com/wp-content/uploads/2020/02/guard-copy.jpg",
-//     phone: "92818838",
-//   },
-//   {
-//     id: 3,
-//     name: "Guard3",
-//     img: "https://www.khaosodenglish.com/wp-content/uploads/2020/02/guard-copy.jpg",
-//     phone: "92818838",
-//   },
-// ];
 
 const Rostering: NextPage = () => {
   return (
     <RosteringProvider>
-      <RosterContainer />
+      <DndProvider backend={HTML5Backend}>
+        <Stack>
+          <RosterDateBar />
+          <Text size="xl" weight={500}>
+            Rostering
+          </Text>
+          <Group position="apart" align="flex-start">
+            <ScrollArea sx={{ width: "45%" }}>
+              <RosterBasketsLists />
+            </ScrollArea>
+            <ScrollArea sx={{ width: "40%" }}>
+              <RosterAvailability />
+            </ScrollArea>
+          </Group>
+        </Stack>
+      </DndProvider>
     </RosteringProvider>
   );
 };

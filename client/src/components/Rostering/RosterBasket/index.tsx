@@ -5,6 +5,7 @@ import { Roster } from "../../../proto/operations_ecosys_pb";
 import RosterGuard, { DraggableGuard } from "../RosterGuard";
 import { useDrop } from "react-dnd";
 import _ from "lodash";
+import addGuardToGuardsAssigned from "../../../helpers/addGuardsToGuardsAssigned";
 
 interface RosterCardProps {
   basket: Roster.AsObject;
@@ -19,28 +20,17 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
   const [{ isOver }, drop] = useDrop({
     accept: "guard",
     drop: (guard: DraggableGuard) =>
-      addGuardToGuardsAssigned(guard.id, guard.index, basket.aifsId),
+      addGuardToGuardsAssigned(
+        guard.id,
+        guard.index,
+        basket.aifsId,
+        selectedDate,
+        setGuardsAssigned
+      ),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
   });
-
-  const addGuardToGuardsAssigned = (
-    id: number,
-    index: number,
-    aifsId: number
-  ) => {
-    selectedDate &&
-      setGuardsAssigned &&
-      setGuardsAssigned((prevState) => {
-        let newState = _.cloneDeep(prevState);
-        const date = selectedDate.toString();
-        const [orginalGuard] = newState[date][aifsId].splice(0, 1);
-        const [newGuard] = newState[date][0].splice(index, 1, orginalGuard);
-        newState[date][aifsId].splice(0, 0, newGuard);
-        return newState;
-      });
-  };
 
   return (
     <Card>

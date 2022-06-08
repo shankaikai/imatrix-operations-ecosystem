@@ -4,7 +4,6 @@ import { useRostering } from "../../../helpers/useRosteringClient";
 import RosterGuard from "../RosterGuard";
 
 export default function RosterAvailability() {
-  const theme = useMantineTheme();
   const { guardsAssigned, selectedDate } = useRostering();
 
   console.log("guardsAssigned from RosterAvailability", guardsAssigned);

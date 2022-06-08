@@ -7,7 +7,7 @@ interface RosterGuardProps {
   guard: User.AsObject;
   withLabels?: boolean;
   index: number;
-  nonDraggable: boolean;
+  nonDraggable?: boolean;
 }
 
 export interface DraggableGuard {
