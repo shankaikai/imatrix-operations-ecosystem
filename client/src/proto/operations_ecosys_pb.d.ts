@@ -711,6 +711,26 @@ export namespace RosterAssignement {
   }
 }
 
+export class BulkRosters extends jspb.Message {
+  getRostersList(): Array<Roster>;
+  setRostersList(value: Array<Roster>): BulkRosters;
+  clearRostersList(): BulkRosters;
+  addRosters(value?: Roster, index?: number): Roster;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): BulkRosters.AsObject;
+  static toObject(includeInstance: boolean, msg: BulkRosters): BulkRosters.AsObject;
+  static serializeBinaryToWriter(message: BulkRosters, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): BulkRosters;
+  static deserializeBinaryFromReader(message: BulkRosters, reader: jspb.BinaryReader): BulkRosters;
+}
+
+export namespace BulkRosters {
+  export type AsObject = {
+    rostersList: Array<Roster.AsObject>,
+  }
+}
+
 export class RosterResponse extends jspb.Message {
   getResponse(): Response | undefined;
   setResponse(value?: Response): RosterResponse;

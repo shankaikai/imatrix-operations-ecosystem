@@ -4,7 +4,7 @@ import { User } from "../../../proto/operations_ecosys_pb";
 import { useDrag } from "react-dnd";
 
 interface RosterGuardProps {
-  guard: User.AsObject;
+  guard?: User.AsObject;
   withLabels?: boolean;
   index: number;
   nonDraggable?: boolean;
@@ -23,7 +23,7 @@ export default function RosterGuard({
 }: RosterGuardProps) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "guard",
-    item: { id: guard.userId, index },
+    item: { id: guard?.userId, index },
     collect: (monitor) => {
       return {
         isDragging: monitor.isDragging(),
@@ -61,19 +61,19 @@ export default function RosterGuard({
               disabled={!withLabels}
               color="orange"
             >
-              <Avatar size={80} src={guard.userSecurityImg} radius={100} />
+              <Avatar size={80} src={guard?.userSecurityImg} radius={100} />
             </Indicator>
             {withLabels && (
               <Stack align="left">
-                <Text weight={600}>{guard.name}</Text>
-                <Text>{guard.phoneNumber}</Text>
+                <Text weight={600}>{guard?.name}</Text>
+                <Text>{guard?.phoneNumber}</Text>
               </Stack>
             )}
           </Group>
         }
       >
-        <Text weight={600}>{guard.name}</Text>
-        <Text>{guard.phoneNumber}</Text>
+        <Text weight={600}>{guard?.name}</Text>
+        <Text>{guard?.phoneNumber}</Text>
       </Popover>
     </div>
   );

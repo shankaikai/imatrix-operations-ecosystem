@@ -3,11 +3,21 @@ import dayjs from "dayjs";
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Send } from "tabler-icons-react";
 import getRosterDates from "../../../helpers/getRosterDates";
-import { useRostering } from "../../../helpers/useRosteringClient";
+import { submitNewBroadcast } from "../../../helpers/useBroadcastClient";
+import {
+  submitNewRoster,
+  useRostering,
+} from "../../../helpers/useRosteringClient";
 
 export default function RosterDateBar() {
-  const { rosterDates, setOffset, offset, selectedDate, setSelectedDate } =
-    useRostering();
+  const {
+    rosterDates,
+    setOffset,
+    offset,
+    selectedDate,
+    setSelectedDate,
+    guardsAssigned,
+  } = useRostering();
 
   const handleLeftClick = () => {
     setOffset && setOffset(offset - 6);
@@ -23,6 +33,7 @@ export default function RosterDateBar() {
 
   const handlePublish = () => {
     console.log("handlePublish called");
+    selectedDate && submitNewRoster(guardsAssigned, selectedDate);
   };
 
   return (

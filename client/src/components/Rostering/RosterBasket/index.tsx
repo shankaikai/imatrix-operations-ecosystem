@@ -1,11 +1,10 @@
 import { Card, Group, Stack, Text, useMantineTheme } from "@mantine/core";
-import React, { useRef } from "react";
+import React from "react";
+import { useDrop } from "react-dnd";
+import addGuardToGuardsAssigned from "../../../helpers/addGuardsToGuardsAssigned";
 import { useRostering } from "../../../helpers/useRosteringClient";
 import { Roster } from "../../../proto/operations_ecosys_pb";
 import RosterGuard, { DraggableGuard } from "../RosterGuard";
-import { useDrop } from "react-dnd";
-import _ from "lodash";
-import addGuardToGuardsAssigned from "../../../helpers/addGuardsToGuardsAssigned";
 
 interface RosterCardProps {
   basket: Roster.AsObject;
@@ -61,8 +60,8 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
               (guard, index) => {
                 return (
                   <RosterGuard
-                    key={guard.userId}
-                    guard={guard}
+                    key={guard.employee?.userId}
+                    guard={guard.employee}
                     index={index}
                     withLabels
                   />

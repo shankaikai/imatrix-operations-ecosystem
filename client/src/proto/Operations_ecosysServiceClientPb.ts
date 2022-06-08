@@ -573,6 +573,49 @@ export class RosterServicesClient {
     this.options_ = options;
   }
 
+  methodDescriptorAddRoster = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.RosterServices/AddRoster',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.BulkRosters,
+    operations_ecosys_pb.Response,
+    (request: operations_ecosys_pb.BulkRosters) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.Response.deserializeBinary
+  );
+
+  addRoster(
+    request: operations_ecosys_pb.BulkRosters,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
+
+  addRoster(
+    request: operations_ecosys_pb.BulkRosters,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
+
+  addRoster(
+    request: operations_ecosys_pb.BulkRosters,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.RosterServices/AddRoster',
+        request,
+        metadata || {},
+        this.methodDescriptorAddRoster,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.RosterServices/AddRoster',
+    request,
+    metadata || {},
+    this.methodDescriptorAddRoster);
+  }
+
   methodDescriptorUpdateRoster = new grpcWeb.MethodDescriptor(
     '/operations_ecosys.RosterServices/UpdateRoster',
     grpcWeb.MethodType.UNARY,

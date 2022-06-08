@@ -9,9 +9,12 @@ import {
 import { RosterServicesClient } from "../proto/Operations_ecosysServiceClientPb";
 import {
   AvailabilityQuery,
+  BulkRosters,
+  EmployeeEvaluation,
   EmployeeEvaluationResponse,
   Filter,
   Roster,
+  RosterAssignement,
   RosterFilter,
   RosterQuery,
   RosterResponse,
@@ -19,6 +22,8 @@ import {
 } from "../proto/operations_ecosys_pb";
 import getRosterDates from "./getRosterDates";
 import _ from "lodash";
+import { Timestamp } from "google-protobuf/google/protobuf/timestamp_pb";
+
 interface RosteringContextInterface {
   rosterBaskets: Roster.AsObject[];
   rosterDates: Date[];
@@ -43,7 +48,7 @@ interface RosteringProviderProps {
 }
 
 export interface RosteringGuardsList {
-  [key: string]: User.AsObject[][];
+  [key: string]: EmployeeEvaluation.AsObject[][];
 }
 export function RosteringProvider({ children }: RosteringProviderProps) {
   const [rosterDates, setRosterDates] = useState<Date[]>([]);
@@ -71,7 +76,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
   // Get basket data
   const updateRosterBaskets = () => {
-    console.log("getAIFSColumns called");
+    console.log("updateRosterBaskets called");
 
     const client = getRosterClient();
     const filter = new RosterFilter();
@@ -84,14 +89,14 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     query.addFilters(filter);
 
     const stream = client.findRosters(query);
+
     stream.on("data", (response: RosterResponse) => {
-      // console.log(response.toObject());
+      console.log(response.toObject());
       const responseRoster = response.getRoster()?.toObject();
       const responseAssignedGuard = response
         .getRoster()
         ?.getGuardAssignedList()[0]
         .getGuardAssigned()
-        ?.getEmployee()
         ?.toObject();
 
       setRosterBaskets((prevBaskets) => {
@@ -122,10 +127,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
     stream.on("data", (response: EmployeeEvaluationResponse) => {
       // console.log(response);
-      const employeeResponse = response
-        .getEmployee()
-        ?.getEmployee()
-        ?.toObject();
+      const employeeResponse = response.getEmployee()?.toObject();
       setGuardsAssigned((prevGuards) => {
         let newGuards = _.cloneDeep(prevGuards);
         employeeResponse &&
@@ -177,6 +179,48 @@ export function useRostering() {
   return useContext(RosteringContext);
 }
 
-export function submitNewRoster() {
+export function submitNewRoster(
+  guardsAssigned: RosteringGuardsList,
+  date: Date
+) {
   const client = getRosterClient();
+
+  const rosterList: Roster[] = [];
+
+  for (const i of [1, 2, 3]) {
+    const userObject = guardsAssigned[date.toString()][i][0];
+
+    const user = new User();
+    userObject.employee && user.setUserId(userObject.employee.userId);
+
+    const employeeEvaluation = new EmployeeEvaluation();
+    employeeEvaluation.setEmployee(user);
+
+    const rosterAssignment = new RosterAssignement();
+    rosterAssignment.setGuardAssigned(employeeEvaluation);
+
+    const roster = new Roster();
+    roster.addGuardAssigned(rosterAssignment);
+    roster.setAifsId(i);
+
+    const timestamp = new Timestamp();
+    date.setHours(18, 0, 0, 0);
+    timestamp.fromDate(date);
+    roster.setStartTime(timestamp);
+
+    rosterList.push(roster);
+  }
+
+  const bulkRoster = new BulkRosters();
+  bulkRoster.setRostersList(rosterList);
+
+  // client
+  //   .addRoster(bulkRoster, {})
+  //   .then((response) => {
+  //     // TODO: Show success toast
+  //     console.log(response);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 }
