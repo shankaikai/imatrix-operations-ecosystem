@@ -34,7 +34,7 @@ func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int
 	fmt.Println("insert roster test")
 	grpcClient, conn := createRosterClient(serverAddr, serverPort)
 	defer conn.Close()
-
+	rosters[0].Clients = nil
 	res, err := grpcClient.AddRoster(context.Background(), &pb.BulkRosters{Rosters: rosters})
 	if err != nil {
 		fmt.Println("InsertRoster ERROR:", err)
@@ -65,13 +65,13 @@ func ConsolidatedFindRosterTest(serverAddr *string, serverPort *int) {
 	// FindRosterClientIdFilter(serverAddr, serverPort)
 	// FindRosterGuardConfirmationFilter(serverAddr, serverPort)
 	// FindRosterGuardAttendedFilter(serverAddr, serverPort)
-	FindRostersMultipleFilters(serverAddr, serverPort)
+	// FindRostersMultipleFilters(serverAddr, serverPort)
 }
 
 func FindRosterStartTimeFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding Roster Start time filter")
 	// startTime := time.Date(2022, 6, 21, 18, 0, 0, 0, time.UTC)
-	startTime := time.Date(2022, 8, 1, 18, 0, 0, 0, time.UTC)
+	startTime := time.Date(2022, 6, 8, 18, 0, 0, 0, time.UTC)
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: startTime.Format(common.DATETIME_FORMAT)}
 	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_START_TIME}
 

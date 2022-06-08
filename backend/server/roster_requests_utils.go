@@ -416,6 +416,34 @@ func (s *Server) insertDefaultRosterValues(roster *pb.Roster) error {
 		}
 	}
 
+	// check if clients are nil
+	if roster.Clients == nil || len(roster.Clients) == 0 {
+		clients := make([]*pb.AIFSClientRoster, 0)
+		clients = append(clients, &pb.AIFSClientRoster{
+			Client:      &pb.Client{ClientId: 1},
+			PatrolOrder: 1,
+		})
+		clients = append(clients, &pb.AIFSClientRoster{
+			Client:      &pb.Client{ClientId: 2},
+			PatrolOrder: 2,
+		})
+		clients = append(clients, &pb.AIFSClientRoster{
+			Client:      &pb.Client{ClientId: 3},
+			PatrolOrder: 3,
+		})
+
+		if roster.AifsId == 2 {
+			clients[0].PatrolOrder = 2
+			clients[1].PatrolOrder = 3
+			clients[2].PatrolOrder = 1
+		} else if roster.AifsId == 3 {
+			clients[0].PatrolOrder = 3
+			clients[1].PatrolOrder = 1
+			clients[2].PatrolOrder = 2
+		}
+		roster.Clients = clients
+	}
+
 	return nil
 }
 
