@@ -36,6 +36,7 @@ const (
 	ROSTER_ASGN_DB_ATTENDED       = "attended"
 	ROSTER_ASGN_DB_ATTENDED_TIME  = "attendance_time"
 	ROSTER_ASGN_DB_IS_ASSIGNED    = "is_assigned"
+	ROSTER_ASGN_DB_REJECTED       = "rejected"
 
 	// AIFS Client Schedule table fields
 	AIFS_CLIENT_DB_ID             = "aifs_client_schedule_id"
@@ -96,6 +97,7 @@ func getRosterAsgnTableFields() string {
 		ROSTER_ASGN_DB_CONFIRMATION,
 		ROSTER_ASGN_DB_ATTENDED,
 		ROSTER_ASGN_DB_IS_ASSIGNED,
+		ROSTER_ASGN_DB_REJECTED,
 	}
 
 	return strings.Join(rosterRecTableFields, ",")
@@ -115,8 +117,10 @@ func orderRosterAsgnFields(rosterAssignment *pb.RosterAssignement, relatedRoster
 
 	// confirmation and attended are false by default.
 	output += "0, 0" + ", "
-	// is assigned is false by default.
-	output += "1"
+	// is assigned is true by default
+	output += "1" + ", "
+	// rejection are false by default
+	output += "0"
 
 	return output
 }
@@ -202,6 +206,7 @@ func getFilledRosterASGNFields(rosterAssignment *pb.RosterAssignement) string {
 	}
 
 	rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_IS_ASSIGNED, strconv.FormatBool(rosterAssignment.IsAssigned), false))
+	rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_ASGN_DB_REJECTED, strconv.FormatBool(rosterAssignment.Rejected), false))
 
 	return strings.Join(rosterTableFields, ",")
 }
@@ -374,6 +379,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			&rosterAssignment.Attended,
 			&attendanceTimeString,
 			&rosterAssignment.IsAssigned,
+			&rosterAssignment.Rejected,
 
 			// Client Details
 			&aifsClient.AifsClientRosterId,
@@ -784,4 +790,27 @@ func RemoveRosteringClientQueries(rosterQuery *pb.RosterQuery) *pb.RosterQuery {
 	}
 
 	return clientQueries
+}
+
+func setRosterStatus(rosters []*pb.Roster) {
+	for _, roster := range rosters {
+		has_unconfirmed := false
+		has_rejected := false
+		status := pb.Roster_CONFIRMED
+		for _, rosterAssignement := range roster.GuardAssigned {
+			if rosterAssignement.Rejected {
+				has_rejected = true
+				break
+			}
+			if !rosterAssignement.Confirmed {
+				has_unconfirmed = true
+			}
+		}
+		if has_rejected {
+			status = pb.Roster_REJECTED
+		} else if has_unconfirmed {
+			status = pb.Roster_PENDING
+		}
+		roster.Status = status
+	}
 }

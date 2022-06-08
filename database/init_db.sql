@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS `schedule_detail` (
 	attended BOOLEAN DEFAULT false NOT NULL,
 	attendance_time DATETIME, 
 	is_assigned BOOLEAN NOT NULL,
+    rejected BOOLEAN NOT NULL, 
 
     FOREIGN KEY (schedule)
         REFERENCES `schedule` (schedule_id)

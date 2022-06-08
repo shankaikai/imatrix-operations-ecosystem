@@ -290,6 +290,13 @@ message Roster {
 
     // The roster is not actually in the database
     bool is_default = 7;
+    Status status = 8;
+
+    enum Status {
+        PENDING = 0;
+        CONFIRMED = 1;
+        REJECTED = 2;
+    }
 }
 
 message AIFSClientRoster {
@@ -311,6 +318,7 @@ message RosterAssignement {
     // If the assignment is part of the current assignment
     // or if it was previously assigned and is now removed
     bool is_assigned = 8;
+    bool rejected = 9;
 }
 
 message BulkRosters{
@@ -344,6 +352,7 @@ message RosterFilter {
         END_TIME = 9;
         IS_ASSIGNED = 10;
         DEFAULT_ROSTERING_DAY_OF_WEEK = 11;
+        GUARD_ASSIGNMENT_REJECTION = 12;
     }
 }
 
