@@ -147,6 +147,9 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	query.Limit = requestedLimit
 	err = convertDbRowsToFullRoster(db, &rosters, rows, query)
 
+	// Set status of rosters
+	setRosterStatus(rosters)
+
 	return rosters, err
 }
 
@@ -250,6 +253,7 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 			&assignment.Attended,
 			&attendanceTimeString,
 			&assignment.IsAssigned,
+			&assignment.Rejected,
 		)
 
 		if err != nil {

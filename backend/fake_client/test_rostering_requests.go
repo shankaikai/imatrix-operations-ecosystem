@@ -27,7 +27,7 @@ func TestRosteringClient(serverAddr *string, serverPort *int) {
 	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
 
 	// DeleteRosterTest(serverAddr, serverPort, &pb.Roster{RosteringId: 9})
-	ConsolidatedGetAvailableUsersTest(serverAddr, serverPort)
+	// ConsolidatedGetAvailableUsersTest(serverAddr, serverPort)
 }
 
 func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int64 {
@@ -70,8 +70,8 @@ func ConsolidatedFindRosterTest(serverAddr *string, serverPort *int) {
 
 func FindRosterStartTimeFilter(serverAddr *string, serverPort *int) {
 	fmt.Println("Finding Roster Start time filter")
-	startTime := time.Date(2022, 6, 21, 18, 0, 0, 0, time.UTC)
-
+	// startTime := time.Date(2022, 6, 21, 18, 0, 0, 0, time.UTC)
+	startTime := time.Date(2022, 8, 1, 18, 0, 0, 0, time.UTC)
 	com := &pb.Filter{Comparison: pb.Filter_EQUAL, Value: startTime.Format(common.DATETIME_FORMAT)}
 	filter := &pb.RosterFilter{Comparisons: com, Field: pb.RosterFilter_START_TIME}
 
