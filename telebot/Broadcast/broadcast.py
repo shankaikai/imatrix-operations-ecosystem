@@ -17,6 +17,8 @@ def send_broadcast_message(updater : Updater, message: str, chat_id: int, broadc
             ]]
     )
 
+    formated_message = 23432
+
     updater.bot.send_message(chat_id=chat_id, text=message, reply_markup=keyboard_markup)
 
 def acknowledge_broadcast(broadcast_recipient_id: int) -> bool:
