@@ -102,7 +102,7 @@ func orderBroadcastRecFields(recipeint *pb.BroadcastRecipient, relatedBCId int64
 	output += strconv.Itoa(int(relatedBCId)) + ","
 	output += strconv.Itoa(int(recipeint.Recipient.UserId)) + ","
 
-	// Ack and rejection are fale by default.
+	// Ack and rejection are false by default.
 	output += "0, 0" + ","
 	output += strconv.Itoa(int(recipeint.AifsId))
 
