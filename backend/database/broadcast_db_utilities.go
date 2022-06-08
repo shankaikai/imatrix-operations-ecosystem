@@ -86,6 +86,7 @@ func getBroadcastRecTableFields() string {
 		BC_REC_DB_RECIPIENT,
 		BC_REC_DB_ACK,
 		BC_REC_DB_REJECTION,
+		BC_REC_DB_LAST_REPLIED,
 		BC_REC_DB_AIDS_ID,
 	}
 
@@ -101,9 +102,16 @@ func orderBroadcastRecFields(recipeint *pb.BroadcastRecipient, relatedBCId int64
 
 	output += strconv.Itoa(int(relatedBCId)) + ","
 	output += strconv.Itoa(int(recipeint.Recipient.UserId)) + ","
+	output += strconv.FormatBool(recipeint.Acknowledged) + ","
 
-	// Ack and rejection are false by default.
-	output += "0, 0" + ","
+	// Rejection are false by default.
+	output += "0" + ","
+	if recipeint.LastReplied != nil {
+		output += "'" + recipeint.LastReplied.AsTime().Format(common.DATETIME_FORMAT) + "'" + ","
+	} else {
+		output += "NULL,"
+	}
+
 	output += strconv.Itoa(int(recipeint.AifsId))
 
 	return output

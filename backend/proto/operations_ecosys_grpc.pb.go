@@ -684,7 +684,7 @@ var BroadcastServices_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RosterServicesClient interface {
 	// Add multiple rosters for different AIFS at the same time
-	AddRoster(ctx context.Context, opts ...grpc.CallOption) (RosterServices_AddRosterClient, error)
+	AddRoster(ctx context.Context, in *BulkRosters, opts ...grpc.CallOption) (*Response, error)
 	// Note that this update does not update the roster's guard's inner status
 	// such as the acknowledgement or attended status but only if the guard
 	// is part of the roster.
@@ -702,38 +702,13 @@ func NewRosterServicesClient(cc grpc.ClientConnInterface) RosterServicesClient {
 	return &rosterServicesClient{cc}
 }
 
-func (c *rosterServicesClient) AddRoster(ctx context.Context, opts ...grpc.CallOption) (RosterServices_AddRosterClient, error) {
-	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[0], "/operations_ecosys.RosterServices/AddRoster", opts...)
+func (c *rosterServicesClient) AddRoster(ctx context.Context, in *BulkRosters, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.RosterServices/AddRoster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &rosterServicesAddRosterClient{stream}
-	return x, nil
-}
-
-type RosterServices_AddRosterClient interface {
-	Send(*Roster) error
-	CloseAndRecv() (*Response, error)
-	grpc.ClientStream
-}
-
-type rosterServicesAddRosterClient struct {
-	grpc.ClientStream
-}
-
-func (x *rosterServicesAddRosterClient) Send(m *Roster) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *rosterServicesAddRosterClient) CloseAndRecv() (*Response, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(Response)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 func (c *rosterServicesClient) UpdateRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error) {
@@ -755,7 +730,7 @@ func (c *rosterServicesClient) DeleteRoster(ctx context.Context, in *Roster, opt
 }
 
 func (c *rosterServicesClient) FindRosters(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRostersClient, error) {
-	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[1], "/operations_ecosys.RosterServices/FindRosters", opts...)
+	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[0], "/operations_ecosys.RosterServices/FindRosters", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -787,7 +762,7 @@ func (x *rosterServicesFindRostersClient) Recv() (*RosterResponse, error) {
 }
 
 func (c *rosterServicesClient) GetAvailableUsers(ctx context.Context, in *AvailabilityQuery, opts ...grpc.CallOption) (RosterServices_GetAvailableUsersClient, error) {
-	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[2], "/operations_ecosys.RosterServices/GetAvailableUsers", opts...)
+	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[1], "/operations_ecosys.RosterServices/GetAvailableUsers", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -823,7 +798,7 @@ func (x *rosterServicesGetAvailableUsersClient) Recv() (*EmployeeEvaluationRespo
 // for forward compatibility
 type RosterServicesServer interface {
 	// Add multiple rosters for different AIFS at the same time
-	AddRoster(RosterServices_AddRosterServer) error
+	AddRoster(context.Context, *BulkRosters) (*Response, error)
 	// Note that this update does not update the roster's guard's inner status
 	// such as the acknowledgement or attended status but only if the guard
 	// is part of the roster.
@@ -838,8 +813,8 @@ type RosterServicesServer interface {
 type UnimplementedRosterServicesServer struct {
 }
 
-func (UnimplementedRosterServicesServer) AddRoster(RosterServices_AddRosterServer) error {
-	return status.Errorf(codes.Unimplemented, "method AddRoster not implemented")
+func (UnimplementedRosterServicesServer) AddRoster(context.Context, *BulkRosters) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddRoster not implemented")
 }
 func (UnimplementedRosterServicesServer) UpdateRoster(context.Context, *Roster) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoster not implemented")
@@ -866,30 +841,22 @@ func RegisterRosterServicesServer(s grpc.ServiceRegistrar, srv RosterServicesSer
 	s.RegisterService(&RosterServices_ServiceDesc, srv)
 }
 
-func _RosterServices_AddRoster_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(RosterServicesServer).AddRoster(&rosterServicesAddRosterServer{stream})
-}
-
-type RosterServices_AddRosterServer interface {
-	SendAndClose(*Response) error
-	Recv() (*Roster, error)
-	grpc.ServerStream
-}
-
-type rosterServicesAddRosterServer struct {
-	grpc.ServerStream
-}
-
-func (x *rosterServicesAddRosterServer) SendAndClose(m *Response) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *rosterServicesAddRosterServer) Recv() (*Roster, error) {
-	m := new(Roster)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _RosterServices_AddRoster_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BulkRosters)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(RosterServicesServer).AddRoster(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.RosterServices/AddRoster",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RosterServicesServer).AddRoster(ctx, req.(*BulkRosters))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _RosterServices_UpdateRoster_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -978,6 +945,10 @@ var RosterServices_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RosterServicesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "AddRoster",
+			Handler:    _RosterServices_AddRoster_Handler,
+		},
+		{
 			MethodName: "UpdateRoster",
 			Handler:    _RosterServices_UpdateRoster_Handler,
 		},
@@ -987,11 +958,6 @@ var RosterServices_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "AddRoster",
-			Handler:       _RosterServices_AddRoster_Handler,
-			ClientStreams: true,
-		},
 		{
 			StreamName:    "FindRosters",
 			Handler:       _RosterServices_FindRosters_Handler,

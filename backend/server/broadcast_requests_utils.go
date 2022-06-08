@@ -3,9 +3,11 @@ package server
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	tclient "capstone.operations_ecosystem/backend/telegram_client"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 )
@@ -18,16 +20,26 @@ const (
 
 // If the broadcast recipient is an AIFS,
 // change the recipients to be actual users
+// If the
 // Modified the broadcast in place
-func getDefaultRecipients(broadcast *pb.Broadcast) {
+func getDefaultBroadcastFields(broadcast *pb.Broadcast) {
+	defaultAck := broadcast.Urgency != pb.Broadcast_HIGH
+	var ackTime time.Time
+
+	if defaultAck {
+		ackTime = time.Now()
+	}
+
 	for _, rec := range broadcast.Recipients {
 		newRecipients := make([]*pb.BroadcastRecipient, 0)
 
 		users := getAIFSDuty(rec.AifsId)
 		for _, user := range users {
 			newRecipients = append(newRecipients, &pb.BroadcastRecipient{
-				Recipient: user,
-				AifsId:    rec.AifsId,
+				Recipient:    user,
+				AifsId:       rec.AifsId,
+				Acknowledged: defaultAck,
+				LastReplied:  &timestamppb.Timestamp{Seconds: ackTime.Unix()},
 			})
 		}
 
