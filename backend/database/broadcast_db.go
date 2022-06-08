@@ -210,6 +210,7 @@ func UpdateBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecip
 	filters := getBroadcastIdFormattedFilter(
 		int(broadcastRecipient.BroadcastRecipientsId),
 		BROADCAST_RECIPIENT_TABLE_NAME,
+		false,
 	)
 
 	rowsAffected, err := Update(db, BROADCAST_RECIPIENT_TABLE_NAME, newFields, filters)
@@ -229,6 +230,7 @@ func DeleteBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
 	filters := getBroadcastIdFormattedFilter(
 		int(broadcast.BroadcastId),
 		BROADCAST_DB_TABLE_NAME,
+		true,
 	)
 
 	rowsAffected, err := Delete(db, BROADCAST_DB_TABLE_NAME, filters)
@@ -246,7 +248,7 @@ func DeleteBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecip
 // Delete all recipients belonging to a particular broadcast
 // Currently not in use.
 func DeleteAllBCRecipientsOfMainBC(db *sql.DB, mainBroadcastID int) (int64, error) {
-	filters := getBroadcastIdFormattedFilter(mainBroadcastID, BROADCAST_RECIPIENT_TABLE_NAME)
+	filters := getBroadcastIdFormattedFilter(mainBroadcastID, BROADCAST_RECIPIENT_TABLE_NAME, true)
 	rowsAffected, err := Delete(db, BROADCAST_RECIPIENT_TABLE_NAME, filters)
 	return rowsAffected, err
 }

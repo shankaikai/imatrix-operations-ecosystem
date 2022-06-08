@@ -155,8 +155,9 @@ func getFilledBroadcastRecFields(bRec *pb.BroadcastRecipient) string {
 		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_LAST_REPLIED, bRec.LastReplied.AsTime().Format(common.DATETIME_FORMAT), true))
 	}
 
-	broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_AIDS_ID, strconv.Itoa(int(bRec.AifsId)), true))
-
+	if bRec.AifsId > 0 {
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_REC_DB_AIDS_ID, strconv.Itoa(int(bRec.AifsId)), true))
+	}
 	return strings.Join(broadcastTableFields, ",")
 }
 
@@ -242,7 +243,7 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 		case pb.BroadcastFilter_BROADCAST_ID, pb.BroadcastFilter_TYPE,
 			pb.BroadcastFilter_CONTENT, pb.BroadcastFilter_CREATION_DATE, pb.BroadcastFilter_DEADLINE,
 			pb.BroadcastFilter_CREATOR_ID, pb.BroadcastFilter_RECEIPEIENT_ID, pb.BroadcastFilter_URGENCY,
-			pb.BroadcastFilter_AIFS_ID:
+			pb.BroadcastFilter_AIFS_ID, pb.BroadcastFilter_BROADCAST_RECIPIENT_TABLE_ID:
 			if hasQuotes {
 				whereFilters = append(
 
@@ -503,9 +504,16 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 
 // This function creates the filter required if
 // the only condition is a matching broadcast id.
-func getBroadcastIdFormattedFilter(broadcastId int, table string) string {
+func getBroadcastIdFormattedFilter(broadcastId int, table string, isMainTable bool) string {
 	query := &pb.BroadcastQuery{}
-	AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(broadcastId))
+	if !isMainTable {
+		if table == BROADCAST_RECIPIENT_TABLE_NAME {
+			AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_RECIPIENT_TABLE_ID, pb.Filter_EQUAL, strconv.Itoa(broadcastId))
+		}
+	} else {
+		AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(broadcastId))
+	}
+
 	return getFormattedBroadcastFilters(query, table, false, false)
 }
 
@@ -534,6 +542,8 @@ func bcFilterToDBCol(filterField pb.BroadcastFilter_Field, table string) string 
 		output = BC_DB_URGENCY
 	case pb.BroadcastFilter_AIFS_ID:
 		output = BC_REC_DB_AIDS_ID
+	case pb.BroadcastFilter_BROADCAST_RECIPIENT_TABLE_ID:
+		output = BC_REC_DB_ID
 	}
 
 	return output

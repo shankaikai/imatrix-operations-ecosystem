@@ -22,6 +22,9 @@ class BroadcastServicesServicer(operations_ecosys_pb2_grpc.BroadcastServicesServ
                     continue
                 
                 print("Broadcast recipient has telegram chat id. User id:", broadcastRecipient.recipient.user_id)
-                bc.sendBroadcastMessage(self.updater, request.content, broadcastRecipient.recipient.tele_chat_id)
+                bc.send_broadcast_message(self.updater, request.content,
+                    broadcastRecipient.recipient.tele_chat_id,
+                    broadcastRecipient.broadcast_recipients_id,
+                )
         res = operations_ecosys_pb2.Response(type=operations_ecosys_pb2.Response.ACK)
         return res

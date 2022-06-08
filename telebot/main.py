@@ -3,12 +3,13 @@ import contextvars
 # from turtle import update
 from setuptools import Command
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import CallbackContext
+from telegram.ext import CallbackContext, CallbackQueryHandler
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 from telegram.files.photosize import PhotoSize
 from telegram import File as tFile
+from Keyboard import keyboard_data
 
 import os.path
 import time
@@ -53,6 +54,7 @@ attachment_handler = MessageHandler(Filters.attachment & (~Filters.command), TCo
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(attachment_handler)
+dispatcher.add_handler(CallbackQueryHandler(keyboard_data.keyboardCallback))
 
 # Start grpc server
 grpc_server = serve(updater)
