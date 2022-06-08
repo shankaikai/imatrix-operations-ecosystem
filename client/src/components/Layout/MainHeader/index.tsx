@@ -7,11 +7,16 @@ import {
   ActionIcon,
   useMantineColorScheme,
   Text,
+  Indicator,
 } from "@mantine/core";
-import { Sun, MoonStars } from "tabler-icons-react";
+import { Sun, MoonStars, Bell } from "tabler-icons-react";
 
 export default function MainHeader() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+  const handleBellClick = () => {
+    // TODO: Code out notifcations drop down logic
+  };
 
   return (
     <Header height={60} sx={{ width: "100vw" }} px="sm">
@@ -23,14 +28,24 @@ export default function MainHeader() {
         >
           iMatrix Operations Dashboard
         </Text>
-
-        <ActionIcon
-          variant="default"
-          onClick={() => toggleColorScheme()}
-          size={30}
-        >
-          {colorScheme === "dark" ? <Sun size={16} /> : <MoonStars size={16} />}
-        </ActionIcon>
+        <Group>
+          <ActionIcon onClick={handleBellClick}>
+            <Indicator color="red" size={10} offset={2} withBorder>
+              <Bell size={16} />
+            </Indicator>
+          </ActionIcon>
+          <ActionIcon
+            variant="default"
+            onClick={() => toggleColorScheme()}
+            size={30}
+          >
+            {colorScheme === "dark" ? (
+              <Sun size={16} />
+            ) : (
+              <MoonStars size={16} />
+            )}
+          </ActionIcon>
+        </Group>
       </Group>
     </Header>
   );

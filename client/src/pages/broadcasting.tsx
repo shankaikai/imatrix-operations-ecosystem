@@ -8,9 +8,6 @@ import { BroadcastProvider } from "../helpers/useBroadcastClient";
 
 const Broadcasting: NextPage = () => {
   // TODO: Convert into context provider
-  const [search, setSearch] = useState<string>("");
-  const [selectValue, setSelectValue] = useState("latest");
-  const [filterValue, setFilterValue] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
 
   return (

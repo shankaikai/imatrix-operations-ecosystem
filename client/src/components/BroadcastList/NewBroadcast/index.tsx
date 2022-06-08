@@ -8,7 +8,7 @@ interface NewBroadcastProps {
 }
 
 export default function NewBroadcast({ setModelOpen }: NewBroadcastProps) {
-  const [recipient, setRecipient] = useState<string[]>(["All"]);
+  const [recipient, setRecipient] = useState<string[]>([]);
   const [urgency, setUrgency] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
 

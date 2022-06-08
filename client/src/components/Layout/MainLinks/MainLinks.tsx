@@ -1,5 +1,11 @@
 import React from "react";
-import { Camera, Message2, LayoutDashboard, Report } from "tabler-icons-react";
+import {
+  Camera,
+  Message2,
+  LayoutDashboard,
+  Report,
+  Forms,
+} from "tabler-icons-react";
 import { ThemeIcon, UnstyledButton, Group, Text } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -61,6 +67,12 @@ const links = [
     color: "blue",
     label: "Broadcast",
     link: "/broadcasting",
+  },
+  {
+    icon: <Forms size={16} />,
+    color: "green",
+    label: "Rostering",
+    link: "/rostering",
   },
   {
     icon: <Report size={16} />,

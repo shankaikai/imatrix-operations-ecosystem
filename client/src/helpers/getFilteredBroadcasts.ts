@@ -10,10 +10,27 @@ export default function getFilteredBroadcasts(
 ) {
   console.log("getFilteredBroadcasts called");
   // TODO: Add filtering logic
-  console.log(broadcasts);
-  const filtered = broadcasts.filter((broadcast) =>
-    broadcast.getContent().includes(search)
-  );
-  console.log(filtered);
+  let filtered = broadcasts.filter((broadcast) => {
+    const content = broadcast.getContent();
+    const includesSearch = content.includes(search);
+
+    let includesFilter = true;
+
+    if (filterValue !== "all") {
+      console.log("not all");
+      const recipients = broadcast.getRecipientsList();
+      var aifs = [];
+      for (var recipient of recipients) {
+        aifs.push(recipient.getAifsId().toString());
+      }
+      includesFilter = aifs.includes(filterValue);
+    }
+    return includesSearch && includesFilter;
+  });
+
+  if (selectValue == "oldest") {
+    filtered = filtered.reverse();
+  }
+
   setFilteredBroadcasts(filtered);
 }

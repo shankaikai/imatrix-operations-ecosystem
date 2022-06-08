@@ -1,41 +1,40 @@
-import {
-  Badge,
-  Card,
-  Group,
-  Text,
-  Tooltip,
-  useMantineTheme,
-} from "@mantine/core";
+import { Card, Group, Text, useMantineTheme } from "@mantine/core";
 import React from "react";
-import { Broadcast } from "../../../proto/operations_ecosys_pb";
+import { AIFSRecipient } from "../../../helpers/recipientsFormatter";
 import AcknowledgementToolTip from "./AcknowledgementToolTip";
 
 interface BroadcastCardProps {
-  broadcast: Broadcast;
+  content: string;
+  date: string;
+  aifs: AIFSRecipient[];
 }
 
-const mockdata = [
-  {
-    content: "This is a sample message",
-  },
-];
-
-export default function BroadcastCard({ broadcast }: BroadcastCardProps) {
+export default function BroadcastCard({
+  content,
+  date,
+  aifs,
+}: BroadcastCardProps) {
   const theme = useMantineTheme();
-  const recipients = broadcast.getRecipientsList();
+  let allAcknowledged = true;
+  for (var recipient of aifs) {
+    allAcknowledged = allAcknowledged && recipient.allAcknowledged;
+  }
 
   return (
     <Card
       p="lg"
       shadow="sm"
-      sx={{ position: "relative", borderLeft: "5px solid red" }}
+      sx={{
+        position: "relative",
+        borderLeft: `5px solid ${allAcknowledged ? "green" : "red"}`,
+      }}
     >
       <Group position="apart">
-        <Text>{broadcast.getContent()}</Text>
+        <Text>{content}</Text>
         <Group>
-          <AcknowledgementToolTip />
-          <AcknowledgementToolTip />
-          <AcknowledgementToolTip />
+          {aifs.map((aif) => (
+            <AcknowledgementToolTip key={aif.id} data={aif} />
+          ))}
         </Group>
       </Group>
       <Text
@@ -46,7 +45,7 @@ export default function BroadcastCard({ broadcast }: BroadcastCardProps) {
           right: theme.spacing.lg,
         }}
       >
-        {broadcast.getCreationDate()}
+        {date}
       </Text>
     </Card>
   );

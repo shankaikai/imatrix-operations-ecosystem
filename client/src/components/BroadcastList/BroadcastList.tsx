@@ -5,21 +5,24 @@ import {
   Stack,
   useMantineTheme,
 } from "@mantine/core";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import getFilteredBroadcasts from "../../helpers/getFilteredBroadcasts";
-import { useBroadcastClient } from "../../helpers/useBroadcastClient";
+import recipientFormatter from "../../helpers/recipientsFormatter";
+import { useBroadcast } from "../../helpers/useBroadcastClient";
 import { Broadcast } from "../../proto/operations_ecosys_pb";
 import BroadcastCard from "./BroadcastCard/BroadcastCard";
 
 interface BroadcastListProps {}
 
 export default function BroadcastList({}: BroadcastListProps) {
-  const { broadcasts, search, selectValue, filterValue, setBroadcasts } =
-    useBroadcastClient();
+  const { broadcasts, search, selectValue, filterValue, updateBroadcasts } =
+    useBroadcast();
 
   const handleLoadMoreClick = () => {
     // console.log(broadcasts);
-    console.log(filteredBroadcasts);
+    // console.log(filteredBroadcasts);
+    updateBroadcasts && updateBroadcasts();
   };
 
   const [filteredBroadcasts, setFilteredBroadcasts] = useState<Broadcast[]>([]);
@@ -35,14 +38,6 @@ export default function BroadcastList({}: BroadcastListProps) {
     );
   }, [broadcasts, search, selectValue, filterValue]);
 
-  // mockBroadcast.setCreationDate(Date.now());
-
-  const b = new Broadcast();
-  b.setContent("This is mock broadcast");
-  const c = new Broadcast();
-  c.setContent("This is mock broadcast 2");
-
-  // TODO: Iterate through broadcast list and filter
   return (
     <ScrollArea
       sx={{
@@ -50,21 +45,22 @@ export default function BroadcastList({}: BroadcastListProps) {
       }}
     >
       <Stack>
-        {filteredBroadcasts.map((broadcast) => (
-          <BroadcastCard
-            key={broadcast.getBroadcastId()}
-            broadcast={broadcast}
-          />
-        ))}
-        {/* <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} />
-        <BroadcastCard broadcast={b} /> */}
+        {filteredBroadcasts.map((broadcast) => {
+          const key = broadcast.getBroadcastId();
+          const content = broadcast.getContent();
+          const date = dayjs(
+            broadcast.getCreationDate().toDate() as Date
+          ).format("DD/MM/YYYY, h:mm A");
+          const aifs = recipientFormatter(broadcast.getRecipientsList());
+          return (
+            <BroadcastCard
+              key={key}
+              content={content}
+              date={date}
+              aifs={aifs}
+            />
+          );
+        })}
 
         <Group position="center">
           <Button onClick={handleLoadMoreClick}>Load More</Button>
