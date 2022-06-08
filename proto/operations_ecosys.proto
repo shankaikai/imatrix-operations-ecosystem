@@ -283,8 +283,8 @@ message Roster {
     // Roster IDs are only useful for the backend database. 
     int64 rostering_id = 1;
     int64 aifs_id = 2;
-    google.protobuf.Timestamp start_time = 3;
-    google.protobuf.Timestamp end_time = 4;
+    string start_time = 3;
+    string end_time = 4;
     repeated AIFSClientRoster clients = 5;
     repeated RosterAssignement guard_assigned = 6;
 

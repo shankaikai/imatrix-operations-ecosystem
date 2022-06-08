@@ -216,11 +216,11 @@ func ConsolidatedUpdateRosterTest(serverAddr *string, serverPort *int, roster *p
 }
 
 func UpdateRosterBasicFields(serverAddr *string, serverPort *int, roster *pb.Roster) {
-	fmt.Println("Roster Update time id:", roster.RosteringId, "Before time: ", roster.StartTime.String())
+	fmt.Println("Roster Update time id:", roster.RosteringId, "Before time: ", roster.StartTime)
 
 	updatedRoster := &pb.Roster{
 		RosteringId: roster.RosteringId,
-		StartTime:   &timestamppb.Timestamp{Seconds: roster.StartTime.Seconds - 100},
+		StartTime:   roster.StartTime,
 	}
 
 	UpdateRosterTest(serverAddr, serverPort, updatedRoster)
@@ -330,8 +330,8 @@ func getAvailableUsersTestWithRoster(serverAddr *string, serverPort *int) {
 	rosters := make([]*pb.Roster, 0)
 	for i := 1; i < 4; i++ {
 		roster := createFakeRoster(i)
-		roster.StartTime = startTime
-		roster.EndTime = endTime
+		roster.StartTime = startTimeTime.Format(common.DATETIME_FORMAT)
+		roster.EndTime = endTimeTime.Format(common.DATETIME_FORMAT)
 		for _, assignment := range roster.GuardAssigned {
 			assignment.CustomStartTime = startTime
 			assignment.CustomEndTime = endTime

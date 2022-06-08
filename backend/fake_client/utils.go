@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -83,11 +84,16 @@ func createFakeRoster(id int) *pb.Roster {
 		aifsAssignments = append(aifsAssignments, createFakeAifsAssignment(i))
 	}
 
+	startTimeTime := time.Date(2022, 1, 22, 18, 0, 0, 0, time.UTC)
+	endTimeTime := time.Date(2022, 1, 22, 6, 0, 0, 0, time.UTC)
+	// startTime := &timestamppb.Timestamp{Seconds: startTimeTime.Unix()}
+	// endTime := &timestamppb.Timestamp{Seconds: endTimeTime.Unix()}
+
 	return &pb.Roster{
 		RosteringId:   int64(id),
 		AifsId:        int64(id),
-		StartTime:     timestamppb.Now(),
-		EndTime:       &timestamppb.Timestamp{Seconds: timestamppb.Now().AsTime().Add(time.Hour * 12).Unix()},
+		StartTime:     startTimeTime.Format(common.DATETIME_FORMAT),
+		EndTime:       endTimeTime.Format(common.DATETIME_FORMAT),
 		Clients:       aifsAssignments,
 		GuardAssigned: rosterAssignments,
 	}

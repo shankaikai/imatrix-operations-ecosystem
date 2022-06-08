@@ -3,9 +3,10 @@ package fake_server
 import (
 	"fmt"
 	"strconv"
+	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"context"
 )
@@ -80,8 +81,8 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 		roster := &pb.Roster{
 			RosteringId:   int64(i),
 			AifsId:        int64(i),
-			StartTime:     timestamppb.Now(),
-			EndTime:       &timestamppb.Timestamp{Seconds: timestamppb.Now().Seconds + 1000000},
+			StartTime:     time.Now().Format(common.DATETIME_FORMAT),
+			EndTime:       time.Now().Add(1000000 * time.Second).Format(common.DATETIME_FORMAT),
 			Clients:       aifsClientRoster,
 			GuardAssigned: assignments,
 		}
