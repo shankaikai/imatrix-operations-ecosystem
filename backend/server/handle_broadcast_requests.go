@@ -15,8 +15,7 @@ import (
 func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
 
-	getDefaultRecipients(broadcast)
-
+	getDefaultBroadcastFields(broadcast)
 	// Add creation datetime
 	broadcast.CreationDate = timestamppb.Now()
 	// TODO: define deadline
@@ -98,7 +97,7 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 
 		for _, broadcast := range foundBroadcasts {
 			broadcastRes.Broadcast = broadcast
-			fmt.Println(broadcast)
+			// fmt.Println(broadcast)
 			if err := stream.Send(&broadcastRes); err != nil {
 				return err
 			}
@@ -106,4 +105,22 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 	}
 
 	return nil
+}
+
+func (s *Server) UpdateBroadcastRecipient(cxt context.Context, broadcastRecipient *pb.BroadcastRecipient) (*pb.Response, error) {
+	fmt.Println("UpdateBroadcastRecipient", broadcastRecipient)
+	res := pb.Response{Type: pb.Response_ACK}
+	numAffected, err := db_pck.UpdateBroadcastRecipients(
+		s.db,
+		broadcastRecipient,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numAffected, "broadcast recipients were updated.")
+	}
+
+	return &res, nil
 }

@@ -20,8 +20,8 @@ func TestRosteringClient(serverAddr *string, serverPort *int) {
 		rosters = append(rosters, createFakeRoster(i))
 	}
 
-	// pk := InsertRoster(serverAddr, serverPort, rosters)
-	rosters[2].RosteringId = 4 //pk
+	pk := InsertRoster(serverAddr, serverPort, rosters)
+	rosters[2].RosteringId = pk
 
 	ConsolidatedFindRosterTest(serverAddr, serverPort)
 	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
@@ -31,24 +31,15 @@ func TestRosteringClient(serverAddr *string, serverPort *int) {
 }
 
 func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int64 {
+	fmt.Println("insert roster test")
 	grpcClient, conn := createRosterClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	stream, err := grpcClient.AddRoster(context.Background())
+	res, err := grpcClient.AddRoster(context.Background(), &pb.BulkRosters{Rosters: rosters})
 	if err != nil {
 		fmt.Println("InsertRoster ERROR:", err)
 		return -1
 	}
-
-	for _, roster := range rosters {
-		fmt.Println("Inserting roster:", roster.RosteringId)
-		if err := stream.Send(roster); err != nil {
-			fmt.Println("InsertRoster ERROR:", err)
-			return -1
-		}
-	}
-
-	res, err := stream.CloseAndRecv()
 
 	if err != nil {
 		fmt.Println("InsertRoster ERROR:", err)

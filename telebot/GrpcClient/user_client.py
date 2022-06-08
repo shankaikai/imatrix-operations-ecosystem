@@ -7,7 +7,7 @@ import grpc
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
 
 def get_users(user_query) -> list[operations_ecosys_pb2.User]:
-    stub = get_stub()
+    stub = get_admin_stub()
     userResponses = stub.FindUsers(user_query)
     
     users = []
@@ -21,12 +21,12 @@ def get_users(user_query) -> list[operations_ecosys_pb2.User]:
     return users
 
 def update_user(user) -> bool:
-    stub = get_stub()
+    stub = get_admin_stub()
     res = stub.UpdateUser(user)
     return res.type == operations_ecosys_pb2.Response.ACK
 
 
-def get_stub() -> operations_ecosys_pb2_grpc.AdminServicesStub:
+def get_admin_stub() -> operations_ecosys_pb2_grpc.AdminServicesStub:
     channel = grpc.insecure_channel('{}:{}'.format(utils.WEB_SERVER_ADDR, utils.WEB_SERVER_PORT))
     stub = operations_ecosys_pb2_grpc.AdminServicesStub(channel)
     return stub

@@ -44,7 +44,7 @@ service BroadcastServices{
 
 service RosterServices{
     // Add multiple rosters for different AIFS at the same time
-    rpc AddRoster(stream Roster) returns (Response) {}
+    rpc AddRoster(BulkRosters) returns (Response) {}
     // Note that this update does not update the roster's guard's inner status 
     // such as the acknowledgement or attended status but only if the guard 
     // is part of the roster.
@@ -313,6 +313,9 @@ message RosterAssignement {
     bool is_assigned = 8;
 }
 
+message BulkRosters{
+    repeated Roster rosters = 1;
+}
 
 // Passing around multiple broadcasts in one message. 
 message RosterResponse {

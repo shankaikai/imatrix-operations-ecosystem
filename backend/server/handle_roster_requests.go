@@ -4,32 +4,21 @@ package server
 import (
 	"context"
 	"fmt"
-	"io"
 	"sort"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
-func (s *Server) AddRoster(stream pb.RosterServices_AddRosterServer) error {
+func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
 	fmt.Println("AddRoster")
-	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
+	res := &pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 
-	for {
-		roster, err := stream.Recv()
-
-		if err == io.EOF {
-			return stream.SendAndClose(&res)
-		}
-
-		if err != nil {
-			return err
-		}
-
+	for _, roster := range rosters.Rosters {
 		// Fill up the blank values of the pb message
-		err = s.insertDefaultRosterValues(roster)
+		err := s.insertDefaultRosterValues(roster)
 		if err != nil {
-			return err
+			return res, err
 		}
 
 		pk, err := db_pck.InsertRoster(
@@ -45,6 +34,8 @@ func (s *Server) AddRoster(stream pb.RosterServices_AddRosterServer) error {
 
 		res.PrimaryKey = int64(pk)
 	}
+
+	return res, nil
 }
 
 func (s *Server) UpdateRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {

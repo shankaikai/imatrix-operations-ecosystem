@@ -2,7 +2,6 @@ package fake_server
 
 import (
 	"fmt"
-	"io"
 	"strconv"
 
 	pb "capstone.operations_ecosystem/backend/proto"
@@ -11,21 +10,10 @@ import (
 	"context"
 )
 
-func (s *Server) AddRoster(stream pb.RosterServices_AddRosterServer) error {
+func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
 	fmt.Println("AddRoster")
 	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
-
-	for {
-		_, err := stream.Recv()
-
-		if err == io.EOF {
-			return stream.SendAndClose(&res)
-		}
-
-		if err != nil {
-			return err
-		}
-	}
+	return &res, nil
 }
 
 func (s *Server) UpdateRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
