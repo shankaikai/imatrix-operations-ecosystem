@@ -58,7 +58,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
   const resetStates = () => {
     setRosterBaskets(() => []);
-    // setGuardsAssigned(() => [[]]);
+    setGuardsAssigned(() => [[]]);
   };
 
   // Get basket data
@@ -77,7 +77,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
     const stream = client.findRosters(query);
     stream.on("data", (response: RosterResponse) => {
-      // console.log(response.toObject());
+      console.log(response.toObject());
       const responseRoster = response.getRoster()?.toObject();
       const responseAssignedGuard = response
         .getRoster()

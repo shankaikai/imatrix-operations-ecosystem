@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { useEffect } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import RosterAvailability from "../components/Rostering/RosterAvailability";
-import RosterBasketsLists from "../components/Rostering/RosterBasketsLists";
+import RosterBasketsLists from "../components/Rostering/RosterBasketsList";
 import RosterDateBar from "../components/Rostering/RosterDateBar";
 import { RosteringProvider, useRostering } from "../helpers/useRosteringClient";
 
