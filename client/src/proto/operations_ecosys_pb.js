@@ -55,6 +55,7 @@ goog.exportSymbol('proto.operations_ecosys.OrderByUser', null, global);
 goog.exportSymbol('proto.operations_ecosys.Response', null, global);
 goog.exportSymbol('proto.operations_ecosys.Response.Type', null, global);
 goog.exportSymbol('proto.operations_ecosys.Roster', null, global);
+goog.exportSymbol('proto.operations_ecosys.Roster.Status', null, global);
 goog.exportSymbol('proto.operations_ecosys.RosterAssignement', null, global);
 goog.exportSymbol('proto.operations_ecosys.RosterFilter', null, global);
 goog.exportSymbol('proto.operations_ecosys.RosterFilter.Field', null, global);
@@ -4916,7 +4917,8 @@ proto.operations_ecosys.Roster.toObject = function(includeInstance, msg) {
     proto.operations_ecosys.AIFSClientRoster.toObject, includeInstance),
     guardAssignedList: jspb.Message.toObjectList(msg.getGuardAssignedList(),
     proto.operations_ecosys.RosterAssignement.toObject, includeInstance),
-    isDefault: jspb.Message.getBooleanFieldWithDefault(msg, 7, false)
+    isDefault: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -4984,6 +4986,10 @@ proto.operations_ecosys.Roster.deserializeBinaryFromReader = function(msg, reade
     case 7:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsDefault(value);
+      break;
+    case 8:
+      var value = /** @type {!proto.operations_ecosys.Roster.Status} */ (reader.readEnum());
+      msg.setStatus(value);
       break;
     default:
       reader.skipField();
@@ -5067,8 +5073,24 @@ proto.operations_ecosys.Roster.serializeBinaryToWriter = function(message, write
       f
     );
   }
+  f = message.getStatus();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      8,
+      f
+    );
+  }
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.operations_ecosys.Roster.Status = {
+  PENDING: 0,
+  CONFIRMED: 1,
+  REJECTED: 2
+};
 
 /**
  * optional int64 rostering_id = 1;
@@ -5271,6 +5293,24 @@ proto.operations_ecosys.Roster.prototype.getIsDefault = function() {
  */
 proto.operations_ecosys.Roster.prototype.setIsDefault = function(value) {
   return jspb.Message.setProto3BooleanField(this, 7, value);
+};
+
+
+/**
+ * optional Status status = 8;
+ * @return {!proto.operations_ecosys.Roster.Status}
+ */
+proto.operations_ecosys.Roster.prototype.getStatus = function() {
+  return /** @type {!proto.operations_ecosys.Roster.Status} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.Roster.Status} value
+ * @return {!proto.operations_ecosys.Roster} returns this
+ */
+proto.operations_ecosys.Roster.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3EnumField(this, 8, value);
 };
 
 
@@ -5524,7 +5564,8 @@ proto.operations_ecosys.RosterAssignement.toObject = function(includeInstance, m
     confirmed: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
     attended: jspb.Message.getBooleanFieldWithDefault(msg, 6, false),
     attendanceTime: (f = msg.getAttendanceTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
-    isAssigned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false)
+    isAssigned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
+    rejected: jspb.Message.getBooleanFieldWithDefault(msg, 9, false)
   };
 
   if (includeInstance) {
@@ -5596,6 +5637,10 @@ proto.operations_ecosys.RosterAssignement.deserializeBinaryFromReader = function
     case 8:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsAssigned(value);
+      break;
+    case 9:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setRejected(value);
       break;
     default:
       reader.skipField();
@@ -5683,6 +5728,13 @@ proto.operations_ecosys.RosterAssignement.serializeBinaryToWriter = function(mes
   if (f) {
     writer.writeBool(
       8,
+      f
+    );
+  }
+  f = message.getRejected();
+  if (f) {
+    writer.writeBool(
+      9,
       f
     );
   }
@@ -5906,6 +5958,24 @@ proto.operations_ecosys.RosterAssignement.prototype.getIsAssigned = function() {
  */
 proto.operations_ecosys.RosterAssignement.prototype.setIsAssigned = function(value) {
   return jspb.Message.setProto3BooleanField(this, 8, value);
+};
+
+
+/**
+ * optional bool rejected = 9;
+ * @return {boolean}
+ */
+proto.operations_ecosys.RosterAssignement.prototype.getRejected = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 9, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.operations_ecosys.RosterAssignement} returns this
+ */
+proto.operations_ecosys.RosterAssignement.prototype.setRejected = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 9, value);
 };
 
 
@@ -6412,7 +6482,8 @@ proto.operations_ecosys.RosterFilter.Field = {
   START_TIME: 8,
   END_TIME: 9,
   IS_ASSIGNED: 10,
-  DEFAULT_ROSTERING_DAY_OF_WEEK: 11
+  DEFAULT_ROSTERING_DAY_OF_WEEK: 11,
+  GUARD_ASSIGNMENT_REJECTION: 12
 };
 
 /**

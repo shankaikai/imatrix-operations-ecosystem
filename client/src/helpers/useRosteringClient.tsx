@@ -59,7 +59,6 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
   const [guardsAssigned, setGuardsAssigned] = useState<RosteringGuardsList>({});
   // const [guardsAssigned, setGuardsAssigned] = useState<User.AsObject[][]>([[]]);
-
   // Date bar
   const updateRosterDates = () => {
     const dates = getRosterDates(offset);
@@ -105,11 +104,14 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
       setGuardsAssigned((prevGuards) => {
         let newGuards = prevGuards;
+        console.log(prevGuards);
         responseRoster &&
           responseAssignedGuard &&
-          newGuards[selectedDate.toString()].splice(responseRoster.aifsId, 0, [
-            responseAssignedGuard,
-          ]);
+          newGuards[dayjs(selectedDate).format("YYYY-MM-DD")].splice(
+            responseRoster.aifsId,
+            0,
+            [responseAssignedGuard]
+          );
         return newGuards;
       });
     });
@@ -131,7 +133,9 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
       setGuardsAssigned((prevGuards) => {
         let newGuards = _.cloneDeep(prevGuards);
         employeeResponse &&
-          newGuards[selectedDate.toString()][0].push(employeeResponse);
+          newGuards[dayjs(selectedDate).format("YYYY-MM-DD")][0].push(
+            employeeResponse
+          );
         return newGuards;
       });
     });
@@ -142,7 +146,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   }, [offset]);
 
   useEffect(() => {
-    resetStates(selectedDate.toString());
+    resetStates(dayjs(selectedDate).format("YYYY-MM-DD"));
     updateRosterBaskets();
     getAvailableGuards();
   }, [selectedDate]);
@@ -188,7 +192,7 @@ export function submitNewRoster(
   const rosterList: Roster[] = [];
 
   for (const i of [1, 2, 3]) {
-    const userObject = guardsAssigned[date.toString()][i][0];
+    const userObject = guardsAssigned[dayjs(date).format("YYYY-MM-DD")][i][0];
 
     const user = new User();
     userObject.employee && user.setUserId(userObject.employee.userId);
@@ -203,10 +207,24 @@ export function submitNewRoster(
     roster.addGuardAssigned(rosterAssignment);
     roster.setAifsId(i);
 
-    const timestamp = new Timestamp();
-    date.setHours(18, 0, 0, 0);
-    timestamp.fromDate(date);
-    roster.setStartTime(timestamp);
+    const timeStampStart = new Timestamp();
+    const startTime = new Date();
+    startTime.setDate(date.getMonth());
+    startTime.setMonth(date.getMonth());
+    startTime.setFullYear(date.getFullYear());
+    startTime.setHours(26, 0, 0);
+    timeStampStart.fromDate(startTime);
+
+    const timeStampEnd = new Timestamp();
+    const endTime = new Date();
+    endTime.setDate(date.getMonth() + 1);
+    endTime.setMonth(date.getMonth());
+    endTime.setFullYear(date.getFullYear());
+    endTime.setHours(14, 0, 0);
+    timeStampEnd.fromDate(endTime);
+
+    roster.setStartTime(timeStampStart);
+    roster.setEndTime(timeStampEnd);
 
     rosterList.push(roster);
   }
@@ -214,13 +232,13 @@ export function submitNewRoster(
   const bulkRoster = new BulkRosters();
   bulkRoster.setRostersList(rosterList);
 
-  // client
-  //   .addRoster(bulkRoster, {})
-  //   .then((response) => {
-  //     // TODO: Show success toast
-  //     console.log(response);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
+  client
+    .addRoster(bulkRoster, {})
+    .then((response) => {
+      // TODO: Show success toast
+      console.log(response);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }

@@ -609,6 +609,9 @@ export class Roster extends jspb.Message {
   getIsDefault(): boolean;
   setIsDefault(value: boolean): Roster;
 
+  getStatus(): Roster.Status;
+  setStatus(value: Roster.Status): Roster;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Roster.AsObject;
   static toObject(includeInstance: boolean, msg: Roster): Roster.AsObject;
@@ -626,6 +629,13 @@ export namespace Roster {
     clientsList: Array<AIFSClientRoster.AsObject>,
     guardAssignedList: Array<RosterAssignement.AsObject>,
     isDefault: boolean,
+    status: Roster.Status,
+  }
+
+  export enum Status { 
+    PENDING = 0,
+    CONFIRMED = 1,
+    REJECTED = 2,
   }
 }
 
@@ -690,6 +700,9 @@ export class RosterAssignement extends jspb.Message {
   getIsAssigned(): boolean;
   setIsAssigned(value: boolean): RosterAssignement;
 
+  getRejected(): boolean;
+  setRejected(value: boolean): RosterAssignement;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RosterAssignement.AsObject;
   static toObject(includeInstance: boolean, msg: RosterAssignement): RosterAssignement.AsObject;
@@ -708,6 +721,7 @@ export namespace RosterAssignement {
     attended: boolean,
     attendanceTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     isAssigned: boolean,
+    rejected: boolean,
   }
 }
 
@@ -793,6 +807,7 @@ export namespace RosterFilter {
     END_TIME = 9,
     IS_ASSIGNED = 10,
     DEFAULT_ROSTERING_DAY_OF_WEEK = 11,
+    GUARD_ASSIGNMENT_REJECTION = 12,
   }
 }
 

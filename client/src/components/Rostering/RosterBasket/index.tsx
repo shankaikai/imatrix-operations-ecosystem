@@ -1,4 +1,5 @@
 import { Card, Group, Stack, Text, useMantineTheme } from "@mantine/core";
+import dayjs from "dayjs";
 import React from "react";
 import { useDrop } from "react-dnd";
 import addGuardToGuardsAssigned from "../../../helpers/addGuardsToGuardsAssigned";
@@ -55,19 +56,20 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
             background: isOver ? theme.colors.gray[1] : "default",
           }}
         >
-          {selectedDate && guardsAssigned[selectedDate.toString()] ? (
-            guardsAssigned[selectedDate.toString()][basket.aifsId].map(
-              (guard, index) => {
-                return (
-                  <RosterGuard
-                    key={guard.employee?.userId}
-                    guard={guard.employee}
-                    index={index}
-                    withLabels
-                  />
-                );
-              }
-            )
+          {selectedDate &&
+          guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")] ? (
+            guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")][
+              basket.aifsId
+            ].map((guard, index) => {
+              return (
+                <RosterGuard
+                  key={guard.employee?.userId}
+                  guard={guard.employee}
+                  index={index}
+                  withLabels
+                />
+              );
+            })
           ) : (
             <Text>Please drag over a user</Text>
           )}
