@@ -18,7 +18,7 @@ import {
   User,
 } from "../proto/operations_ecosys_pb";
 import getRosterDates from "./getRosterDates";
-
+import _ from "lodash";
 interface RosteringContextInterface {
   rosterBaskets: Roster.AsObject[];
   rosterDates: Date[];
@@ -27,21 +27,24 @@ interface RosteringContextInterface {
   setOffset?: Dispatch<number>;
   selectedDate?: Date;
   setSelectedDate?: Dispatch<Date>;
-  guardsAssigned: User.AsObject[][];
-  setGuardsAssigned?: Dispatch<User.AsObject[][]>;
+  guardsAssigned: RosteringGuardsList;
+  setGuardsAssigned?: Dispatch<RosteringGuardsList>;
 }
 
 const RosteringContext = createContext<RosteringContextInterface>({
   rosterDates: [],
   offset: 0,
   rosterBaskets: [],
-  guardsAssigned: [[]],
+  guardsAssigned: {},
 });
 
 interface RosteringProviderProps {
   children: JSX.Element | JSX.Element[];
 }
 
+interface RosteringGuardsList {
+  [key: string]: User.AsObject[][];
+}
 export function RosteringProvider({ children }: RosteringProviderProps) {
   const [rosterDates, setRosterDates] = useState<Date[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -49,16 +52,21 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
   const [rosterBaskets, setRosterBaskets] = useState<Roster.AsObject[]>([]);
 
-  const [guardsAssigned, setGuardsAssigned] = useState<User.AsObject[][]>([[]]);
+  const [guardsAssigned, setGuardsAssigned] = useState<RosteringGuardsList>({});
+  // const [guardsAssigned, setGuardsAssigned] = useState<User.AsObject[][]>([[]]);
 
+  // Date bar
   const updateRosterDates = () => {
     const dates = getRosterDates(offset);
     setRosterDates(dates);
   };
 
-  const resetStates = () => {
+  const resetStates = (date: string) => {
     setRosterBaskets(() => []);
-    setGuardsAssigned(() => [[]]);
+
+    let guardsAssignedCopy = _.cloneDeep(guardsAssigned);
+    guardsAssignedCopy[date] = [[]];
+    setGuardsAssigned(guardsAssignedCopy);
   };
 
   // Get basket data
@@ -77,7 +85,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
     const stream = client.findRosters(query);
     stream.on("data", (response: RosterResponse) => {
-      console.log(response.toObject());
+      // console.log(response.toObject());
       const responseRoster = response.getRoster()?.toObject();
       const responseAssignedGuard = response
         .getRoster()
@@ -94,7 +102,9 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         let newGuards = prevGuards;
         responseRoster &&
           responseAssignedGuard &&
-          newGuards.splice(responseRoster.aifsId, 0, [responseAssignedGuard]);
+          newGuards[selectedDate.toString()].splice(responseRoster.aifsId, 0, [
+            responseAssignedGuard,
+          ]);
         return newGuards;
       });
     });
@@ -106,8 +116,8 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const client = getRosterClient();
 
     const query = new AvailabilityQuery();
-    console.log(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
     query.setStartTime(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+
     const stream = client.getAvailableUsers(query);
 
     stream.on("data", (response: EmployeeEvaluationResponse) => {
@@ -117,8 +127,9 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         ?.getEmployee()
         ?.toObject();
       setGuardsAssigned((prevGuards) => {
-        let newGuards = prevGuards;
-        employeeResponse && newGuards[0].push(employeeResponse);
+        let newGuards = _.cloneDeep(prevGuards);
+        employeeResponse &&
+          newGuards[selectedDate.toString()][0].push(employeeResponse);
         return newGuards;
       });
     });
@@ -129,14 +140,14 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   }, [offset]);
 
   useEffect(() => {
-    resetStates();
+    resetStates(selectedDate.toString());
     updateRosterBaskets();
     getAvailableGuards();
   }, [selectedDate]);
 
-  useEffect(() => {
-    console.log(guardsAssigned);
-  });
+  // useEffect(() => {
+  //   console.log(guardsAssigned);
+  // }, [guardsAssigned]);
 
   return (
     <RosteringContext.Provider

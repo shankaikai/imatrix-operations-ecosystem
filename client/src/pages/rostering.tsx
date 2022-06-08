@@ -1,11 +1,6 @@
-import { Group, ScrollArea, Stack, Text } from "@mantine/core";
 import type { NextPage } from "next";
-import { useEffect } from "react";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import RosterAvailability from "../components/Rostering/RosterAvailability";
-import RosterBasketsLists from "../components/Rostering/RosterBasketsList";
-import RosterDateBar from "../components/Rostering/RosterDateBar";
-import { RosteringProvider, useRostering } from "../helpers/useRosteringClient";
+import RosterContainer from "../components/Rostering/RosterContainer";
+import { RosteringProvider } from "../helpers/useRosteringClient";
 
 // const aifs = ["AIFS 1 (AMKC)", "AIFS 2 (BKP)", "AIFS 3 (PKC)"];
 
@@ -31,29 +26,9 @@ import { RosteringProvider, useRostering } from "../helpers/useRosteringClient";
 // ];
 
 const Rostering: NextPage = () => {
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-    if (!destination) return;
-  };
-
   return (
     <RosteringProvider>
-      <DragDropContext onDragEnd={(result) => console.log(result)}>
-        <Stack>
-          <RosterDateBar />
-          <Text size="xl" weight={500}>
-            Rostering
-          </Text>
-          <Group position="apart" align="flex-start">
-            <ScrollArea sx={{ width: "45%" }}>
-              <RosterBasketsLists />
-            </ScrollArea>
-            <ScrollArea sx={{ width: "40%" }}>
-              <RosterAvailability />
-            </ScrollArea>
-          </Group>
-        </Stack>
-      </DragDropContext>
+      <RosterContainer />
     </RosteringProvider>
   );
 };
