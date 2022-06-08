@@ -81,7 +81,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const filter = new RosterFilter();
     filter.setField(RosterFilter.Field.START_TIME);
     const filterDate = new Filter();
-    filterDate.setValue(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+    filterDate.setValue(dayjs(selectedDate).format("YYYY-MM-DD 18:00:00"));
     filterDate.setComparison(Filter.Comparisons.EQUAL);
     filter.setComparisons(filterDate);
     const query = new RosterQuery();
@@ -123,7 +123,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const client = getRosterClient();
 
     const query = new AvailabilityQuery();
-    query.setStartTime(dayjs(selectedDate).format("YYYY-DD-MM 18:00:00"));
+    query.setStartTime(dayjs(selectedDate).format("YYYY-MM-DD 18:00:00"));
 
     const stream = client.getAvailableUsers(query);
 
@@ -217,14 +217,11 @@ export function submitNewRoster(
 
     const timeStampEnd = new Timestamp();
     const endTime = new Date();
-    endTime.setDate(date.getMonth() + 1);
-    endTime.setMonth(date.getMonth());
-    endTime.setFullYear(date.getFullYear());
-    endTime.setHours(14, 0, 0);
-    timeStampEnd.fromDate(endTime);
 
-    roster.setStartTime(timeStampStart);
-    roster.setEndTime(timeStampEnd);
+    roster.setStartTime(dayjs(date).format("YYYY-MM-DD 18:00:00"));
+    const endDate = new Date();
+    endDate.setDate(date.getDate() + 1);
+    roster.setEndTime(dayjs(endDate).format("YYYY-MM-DD 18:00:00"));
 
     rosterList.push(roster);
   }

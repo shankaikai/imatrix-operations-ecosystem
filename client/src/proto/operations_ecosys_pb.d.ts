@@ -586,15 +586,11 @@ export class Roster extends jspb.Message {
   getAifsId(): number;
   setAifsId(value: number): Roster;
 
-  getStartTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setStartTime(value?: google_protobuf_timestamp_pb.Timestamp): Roster;
-  hasStartTime(): boolean;
-  clearStartTime(): Roster;
+  getStartTime(): string;
+  setStartTime(value: string): Roster;
 
-  getEndTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setEndTime(value?: google_protobuf_timestamp_pb.Timestamp): Roster;
-  hasEndTime(): boolean;
-  clearEndTime(): Roster;
+  getEndTime(): string;
+  setEndTime(value: string): Roster;
 
   getClientsList(): Array<AIFSClientRoster>;
   setClientsList(value: Array<AIFSClientRoster>): Roster;
@@ -624,8 +620,8 @@ export namespace Roster {
   export type AsObject = {
     rosteringId: number,
     aifsId: number,
-    startTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-    endTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    startTime: string,
+    endTime: string,
     clientsList: Array<AIFSClientRoster.AsObject>,
     guardAssignedList: Array<RosterAssignement.AsObject>,
     isDefault: boolean,
