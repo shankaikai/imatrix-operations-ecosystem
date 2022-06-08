@@ -214,13 +214,11 @@ export function submitNewRoster(
     startTime.setFullYear(date.getFullYear());
     startTime.setHours(26, 0, 0);
     timeStampStart.fromDate(startTime);
-
-    const timeStampEnd = new Timestamp();
-    const endTime = new Date();
-
+    
     roster.setStartTime(dayjs(date).format("YYYY-MM-DD 18:00:00"));
     const endDate = new Date();
     endDate.setDate(date.getDate() + 1);
+
     roster.setEndTime(dayjs(endDate).format("YYYY-MM-DD 18:00:00"));
 
     rosterList.push(roster);
