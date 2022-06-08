@@ -14,7 +14,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Insert a new roster into the database table.
@@ -32,7 +31,7 @@ func InsertRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 		return -1, err
 	}
 	if existingPk != -1 {
-		err = status.Errorf(codes.AlreadyExists, "roster for AIFS "+strconv.Itoa(int(roster.AifsId))+" at "+roster.StartTime.String()+"already exists")
+		err = status.Errorf(codes.AlreadyExists, "roster for AIFS "+strconv.Itoa(int(roster.AifsId))+" at "+roster.StartTime+"already exists")
 		return -1, err
 	}
 
@@ -191,9 +190,9 @@ func GetDefaultRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) 
 
 	// Set start and end time correctly, also set as default
 	for _, roster := range rosters {
-		roster.StartTime = &timestamppb.Timestamp{Seconds: startTime.Unix()}
+		roster.StartTime = startTimeString
 		// Shifts are 12 hours long
-		roster.EndTime = &timestamppb.Timestamp{Seconds: startTime.Add(time.Hour * 12).Unix()}
+		roster.EndTime = startTime.Add(time.Hour * 12).Format(common.DATETIME_FORMAT)
 		roster.IsDefault = true
 	}
 

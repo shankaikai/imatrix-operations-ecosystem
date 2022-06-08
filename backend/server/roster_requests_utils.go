@@ -15,6 +15,7 @@ import (
 	rs "capstone.operations_ecosystem/backend/rating_system"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 )
@@ -398,10 +399,20 @@ func (s *Server) insertDefaultRosterValues(roster *pb.Roster) error {
 	// fill up custom time
 	for _, assignment := range roster.GuardAssigned {
 		if assignment.CustomStartTime == nil {
-			assignment.CustomStartTime = roster.StartTime
+			startTime, err := time.Parse(common.DATETIME_FORMAT, roster.StartTime)
+			if err != nil {
+				fmt.Println("insertDefaultRosterValues", err)
+				return err
+			}
+			assignment.CustomStartTime = &timestamppb.Timestamp{Seconds: startTime.Unix()}
 		}
 		if assignment.CustomEndTime == nil {
-			assignment.CustomEndTime = roster.EndTime
+			endTime, err := time.Parse(common.DATETIME_FORMAT, roster.EndTime)
+			if err != nil {
+				fmt.Println("insertDefaultRosterValues", err)
+				return err
+			}
+			assignment.CustomEndTime = &timestamppb.Timestamp{Seconds: endTime.Unix()}
 		}
 	}
 

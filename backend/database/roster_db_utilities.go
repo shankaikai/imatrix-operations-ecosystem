@@ -76,8 +76,8 @@ func orderRosterFields(roster *pb.Roster) string {
 	output := ""
 
 	output += "'" + strconv.Itoa(int(roster.AifsId)) + "'" + ", "
-	output += "'" + roster.StartTime.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
-	output += "'" + roster.EndTime.AsTime().Format(common.DATETIME_FORMAT) + "'"
+	output += "'" + roster.StartTime + "'" + ", "
+	output += "'" + roster.EndTime + "'"
 
 	return output
 }
@@ -167,11 +167,11 @@ func getFilledRosterFields(roster *pb.Roster) string {
 	if roster.AifsId > 0 {
 		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_AIFS_ID, strconv.Itoa(int(roster.AifsId)), true))
 	}
-	if roster.StartTime != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_START_TIME, roster.StartTime.AsTime().Format(common.DATETIME_FORMAT), true))
+	if len(roster.StartTime) > 0 {
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_START_TIME, roster.StartTime, true))
 	}
-	if roster.EndTime != nil {
-		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_END_TIME, roster.EndTime.AsTime().Format(common.DATETIME_FORMAT), true))
+	if len(roster.EndTime) > 0 {
+		rosterTableFields = append(rosterTableFields, formatFieldEqVal(ROSTER_DB_END_TIME, roster.EndTime, true))
 	}
 
 	return strings.Join(rosterTableFields, ",")
@@ -354,9 +354,6 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		var confirmation sql.NullBool
 
 		// Datetimes
-		startTimeString := ""
-		endTimeString := ""
-
 		customStartTimeString := ""
 		customEndTimeString := ""
 		var attendanceTimeString sql.NullString
@@ -366,8 +363,8 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			// Main Roster
 			&roster.RosteringId,
 			&roster.AifsId,
-			&startTimeString,
-			&endTimeString,
+			&roster.StartTime,
+			&roster.EndTime,
 
 			// Roster Details
 			&rosterAssignment.RosterAssignmentId,
@@ -401,17 +398,6 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 			// If the number of rosters have reached the limit,
 			// do not add new rosters.
 			if int64(len(rosterMap)) >= query.Limit+query.Skip {
-				continue
-			}
-			roster.StartTime, err = DBDatetimeToPB(startTimeString)
-			if err != nil {
-				fmt.Println("GetRosters:", err.Error())
-				continue
-			}
-			roster.EndTime, err = DBDatetimeToPB(endTimeString)
-
-			if err != nil {
-				fmt.Println("GetRosters:", err.Error())
 				continue
 			}
 
@@ -740,8 +726,8 @@ func rosterFilterToDBCol(filterField pb.RosterFilter_Field, table string) string
 func checkRosterExists(db *sql.DB, roster *pb.Roster) (int64, error) {
 	query := &pb.RosterQuery{}
 	AddRosterFilter(query, pb.RosterFilter_AIFS_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.AifsId)))
-	AddRosterFilter(query, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, roster.StartTime.AsTime().Format(common.DATETIME_FORMAT))
-	AddRosterFilter(query, pb.RosterFilter_END_TIME, pb.Filter_EQUAL, roster.EndTime.AsTime().Format(common.DATETIME_FORMAT))
+	AddRosterFilter(query, pb.RosterFilter_START_TIME, pb.Filter_EQUAL, roster.StartTime)
+	AddRosterFilter(query, pb.RosterFilter_END_TIME, pb.Filter_EQUAL, roster.EndTime)
 	rosters, err := GetRosters(db, query)
 
 	if err != nil {
