@@ -33,7 +33,7 @@ func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, erro
 // TODO: Add field verification
 func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
-	pk, err := db_pck.UpdateUser(
+	num_affected, err := db_pck.UpdateUser(
 		s.db,
 		user,
 	)
@@ -43,7 +43,8 @@ func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, e
 		res.ErrorMessage = err.Error()
 	}
 
-	res.PrimaryKey = int64(pk)
+	res.PrimaryKey = int64(num_affected)
+	fmt.Println("Updated", num_affected, "users")
 
 	return &res, nil
 }
@@ -68,6 +69,7 @@ func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, e
 
 // TODO: Add field verification
 func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUsersServer) error {
+	fmt.Println("FindUsers", query)
 	res := pb.Response{Type: pb.Response_ACK}
 	foundUsers, err := db_pck.GetUsers(
 		s.db,
@@ -115,7 +117,7 @@ func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response
 // TODO: Add field verification
 func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
-	pk, err := db_pck.UpdateClients(
+	num_affected, err := db_pck.UpdateClients(
 		s.db,
 		client,
 	)
@@ -125,8 +127,8 @@ func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Respo
 		res.ErrorMessage = err.Error()
 	}
 
-	res.PrimaryKey = int64(pk)
-
+	res.PrimaryKey = int64(num_affected)
+	fmt.Println("Updated", num_affected, "clients")
 	return &res, nil
 }
 

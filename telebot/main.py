@@ -55,6 +55,10 @@ dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(attachment_handler)
 
 # Start grpc server
-serve()
-updater.start_polling()
+grpc_server = serve(updater)
+print("Started Tele Bot gRPC Server")
+
+updater.start_polling(timeout=100)
+print("Telegram bot started")
+
 updater.idle()

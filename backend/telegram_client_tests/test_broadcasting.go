@@ -11,5 +11,11 @@ func TestTelegramBroadcasts(serverAddr *string, serverPort *int) {
 
 func testInsertBroadcast(serverAddr *string, serverPort *int) {
 	broadcast := fclient.CreateFakeBroadcast(2, true)
+	for _, rep := range broadcast.Recipients {
+		for _, brep := range rep.Recipient {
+			// TODO: REMOVE this is hannah's chat id
+			brep.Recipient.TeleChatId = 223102557
+		}
+	}
 	tclient.InsertBroadcast(serverAddr, serverPort, broadcast)
 }

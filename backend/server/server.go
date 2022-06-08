@@ -19,11 +19,18 @@ type Server struct {
 
 	db     *sql.DB
 	dbLock *sync.Mutex
+
+	teleServerAddr *string
+	teleServerPort *int
 }
 
-func InitServer(serverAddr *string, serverPort *int) {
+func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int) {
 	fmt.Println("Starting gRPC server...")
-	server := Server{dbLock: &sync.Mutex{}}
+	server := Server{
+		dbLock:         &sync.Mutex{},
+		teleServerAddr: teleServerAddr,
+		teleServerPort: teleServerPort,
+	}
 	server.db = db_pck.GetDB()
 
 	if server.db == nil {

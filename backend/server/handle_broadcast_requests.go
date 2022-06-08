@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
+
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -32,7 +33,10 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 		res.ErrorMessage = err.Error()
 	}
 
-	res.PrimaryKey = int64(pk)
+	res.PrimaryKey = pk
+
+	// Send to Telegram Bot
+	go s.sendNewBroadcastToTele(pk)
 
 	return &res, nil
 }

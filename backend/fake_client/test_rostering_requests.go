@@ -302,7 +302,7 @@ func DeleteRosterTest(serverAddr *string, serverPort *int, roster *pb.Roster) {
 
 func ConsolidatedGetAvailableUsersTest(serverAddr *string, serverPort *int) {
 	getAvailableUsersTestNoRoster(serverAddr, serverPort)
-	// getAvailableUsersTestWithRoster(serverAddr, serverPort)
+	getAvailableUsersTestWithRoster(serverAddr, serverPort)
 }
 
 func getAvailableUsersTestNoRoster(serverAddr *string, serverPort *int) {

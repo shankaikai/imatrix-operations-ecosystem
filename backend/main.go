@@ -27,19 +27,11 @@ func main() {
 	} else if *teleClientFlag {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
-		server.InitServer(serverAddrFlag, serverPortFlag)
+		server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag)
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
-		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
-		client.TestRosteringClient(serverAddrFlag, serverPortFlag)
+		client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
+		// client.TestRosteringClient(serverAddrFlag, serverPortFlag)
 	}
 }
-
-// TODO:
-// Add scores to the users returned during find roster  	UNTESTED
-// roster db is assigned col 								UNTESTED
-// roster confirmation only send back assigned				UNTESTED
-// roster do not delete changed rosters 					UNTESTED
-// roster send guards available that are not assigned
-// user page

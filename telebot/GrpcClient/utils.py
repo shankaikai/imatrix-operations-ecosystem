@@ -1,0 +1,5 @@
+# TODO: Create flags
+
+WEB_SERVER_ADDR = "127.0.0.1"
+WEB_SERVER_PORT = 9090
+

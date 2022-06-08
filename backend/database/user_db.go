@@ -56,6 +56,7 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 				&user.TelegramHandle,
 				&user.UserSecurityImg,
 				&user.IsPartTimer,
+				&user.TeleChatId,
 			)
 
 			if err != nil {
