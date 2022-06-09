@@ -17,11 +17,11 @@ const Rostering: NextPage = () => {
           <Text size="xl" weight={500}>
             Rostering
           </Text>
-          <Group position="apart" align="flex-start">
-            <ScrollArea sx={{ width: "45%" }}>
+          <Group align="flex-start" spacing="xl">
+            <ScrollArea sx={{ width: "40%" }}>
               <RosterBasketsLists />
             </ScrollArea>
-            <ScrollArea sx={{ width: "40%" }}>
+            <ScrollArea sx={{ width: "50%" }}>
               <RosterAvailability />
             </ScrollArea>
           </Group>

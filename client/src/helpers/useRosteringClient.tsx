@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import _ from "lodash";
 import {
   createContext,
   Dispatch,
@@ -21,8 +22,10 @@ import {
   User,
 } from "../proto/operations_ecosys_pb";
 import getRosterDates from "./getRosterDates";
-import _ from "lodash";
-import { Timestamp } from "google-protobuf/google/protobuf/timestamp_pb";
+import {
+  showErrorNotification,
+  showRosterAddSuccessNotification,
+} from "./notifications";
 
 interface RosteringContextInterface {
   rosterBaskets: Roster.AsObject[];
@@ -50,6 +53,15 @@ interface RosteringProviderProps {
 export interface RosteringGuardsList {
   [key: string]: EmployeeEvaluation.AsObject[][];
 }
+
+const formatSelectedDateForBackend = (date: Date) => {
+  return dayjs(date).format("YYYY-MM-DD 18:00:00");
+};
+
+const formatSelectedDateForState = (date: Date) => {
+  return dayjs(date).format("YYYY-MM-DD");
+};
+
 export function RosteringProvider({ children }: RosteringProviderProps) {
   const [rosterDates, setRosterDates] = useState<Date[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -81,7 +93,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const filter = new RosterFilter();
     filter.setField(RosterFilter.Field.START_TIME);
     const filterDate = new Filter();
-    filterDate.setValue(dayjs(selectedDate).format("YYYY-MM-DD 18:00:00"));
+    filterDate.setValue(formatSelectedDateForBackend(selectedDate));
     filterDate.setComparison(Filter.Comparisons.EQUAL);
     filter.setComparisons(filterDate);
     const query = new RosterQuery();
@@ -107,7 +119,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         console.log(prevGuards);
         responseRoster &&
           responseAssignedGuard &&
-          newGuards[dayjs(selectedDate).format("YYYY-MM-DD")].splice(
+          newGuards[formatSelectedDateForState(selectedDate)].splice(
             responseRoster.aifsId,
             0,
             [responseAssignedGuard]
@@ -123,7 +135,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const client = getRosterClient();
 
     const query = new AvailabilityQuery();
-    query.setStartTime(dayjs(selectedDate).format("YYYY-MM-DD 18:00:00"));
+    query.setStartTime(formatSelectedDateForBackend(selectedDate));
 
     const stream = client.getAvailableUsers(query);
 
@@ -133,7 +145,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
       setGuardsAssigned((prevGuards) => {
         let newGuards = _.cloneDeep(prevGuards);
         employeeResponse &&
-          newGuards[dayjs(selectedDate).format("YYYY-MM-DD")][0].push(
+          newGuards[formatSelectedDateForState(selectedDate)][0].push(
             employeeResponse
           );
         return newGuards;
@@ -146,7 +158,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   }, [offset]);
 
   useEffect(() => {
-    resetStates(dayjs(selectedDate).format("YYYY-MM-DD"));
+    resetStates(formatSelectedDateForState(selectedDate));
     updateRosterBaskets();
     getAvailableGuards();
   }, [selectedDate]);
@@ -192,7 +204,7 @@ export function submitNewRoster(
   const rosterList: Roster[] = [];
 
   for (const i of [1, 2, 3]) {
-    const userObject = guardsAssigned[dayjs(date).format("YYYY-MM-DD")][i][0];
+    const userObject = guardsAssigned[formatSelectedDateForState(date)][i][0];
 
     const user = new User();
     userObject.employee && user.setUserId(userObject.employee.userId);
@@ -207,19 +219,11 @@ export function submitNewRoster(
     roster.addGuardAssigned(rosterAssignment);
     roster.setAifsId(i);
 
-    const timeStampStart = new Timestamp();
-    const startTime = new Date();
-    startTime.setDate(date.getMonth());
-    startTime.setMonth(date.getMonth());
-    startTime.setFullYear(date.getFullYear());
-    startTime.setHours(26, 0, 0);
-    timeStampStart.fromDate(startTime);
-    
-    roster.setStartTime(dayjs(date).format("YYYY-MM-DD 18:00:00"));
     const endDate = new Date();
     endDate.setDate(date.getDate() + 1);
 
-    roster.setEndTime(dayjs(endDate).format("YYYY-MM-DD 18:00:00"));
+    roster.setStartTime(formatSelectedDateForBackend(date));
+    roster.setEndTime(formatSelectedDateForBackend(endDate));
 
     rosterList.push(roster);
   }
@@ -230,10 +234,11 @@ export function submitNewRoster(
   client
     .addRoster(bulkRoster, {})
     .then((response) => {
-      // TODO: Show success toast
+      showRosterAddSuccessNotification();
       console.log(response);
     })
     .catch((err) => {
       console.log(err);
+      showErrorNotification();
     });
 }

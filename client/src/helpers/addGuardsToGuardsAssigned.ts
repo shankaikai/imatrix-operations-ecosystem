@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { Dispatch } from "react";
 import { RosteringGuardsList } from "./useRosteringClient";
 
+// When an available guard is dragged onto a 
 export default function addGuardToGuardsAssigned(
   id: number,
   index: number,

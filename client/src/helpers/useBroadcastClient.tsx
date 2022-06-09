@@ -13,6 +13,10 @@ import {
   BroadcastResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import {
+  showErrorNotification,
+  showBroadcastSuccessNotification,
+} from "./notifications";
 
 interface BroadcastContextInterface {
   broadcasts: Broadcast[];
@@ -149,11 +153,11 @@ export async function submitNewBroadcast({
   await client
     .addBroadcast(broadcast, {})
     .then((response) => {
-      // TODO: Bring up success toast
+      showBroadcastSuccessNotification();
       console.log(response);
     })
     .catch((error) => {
       // TODO: Error toast
-      console.log(error);
+      showErrorNotification();
     });
 }
