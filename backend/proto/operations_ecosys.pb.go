@@ -3457,7 +3457,7 @@ var file_proto_operations_ecosys_proto_rawDesc = []byte{
 	0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79, 0x73, 0x2e, 0x42, 0x72, 0x6f, 0x61, 0x64,
 	0x63, 0x61, 0x73, 0x74, 0x52, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e, 0x74, 0x1a, 0x1b, 0x2e,
 	0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79,
-	0x73, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x32, 0xb9, 0x03, 0x0a,
+	0x73, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x32, 0x98, 0x04, 0x0a,
 	0x0e, 0x52, 0x6f, 0x73, 0x74, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x12,
 	0x4a, 0x0a, 0x09, 0x41, 0x64, 0x64, 0x52, 0x6f, 0x73, 0x74, 0x65, 0x72, 0x12, 0x1e, 0x2e, 0x6f,
 	0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79, 0x73,
@@ -3485,9 +3485,15 @@ var file_proto_operations_ecosys_proto_rawDesc = []byte{
 	0x51, 0x75, 0x65, 0x72, 0x79, 0x1a, 0x2d, 0x2e, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f,
 	0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79, 0x73, 0x2e, 0x45, 0x6d, 0x70, 0x6c, 0x6f, 0x79,
 	0x65, 0x65, 0x45, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01, 0x42, 0x14, 0x5a, 0x12, 0x2f, 0x6f, 0x70, 0x65,
-	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79, 0x73, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01, 0x12, 0x5d, 0x0a, 0x16, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x52, 0x6f, 0x73, 0x74, 0x65, 0x72, 0x41, 0x73, 0x73, 0x69, 0x67, 0x6e, 0x6d, 0x65,
+	0x6e, 0x74, 0x12, 0x24, 0x2e, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f,
+	0x65, 0x63, 0x6f, 0x73, 0x79, 0x73, 0x2e, 0x52, 0x6f, 0x73, 0x74, 0x65, 0x72, 0x41, 0x73, 0x73,
+	0x69, 0x67, 0x6e, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x1a, 0x1b, 0x2e, 0x6f, 0x70, 0x65, 0x72, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79, 0x73, 0x2e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x14, 0x5a, 0x12, 0x2f, 0x6f, 0x70, 0x65, 0x72,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79, 0x73, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -3632,26 +3638,28 @@ var file_proto_operations_ecosys_proto_depIdxs = []int32{
 	29, // 77: operations_ecosys.RosterServices.DeleteRoster:input_type -> operations_ecosys.Roster
 	35, // 78: operations_ecosys.RosterServices.FindRosters:input_type -> operations_ecosys.RosterQuery
 	37, // 79: operations_ecosys.RosterServices.GetAvailableUsers:input_type -> operations_ecosys.AvailabilityQuery
-	42, // 80: operations_ecosys.AdminServices.AddUser:output_type -> operations_ecosys.Response
-	42, // 81: operations_ecosys.AdminServices.UpdateUser:output_type -> operations_ecosys.Response
-	42, // 82: operations_ecosys.AdminServices.DeleteUser:output_type -> operations_ecosys.Response
-	13, // 83: operations_ecosys.AdminServices.FindUsers:output_type -> operations_ecosys.UsersResponse
-	42, // 84: operations_ecosys.AdminServices.AddClient:output_type -> operations_ecosys.Response
-	42, // 85: operations_ecosys.AdminServices.UpdateClient:output_type -> operations_ecosys.Response
-	42, // 86: operations_ecosys.AdminServices.DeleteClient:output_type -> operations_ecosys.Response
-	18, // 87: operations_ecosys.AdminServices.FindClients:output_type -> operations_ecosys.ClientResponse
-	42, // 88: operations_ecosys.BroadcastServices.AddBroadcast:output_type -> operations_ecosys.Response
-	42, // 89: operations_ecosys.BroadcastServices.UpdateBroadcast:output_type -> operations_ecosys.Response
-	42, // 90: operations_ecosys.BroadcastServices.DeleteBroadcast:output_type -> operations_ecosys.Response
-	25, // 91: operations_ecosys.BroadcastServices.FindBroadcasts:output_type -> operations_ecosys.BroadcastResponse
-	42, // 92: operations_ecosys.BroadcastServices.UpdateBroadcastRecipient:output_type -> operations_ecosys.Response
-	42, // 93: operations_ecosys.RosterServices.AddRoster:output_type -> operations_ecosys.Response
-	42, // 94: operations_ecosys.RosterServices.UpdateRoster:output_type -> operations_ecosys.Response
-	42, // 95: operations_ecosys.RosterServices.DeleteRoster:output_type -> operations_ecosys.Response
-	33, // 96: operations_ecosys.RosterServices.FindRosters:output_type -> operations_ecosys.RosterResponse
-	40, // 97: operations_ecosys.RosterServices.GetAvailableUsers:output_type -> operations_ecosys.EmployeeEvaluationResponse
-	80, // [80:98] is the sub-list for method output_type
-	62, // [62:80] is the sub-list for method input_type
+	31, // 80: operations_ecosys.RosterServices.UpdateRosterAssignment:input_type -> operations_ecosys.RosterAssignement
+	42, // 81: operations_ecosys.AdminServices.AddUser:output_type -> operations_ecosys.Response
+	42, // 82: operations_ecosys.AdminServices.UpdateUser:output_type -> operations_ecosys.Response
+	42, // 83: operations_ecosys.AdminServices.DeleteUser:output_type -> operations_ecosys.Response
+	13, // 84: operations_ecosys.AdminServices.FindUsers:output_type -> operations_ecosys.UsersResponse
+	42, // 85: operations_ecosys.AdminServices.AddClient:output_type -> operations_ecosys.Response
+	42, // 86: operations_ecosys.AdminServices.UpdateClient:output_type -> operations_ecosys.Response
+	42, // 87: operations_ecosys.AdminServices.DeleteClient:output_type -> operations_ecosys.Response
+	18, // 88: operations_ecosys.AdminServices.FindClients:output_type -> operations_ecosys.ClientResponse
+	42, // 89: operations_ecosys.BroadcastServices.AddBroadcast:output_type -> operations_ecosys.Response
+	42, // 90: operations_ecosys.BroadcastServices.UpdateBroadcast:output_type -> operations_ecosys.Response
+	42, // 91: operations_ecosys.BroadcastServices.DeleteBroadcast:output_type -> operations_ecosys.Response
+	25, // 92: operations_ecosys.BroadcastServices.FindBroadcasts:output_type -> operations_ecosys.BroadcastResponse
+	42, // 93: operations_ecosys.BroadcastServices.UpdateBroadcastRecipient:output_type -> operations_ecosys.Response
+	42, // 94: operations_ecosys.RosterServices.AddRoster:output_type -> operations_ecosys.Response
+	42, // 95: operations_ecosys.RosterServices.UpdateRoster:output_type -> operations_ecosys.Response
+	42, // 96: operations_ecosys.RosterServices.DeleteRoster:output_type -> operations_ecosys.Response
+	33, // 97: operations_ecosys.RosterServices.FindRosters:output_type -> operations_ecosys.RosterResponse
+	40, // 98: operations_ecosys.RosterServices.GetAvailableUsers:output_type -> operations_ecosys.EmployeeEvaluationResponse
+	42, // 99: operations_ecosys.RosterServices.UpdateRosterAssignment:output_type -> operations_ecosys.Response
+	81, // [81:100] is the sub-list for method output_type
+	62, // [62:81] is the sub-list for method input_type
 	62, // [62:62] is the sub-list for extension type_name
 	62, // [62:62] is the sub-list for extension extendee
 	0,  // [0:62] is the sub-list for field type_name

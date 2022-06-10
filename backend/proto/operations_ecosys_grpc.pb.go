@@ -692,6 +692,8 @@ type RosterServicesClient interface {
 	DeleteRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error)
 	FindRosters(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRostersClient, error)
 	GetAvailableUsers(ctx context.Context, in *AvailabilityQuery, opts ...grpc.CallOption) (RosterServices_GetAvailableUsersClient, error)
+	// Updates the individual roster assignment
+	UpdateRosterAssignment(ctx context.Context, in *RosterAssignement, opts ...grpc.CallOption) (*Response, error)
 }
 
 type rosterServicesClient struct {
@@ -793,6 +795,15 @@ func (x *rosterServicesGetAvailableUsersClient) Recv() (*EmployeeEvaluationRespo
 	return m, nil
 }
 
+func (c *rosterServicesClient) UpdateRosterAssignment(ctx context.Context, in *RosterAssignement, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.RosterServices/UpdateRosterAssignment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RosterServicesServer is the server API for RosterServices service.
 // All implementations must embed UnimplementedRosterServicesServer
 // for forward compatibility
@@ -806,6 +817,8 @@ type RosterServicesServer interface {
 	DeleteRoster(context.Context, *Roster) (*Response, error)
 	FindRosters(*RosterQuery, RosterServices_FindRostersServer) error
 	GetAvailableUsers(*AvailabilityQuery, RosterServices_GetAvailableUsersServer) error
+	// Updates the individual roster assignment
+	UpdateRosterAssignment(context.Context, *RosterAssignement) (*Response, error)
 	mustEmbedUnimplementedRosterServicesServer()
 }
 
@@ -827,6 +840,9 @@ func (UnimplementedRosterServicesServer) FindRosters(*RosterQuery, RosterService
 }
 func (UnimplementedRosterServicesServer) GetAvailableUsers(*AvailabilityQuery, RosterServices_GetAvailableUsersServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetAvailableUsers not implemented")
+}
+func (UnimplementedRosterServicesServer) UpdateRosterAssignment(context.Context, *RosterAssignement) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRosterAssignment not implemented")
 }
 func (UnimplementedRosterServicesServer) mustEmbedUnimplementedRosterServicesServer() {}
 
@@ -937,6 +953,24 @@ func (x *rosterServicesGetAvailableUsersServer) Send(m *EmployeeEvaluationRespon
 	return x.ServerStream.SendMsg(m)
 }
 
+func _RosterServices_UpdateRosterAssignment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RosterAssignement)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RosterServicesServer).UpdateRosterAssignment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.RosterServices/UpdateRosterAssignment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RosterServicesServer).UpdateRosterAssignment(ctx, req.(*RosterAssignement))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RosterServices_ServiceDesc is the grpc.ServiceDesc for RosterServices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -955,6 +989,10 @@ var RosterServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteRoster",
 			Handler:    _RosterServices_DeleteRoster_Handler,
+		},
+		{
+			MethodName: "UpdateRosterAssignment",
+			Handler:    _RosterServices_UpdateRosterAssignment_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

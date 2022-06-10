@@ -186,3 +186,21 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 
 	return nil
 }
+
+func (s *Server) UpdateRosterAssignment(cxt context.Context, RosterAssignement *pb.RosterAssignement) (*pb.Response, error) {
+	res := pb.Response{Type: pb.Response_ACK}
+
+	numAffected, err := db_pck.UpdateRosterAssignments(
+		s.db,
+		RosterAssignement,
+	)
+
+	if err != nil {
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+	} else {
+		fmt.Println(numAffected, "roster assignments were updated.")
+	}
+
+	return &res, nil
+}

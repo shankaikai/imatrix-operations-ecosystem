@@ -1,4 +1,5 @@
 from Broadcast import broadcast_grpc_server as bc_server
+from Rostering import rostering_grpc_server as roster_server
 
 from concurrent import futures
 import logging
@@ -16,7 +17,7 @@ def serve(updater : Updater):
   operations_ecosys_pb2_grpc.add_BroadcastServicesServicer_to_server(
       bc_server.BroadcastServicesServicer(updater), server)
   operations_ecosys_pb2_grpc.add_RosterServicesServicer_to_server(
-      bc_server.BroadcastServicesServicer(updater), server)
+      roster_server.RosterServicesServicer(updater), server)
   server.add_insecure_port('[::]:'+ str(GRPC_PORT))
   server.start()
 

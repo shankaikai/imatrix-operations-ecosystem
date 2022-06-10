@@ -1,12 +1,14 @@
 from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Update
 from telegram.ext import Updater, ContextTypes
 import Broadcast as bc
+import Rostering as rostering
 
 class KeyboardData: pass
 
 class KeyboardData:
     BROADCAST_FEATURE = "broadcast"
-    ROSTERING_FEATURE = "rostering"
+    ROSTERING_ACCEPT_FEATURE = "rostering_accept"
+    ROSTERING_REJECT_FEATURE = "rostering_reject"
 
     DELIMITER = "-"
 
@@ -47,5 +49,18 @@ def keyboardCallback(update: Update, context: ContextTypes) -> None:
         if updated:
             query.edit_message_text(f"{query.message.text}\n\nAcknowledged")
         else:
-            print("could not update message")
-
+            print("could not update broadcast message")
+    elif keyboard_data.feature == KeyboardData.ROSTERING_ACCEPT_FEATURE:
+        print("found roster accept keyboard", query.to_dict())
+        updated = rostering.rostering.acknowledge_roster(keyboard_data.pb_msg_id)
+        if updated:
+            query.edit_message_text(f"{query.message.text}\n\nAcknowledged")
+        else:
+            print("could not update roster accept message")
+    elif keyboard_data.feature == KeyboardData.ROSTERING_REJECT_FEATURE:
+        print("found roster reject keyboard", query.to_dict())
+        updated = rostering.rostering.reject_roster(keyboard_data.pb_msg_id)
+        if updated:
+            query.edit_message_text(f"{query.message.text}\n\nRejected")
+        else:
+            print("could not update roster reject message")

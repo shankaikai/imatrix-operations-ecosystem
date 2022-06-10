@@ -1,12 +1,12 @@
 from concurrent import futures
 
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
-from . import roster
+from . import rostering
 
 from telegram.ext import Updater
 
-class RosterServicesServicers(operations_ecosys_pb2_grpc.RosterServicesServicers):
-    """Provides methods that implement functionality of broadcasting server."""
+class RosterServicesServicer(operations_ecosys_pb2_grpc.RosterServicesServicer):
+    """Provides methods that implement functionality of roster server."""
     
     def __init__(self, updater : Updater):
         self.updater = updater
@@ -23,9 +23,8 @@ class RosterServicesServicers(operations_ecosys_pb2_grpc.RosterServicesServicers
                     continue
                 
                 print("Roster recipient has telegram chat id. User id:", guard_user.user_id)
-                roster.send_roster_message(self.updater, request.content,
-                    guard_user.tele_chat_id,
-                    guard_user.user_id,
+                rostering.send_roster_message(self.updater, guard_user.tele_chat_id,
+                    guard, roster,
                 )
         res = operations_ecosys_pb2.Response(type=operations_ecosys_pb2.Response.ACK)
         return res

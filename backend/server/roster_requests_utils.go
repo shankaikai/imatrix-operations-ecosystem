@@ -537,6 +537,11 @@ func (s *Server) sendNewRostersToTele(rosterIds []int64) {
 	}
 
 	db_pck.AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_IN, strings.Join(idStrings, ","))
+	// Only find rosters assignments that are still assigned
+	db_pck.AddRosterFilter(query, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
+	// Only find rosters where the confirmed is false
+	db_pck.AddRosterFilter(query, pb.RosterFilter_GUARD_ASSIGNMENT_CONFIRMATION, pb.Filter_EQUAL, "0")
+
 	rosters, err := db_pck.GetRosters(s.db, query)
 
 	if err != nil {

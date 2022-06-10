@@ -52,6 +52,9 @@ service RosterServices{
     rpc DeleteRoster(Roster) returns (Response) {}
     rpc FindRosters(RosterQuery) returns (stream RosterResponse) {}
     rpc GetAvailableUsers(AvailabilityQuery) returns (stream EmployeeEvaluationResponse) {}
+
+    // Updates the individual roster assignment
+    rpc UpdateRosterAssignment(RosterAssignement) returns (Response) {}
 }
 
 // Admin
