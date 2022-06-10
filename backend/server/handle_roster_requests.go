@@ -44,21 +44,23 @@ func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Re
 	return res, nil
 }
 
-func (s *Server) UpdateRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
-	numAffected, err := db_pck.UpdateRoster(
-		s.db,
-		roster,
-		s.dbLock,
-	)
+	for _, roster := range rosters.Rosters {
 
-	if err != nil {
-		res.Type = pb.Response_ERROR
-		res.ErrorMessage = err.Error()
-	} else {
-		fmt.Println(numAffected, "rosters were updated.")
+		numAffected, err := db_pck.UpdateRoster(
+			s.db,
+			roster,
+			s.dbLock,
+		)
+
+		if err != nil {
+			res.Type = pb.Response_ERROR
+			res.ErrorMessage = err.Error()
+		} else {
+			fmt.Println(numAffected, "rosters were updated.")
+		}
 	}
-
 	return &res, nil
 }
 

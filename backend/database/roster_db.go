@@ -193,7 +193,7 @@ func GetDefaultRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) 
 		roster.StartTime = startTimeString
 		// Shifts are 12 hours long
 		roster.EndTime = startTime.Add(time.Hour * 12).Format(common.DATETIME_FORMAT)
-		roster.IsDefault = true
+		roster.Status = pb.Roster_IS_DEFAULT
 	}
 
 	return rosters, err

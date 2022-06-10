@@ -48,7 +48,7 @@ service RosterServices{
     // Note that this update does not update the roster's guard's inner status 
     // such as the acknowledgement or attended status but only if the guard 
     // is part of the roster.
-    rpc UpdateRoster(Roster) returns (Response) {}
+    rpc UpdateRoster(BulkRosters) returns (Response) {}
     rpc DeleteRoster(Roster) returns (Response) {}
     rpc FindRosters(RosterQuery) returns (stream RosterResponse) {}
     rpc GetAvailableUsers(AvailabilityQuery) returns (stream EmployeeEvaluationResponse) {}
@@ -289,13 +289,13 @@ message Roster {
     repeated RosterAssignement guard_assigned = 6;
 
     // The roster is not actually in the database
-    bool is_default = 7;
-    Status status = 8;
+    Status status = 7;
 
     enum Status {
-        PENDING = 0;
-        CONFIRMED = 1;
-        REJECTED = 2;
+        IS_DEFAULT = 0;
+        PENDING = 1;
+        CONFIRMED = 2;
+        REJECTED = 3;
     }
 }
 
