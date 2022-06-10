@@ -4917,8 +4917,7 @@ proto.operations_ecosys.Roster.toObject = function(includeInstance, msg) {
     proto.operations_ecosys.AIFSClientRoster.toObject, includeInstance),
     guardAssignedList: jspb.Message.toObjectList(msg.getGuardAssignedList(),
     proto.operations_ecosys.RosterAssignement.toObject, includeInstance),
-    isDefault: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
-    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    status: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -4982,10 +4981,6 @@ proto.operations_ecosys.Roster.deserializeBinaryFromReader = function(msg, reade
       msg.addGuardAssigned(value);
       break;
     case 7:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setIsDefault(value);
-      break;
-    case 8:
       var value = /** @type {!proto.operations_ecosys.Roster.Status} */ (reader.readEnum());
       msg.setStatus(value);
       break;
@@ -5062,17 +5057,10 @@ proto.operations_ecosys.Roster.serializeBinaryToWriter = function(message, write
       proto.operations_ecosys.RosterAssignement.serializeBinaryToWriter
     );
   }
-  f = message.getIsDefault();
-  if (f) {
-    writer.writeBool(
-      7,
-      f
-    );
-  }
   f = message.getStatus();
   if (f !== 0.0) {
     writer.writeEnum(
-      8,
+      7,
       f
     );
   }
@@ -5083,9 +5071,10 @@ proto.operations_ecosys.Roster.serializeBinaryToWriter = function(message, write
  * @enum {number}
  */
 proto.operations_ecosys.Roster.Status = {
-  PENDING: 0,
-  CONFIRMED: 1,
-  REJECTED: 2
+  IS_DEFAULT: 0,
+  PENDING: 1,
+  CONFIRMED: 2,
+  REJECTED: 3
 };
 
 /**
@@ -5237,29 +5226,11 @@ proto.operations_ecosys.Roster.prototype.clearGuardAssignedList = function() {
 
 
 /**
- * optional bool is_default = 7;
- * @return {boolean}
- */
-proto.operations_ecosys.Roster.prototype.getIsDefault = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 7, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.operations_ecosys.Roster} returns this
- */
-proto.operations_ecosys.Roster.prototype.setIsDefault = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 7, value);
-};
-
-
-/**
- * optional Status status = 8;
+ * optional Status status = 7;
  * @return {!proto.operations_ecosys.Roster.Status}
  */
 proto.operations_ecosys.Roster.prototype.getStatus = function() {
-  return /** @type {!proto.operations_ecosys.Roster.Status} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+  return /** @type {!proto.operations_ecosys.Roster.Status} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -5268,7 +5239,7 @@ proto.operations_ecosys.Roster.prototype.getStatus = function() {
  * @return {!proto.operations_ecosys.Roster} returns this
  */
 proto.operations_ecosys.Roster.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3EnumField(this, 8, value);
+  return jspb.Message.setProto3EnumField(this, 7, value);
 };
 
 

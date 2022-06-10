@@ -66,6 +66,7 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
                   guard={guard.employee}
                   index={index}
                   status={basket.status}
+                  withLabels
                 />
               );
             })

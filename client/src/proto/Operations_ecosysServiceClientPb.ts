@@ -619,26 +619,26 @@ export class RosterServicesClient {
   methodDescriptorUpdateRoster = new grpcWeb.MethodDescriptor(
     '/operations_ecosys.RosterServices/UpdateRoster',
     grpcWeb.MethodType.UNARY,
-    operations_ecosys_pb.Roster,
+    operations_ecosys_pb.BulkRosters,
     operations_ecosys_pb.Response,
-    (request: operations_ecosys_pb.Roster) => {
+    (request: operations_ecosys_pb.BulkRosters) => {
       return request.serializeBinary();
     },
     operations_ecosys_pb.Response.deserializeBinary
   );
 
   updateRoster(
-    request: operations_ecosys_pb.Roster,
+    request: operations_ecosys_pb.BulkRosters,
     metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
 
   updateRoster(
-    request: operations_ecosys_pb.Roster,
+    request: operations_ecosys_pb.BulkRosters,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
 
   updateRoster(
-    request: operations_ecosys_pb.Roster,
+    request: operations_ecosys_pb.BulkRosters,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: operations_ecosys_pb.Response) => void) {

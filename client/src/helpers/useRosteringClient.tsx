@@ -21,6 +21,7 @@ import {
   RosterResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import getOverallRosterStatus from "./getOverallRosterStatus";
 import getRosterDates from "./getRosterDates";
 import {
   showErrorNotification,
@@ -163,7 +164,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   useEffect(() => {
     resetStates(formatSelectedDateForState(selectedDate));
     updateRosterBaskets();
-    getAvailableGuards();
+    getAvailableGuards();    
   }, [selectedDate]);
 
   // useEffect(() => {
@@ -202,7 +203,8 @@ export function useRostering() {
 
 export function submitNewRoster(
   guardsAssigned: RosteringGuardsList,
-  date: Date
+  date: Date,
+  setPublishDisabled: Dispatch<boolean>
 ) {
   const client = getRosterClient();
 
@@ -240,6 +242,7 @@ export function submitNewRoster(
     .addRoster(bulkRoster, {})
     .then((response) => {
       showRosterAddSuccessNotification();
+      setPublishDisabled(true);
       console.log(response);
       console.log("errormsg", response.getErrorMessage());
     })
@@ -251,7 +254,8 @@ export function submitNewRoster(
 
 export function submitUpdateRoster(
   guardsAssigned: RosteringGuardsList,
-  date: Date
+  date: Date,
+  setPublishDisabled: Dispatch<boolean>
 ) {
   const client = getRosterClient();
 
@@ -289,6 +293,7 @@ export function submitUpdateRoster(
     .updateRoster(bulkRoster, {})
     .then((response) => {
       showRosterUpdateSuccessNotification();
+      setPublishDisabled(true);
       console.log(response);
     })
     .catch((err) => {

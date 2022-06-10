@@ -602,9 +602,6 @@ export class Roster extends jspb.Message {
   clearGuardAssignedList(): Roster;
   addGuardAssigned(value?: RosterAssignement, index?: number): RosterAssignement;
 
-  getIsDefault(): boolean;
-  setIsDefault(value: boolean): Roster;
-
   getStatus(): Roster.Status;
   setStatus(value: Roster.Status): Roster;
 
@@ -624,14 +621,14 @@ export namespace Roster {
     endTime: string,
     clientsList: Array<AIFSClientRoster.AsObject>,
     guardAssignedList: Array<RosterAssignement.AsObject>,
-    isDefault: boolean,
     status: Roster.Status,
   }
 
   export enum Status { 
-    PENDING = 0,
-    CONFIRMED = 1,
-    REJECTED = 2,
+    IS_DEFAULT = 0,
+    PENDING = 1,
+    CONFIRMED = 2,
+    REJECTED = 3,
   }
 }
 

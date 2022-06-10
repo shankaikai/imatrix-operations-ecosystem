@@ -66,6 +66,8 @@ export default function RosterGuard({
                   ? "orange"
                   : status === Roster.Status.CONFIRMED
                   ? "green"
+                  : status === Roster.Status.IS_DEFAULT
+                  ? "blue"
                   : "red"
               }
             >

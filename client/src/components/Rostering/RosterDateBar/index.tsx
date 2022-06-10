@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Group } from "@mantine/core";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useEffect } from "react";
 import { ChevronLeft, ChevronRight, Send } from "tabler-icons-react";
 import getOverallRosterStatus from "../../../helpers/getOverallRosterStatus";
 import {
@@ -20,6 +20,7 @@ export default function RosterDateBar() {
     guardsAssigned,
     rosterBaskets,
     publishDisabled,
+    setPublishDisabled,
   } = useRostering();
 
   const handleLeftClick = () => {
@@ -37,11 +38,32 @@ export default function RosterDateBar() {
   const handlePublish = () => {
     console.log("handlePublish called");
     if (getOverallRosterStatus(rosterBaskets) === Roster.Status.REJECTED) {
-      selectedDate && submitUpdateRoster(guardsAssigned, selectedDate);
-    } else {
-      selectedDate && submitNewRoster(guardsAssigned, selectedDate);
+      selectedDate &&
+        setPublishDisabled &&
+        submitUpdateRoster(guardsAssigned, selectedDate, setPublishDisabled);
+    }
+    if (getOverallRosterStatus(rosterBaskets) === Roster.Status.IS_DEFAULT) {
+      selectedDate &&
+        setPublishDisabled &&
+        submitNewRoster(guardsAssigned, selectedDate, setPublishDisabled);
     }
   };
+
+  useEffect(() => {
+    console.log("rosterbasketstatus", getOverallRosterStatus(rosterBaskets));
+    if (
+      getOverallRosterStatus(rosterBaskets) === Roster.Status.PENDING ||
+      getOverallRosterStatus(rosterBaskets) === Roster.Status.CONFIRMED
+    ) {
+      setPublishDisabled && setPublishDisabled(true);
+    }
+    if (
+      getOverallRosterStatus(rosterBaskets) === Roster.Status.IS_DEFAULT ||
+      getOverallRosterStatus(rosterBaskets) === Roster.Status.REJECTED
+    ) {
+      setPublishDisabled && setPublishDisabled(false);
+    }
+  }, [rosterBaskets]);
 
   return (
     <Group position="apart">
