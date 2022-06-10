@@ -1,4 +1,4 @@
-from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Update
+from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Update, ParseMode
 from telegram.ext import Updater, ContextTypes
 from google.protobuf.timestamp_pb2 import Timestamp
 
@@ -36,16 +36,17 @@ def send_roster_message(updater : Updater, chat_id: int,
             ]]
     )
 
-    format_data = "%d/%m/%y %H:%M"
+    format_data = "%d %b %Y %#I:%M%p" 
 
-    message = "{}, {} @ {} id {}".format(
-        roster.clients[0].client.abbreviation, 
-        roster.clients[1].client.abbreviation, 
-        roster_assignment.custom_start_time.ToDatetime().strftime(format_data),
-        roster_assignment.roster_assignment_id, 
-    )
+    message = """You have been assigned to a shift, please click to accept/reject.
+    <b><u>Shift Details</u></b>
+    <b>AIFS:</b> {}
+    <b>Start Time:</b> {}
+    <b>End Time:</b> {}""".format(roster.aifs_id,
+    roster_assignment.custom_start_time.ToDatetime().strftime(format_data),
+    roster_assignment.custom_end_time.ToDatetime().strftime(format_data),)
 
-    updater.bot.send_message(chat_id=chat_id, text=message, reply_markup=keyboard_markup)
+    updater.bot.send_message(chat_id=chat_id, text=message, parse_mode=ParseMode.HTML, reply_markup=keyboard_markup)
 
 def acknowledge_roster(roster_assignment_id: int) -> bool:
     roster_assignment = operations_ecosys_pb2.RosterAssignement(
