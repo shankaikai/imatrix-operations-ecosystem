@@ -12,8 +12,10 @@ func TestTelegramBroadcasts(serverAddr *string, serverPort *int) {
 
 func testInsertBroadcast(serverAddr *string, serverPort *int) {
 	broadcast := fclient.CreateFakeBroadcast(2, true)
-	broadcast.Content = "ahhhhhhhhhhhhhhhhhhhhhhhh"
-	broadcast.Urgency = operations_ecosys.Broadcast_HIGH
+	broadcast.Content = "This is a message :)"
+	// broadcast.Urgency = operations_ecosys.Broadcast_HIGH
+	// broadcast.Urgency = operations_ecosys.Broadcast_MEDIUM
+	broadcast.Urgency = operations_ecosys.Broadcast_LOW
 	for _, rep := range broadcast.Recipients {
 		for _, brep := range rep.Recipient {
 			// TODO: REMOVE this is emily's chat id
