@@ -1,13 +1,14 @@
-import { Group, Button, ActionIcon } from "@mantine/core";
+import { ActionIcon, Button, Group } from "@mantine/core";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React from "react";
 import { ChevronLeft, ChevronRight, Send } from "tabler-icons-react";
-import getRosterDates from "../../../helpers/getRosterDates";
-import { submitNewBroadcast } from "../../../helpers/useBroadcastClient";
+import getOverallRosterStatus from "../../../helpers/getOverallRosterStatus";
 import {
   submitNewRoster,
+  submitUpdateRoster,
   useRostering,
 } from "../../../helpers/useRosteringClient";
+import { Roster } from "../../../proto/operations_ecosys_pb";
 
 export default function RosterDateBar() {
   const {
@@ -17,6 +18,8 @@ export default function RosterDateBar() {
     selectedDate,
     setSelectedDate,
     guardsAssigned,
+    rosterBaskets,
+    publishDisabled,
   } = useRostering();
 
   const handleLeftClick = () => {
@@ -33,7 +36,11 @@ export default function RosterDateBar() {
 
   const handlePublish = () => {
     console.log("handlePublish called");
-    selectedDate && submitNewRoster(guardsAssigned, selectedDate);
+    if (getOverallRosterStatus(rosterBaskets) === Roster.Status.REJECTED) {
+      selectedDate && submitUpdateRoster(guardsAssigned, selectedDate);
+    } else {
+      selectedDate && submitNewRoster(guardsAssigned, selectedDate);
+    }
   };
 
   return (
@@ -61,6 +68,7 @@ export default function RosterDateBar() {
         radius="xl"
         size="xs"
         onClick={handlePublish}
+        disabled={publishDisabled}
       >
         Publish
       </Button>

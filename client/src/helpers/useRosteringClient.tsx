@@ -25,6 +25,7 @@ import getRosterDates from "./getRosterDates";
 import {
   showErrorNotification,
   showRosterAddSuccessNotification,
+  showRosterUpdateSuccessNotification,
 } from "./notifications";
 
 interface RosteringContextInterface {
@@ -37,6 +38,8 @@ interface RosteringContextInterface {
   setSelectedDate?: Dispatch<Date>;
   guardsAssigned: RosteringGuardsList;
   setGuardsAssigned?: Dispatch<RosteringGuardsList>;
+  publishDisabled: boolean;
+  setPublishDisabled?: Dispatch<boolean>;
 }
 
 const RosteringContext = createContext<RosteringContextInterface>({
@@ -44,6 +47,7 @@ const RosteringContext = createContext<RosteringContextInterface>({
   offset: 0,
   rosterBaskets: [],
   guardsAssigned: {},
+  publishDisabled: false,
 });
 
 interface RosteringProviderProps {
@@ -66,12 +70,11 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   const [rosterDates, setRosterDates] = useState<Date[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
   const [rosterBaskets, setRosterBaskets] = useState<Roster.AsObject[]>([]);
-
   const [guardsAssigned, setGuardsAssigned] = useState<RosteringGuardsList>({});
-  // const [guardsAssigned, setGuardsAssigned] = useState<User.AsObject[][]>([[]]);
-  // Date bar
+  const [publishDisabled, setPublishDisabled] = useState<boolean>(false);
+
+  // Update the dates for the date bar from Tues to Sun
   const updateRosterDates = () => {
     const dates = getRosterDates(offset);
     setRosterDates(dates);
@@ -179,6 +182,8 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         rosterBaskets,
         guardsAssigned,
         setGuardsAssigned,
+        publishDisabled,
+        setPublishDisabled,
       }}
     >
       {children}
@@ -235,6 +240,55 @@ export function submitNewRoster(
     .addRoster(bulkRoster, {})
     .then((response) => {
       showRosterAddSuccessNotification();
+      console.log(response);
+      console.log("errormsg", response.getErrorMessage());
+    })
+    .catch((err) => {
+      console.log(err);
+      showErrorNotification();
+    });
+}
+
+export function submitUpdateRoster(
+  guardsAssigned: RosteringGuardsList,
+  date: Date
+) {
+  const client = getRosterClient();
+
+  const rosterList: Roster[] = [];
+
+  for (const i of [1, 2, 3]) {
+    const userObject = guardsAssigned[formatSelectedDateForState(date)][i][0];
+
+    const user = new User();
+    userObject.employee && user.setUserId(userObject.employee.userId);
+
+    const employeeEvaluation = new EmployeeEvaluation();
+    employeeEvaluation.setEmployee(user);
+
+    const rosterAssignment = new RosterAssignement();
+    rosterAssignment.setGuardAssigned(employeeEvaluation);
+
+    const roster = new Roster();
+    roster.addGuardAssigned(rosterAssignment);
+    roster.setAifsId(i);
+
+    const endDate = new Date();
+    endDate.setDate(date.getDate() + 1);
+
+    roster.setStartTime(formatSelectedDateForBackend(date));
+    roster.setEndTime(formatSelectedDateForBackend(endDate));
+
+    rosterList.push(roster);
+  }
+
+  const bulkRoster = new BulkRosters();
+  bulkRoster.setRostersList(rosterList);
+
+  client
+    .updateRoster(bulkRoster, {})
+    .then((response) => {
+      showRosterUpdateSuccessNotification();
       console.log(response);
     })
     .catch((err) => {

@@ -1,6 +1,6 @@
 import { Avatar, Group, Indicator, Popover, Stack, Text } from "@mantine/core";
 import React, { useRef, useState } from "react";
-import { User } from "../../../proto/operations_ecosys_pb";
+import { Roster, User } from "../../../proto/operations_ecosys_pb";
 import { useDrag } from "react-dnd";
 
 interface RosterGuardProps {
@@ -8,6 +8,7 @@ interface RosterGuardProps {
   withLabels?: boolean;
   index: number;
   nonDraggable?: boolean;
+  status?: Roster.Status;
 }
 
 export interface DraggableGuard {
@@ -20,6 +21,7 @@ export default function RosterGuard({
   withLabels,
   index,
   nonDraggable,
+  status,
 }: RosterGuardProps) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "guard",
@@ -59,7 +61,13 @@ export default function RosterGuard({
               size={14}
               withBorder
               disabled={!withLabels}
-              color="orange"
+              color={
+                status === Roster.Status.PENDING
+                  ? "orange"
+                  : status === Roster.Status.CONFIRMED
+                  ? "green"
+                  : "red"
+              }
             >
               <Avatar size={80} src={guard?.userSecurityImg} radius={100} />
             </Indicator>

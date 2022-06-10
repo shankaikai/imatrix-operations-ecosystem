@@ -15,7 +15,6 @@ interface RosterCardProps {
 export default function RosterBasket({ basket, index }: RosterCardProps) {
   const theme = useMantineTheme();
   const { guardsAssigned, selectedDate, setGuardsAssigned } = useRostering();
-  // console.log("guardsAssigned", guardsAssigned);
 
   const [{ isOver }, drop] = useDrop({
     accept: "guard",
@@ -66,7 +65,7 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
                   key={guard.employee?.userId}
                   guard={guard.employee}
                   index={index}
-                  withLabels
+                  status={basket.status}
                 />
               );
             })
