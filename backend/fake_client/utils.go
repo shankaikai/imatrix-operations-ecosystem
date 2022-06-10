@@ -75,7 +75,7 @@ func createFakeBroadcastRec(id int, hasUser bool) *pb.BroadcastRecipient {
 	}
 }
 
-func createFakeRoster(id int) *pb.Roster {
+func CreateFakeRoster(id int) *pb.Roster {
 	rosterAssignments := make([]*pb.RosterAssignement, 0)
 	aifsAssignments := make([]*pb.AIFSClientRoster, 0)
 

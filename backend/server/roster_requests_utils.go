@@ -13,6 +13,7 @@ import (
 	"capstone.operations_ecosystem/backend/common"
 	db_pck "capstone.operations_ecosystem/backend/database"
 	rs "capstone.operations_ecosystem/backend/rating_system"
+	tclient "capstone.operations_ecosystem/backend/telegram_client"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -525,4 +526,26 @@ func getDefaultEndTime(query *pb.AvailabilityQuery) error {
 		query.EndTime = startTime.Add(time.Hour * 12).Format(common.DATETIME_FORMAT)
 	}
 	return nil
+}
+
+func (s *Server) sendNewRostersToTele(rosterIds []int64) {
+	query := &pb.RosterQuery{Limit: int64(len(rosterIds))}
+	idStrings := make([]string, 0)
+
+	for _, id := range rosterIds {
+		idStrings = append(idStrings, strconv.Itoa(int(id)))
+	}
+
+	db_pck.AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_IN, strings.Join(idStrings, ","))
+	rosters, err := db_pck.GetRosters(s.db, query)
+
+	if err != nil {
+		fmt.Println("sendNewRostersToTele ERROR:", err)
+	}
+
+	if len(rosters) == 0 {
+		fmt.Println("sendNewRostersToTele: No Rosters found for ids", rosterIds)
+	}
+
+	tclient.InsertRoster(s.teleServerAddr, s.teleServerPort, rosters)
 }

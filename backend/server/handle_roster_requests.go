@@ -14,6 +14,8 @@ func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Re
 	fmt.Println("AddRoster")
 	res := &pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 
+	rosterIds := make([]int64, 0)
+
 	for _, roster := range rosters.Rosters {
 		// Fill up the blank values of the pb message
 		err := s.insertDefaultRosterValues(roster)
@@ -32,8 +34,12 @@ func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Re
 			res.ErrorMessage = err.Error()
 		}
 
-		res.PrimaryKey = int64(pk)
+		rosterIds = append(rosterIds, pk)
+		res.PrimaryKey = pk
 	}
+
+	// Send rosters on telegram
+	go s.sendNewRostersToTele(rosterIds)
 
 	return res, nil
 }

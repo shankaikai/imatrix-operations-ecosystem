@@ -17,7 +17,7 @@ import (
 func TestRosteringClient(serverAddr *string, serverPort *int) {
 	rosters := make([]*pb.Roster, 0)
 	for i := 1; i < 4; i++ {
-		rosters = append(rosters, createFakeRoster(i))
+		rosters = append(rosters, CreateFakeRoster(i))
 	}
 
 	pk := InsertRoster(serverAddr, serverPort, rosters)
@@ -329,7 +329,7 @@ func getAvailableUsersTestWithRoster(serverAddr *string, serverPort *int) {
 
 	rosters := make([]*pb.Roster, 0)
 	for i := 1; i < 4; i++ {
-		roster := createFakeRoster(i)
+		roster := CreateFakeRoster(i)
 		roster.StartTime = startTimeTime.Format(common.DATETIME_FORMAT)
 		roster.EndTime = endTimeTime.Format(common.DATETIME_FORMAT)
 		for _, assignment := range roster.GuardAssigned {
@@ -381,6 +381,7 @@ func GetAvailableUsersTest(serverAddr *string, serverPort *int, query *pb.Availa
 		count++
 	}
 }
+
 func createRosterClient(serverAddr *string, serverPort *int) (pb.RosterServicesClient, *grpc.ClientConn) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
