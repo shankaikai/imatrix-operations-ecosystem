@@ -49,7 +49,7 @@ export default function BroadcastList({}: BroadcastListProps) {
           const key = broadcast.getBroadcastId();
           const content = broadcast.getContent();
           const date = dayjs(
-            broadcast.getCreationDate().toDate() as Date
+            broadcast.getCreationDate()?.toDate() as Date
           ).format("DD/MM/YYYY, h:mm A");
           const aifs = recipientFormatter(broadcast.getRecipientsList());
           return (

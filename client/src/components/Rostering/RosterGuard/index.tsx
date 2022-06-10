@@ -1,7 +1,7 @@
 import { Avatar, Group, Indicator, Popover, Stack, Text } from "@mantine/core";
-import React, { useRef, useState } from "react";
-import { Roster, User } from "../../../proto/operations_ecosys_pb";
+import React, { useState } from "react";
 import { useDrag } from "react-dnd";
+import { Roster, User } from "../../../proto/operations_ecosys_pb";
 
 interface RosterGuardProps {
   guard?: User.AsObject;

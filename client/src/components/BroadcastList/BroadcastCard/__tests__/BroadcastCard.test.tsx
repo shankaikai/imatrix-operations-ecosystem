@@ -1,10 +1,12 @@
-import { render, screen } from "@testing-library/react";
-import AcknowledgementToolTip from "..";
+import { render } from "@testing-library/react";
 import {
   AIFSRecipient,
   RecipientDetails,
-} from "../../../../../helpers/recipientsFormatter";
+} from "../../../../helpers/recipientsFormatter";
+import BroadcastCard from "../BroadcastCard";
 
+const mockContent = "some content";
+const mockDate = "some date";
 const mockRecipientDetails: RecipientDetails[] = [
   {
     id: 1,
@@ -21,10 +23,13 @@ const mockData: AIFSRecipient = {
   allAcknowledged: true,
   users: mockRecipientDetails,
 };
+const mockAifs = [mockData];
 
-describe("AcknowledgementToolTip", () => {
+describe("BroadcastCard", () => {
   it("matches snapshot", () => {
-    const { container } = render(<AcknowledgementToolTip data={mockData} />);
+    const { container } = render(
+      <BroadcastCard content={mockContent} date={mockDate} aifs={mockAifs} />
+    );
     expect(container).toMatchSnapshot();
   });
 });
