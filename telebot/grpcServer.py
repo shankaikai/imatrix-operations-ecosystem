@@ -15,6 +15,8 @@ def serve(updater : Updater):
   server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
   operations_ecosys_pb2_grpc.add_BroadcastServicesServicer_to_server(
       bc_server.BroadcastServicesServicer(updater), server)
+  operations_ecosys_pb2_grpc.add_RosterServicesServicer_to_server(
+      bc_server.BroadcastServicesServicer(updater), server)
   server.add_insecure_port('[::]:'+ str(GRPC_PORT))
   server.start()
 

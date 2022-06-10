@@ -17,14 +17,14 @@ import (
 func TestRosteringClient(serverAddr *string, serverPort *int) {
 	rosters := make([]*pb.Roster, 0)
 	for i := 1; i < 4; i++ {
-		rosters = append(rosters, createFakeRoster(i))
+		rosters = append(rosters, CreateFakeRoster(i))
 	}
 
-	pk := InsertRoster(serverAddr, serverPort, rosters)
-	rosters[2].RosteringId = pk
+	// pk := InsertRoster(serverAddr, serverPort, rosters)
+	rosters[2].RosteringId = 49
 
-	ConsolidatedFindRosterTest(serverAddr, serverPort)
-	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
+	// ConsolidatedFindRosterTest(serverAddr, serverPort)
+	ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
 
 	// DeleteRosterTest(serverAddr, serverPort, &pb.Roster{RosteringId: 9})
 	// ConsolidatedGetAvailableUsersTest(serverAddr, serverPort)
@@ -259,8 +259,9 @@ func UpdateRosterTest(serverAddr *string, serverPort *int, roster *pb.Roster) {
 
 	grpcRoster, conn := createRosterClient(serverAddr, serverPort)
 	defer conn.Close()
+	bulkRoster := &pb.BulkRosters{Rosters: []*pb.Roster{roster}}
 
-	res, err := grpcRoster.UpdateRoster(context.Background(), roster)
+	res, err := grpcRoster.UpdateRoster(context.Background(), bulkRoster)
 	if err != nil {
 		fmt.Println("UpdateRosterTest ERROR:", err)
 		return
@@ -329,7 +330,7 @@ func getAvailableUsersTestWithRoster(serverAddr *string, serverPort *int) {
 
 	rosters := make([]*pb.Roster, 0)
 	for i := 1; i < 4; i++ {
-		roster := createFakeRoster(i)
+		roster := CreateFakeRoster(i)
 		roster.StartTime = startTimeTime.Format(common.DATETIME_FORMAT)
 		roster.EndTime = endTimeTime.Format(common.DATETIME_FORMAT)
 		for _, assignment := range roster.GuardAssigned {
@@ -381,6 +382,7 @@ func GetAvailableUsersTest(serverAddr *string, serverPort *int, query *pb.Availa
 		count++
 	}
 }
+
 func createRosterClient(serverAddr *string, serverPort *int) (pb.RosterServicesClient, *grpc.ClientConn) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))

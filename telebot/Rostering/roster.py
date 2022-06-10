@@ -1,4 +1,4 @@
-from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Update, ParseMode
+from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Update
 from telegram.ext import Updater, ContextTypes
 from google.protobuf.timestamp_pb2 import Timestamp
 
@@ -6,27 +6,20 @@ from Keyboard.keyboard_data import KeyboardData
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
 from GrpcClient import broadcast_client
 
-def send_broadcast_message(updater : Updater, message: str, chat_id: int, broadcast_recipient_id: int, urgency): # can add urgency parameter here
+def send_roster_message(updater : Updater, message: str, chat_id: int, roster_assignment: operations_ecosys_pb2.RosterAssignement):
     print("sendBroadcastMessage", message, chat_id)
-    keyboard_markup = InlineKeyboardMarkup( #ignore
+    keyboard_markup = InlineKeyboardMarkup(
             [[
                 InlineKeyboardButton(
                     text="Acknowledge",
-                    callback_data=str(KeyboardData(KeyboardData.BROADCAST_FEATURE, broadcast_recipient_id, chat_id))
+                    callback_data=str(KeyboardData(KeyboardData.ROSTERING_FEATURE, broadcast_recipient_id, chat_id))
                 )
             ]]
     )
 
-    if urgency==2:
-        formatted_message = "🔴 <b>High Urgency</b>\n" + message
-    elif urgency==1:
-        formatted_message = "🟠 <b>Medium Urgency</b>\n" + message
-    elif urgency==0:
-        formatted_message = "🟢 <b>Low Urgency</b>\n" + message
-    else:
-        formatted_message = message
+    formated_message = 23432
 
-    updater.bot.send_message(chat_id=chat_id, text=formatted_message, parse_mode=ParseMode.HTML, reply_markup=keyboard_markup) #keep
+    updater.bot.send_message(chat_id=chat_id, text=message, reply_markup=keyboard_markup)
 
 def acknowledge_broadcast(broadcast_recipient_id: int) -> bool:
     broadcast_recipient = operations_ecosys_pb2.BroadcastRecipient(

@@ -688,7 +688,7 @@ type RosterServicesClient interface {
 	// Note that this update does not update the roster's guard's inner status
 	// such as the acknowledgement or attended status but only if the guard
 	// is part of the roster.
-	UpdateRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error)
+	UpdateRoster(ctx context.Context, in *BulkRosters, opts ...grpc.CallOption) (*Response, error)
 	DeleteRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error)
 	FindRosters(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRostersClient, error)
 	GetAvailableUsers(ctx context.Context, in *AvailabilityQuery, opts ...grpc.CallOption) (RosterServices_GetAvailableUsersClient, error)
@@ -711,7 +711,7 @@ func (c *rosterServicesClient) AddRoster(ctx context.Context, in *BulkRosters, o
 	return out, nil
 }
 
-func (c *rosterServicesClient) UpdateRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error) {
+func (c *rosterServicesClient) UpdateRoster(ctx context.Context, in *BulkRosters, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/operations_ecosys.RosterServices/UpdateRoster", in, out, opts...)
 	if err != nil {
@@ -802,7 +802,7 @@ type RosterServicesServer interface {
 	// Note that this update does not update the roster's guard's inner status
 	// such as the acknowledgement or attended status but only if the guard
 	// is part of the roster.
-	UpdateRoster(context.Context, *Roster) (*Response, error)
+	UpdateRoster(context.Context, *BulkRosters) (*Response, error)
 	DeleteRoster(context.Context, *Roster) (*Response, error)
 	FindRosters(*RosterQuery, RosterServices_FindRostersServer) error
 	GetAvailableUsers(*AvailabilityQuery, RosterServices_GetAvailableUsersServer) error
@@ -816,7 +816,7 @@ type UnimplementedRosterServicesServer struct {
 func (UnimplementedRosterServicesServer) AddRoster(context.Context, *BulkRosters) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddRoster not implemented")
 }
-func (UnimplementedRosterServicesServer) UpdateRoster(context.Context, *Roster) (*Response, error) {
+func (UnimplementedRosterServicesServer) UpdateRoster(context.Context, *BulkRosters) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoster not implemented")
 }
 func (UnimplementedRosterServicesServer) DeleteRoster(context.Context, *Roster) (*Response, error) {
@@ -860,7 +860,7 @@ func _RosterServices_AddRoster_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _RosterServices_UpdateRoster_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Roster)
+	in := new(BulkRosters)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -872,7 +872,7 @@ func _RosterServices_UpdateRoster_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/operations_ecosys.RosterServices/UpdateRoster",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RosterServicesServer).UpdateRoster(ctx, req.(*Roster))
+		return srv.(RosterServicesServer).UpdateRoster(ctx, req.(*BulkRosters))
 	}
 	return interceptor(ctx, in, info, handler)
 }

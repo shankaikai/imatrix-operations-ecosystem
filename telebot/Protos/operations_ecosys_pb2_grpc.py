@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import operations_ecosys_pb2 as operations__ecosys__pb2
+import operations_ecosys_pb2 as operations__ecosys__pb2
 
 
 class AdminServicesStub(object):
@@ -524,14 +524,14 @@ class RosterServicesStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.AddRoster = channel.stream_unary(
+        self.AddRoster = channel.unary_unary(
                 '/operations_ecosys.RosterServices/AddRoster',
-                request_serializer=operations__ecosys__pb2.Roster.SerializeToString,
+                request_serializer=operations__ecosys__pb2.BulkRosters.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.Response.FromString,
                 )
         self.UpdateRoster = channel.unary_unary(
                 '/operations_ecosys.RosterServices/UpdateRoster',
-                request_serializer=operations__ecosys__pb2.Roster.SerializeToString,
+                request_serializer=operations__ecosys__pb2.BulkRosters.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.Response.FromString,
                 )
         self.DeleteRoster = channel.unary_unary(
@@ -554,7 +554,7 @@ class RosterServicesStub(object):
 class RosterServicesServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def AddRoster(self, request_iterator, context):
+    def AddRoster(self, request, context):
         """Add multiple rosters for different AIFS at the same time
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -591,14 +591,14 @@ class RosterServicesServicer(object):
 
 def add_RosterServicesServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'AddRoster': grpc.stream_unary_rpc_method_handler(
+            'AddRoster': grpc.unary_unary_rpc_method_handler(
                     servicer.AddRoster,
-                    request_deserializer=operations__ecosys__pb2.Roster.FromString,
+                    request_deserializer=operations__ecosys__pb2.BulkRosters.FromString,
                     response_serializer=operations__ecosys__pb2.Response.SerializeToString,
             ),
             'UpdateRoster': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateRoster,
-                    request_deserializer=operations__ecosys__pb2.Roster.FromString,
+                    request_deserializer=operations__ecosys__pb2.BulkRosters.FromString,
                     response_serializer=operations__ecosys__pb2.Response.SerializeToString,
             ),
             'DeleteRoster': grpc.unary_unary_rpc_method_handler(
@@ -627,7 +627,7 @@ class RosterServices(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def AddRoster(request_iterator,
+    def AddRoster(request,
             target,
             options=(),
             channel_credentials=None,
@@ -637,8 +637,8 @@ class RosterServices(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/operations_ecosys.RosterServices/AddRoster',
-            operations__ecosys__pb2.Roster.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.RosterServices/AddRoster',
+            operations__ecosys__pb2.BulkRosters.SerializeToString,
             operations__ecosys__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -655,7 +655,7 @@ class RosterServices(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/operations_ecosys.RosterServices/UpdateRoster',
-            operations__ecosys__pb2.Roster.SerializeToString,
+            operations__ecosys__pb2.BulkRosters.SerializeToString,
             operations__ecosys__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

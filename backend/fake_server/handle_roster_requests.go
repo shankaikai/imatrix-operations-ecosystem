@@ -17,7 +17,7 @@ func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Re
 	return &res, nil
 }
 
-func (s *Server) UpdateRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+func (s *Server) UpdateRoster(cxt context.Context, roster *pb.BulkRosters) (*pb.Response, error) {
 	fmt.Println("UpdateRoster")
 	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 	return &res, nil
