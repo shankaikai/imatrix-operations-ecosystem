@@ -14,15 +14,16 @@ class RosterServicesServicer(operations_ecosys_pb2_grpc.RosterServicesServicer):
     def AddRoster(self, request, context):
         print("Received Request:", request)
         for roster in request.rosters:
+            print("Roster: ", roster)
             for guard in roster.guard_assigned:
                 guard_user = guard.guard_assigned.employee
-                print("guard user", guard_user)
+                # print("guard user", guard_user)
 
                 if guard_user.tele_chat_id == -1:
-                    print("Roster recipient has no telegram chat id. User id:", guard_user.user_id)
+                    # print("Roster recipient has no telegram chat id. User id:", guard_user.user_id)
                     continue
                 
-                print("Roster recipient has telegram chat id. User id:", guard_user.user_id)
+                # print("Roster recipient has telegram chat id. User id:", guard_user.user_id)
                 rostering.send_roster_message(self.updater, guard_user.tele_chat_id,
                     guard, roster,
                 )
