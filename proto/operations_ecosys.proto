@@ -53,8 +53,11 @@ service RosterServices{
     rpc FindRosters(RosterQuery) returns (stream RosterResponse) {}
     rpc GetAvailableUsers(AvailabilityQuery) returns (stream EmployeeEvaluationResponse) {}
 
+    // Specifically for the roster assignments
+    rpc FindRosterAssignments(RosterQuery) returns (stream RosterAssignmentResponse) {}
     // Updates the individual roster assignment
     rpc UpdateRosterAssignment(RosterAssignement) returns (Response) {}
+    
 }
 
 // Admin
@@ -328,10 +331,16 @@ message BulkRosters{
     repeated Roster rosters = 1;
 }
 
-// Passing around multiple broadcasts in one message. 
+// Passing around multiple roster in one message. 
 message RosterResponse {
     Response response = 1;
     Roster roster = 2;
+}
+
+// Passing around multiple roster assignments in one message. 
+message RosterAssignmentResponse {
+    Response response = 1;
+    RosterAssignement roster_assignment = 2;
 }
 
 // Filter the types of rosters to be returned. 

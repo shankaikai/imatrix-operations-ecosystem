@@ -204,3 +204,33 @@ func (s *Server) UpdateRosterAssignment(cxt context.Context, RosterAssignement *
 
 	return &res, nil
 }
+
+func (s *Server) FindRosterAssignments(query *pb.RosterQuery, stream pb.RosterServices_FindRosterAssignmentsServer) error {
+	res := pb.Response{Type: pb.Response_ACK}
+
+	foundRosterAssignments, err := db_pck.GetRosterAssingments(
+		s.db,
+		query,
+		-1,
+	)
+
+	if err != nil {
+		rosterRes := pb.RosterAssignmentResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		stream.Send(&rosterRes)
+		return nil
+	}
+
+	fmt.Println("FindRosters: Found rosters to return")
+
+	for _, rosterAsgn := range foundRosterAssignments {
+		rosterRes := pb.RosterAssignmentResponse{Response: &res}
+		rosterRes.RosterAssignment = rosterAsgn
+		if err := stream.Send(&rosterRes); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

@@ -692,6 +692,8 @@ type RosterServicesClient interface {
 	DeleteRoster(ctx context.Context, in *Roster, opts ...grpc.CallOption) (*Response, error)
 	FindRosters(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRostersClient, error)
 	GetAvailableUsers(ctx context.Context, in *AvailabilityQuery, opts ...grpc.CallOption) (RosterServices_GetAvailableUsersClient, error)
+	// Specifically for the roster assignments
+	FindRosterAssignments(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRosterAssignmentsClient, error)
 	// Updates the individual roster assignment
 	UpdateRosterAssignment(ctx context.Context, in *RosterAssignement, opts ...grpc.CallOption) (*Response, error)
 }
@@ -795,6 +797,38 @@ func (x *rosterServicesGetAvailableUsersClient) Recv() (*EmployeeEvaluationRespo
 	return m, nil
 }
 
+func (c *rosterServicesClient) FindRosterAssignments(ctx context.Context, in *RosterQuery, opts ...grpc.CallOption) (RosterServices_FindRosterAssignmentsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RosterServices_ServiceDesc.Streams[2], "/operations_ecosys.RosterServices/FindRosterAssignments", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &rosterServicesFindRosterAssignmentsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type RosterServices_FindRosterAssignmentsClient interface {
+	Recv() (*RosterAssignmentResponse, error)
+	grpc.ClientStream
+}
+
+type rosterServicesFindRosterAssignmentsClient struct {
+	grpc.ClientStream
+}
+
+func (x *rosterServicesFindRosterAssignmentsClient) Recv() (*RosterAssignmentResponse, error) {
+	m := new(RosterAssignmentResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *rosterServicesClient) UpdateRosterAssignment(ctx context.Context, in *RosterAssignement, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/operations_ecosys.RosterServices/UpdateRosterAssignment", in, out, opts...)
@@ -817,6 +851,8 @@ type RosterServicesServer interface {
 	DeleteRoster(context.Context, *Roster) (*Response, error)
 	FindRosters(*RosterQuery, RosterServices_FindRostersServer) error
 	GetAvailableUsers(*AvailabilityQuery, RosterServices_GetAvailableUsersServer) error
+	// Specifically for the roster assignments
+	FindRosterAssignments(*RosterQuery, RosterServices_FindRosterAssignmentsServer) error
 	// Updates the individual roster assignment
 	UpdateRosterAssignment(context.Context, *RosterAssignement) (*Response, error)
 	mustEmbedUnimplementedRosterServicesServer()
@@ -840,6 +876,9 @@ func (UnimplementedRosterServicesServer) FindRosters(*RosterQuery, RosterService
 }
 func (UnimplementedRosterServicesServer) GetAvailableUsers(*AvailabilityQuery, RosterServices_GetAvailableUsersServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetAvailableUsers not implemented")
+}
+func (UnimplementedRosterServicesServer) FindRosterAssignments(*RosterQuery, RosterServices_FindRosterAssignmentsServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindRosterAssignments not implemented")
 }
 func (UnimplementedRosterServicesServer) UpdateRosterAssignment(context.Context, *RosterAssignement) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRosterAssignment not implemented")
@@ -953,6 +992,27 @@ func (x *rosterServicesGetAvailableUsersServer) Send(m *EmployeeEvaluationRespon
 	return x.ServerStream.SendMsg(m)
 }
 
+func _RosterServices_FindRosterAssignments_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(RosterQuery)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RosterServicesServer).FindRosterAssignments(m, &rosterServicesFindRosterAssignmentsServer{stream})
+}
+
+type RosterServices_FindRosterAssignmentsServer interface {
+	Send(*RosterAssignmentResponse) error
+	grpc.ServerStream
+}
+
+type rosterServicesFindRosterAssignmentsServer struct {
+	grpc.ServerStream
+}
+
+func (x *rosterServicesFindRosterAssignmentsServer) Send(m *RosterAssignmentResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _RosterServices_UpdateRosterAssignment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RosterAssignement)
 	if err := dec(in); err != nil {
@@ -1004,6 +1064,11 @@ var RosterServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetAvailableUsers",
 			Handler:       _RosterServices_GetAvailableUsers_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "FindRosterAssignments",
+			Handler:       _RosterServices_FindRosterAssignments_Handler,
 			ServerStreams: true,
 		},
 	},

@@ -15,33 +15,33 @@ def get_broadcast_recipient(broadcast_recipient_id: int) -> operations_ecosys_pb
             value=str(broadcast_recipient_id)
         )
     )
-    broadcastQuery = operations_ecosys_pb2.BroadcastQuery(
+    broadcast_query = operations_ecosys_pb2.BroadcastQuery(
         filters = [broadcast_filter],
         limit = 1,
     )
-    broadcastResponses = stub.FindBroadcasts(broadcastQuery)
-    broadcastRes = None
+    broadcast_responses = stub.FindBroadcasts(broadcast_query)
+    broadcast_res = None
 
     # There should only be at most one response because the limit was 1
-    for res in broadcastResponses:
-        broadcastRes = res
+    for res in broadcast_responses:
+        broadcast_res = res
         break
 
     if res is None:
         print("No broadcasts returned")
         return None
     
-    print("get_broadcast_recipient", broadcastRes.response)
+    print("get_broadcast_recipient", broadcast_res.response)
 
-    if broadcastRes.broadcast is None:
+    if broadcast_res.broadcast is None:
         return None
 
-    if len(broadcastRes.broadcast.recipients) == 0:
+    if len(broadcast_res.broadcast.recipients) == 0:
         return None
-    if len(broadcastRes.broadcast.recipients[0].recipient) == 0:
+    if len(broadcast_res.broadcast.recipients[0].recipient) == 0:
         return None
         
-    return broadcastRes.broadcast.recipients[0].recipient[0]
+    return broadcast_res.broadcast.recipients[0].recipient[0]
 
 
 def update_broadcast_recipient(broadcast_recipient) -> bool:

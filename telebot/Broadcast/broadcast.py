@@ -5,13 +5,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from Keyboard.keyboard_data import KeyboardData
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
 from GrpcClient import broadcast_client
+from Reminders import reminders
 
-# Constants
-BROADCAST_REMINDER_SECONDS = 30
-CHAT_ID_KEY = "chat_id"
-UPDATER_KEY = "updater"
-MSG_KEY = "msg"
-BROADCAST_REC_ID_KEY = "broadcast_recipient_id"
 
 def send_broadcast_message(updater : Updater, message: str, chat_id: int, broadcast_recipient_id: int, urgency):
     print("sendBroadcastMessage", message, chat_id)
@@ -49,12 +44,12 @@ def acknowledge_broadcast(broadcast_recipient_id: int) -> bool:
 def setup_broadcast_reminder(updater : Updater, chat_id: int, msg: Message, broadcast_recipient_id: int):
     updater.job_queue.run_once(
         callback=remind_broadcast, 
-        when=BROADCAST_REMINDER_SECONDS, 
+        when=reminders.BROADCAST_REMINDER_SECONDS, 
         context={
-            MSG_KEY:msg,
-            CHAT_ID_KEY: chat_id, 
-            BROADCAST_REC_ID_KEY: broadcast_recipient_id,
-            UPDATER_KEY: updater,
+            reminders.MSG_KEY:msg,
+            reminders.CHAT_ID_KEY: chat_id, 
+            reminders.BROADCAST_REC_ID_KEY: broadcast_recipient_id,
+            reminders.UPDATER_KEY: updater,
         },
     )
 
@@ -62,7 +57,7 @@ def remind_broadcast(context: CallbackContext):
     # print("remind_broadcast", context.job.context)
 
     # If already has a reply, do nothing
-    bc_recipient = broadcast_client.get_broadcast_recipient(context.job.context[BROADCAST_REC_ID_KEY])
+    bc_recipient = broadcast_client.get_broadcast_recipient(context.job.context[reminders.BROADCAST_REC_ID_KEY])
 
     # If the row in the db is already gone, it could have been deleted. Ignore
     if bc_recipient is None:
@@ -73,15 +68,5 @@ def remind_broadcast(context: CallbackContext):
         return
 
     # Resend the same message + keyboard
-    prev_msg = context.job.context[MSG_KEY]
-    updater = context.job.context[UPDATER_KEY]
-
-    msg = updater.bot.send_message(
-        chat_id=context.job.context[CHAT_ID_KEY], 
-        text=prev_msg.text, 
-        parse_mode=ParseMode.HTML, 
-        reply_markup=prev_msg.reply_markup, 
-    )
-
-    prev_msg.edit_text(text=prev_msg.text + "\n\nResent")
-    setup_broadcast_reminder(updater, context.job.context[CHAT_ID_KEY], msg, context.job.context[BROADCAST_REC_ID_KEY])
+    reminders.resend_message(context, setup_broadcast_reminder, context.job.context[reminders.BROADCAST_REC_ID_KEY])
+    

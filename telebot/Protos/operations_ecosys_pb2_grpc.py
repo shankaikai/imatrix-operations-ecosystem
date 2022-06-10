@@ -549,6 +549,11 @@ class RosterServicesStub(object):
                 request_serializer=operations__ecosys__pb2.AvailabilityQuery.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.EmployeeEvaluationResponse.FromString,
                 )
+        self.FindRosterAssignments = channel.unary_stream(
+                '/operations_ecosys.RosterServices/FindRosterAssignments',
+                request_serializer=operations__ecosys__pb2.RosterQuery.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.RosterAssignmentResponse.FromString,
+                )
         self.UpdateRosterAssignment = channel.unary_unary(
                 '/operations_ecosys.RosterServices/UpdateRosterAssignment',
                 request_serializer=operations__ecosys__pb2.RosterAssignement.SerializeToString,
@@ -593,6 +598,13 @@ class RosterServicesServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def FindRosterAssignments(self, request, context):
+        """Specifically for the roster assignments
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def UpdateRosterAssignment(self, request, context):
         """Updates the individual roster assignment
         """
@@ -627,6 +639,11 @@ def add_RosterServicesServicer_to_server(servicer, server):
                     servicer.GetAvailableUsers,
                     request_deserializer=operations__ecosys__pb2.AvailabilityQuery.FromString,
                     response_serializer=operations__ecosys__pb2.EmployeeEvaluationResponse.SerializeToString,
+            ),
+            'FindRosterAssignments': grpc.unary_stream_rpc_method_handler(
+                    servicer.FindRosterAssignments,
+                    request_deserializer=operations__ecosys__pb2.RosterQuery.FromString,
+                    response_serializer=operations__ecosys__pb2.RosterAssignmentResponse.SerializeToString,
             ),
             'UpdateRosterAssignment': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateRosterAssignment,
@@ -725,6 +742,23 @@ class RosterServices(object):
         return grpc.experimental.unary_stream(request, target, '/operations_ecosys.RosterServices/GetAvailableUsers',
             operations__ecosys__pb2.AvailabilityQuery.SerializeToString,
             operations__ecosys__pb2.EmployeeEvaluationResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def FindRosterAssignments(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/operations_ecosys.RosterServices/FindRosterAssignments',
+            operations__ecosys__pb2.RosterQuery.SerializeToString,
+            operations__ecosys__pb2.RosterAssignmentResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

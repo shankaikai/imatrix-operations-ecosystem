@@ -18,7 +18,7 @@ func testInsertRoster(serverAddr *string, serverPort *int) {
 		for _, guardAssigned := range roster.GuardAssigned {
 			user := guardAssigned.GuardAssigned.Employee
 			// TODO: REMOVE this is emily's chat id
-			user.TeleChatId = 29333507
+			user.TeleChatId = 223102557 // emily: 29333507
 		}
 		rosters = append(rosters, roster)
 	}
