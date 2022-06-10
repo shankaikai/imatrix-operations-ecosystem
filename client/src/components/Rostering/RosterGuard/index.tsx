@@ -44,8 +44,6 @@ export default function RosterGuard({
     >
       <Popover
         opened={opened}
-        onClose={() => setOpened(false)}
-        onClick={() => setOpened(true)}
         position="bottom"
         placement="center"
         withArrow
@@ -55,7 +53,10 @@ export default function RosterGuard({
         width={260}
         styles={{ body: { pointerEvents: "none" } }}
         target={
-          <Group>
+          <Group
+            onMouseEnter={withLabels ? undefined : () => setOpened(true)}
+            onMouseLeave={() => setOpened(false)}
+          >
             <Indicator
               offset={10}
               size={14}
