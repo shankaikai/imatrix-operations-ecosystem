@@ -7,11 +7,11 @@ import {
 } from "@mantine/core";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import getFilteredBroadcasts from "../../helpers/getFilteredBroadcasts";
-import recipientFormatter from "../../helpers/recipientsFormatter";
-import { useBroadcast } from "../../helpers/useBroadcastClient";
-import { Broadcast } from "../../proto/operations_ecosys_pb";
-import BroadcastCard from "./BroadcastCard/BroadcastCard";
+import getFilteredBroadcasts from "../../../helpers/getFilteredBroadcasts";
+import recipientFormatter from "../../../helpers/recipientsFormatter";
+import { useBroadcast } from "../../../helpers/useBroadcastClient";
+import { Broadcast } from "../../../proto/operations_ecosys_pb";
+import BroadcastCard from "../BroadcastCard/BroadcastCard";
 
 interface BroadcastListProps {}
 
@@ -44,7 +44,7 @@ export default function BroadcastList({}: BroadcastListProps) {
         height: "calc(100vh - 60px - 30px - 30px)",
       }}
     >
-      <Stack>
+      <Stack data-testid="broadcastList">
         {filteredBroadcasts.map((broadcast) => {
           const key = broadcast.getBroadcastId();
           const content = broadcast.getContent();

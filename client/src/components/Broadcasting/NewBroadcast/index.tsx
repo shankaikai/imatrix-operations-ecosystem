@@ -29,6 +29,7 @@ export default function NewBroadcast({ setModelOpen }: NewBroadcastProps) {
     <form>
       <Stack>
         <MultiSelect
+          data-testid="aifsSelect"
           data={[
             {
               label: "All",
@@ -54,6 +55,7 @@ export default function NewBroadcast({ setModelOpen }: NewBroadcastProps) {
           onChange={setRecipient}
         />
         <MultiSelect
+          data-testid="urgencySelect"
           data={["Low", "Medium", "High"]}
           label="Urgency"
           placeholder="Choose your urgency level"
@@ -64,6 +66,7 @@ export default function NewBroadcast({ setModelOpen }: NewBroadcastProps) {
           onChange={setUrgency}
         />
         <Textarea
+          data-testid="newBroadcastMessageInput"
           label="Message"
           placeholder="Enter your broadcast message"
           autosize
@@ -73,7 +76,7 @@ export default function NewBroadcast({ setModelOpen }: NewBroadcastProps) {
           onChange={(event) => setMessage(event.currentTarget.value)}
         />
         <Group position="center">
-          <Button leftIcon={<Send size={16} />} onClick={handleSubmit}>
+          <Button data-testid="submitBroadcast" leftIcon={<Send size={16} />} onClick={handleSubmit}>
             Submit
           </Button>
         </Group>
