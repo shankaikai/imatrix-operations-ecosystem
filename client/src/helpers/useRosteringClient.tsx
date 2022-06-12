@@ -164,7 +164,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
   useEffect(() => {
     resetStates(formatSelectedDateForState(selectedDate));
     updateRosterBaskets();
-    getAvailableGuards();    
+    getAvailableGuards();
   }, [selectedDate]);
 
   // useEffect(() => {

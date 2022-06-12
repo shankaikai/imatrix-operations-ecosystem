@@ -1,6 +1,15 @@
-import { Avatar, Group, Indicator, Popover, Stack, Text } from "@mantine/core";
+import {
+  Avatar,
+  Button,
+  Group,
+  Indicator,
+  Popover,
+  Stack,
+  Text,
+} from "@mantine/core";
 import React, { useState } from "react";
 import { useDrag } from "react-dnd";
+import { UserCircle } from "tabler-icons-react";
 import { Roster, User } from "../../../proto/operations_ecosys_pb";
 
 interface RosterGuardProps {
@@ -50,7 +59,6 @@ export default function RosterGuard({
         trapFocus={false}
         closeOnEscape={false}
         transition="pop-top-left"
-        width={260}
         styles={{ body: { pointerEvents: "none" } }}
         target={
           <Group
@@ -83,8 +91,11 @@ export default function RosterGuard({
           </Group>
         }
       >
-        <Text weight={600}>{guard?.name}</Text>
-        <Text>{guard?.phoneNumber}</Text>
+        <Stack align="center">
+          <Text weight={600}>{guard?.name}</Text>
+          <Text>{guard?.phoneNumber}</Text>
+          <Button leftIcon={<UserCircle />}>View Profile</Button>
+        </Stack>
       </Popover>
     </div>
   );

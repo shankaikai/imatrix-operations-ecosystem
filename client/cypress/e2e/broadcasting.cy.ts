@@ -1,7 +1,7 @@
-beforeEach(() => {});
+export {};
 
 describe("broadcasting feature", () => {
-  it("should load the page", () => {
+  it("should load the page on menu nav", () => {
     cy.visit("/");
     cy.get(".mantine-1myn8qs > :nth-child(1) > :nth-child(2)").click();
   });
@@ -67,22 +67,12 @@ describe("broadcasting feature", () => {
 
     it("should change Recipient inputs", () => {
       cy.get('[data-testid="newBroadcastButton"]').click();
-
-      cy.get('[data-testid="aifsSelect"]').click();
-      cy.wait(2);
-      cy.contains("All").click();
-
-      // Clicking outside input to close dropdown
-      cy.contains("Broadcast Details").click();
+      cy.get('[data-testid="1Badge"]').click();
+      cy.get('[data-testid="2Badge"]').click();
     });
 
     it("should change Urgency inputs", () => {
-      cy.get('[data-testid="urgencySelect"]').click();
-      cy.wait(2);
-      cy.contains("Medium").click();
-
-      // Clicking outside input to close dropdown
-      cy.contains("Broadcast Details").click();
+      cy.get('[data-testid="UrgentBadge"]');
     });
 
     it("should change messageInput", () => {
@@ -96,9 +86,9 @@ describe("broadcasting feature", () => {
         );
     });
 
-    // it("should submit broadcast", () => {
-    //   cy.get('[data-testid="submitBroadcast"]').click();
-    // });
+    it("should submit broadcast", () => {
+      cy.get('[data-testid="submitBroadcast"]').click();
+    });
 
     it("should contain the new broadcast on refresh", () => {
       cy.visit("/broadcasting");

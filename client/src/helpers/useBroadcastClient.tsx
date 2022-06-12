@@ -101,7 +101,7 @@ export async function submitNewBroadcast({
   message,
 }: {
   recipient: string[];
-  urgency: string[];
+  urgency: string;
   message: string;
 }) {
   const client = getBroadcastClient();
@@ -114,9 +114,8 @@ export async function submitNewBroadcast({
 
   // TODO: Ask gab wats good practice for this
   const urgencyMap: urgencyMapInterface = {
-    Low: Broadcast.UrgencyType.LOW,
-    Medium: Broadcast.UrgencyType.MEDIUM,
-    High: Broadcast.UrgencyType.HIGH,
+    "Not Urgent": Broadcast.UrgencyType.LOW,
+    Urgent: Broadcast.UrgencyType.HIGH,
   };
 
   var recipientList: AIFSBroadcastRecipient[] = [];
