@@ -1,3 +1,5 @@
+export {};
+
 describe("rostering feature", () => {
   it("should load the page on menu nav", () => {
     cy.visit("/");
@@ -12,7 +14,7 @@ describe("rostering feature", () => {
     cy.wait(2000);
     cy.get(".mantine-19jxmdp > :nth-child(2)").click();
     cy.wait(2000);
-    cy.get(".mantine-19jxmdp > :nth-child(4)").click();
+    cy.get(".mantine-19jxmdp > :nth-child(5)").click();
   });
 
   it("should replace aifs basket on drag and drop", () => {
@@ -21,16 +23,14 @@ describe("rostering feature", () => {
       ':nth-child(1) > .mantine-lfk3cq > [style="border: 2px dashed rgb(173, 181, 189); height: auto; padding: 10px; border-radius: 12px; display: flex; align-items: center; justify-content: center;"]'
     ).trigger("drop");
 
-    cy.get(":nth-child(4) > .mantine-Popover-root").trigger("dragstart");
+    cy.get(":nth-child(5) > .mantine-Popover-root").trigger("dragstart");
     cy.get(
       ':nth-child(2) > .mantine-lfk3cq > [style="border: 2px dashed rgb(173, 181, 189); height: auto; padding: 10px; border-radius: 12px; display: flex; align-items: center; justify-content: center;"]'
     ).trigger("drop");
   });
 
   it("should publish on publish click", () => {
-    try {
-      cy.get(".mantine-2phkfh").click();
-    } catch {}
+    cy.get(".mantine-2phkfh").click({ force: true });
     cy.get(".mantine-2phkfh").should("be.disabled");
   });
 });
