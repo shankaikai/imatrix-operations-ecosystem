@@ -1,9 +1,9 @@
 import { Modal, ScrollArea, Stack } from "@mantine/core";
 import type { NextPage } from "next";
 import { useState } from "react";
-import BroadcastFilter from "../components/BroadcastList/BroadcastFilter/BroadcastFilter";
-import BroadcastList from "../components/BroadcastList/BroadcastList";
-import NewBroadcast from "../components/BroadcastList/NewBroadcast";
+import BroadcastFilter from "../components/Broadcasting/BroadcastFilter/BroadcastFilter";
+import BroadcastList from "../components/Broadcasting/BroadcastList/BroadcastList";
+import NewBroadcast from "../components/Broadcasting/NewBroadcast";
 import { BroadcastProvider } from "../helpers/useBroadcastClient";
 
 const Broadcasting: NextPage = () => {

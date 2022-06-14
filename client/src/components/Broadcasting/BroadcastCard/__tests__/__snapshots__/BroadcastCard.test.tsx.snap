@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BroadcastCard matches snapshot 1`] = `
+<div>
+  <div
+    class="mantine-Paper-root mantine-Card-root mantine-1671lvg"
+  >
+    <div
+      class="mantine-Group-root mantine-19jxmdp"
+    >
+      <div
+        class="mantine-Text-root mantine-Group-child mantine-1rxq3mb"
+      >
+        some content
+      </div>
+      <div
+        class="mantine-Group-root mantine-Group-child mantine-zah578"
+      >
+        <div
+          class="mantine-Popover-root mantine-gc2cx1"
+        >
+          <div
+            class="mantine-1imxcuq mantine-Popover-target"
+          >
+            <div
+              class="mantine-Badge-filled mantine-Badge-root mantine-12ynvk6"
+            >
+              <span
+                class="mantine-h9iq4m mantine-Badge-inner"
+              >
+                some id
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="mantine-Text-root mantine-3jfi03"
+    >
+      some date
+    </div>
+  </div>
+</div>
+`;

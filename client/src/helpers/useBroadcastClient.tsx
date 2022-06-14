@@ -13,6 +13,10 @@ import {
   BroadcastResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import {
+  showErrorNotification,
+  showBroadcastSuccessNotification,
+} from "./notifications";
 
 interface BroadcastContextInterface {
   broadcasts: Broadcast[];
@@ -97,7 +101,7 @@ export async function submitNewBroadcast({
   message,
 }: {
   recipient: string[];
-  urgency: string[];
+  urgency: string;
   message: string;
 }) {
   const client = getBroadcastClient();
@@ -110,9 +114,8 @@ export async function submitNewBroadcast({
 
   // TODO: Ask gab wats good practice for this
   const urgencyMap: urgencyMapInterface = {
-    Low: Broadcast.UrgencyType.LOW,
-    Medium: Broadcast.UrgencyType.MEDIUM,
-    High: Broadcast.UrgencyType.HIGH,
+    "Not Urgent": Broadcast.UrgencyType.LOW,
+    Urgent: Broadcast.UrgencyType.HIGH,
   };
 
   var recipientList: AIFSBroadcastRecipient[] = [];
@@ -149,11 +152,11 @@ export async function submitNewBroadcast({
   await client
     .addBroadcast(broadcast, {})
     .then((response) => {
-      // TODO: Bring up success toast
+      showBroadcastSuccessNotification();
       console.log(response);
     })
     .catch((error) => {
       // TODO: Error toast
-      console.log(error);
+      showErrorNotification();
     });
 }

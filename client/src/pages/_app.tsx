@@ -7,6 +7,7 @@ import {
 } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import Layout from "../components/Layout/Layout";
+import { NotificationsProvider } from "@mantine/notifications";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -41,9 +42,11 @@ export default function App(props: AppProps) {
             colorScheme,
           }}
         >
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <NotificationsProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </NotificationsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
     </>

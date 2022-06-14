@@ -28,6 +28,9 @@ export class User extends jspb.Message {
   getIsPartTimer(): boolean;
   setIsPartTimer(value: boolean): User;
 
+  getTeleChatId(): number;
+  setTeleChatId(value: number): User;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): User.AsObject;
   static toObject(includeInstance: boolean, msg: User): User.AsObject;
@@ -46,6 +49,7 @@ export namespace User {
     telegramHandle: string,
     userSecurityImg: string,
     isPartTimer: boolean,
+    teleChatId: number,
   }
 
   export enum UserType { 
@@ -582,15 +586,11 @@ export class Roster extends jspb.Message {
   getAifsId(): number;
   setAifsId(value: number): Roster;
 
-  getStartTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setStartTime(value?: google_protobuf_timestamp_pb.Timestamp): Roster;
-  hasStartTime(): boolean;
-  clearStartTime(): Roster;
+  getStartTime(): string;
+  setStartTime(value: string): Roster;
 
-  getEndTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setEndTime(value?: google_protobuf_timestamp_pb.Timestamp): Roster;
-  hasEndTime(): boolean;
-  clearEndTime(): Roster;
+  getEndTime(): string;
+  setEndTime(value: string): Roster;
 
   getClientsList(): Array<AIFSClientRoster>;
   setClientsList(value: Array<AIFSClientRoster>): Roster;
@@ -602,8 +602,8 @@ export class Roster extends jspb.Message {
   clearGuardAssignedList(): Roster;
   addGuardAssigned(value?: RosterAssignement, index?: number): RosterAssignement;
 
-  getIsDefault(): boolean;
-  setIsDefault(value: boolean): Roster;
+  getStatus(): Roster.Status;
+  setStatus(value: Roster.Status): Roster;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Roster.AsObject;
@@ -617,11 +617,18 @@ export namespace Roster {
   export type AsObject = {
     rosteringId: number,
     aifsId: number,
-    startTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-    endTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    startTime: string,
+    endTime: string,
     clientsList: Array<AIFSClientRoster.AsObject>,
     guardAssignedList: Array<RosterAssignement.AsObject>,
-    isDefault: boolean,
+    status: Roster.Status,
+  }
+
+  export enum Status { 
+    IS_DEFAULT = 0,
+    PENDING = 1,
+    CONFIRMED = 2,
+    REJECTED = 3,
   }
 }
 
@@ -686,6 +693,9 @@ export class RosterAssignement extends jspb.Message {
   getIsAssigned(): boolean;
   setIsAssigned(value: boolean): RosterAssignement;
 
+  getRejected(): boolean;
+  setRejected(value: boolean): RosterAssignement;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RosterAssignement.AsObject;
   static toObject(includeInstance: boolean, msg: RosterAssignement): RosterAssignement.AsObject;
@@ -704,6 +714,27 @@ export namespace RosterAssignement {
     attended: boolean,
     attendanceTime?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     isAssigned: boolean,
+    rejected: boolean,
+  }
+}
+
+export class BulkRosters extends jspb.Message {
+  getRostersList(): Array<Roster>;
+  setRostersList(value: Array<Roster>): BulkRosters;
+  clearRostersList(): BulkRosters;
+  addRosters(value?: Roster, index?: number): Roster;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): BulkRosters.AsObject;
+  static toObject(includeInstance: boolean, msg: BulkRosters): BulkRosters.AsObject;
+  static serializeBinaryToWriter(message: BulkRosters, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): BulkRosters;
+  static deserializeBinaryFromReader(message: BulkRosters, reader: jspb.BinaryReader): BulkRosters;
+}
+
+export namespace BulkRosters {
+  export type AsObject = {
+    rostersList: Array<Roster.AsObject>,
   }
 }
 
@@ -769,6 +800,7 @@ export namespace RosterFilter {
     END_TIME = 9,
     IS_ASSIGNED = 10,
     DEFAULT_ROSTERING_DAY_OF_WEEK = 11,
+    GUARD_ASSIGNMENT_REJECTION = 12,
   }
 }
 

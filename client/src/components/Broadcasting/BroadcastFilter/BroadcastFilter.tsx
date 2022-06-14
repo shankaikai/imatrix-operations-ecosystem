@@ -33,6 +33,7 @@ export default function BroadcastFilter({
     >
       {setSearch && (
         <TextInput
+          data-testid="broadcastSearch"
           icon={<Search size={16} />}
           placeholder="Search"
           radius="lg"
@@ -44,6 +45,7 @@ export default function BroadcastFilter({
       )}
 
       <Button
+        data-testid="newBroadcastButton"
         size="xs"
         radius="xl"
         leftIcon={<Plus size={14} />}
@@ -56,8 +58,9 @@ export default function BroadcastFilter({
           Sort by:
         </Text>
         <Select
+          data-testid="sortBy"
           data={[
-            { value: "latest", label: "Lastest First" },
+            { value: "latest", label: "Latest First" },
             { value: "oldest", label: "Oldest First" },
           ]}
           value={selectValue}
@@ -65,6 +68,9 @@ export default function BroadcastFilter({
           onChange={setSelectValue}
           variant="unstyled"
           size="xs"
+          sx={{
+            width: "100px",
+          }}
         />
       </Group>
       <Group>
@@ -72,6 +78,7 @@ export default function BroadcastFilter({
           Filter by:
         </Text>
         <Select
+          data-testid="filterBy"
           data={[
             { value: "all", label: "All" },
             { value: "1", label: "AIFS 1" },
@@ -83,6 +90,9 @@ export default function BroadcastFilter({
           onChange={setFilterValue}
           variant="unstyled"
           size="xs"
+          sx={{
+            width: "100px",
+          }}
         />
       </Group>
     </Group>

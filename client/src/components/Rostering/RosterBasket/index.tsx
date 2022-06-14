@@ -1,9 +1,11 @@
 import { Card, Group, Stack, Text, useMantineTheme } from "@mantine/core";
+import dayjs from "dayjs";
 import React from "react";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { useDrop } from "react-dnd";
+import addGuardToGuardsAssigned from "../../../helpers/addGuardsToGuardsAssigned";
 import { useRostering } from "../../../helpers/useRosteringClient";
 import { Roster } from "../../../proto/operations_ecosys_pb";
-import RosterGuard from "../RosterGuard";
+import RosterGuard, { DraggableGuard } from "../RosterGuard";
 
 interface RosterCardProps {
   basket: Roster.AsObject;
@@ -12,8 +14,22 @@ interface RosterCardProps {
 
 export default function RosterBasket({ basket, index }: RosterCardProps) {
   const theme = useMantineTheme();
-  const { guardsAssigned } = useRostering();
-  // console.log("guardsAssigned", guardsAssigned);
+  const { guardsAssigned, selectedDate, setGuardsAssigned } = useRostering();
+
+  const [{ isOver }, drop] = useDrop({
+    accept: "guard",
+    drop: (guard: DraggableGuard) =>
+      addGuardToGuardsAssigned(
+        guard.id,
+        guard.index,
+        basket.aifsId,
+        selectedDate,
+        setGuardsAssigned
+      ),
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  });
 
   return (
     <Card>
@@ -21,57 +37,43 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
         <Group>
           <Text>{`AIFS ${basket.aifsId}`}</Text>
         </Group>
-        <Droppable droppableId={basket.aifsId.toString()}>
-          {(provided, snapshot) => (
-            <div
-              style={{
-                border: `2px dashed ${
-                  theme.colorScheme === "dark"
-                    ? theme.colors.dark[3]
-                    : theme.colors.gray[5]
-                }`,
-                borderStyle: "dashed",
-                height: "auto",
-                padding: theme.spacing.xs,
-                borderRadius: theme.spacing.sm,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {guardsAssigned[basket.aifsId] ? (
-                <Draggable
-                  key={guardsAssigned[basket.aifsId][0].userId}
-                  draggableId={guardsAssigned[
-                    basket.aifsId
-                  ][0].userId.toString()}
+        <div
+          ref={drop}
+          style={{
+            border: `2px dashed ${
+              theme.colorScheme === "dark"
+                ? theme.colors.dark[3]
+                : theme.colors.gray[5]
+            }`,
+            borderStyle: "dashed",
+            height: "auto",
+            padding: theme.spacing.xs,
+            borderRadius: theme.spacing.sm,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: isOver ? theme.colors.gray[1] : "default",
+          }}
+        >
+          {selectedDate &&
+          guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")] ? (
+            guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")][
+              basket.aifsId
+            ].map((guard, index) => {
+              return (
+                <RosterGuard
+                  key={guard.employee?.userId}
+                  guard={guard.employee}
                   index={index}
-                >
-                  {(provided, snapshot) => (
-                    <div
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      ref={provided.innerRef}
-                      style={{
-                        ...provided.draggableProps.style,
-                      }}
-                    >
-                      <RosterGuard
-                        guard={guardsAssigned[basket.aifsId][0]}
-                        withLabels
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ) : (
-                <Text>hi</Text>
-              )}
-              {provided.placeholder}
-            </div>
+                  status={basket.status}
+                  withLabels
+                />
+              );
+            })
+          ) : (
+            <Text>Please drag over a user</Text>
           )}
-        </Droppable>
+        </div>
       </Stack>
     </Card>
   );
