@@ -554,3 +554,35 @@ func (s *Server) sendNewRostersToTele(rosterIds []int64) {
 
 	tclient.InsertRoster(s.teleServerAddr, s.teleServerPort, rosters)
 }
+
+func (s *Server) sendUpdatedRostersToTele(newRosterAssignmentsPk []int64) {
+	if len(newRosterAssignmentsPk) == 0 {
+		return
+	}
+	// Get the rosters with the newly assigned roster assignments
+	// The number of rosters cannot be greater than the number of assignments
+	query := &pb.RosterQuery{Limit: int64(len(newRosterAssignmentsPk))}
+	idStrings := make([]string, 0)
+
+	for _, id := range newRosterAssignmentsPk {
+		idStrings = append(idStrings, strconv.Itoa(int(id)))
+	}
+
+	db_pck.AddRosterFilter(query, pb.RosterFilter_ROSTER_ASSIGNMENT_ID, pb.Filter_IN, strings.Join(idStrings, ","))
+	// Only find rosters assignments that are still assigned
+	db_pck.AddRosterFilter(query, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
+	// Only find rosters where the confirmed is false
+	db_pck.AddRosterFilter(query, pb.RosterFilter_GUARD_ASSIGNMENT_CONFIRMATION, pb.Filter_EQUAL, "0")
+
+	rosters, err := db_pck.GetRosters(s.db, query)
+
+	if err != nil {
+		fmt.Println("sendUpdatedRostersToTele ERROR:", err)
+	}
+
+	if len(rosters) == 0 {
+		fmt.Println("sendUpdatedRostersToTele: No Rosters found for ids", newRosterAssignmentsPk)
+	}
+
+	tclient.InsertRoster(s.teleServerAddr, s.teleServerPort, rosters)
+}

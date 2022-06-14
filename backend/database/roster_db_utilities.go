@@ -528,14 +528,16 @@ func convertFromDbRosterAifsClient(db *sql.DB, aifsClient *pb.AIFSClientRoster, 
 // recipients are and make the necessary changes so that the
 // recipients of the main roster will corresponds to the new
 // list that is needed. Ie, it inserts and deletes recipients at will.
-func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) error {
+func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) ([]int64, error) {
+	newRosterAssignmentsPk := make([]int64, 0)
+
 	// Get all current assignments that are assigned
 	query := &pb.RosterQuery{}
 	AddRosterFilter(query, pb.RosterFilter_IS_ASSIGNED, pb.Filter_EQUAL, "1")
 	currentAssignments, err := GetRosterAssingments(db, query, roster.RosteringId)
 	if err != nil {
 		fmt.Println("updateAssignmentsOfRoster ERROR::", err)
-		return err
+		return newRosterAssignmentsPk, err
 	}
 
 	// create array of current roster recipient ids
@@ -569,11 +571,12 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 	fmt.Println("Missing Assignment Index:", missingAsgnIndex)
 	// Add the missing recipients
 	for _, asgnIndex := range missingAsgnIndex {
-		_, err := InsertRosterASGN(db, roster.GuardAssigned[asgnIndex], roster.RosteringId, dbLock)
+		rosterAsgnPk, err := InsertRosterASGN(db, roster.GuardAssigned[asgnIndex], roster.RosteringId, dbLock)
 		if err != nil {
 			fmt.Println("updateAssignmentsOfRoster ERROR::", err)
-			return err
+			return newRosterAssignmentsPk, err
 		}
+		newRosterAssignmentsPk = append(newRosterAssignmentsPk, rosterAsgnPk)
 	}
 
 	fmt.Println("Removing is_assigned flag for Assignment IDs:", currentAsgnIds)
@@ -588,11 +591,11 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 		})
 		if err != nil {
 			fmt.Println("UpdateRoster ERROR::", err)
-			return err
+			return newRosterAssignmentsPk, err
 		}
 	}
 
-	return nil
+	return newRosterAssignmentsPk, nil
 }
 
 // This function is different from UpdateRosterAssignements()

@@ -399,10 +399,14 @@ func GetDefaultRosterDetails(db *sql.DB, query *pb.RosterQuery, dayOfWeek int) (
 
 // Update a specific roster in the table
 // Only fields that have been filled in the roster object will be updated.
+// Returns the number of main roster rows updated as well as the a list of
+// all the primary keys of newly inserted roster assignments into the db.
 // Note that this update does not update the roster's guards's inner status
 // such as the acknowledgement or attended status but only if the guard
 // is part of the roster. Same for the clients
-func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, error) {
+func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, []int64, error) {
+	newRosterAssignmentsPk := make([]int64, 0)
+
 	// Update the main roster first
 	newFields := getFilledRosterFields(roster)
 
@@ -418,13 +422,13 @@ func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 		rowsAffected, err = Update(db, ROSTER_DB_TABLE_NAME, newFields, filters)
 		if err != nil {
 			fmt.Println("UpdateRoster ERROR::", err)
-			return rowsAffected, err
+			return rowsAffected, newRosterAssignmentsPk, err
 		}
 	}
 
 	// Update assignments if necessary
 	if roster.GuardAssigned != nil {
-		err = updateAssignmentsOfRoster(db, roster, dbLock)
+		newRosterAssignmentsPk, err = updateAssignmentsOfRoster(db, roster, dbLock)
 	}
 
 	// Update clients if necessary
@@ -432,7 +436,7 @@ func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, err
 		err = updateClientsOfRoster(db, roster, dbLock)
 	}
 
-	return rowsAffected, err
+	return rowsAffected, newRosterAssignmentsPk, err
 }
 
 // Update a specific recipient row in the table

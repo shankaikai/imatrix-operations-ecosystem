@@ -35,7 +35,7 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 	res.PrimaryKey = pk
 
 	// Send to Telegram Bot
-	go s.sendNewBroadcastToTele(pk)
+	go s.sendNewBroadcastsOut(pk)
 
 	return &res, nil
 }
@@ -120,6 +120,11 @@ func (s *Server) UpdateBroadcastRecipient(cxt context.Context, broadcastRecipien
 		res.ErrorMessage = err.Error()
 	} else {
 		fmt.Println(numAffected, "broadcast recipients were updated.")
+	}
+
+	// Notify aifs led lights to turn back to default
+	if numAffected > 0 && (broadcastRecipient.Acknowledged || broadcastRecipient.Rejected) {
+		s.notifyAIFSofBroadcastAck(broadcastRecipient)
 	}
 
 	return &res, nil

@@ -22,14 +22,18 @@ type Server struct {
 
 	teleServerAddr *string
 	teleServerPort *int
+
+	// AIFS LED lights for broadcasting
+	testLEDAddr *string
 }
 
-func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int) {
+func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int, testLEDAddr *string) {
 	fmt.Println("Starting gRPC server...")
 	server := Server{
 		dbLock:         &sync.Mutex{},
 		teleServerAddr: teleServerAddr,
 		teleServerPort: teleServerPort,
+		testLEDAddr:    testLEDAddr,
 	}
 	server.db = db_pck.GetDB()
 

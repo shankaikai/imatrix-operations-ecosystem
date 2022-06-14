@@ -13,7 +13,7 @@ func TestTelegramRosters(serverAddr *string, serverPort *int) {
 
 func testInsertRoster(serverAddr *string, serverPort *int) {
 	rosters := make([]*pb.Roster, 0)
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 1; i++ {
 		roster := fclient.CreateFakeRoster(2)
 		for _, guardAssigned := range roster.GuardAssigned {
 			user := guardAssigned.GuardAssigned.Employee

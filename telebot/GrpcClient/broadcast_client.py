@@ -27,7 +27,7 @@ def get_broadcast_recipient(broadcast_recipient_id: int) -> operations_ecosys_pb
         broadcast_res = res
         break
 
-    if res is None:
+    if broadcast_res is None:
         print("No broadcasts returned")
         return None
     

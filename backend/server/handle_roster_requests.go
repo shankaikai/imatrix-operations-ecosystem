@@ -48,7 +48,7 @@ func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb
 	res := pb.Response{Type: pb.Response_ACK}
 	for _, roster := range rosters.Rosters {
 
-		numAffected, err := db_pck.UpdateRoster(
+		numAffected, newRosterAssignmentsPk, err := db_pck.UpdateRoster(
 			s.db,
 			roster,
 			s.dbLock,
@@ -59,6 +59,7 @@ func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb
 			res.ErrorMessage = err.Error()
 		} else {
 			fmt.Println(numAffected, "rosters were updated.")
+			s.sendUpdatedRostersToTele(newRosterAssignmentsPk)
 		}
 	}
 	return &res, nil

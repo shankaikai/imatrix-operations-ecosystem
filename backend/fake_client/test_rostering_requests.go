@@ -212,7 +212,7 @@ func FindRostersTest(serverAddr *string, serverPort *int, query *pb.RosterQuery)
 func ConsolidatedUpdateRosterTest(serverAddr *string, serverPort *int, roster *pb.Roster) {
 	UpdateRosterBasicFields(serverAddr, serverPort, roster)
 	UpdateRosterAssignments(serverAddr, serverPort, roster)
-	UpdateRosterAifsClients(serverAddr, serverPort, roster)
+	// UpdateRosterAifsClients(serverAddr, serverPort, roster)
 }
 
 func UpdateRosterBasicFields(serverAddr *string, serverPort *int, roster *pb.Roster) {
@@ -235,7 +235,7 @@ func UpdateRosterAssignments(serverAddr *string, serverPort *int, roster *pb.Ros
 	}
 
 	// replace one of the guards with someone else
-	updatedRoster.GuardAssigned[0].GuardAssigned.Employee.UserId = 6
+	updatedRoster.GuardAssigned[0].GuardAssigned.Employee.UserId = 8
 
 	UpdateRosterTest(serverAddr, serverPort, updatedRoster)
 }

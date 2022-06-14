@@ -79,7 +79,7 @@ func CreateFakeRoster(id int) *pb.Roster {
 	rosterAssignments := make([]*pb.RosterAssignement, 0)
 	aifsAssignments := make([]*pb.AIFSClientRoster, 0)
 
-	for i := 2; i < 4; i++ {
+	for i := 2; i < 3; i++ {
 		rosterAssignments = append(rosterAssignments, createFakeRosterAssignment(i))
 		aifsAssignments = append(aifsAssignments, createFakeAifsAssignment(i))
 	}

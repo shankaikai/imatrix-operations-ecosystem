@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -16,6 +17,11 @@ const (
 	AIFS1_USER_ID = 8
 	AIFS2_USER_ID = 9
 	AIFS3_USER_ID = 10
+
+	// AIFS LED light triggers for broadcasting
+	AIFS_LED_DEFAULT_URI          = "win&PL=2"
+	AIFS_LED_BROADCAST_URGENT_URI = "win&PL=1"
+	TEST_BROADCAST_LED_AIFS_ID    = 1
 )
 
 // If the broadcast recipient is an AIFS,
@@ -68,7 +74,7 @@ func getAIFSDuty(aifsId int64) []*pb.User {
 	return users
 }
 
-func (s *Server) sendNewBroadcastToTele(broadcastId int64) {
+func (s *Server) sendNewBroadcastsOut(broadcastId int64) {
 	query := &pb.BroadcastQuery{Limit: 1}
 	db_pck.AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastId)))
 	broadcasts, err := db_pck.GetBroadcasts(s.db, query)
@@ -82,4 +88,33 @@ func (s *Server) sendNewBroadcastToTele(broadcastId int64) {
 	}
 
 	tclient.InsertBroadcast(s.teleServerAddr, s.teleServerPort, broadcasts[0])
+	s.notifyAIFSofNewBroadcast(broadcasts[0])
+}
+
+func (s *Server) notifyAIFSofNewBroadcast(broadcast *pb.Broadcast) {
+	for _, aifsRec := range broadcast.Recipients {
+		for _, rec := range aifsRec.Recipient {
+			switch rec.AifsId {
+			case TEST_BROADCAST_LED_AIFS_ID:
+				resp, err := http.Get(fmt.Sprintf("%s/%s", *s.testLEDAddr, AIFS_LED_BROADCAST_URGENT_URI))
+				if err != nil {
+					fmt.Println("notifyAIFSofNewBroadcast ERROR:", err)
+				}
+
+				fmt.Println("notifyAIFSofNewBroadcast RESPONSE:", resp)
+			}
+		}
+	}
+}
+
+func (s *Server) notifyAIFSofBroadcastAck(broadcastRecipient *pb.BroadcastRecipient) {
+	switch broadcastRecipient.AifsId {
+	case TEST_BROADCAST_LED_AIFS_ID:
+		resp, err := http.Get(fmt.Sprintf("%s/%s", *s.testLEDAddr, AIFS_LED_BROADCAST_URGENT_URI))
+		if err != nil {
+			fmt.Println("notifyAIFSofBroadcastAck ERROR:", err)
+		}
+
+		fmt.Println("notifyAIFSofBroadcastAck RESPONSE:", resp)
+	}
 }

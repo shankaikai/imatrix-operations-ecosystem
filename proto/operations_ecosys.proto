@@ -289,6 +289,7 @@ message Roster {
     // Roster IDs are only useful for the backend database. 
     int64 rostering_id = 1;
     int64 aifs_id = 2;
+    // Format must be in: YYYY-MM-DD HH:MM:SS
     string start_time = 3;
     string end_time = 4;
     repeated AIFSClientRoster clients = 5;
@@ -415,6 +416,7 @@ message AvailabilityQuery {
     OrderByQuery order_by = 6;
 }
 
+// TODO change name
 message OrderByQuery{
     AvailabilityFilter.Field field = 1;
     OrderBy order_by = 2;
