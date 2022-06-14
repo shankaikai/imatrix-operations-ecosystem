@@ -21,4 +21,17 @@ protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --g
 python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --grpc_python_out=telebot/Protos proto/operations_ecosys.proto
 ```
 
-# hello
+# Docker
+
+To start all services, run `docker-compose up -d`
+
+to restart certain services after making your changes, run `docker-compose restart CONTAINER_NAME`.
+
+restart client: `docker-compose restart client`
+restart backend: `docker-compose retart backend`
+restart client + backend: `docker-compose restart client backend`
+restart all services: `docker-compose restart`
+
+to stop all services, run `docker-compose down`
+
+to view logs (e.g. print statements), run `docker logs CONTAINER_NAME`
