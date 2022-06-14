@@ -1,31 +1,40 @@
 version: "3.7"
 
+volumes:
+  node_modules:
 services:
   gateway-envoy:
     build:
       context: ./envoy
       dockerfile: Dockerfile
     ports:
-      - "10000:10000"
-      - "8080:8080"
-      - "8001:8001"
+      - '8080:8080'
+  client:
+    volumes:
+          - ./client:/client
+          - node_modules:/client/node_modules
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+
+  backend:
+    volumes:
+          - ./backend:/backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
       - "9090:9090"
 
-  # client:
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #   stdin_open: true
-  #   ports:
-  #     - "3000:3000"
 
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   stdin_open: true
-  #   ports:
-  #     - "9090:9090"
-  #     - "29139:29139"
-  #   env_file:
-  #     - .env
+  telebot:
+    environment:
+        PYTHONUNBUFFERED: 1
+    build:
+      context: ./telebot
+      dockerfile: Dockerfile
+    ports:
+      - "9091:9091"

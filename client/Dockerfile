@@ -1,10 +1,10 @@
 FROM node:18
 
 WORKDIR /client
-COPY . . 
 
-RUN npm install
+COPY ./package.json /client
 
-EXPOSE 3000
+RUN npm install --legacy-peer-deps
+RUN echo $(ls)
 
 CMD ["npm", "run", "dev"]

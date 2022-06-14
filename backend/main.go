@@ -13,9 +13,9 @@ import (
 )
 
 func main() {
-	serverAddrFlag := flag.String("addr", "127.0.0.1", "TCP address for the server to run on.")
+	serverAddrFlag := flag.String("addr", "0.0.0.0", "TCP address for the server to run on.")
 	serverPortFlag := flag.Int("port", 9090, "TCP port for the server to run on.")
-	teleServerAddrFlag := flag.String("tele_addr", "127.0.0.1", "TCP address for the server to run on.")
+	teleServerAddrFlag := flag.String("tele_addr", "telebot", "TCP address for the server to run on.")
 	teleServerPortFlag := flag.Int("tele_port", 9091, "TCP port for the server to run on.")
 	testLEDAddrFlag := flag.String("led_addr", "http://192.168.0.163", "IP address of the LED lights on the AIFS for testing")
 	serverFlag := flag.Bool("is_server", true, "Is this terminal for the server or the test client?")
