@@ -1,0 +1,2689 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0;  
+      }
+
+       
+      .field-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(3) {  
+        width: 6em;
+      }
+      .field-table td:nth-child(4) {  
+        width: auto;
+      }
+
+       
+      .extension-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) {  
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) {  
+        width: auto;
+      }
+
+       
+      .enum-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) {  
+        width: auto;
+      }
+
+       
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+       
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+       
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+       
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
+            <a href="#operations_ecosys.proto">operations_ecosys.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#operations_ecosys.AIFSBroadcastRecipient"><span class="badge">M</span>AIFSBroadcastRecipient</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.AIFSClientRoster"><span class="badge">M</span>AIFSClientRoster</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.AvailabilityFilter"><span class="badge">M</span>AvailabilityFilter</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.AvailabilityQuery"><span class="badge">M</span>AvailabilityQuery</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Broadcast"><span class="badge">M</span>Broadcast</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.BroadcastFilter"><span class="badge">M</span>BroadcastFilter</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.BroadcastQuery"><span class="badge">M</span>BroadcastQuery</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.BroadcastRecipient"><span class="badge">M</span>BroadcastRecipient</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.BroadcastResponse"><span class="badge">M</span>BroadcastResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.BulkRosters"><span class="badge">M</span>BulkRosters</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Client"><span class="badge">M</span>Client</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.ClientFilter"><span class="badge">M</span>ClientFilter</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.ClientQuery"><span class="badge">M</span>ClientQuery</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.ClientResponse"><span class="badge">M</span>ClientResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.EmployeeEvaluation"><span class="badge">M</span>EmployeeEvaluation</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.EmployeeEvaluationResponse"><span class="badge">M</span>EmployeeEvaluationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Filter"><span class="badge">M</span>Filter</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.OrderByBroadcast"><span class="badge">M</span>OrderByBroadcast</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.OrderByClient"><span class="badge">M</span>OrderByClient</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.OrderByQuery"><span class="badge">M</span>OrderByQuery</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.OrderByRoster"><span class="badge">M</span>OrderByRoster</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.OrderByUser"><span class="badge">M</span>OrderByUser</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Response"><span class="badge">M</span>Response</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Roster"><span class="badge">M</span>Roster</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.RosterAssignement"><span class="badge">M</span>RosterAssignement</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.RosterAssignmentResponse"><span class="badge">M</span>RosterAssignmentResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.RosterFilter"><span class="badge">M</span>RosterFilter</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.RosterQuery"><span class="badge">M</span>RosterQuery</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.RosterResponse"><span class="badge">M</span>RosterResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.User"><span class="badge">M</span>User</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.UserFilter"><span class="badge">M</span>UserFilter</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.UserQuery"><span class="badge">M</span>UserQuery</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.UsersResponse"><span class="badge">M</span>UsersResponse</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#operations_ecosys.AvailabilityFilter.Field"><span class="badge">E</span>AvailabilityFilter.Field</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Broadcast.BroadcastType"><span class="badge">E</span>Broadcast.BroadcastType</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Broadcast.UrgencyType"><span class="badge">E</span>Broadcast.UrgencyType</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.BroadcastFilter.Field"><span class="badge">E</span>BroadcastFilter.Field</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.ClientFilter.Field"><span class="badge">E</span>ClientFilter.Field</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Filter.Comparisons"><span class="badge">E</span>Filter.Comparisons</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.OrderBy"><span class="badge">E</span>OrderBy</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Response.Type"><span class="badge">E</span>Response.Type</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.Roster.Status"><span class="badge">E</span>Roster.Status</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.RosterFilter.Field"><span class="badge">E</span>RosterFilter.Field</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.User.UserType"><span class="badge">E</span>User.UserType</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.UserFilter.Field"><span class="badge">E</span>UserFilter.Field</a>
+                </li>
+              
+              
+              
+                <li>
+                  <a href="#operations_ecosys.AdminServices"><span class="badge">S</span>AdminServices</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.BroadcastServices"><span class="badge">S</span>BroadcastServices</a>
+                </li>
+              
+                <li>
+                  <a href="#operations_ecosys.RosterServices"><span class="badge">S</span>RosterServices</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="operations_ecosys.proto">operations_ecosys.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="operations_ecosys.AIFSBroadcastRecipient">AIFSBroadcastRecipient</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>recipient</td>
+                  <td><a href="#operations_ecosys.BroadcastRecipient">BroadcastRecipient</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>aifs_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.AIFSClientRoster">AIFSClientRoster</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>aifs_client_roster_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>client</td>
+                  <td><a href="#operations_ecosys.Client">Client</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>patrol_order</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.AvailabilityFilter">AvailabilityFilter</h3>
+        <p>Filter the types of availabilty to be returned.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.AvailabilityFilter.Field">AvailabilityFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>comparisons</td>
+                  <td><a href="#operations_ecosys.Filter">Filter</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.AvailabilityQuery">AvailabilityQuery</h3>
+        <p>TODO: Find out if the user should be available</p><p>throughout the whole duration.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>start_time</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>end_time</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>If end time is null, the time period is taken 
+to be from the start time &#43; 12h </p></td>
+                </tr>
+              
+                <tr>
+                  <td>limit</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Limit the number of objects being returned. 
+If only 5 objects should be shown, limit = 5; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>skip</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Skip n rows from the database </p></td>
+                </tr>
+              
+                <tr>
+                  <td>filters</td>
+                  <td><a href="#operations_ecosys.AvailabilityFilter">AvailabilityFilter</a></td>
+                  <td>repeated</td>
+                  <td><p>The client has no current need to fill this up. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderByQuery">OrderByQuery</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.Broadcast">Broadcast</h3>
+        <p>The default fields of a broadcast</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>broadcast_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Broadcast IDs are only useful for the backend database. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#operations_ecosys.Broadcast.BroadcastType">Broadcast.BroadcastType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>content</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creation_date</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>deadline</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#operations_ecosys.User">User</a></td>
+                  <td></td>
+                  <td><p>The whole user fields does not need to be filled, 
+as long as the user is identifiable. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>recipients</td>
+                  <td><a href="#operations_ecosys.AIFSBroadcastRecipient">AIFSBroadcastRecipient</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>urgency</td>
+                  <td><a href="#operations_ecosys.Broadcast.UrgencyType">Broadcast.UrgencyType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.BroadcastFilter">BroadcastFilter</h3>
+        <p>Filter the types of broadcasts to be returned.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.BroadcastFilter.Field">BroadcastFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>comparisons</td>
+                  <td><a href="#operations_ecosys.Filter">Filter</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.BroadcastQuery">BroadcastQuery</h3>
+        <p>Get specific types users as specified in the Filter. </p><p>If one wants to get all objects, leave filters empty. </p><p>A default limit of 10 will be used if the field is empty.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>filters</td>
+                  <td><a href="#operations_ecosys.BroadcastFilter">BroadcastFilter</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>limit</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Limit the number of objects being returned. 
+If only 5 objects should be shown, limit = 5; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>skip</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Skip n rows from the database </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderByBroadcast">OrderByBroadcast</a></td>
+                  <td></td>
+                  <td><p>Order the queries, by default the order is desc by creation date </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.BroadcastRecipient">BroadcastRecipient</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>broadcast_recipients_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>recipient</td>
+                  <td><a href="#operations_ecosys.User">User</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>acknowledged</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>last_replied</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>aifs_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.BroadcastResponse">BroadcastResponse</h3>
+        <p>Passing around multiple broadcasts in one message.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>response</td>
+                  <td><a href="#operations_ecosys.Response">Response</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>broadcast</td>
+                  <td><a href="#operations_ecosys.Broadcast">Broadcast</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.BulkRosters">BulkRosters</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>rosters</td>
+                  <td><a href="#operations_ecosys.Roster">Roster</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.Client">Client</h3>
+        <p>All clients who hire the company to protect their compounds. </p><p>TODO: decide if we want to have an inactive field for clients</p><p>so that we don't need to delete cleints completely.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>client_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>abbreviation</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>email</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>address</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>postal_code</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>phone_number</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.ClientFilter">ClientFilter</h3>
+        <p>Filter the types of clients to be returned.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.ClientFilter.Field">ClientFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>comparisons</td>
+                  <td><a href="#operations_ecosys.Filter">Filter</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.ClientQuery">ClientQuery</h3>
+        <p>Get specific types clients as specified in the Filter. </p><p>If one wants to get all objects, leave filters empty. </p><p>A default limit of 10 will be used if the field is empty.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>filters</td>
+                  <td><a href="#operations_ecosys.ClientFilter">ClientFilter</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>limit</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Limit the number of objects being returned. 
+If only 5 objects should be shown, limit = 5; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>skip</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Skip n rows from the database </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderByClient">OrderByClient</a></td>
+                  <td></td>
+                  <td><p>Order the queries, by default the order is desc by creation date </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.ClientResponse">ClientResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>response</td>
+                  <td><a href="#operations_ecosys.Response">Response</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>client</td>
+                  <td><a href="#operations_ecosys.Client">Client</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.EmployeeEvaluation">EmployeeEvaluation</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>employee</td>
+                  <td><a href="#operations_ecosys.User">User</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>employee_score</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_available</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>This is used if it is needed to determine 
+if the employee is available within a previously 
+specified time. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.EmployeeEvaluationResponse">EmployeeEvaluationResponse</h3>
+        <p>ROSTERING EMPLOYEE EVALUATION MESSAGES                    *</p><p>**************************************************************************</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>response</td>
+                  <td><a href="#operations_ecosys.Response">Response</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>employee</td>
+                  <td><a href="#operations_ecosys.EmployeeEvaluation">EmployeeEvaluation</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.Filter">Filter</h3>
+        <p>This is used to indicate what kind of objects should be returned that</p><p>fit this critera. </p><p>For example, if one wishes to get all broadcasts that have more than </p><p>one recipient. They might put the comparison as GREATER, value = 1;</p><p>The field to be compared with is in the corresponding XXXFilter message.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>comparison</td>
+                  <td><a href="#operations_ecosys.Filter.Comparisons">Filter.Comparisons</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.OrderByBroadcast">OrderByBroadcast</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.BroadcastFilter.Field">BroadcastFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderBy">OrderBy</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.OrderByClient">OrderByClient</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.ClientFilter.Field">ClientFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderBy">OrderBy</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.OrderByQuery">OrderByQuery</h3>
+        <p>TODO change name</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.AvailabilityFilter.Field">AvailabilityFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderBy">OrderBy</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.OrderByRoster">OrderByRoster</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.RosterFilter.Field">RosterFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderBy">OrderBy</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.OrderByUser">OrderByUser</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.UserFilter.Field">UserFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderBy">OrderBy</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.Response">Response</h3>
+        <p>Generic reponses to add or update requests</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#operations_ecosys.Response.Type">Response.Type</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>error_message</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>primary_key</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Return any pk of the row that the query modified </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.Roster">Roster</h3>
+        <p>The default fields of a roster</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>rostering_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Roster IDs are only useful for the backend database. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>aifs_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>start_time</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Format must be in: YYYY-MM-DD HH:MM:SS </p></td>
+                </tr>
+              
+                <tr>
+                  <td>end_time</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>clients</td>
+                  <td><a href="#operations_ecosys.AIFSClientRoster">AIFSClientRoster</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>guard_assigned</td>
+                  <td><a href="#operations_ecosys.RosterAssignement">RosterAssignement</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#operations_ecosys.Roster.Status">Roster.Status</a></td>
+                  <td></td>
+                  <td><p>The roster is not actually in the database </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.RosterAssignement">RosterAssignement</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>roster_assignment_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>guard_assigned</td>
+                  <td><a href="#operations_ecosys.EmployeeEvaluation">EmployeeEvaluation</a></td>
+                  <td></td>
+                  <td><p>The whole user fields does not need to be filled, 
+as long as the user is identifiable. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>custom_start_time</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>custom_end_time</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>confirmed</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>attended</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>attendance_time</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_assigned</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>If the assignment is part of the current assignment
+or if it was previously assigned and is now removed </p></td>
+                </tr>
+              
+                <tr>
+                  <td>rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.RosterAssignmentResponse">RosterAssignmentResponse</h3>
+        <p>Passing around multiple roster assignments in one message.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>response</td>
+                  <td><a href="#operations_ecosys.Response">Response</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>roster_assignment</td>
+                  <td><a href="#operations_ecosys.RosterAssignement">RosterAssignement</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.RosterFilter">RosterFilter</h3>
+        <p>Filter the types of rosters to be returned.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.RosterFilter.Field">RosterFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>comparisons</td>
+                  <td><a href="#operations_ecosys.Filter">Filter</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.RosterQuery">RosterQuery</h3>
+        <p>Get specific types rosters as specified in the Filter. </p><p>If one wants to get all objects, leave filters empty. </p><p>A default limit of 10 will be used if the field is empty.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>filters</td>
+                  <td><a href="#operations_ecosys.RosterFilter">RosterFilter</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>limit</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Limit the number of objects being returned. 
+If only 5 objects should be shown, limit = 5; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>skip</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Skip n rows from the database </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderByRoster">OrderByRoster</a></td>
+                  <td></td>
+                  <td><p>Order the queries, by default the order is desc by creation date </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.RosterResponse">RosterResponse</h3>
+        <p>Passing around multiple roster in one message.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>response</td>
+                  <td><a href="#operations_ecosys.Response">Response</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>roster</td>
+                  <td><a href="#operations_ecosys.Roster">Roster</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.User">User</h3>
+        <p>All users who use the operations ecosystem.</p><p>TODO: decide if we want to have an inactive field for users</p><p>so that we don't need to delete users completely.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_type</td>
+                  <td><a href="#operations_ecosys.User.UserType">User.UserType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>email</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>phone_number</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>telegram_handle</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_security_img</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_part_timer</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tele_chat_id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.UserFilter">UserFilter</h3>
+        <p>Filter the types of users to be returned.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>field</td>
+                  <td><a href="#operations_ecosys.UserFilter.Field">UserFilter.Field</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>comparisons</td>
+                  <td><a href="#operations_ecosys.Filter">Filter</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.UserQuery">UserQuery</h3>
+        <p>Get specific types users as specified in the Filter. </p><p>If one wants to get all objects, leave filters empty. </p><p>A default limit of 10 will be used if the field is empty.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>filters</td>
+                  <td><a href="#operations_ecosys.UserFilter">UserFilter</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>limit</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Limit the number of objects being returned. 
+If only 5 objects should be shown, limit = 5; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>skip</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Skip n rows from the database </p></td>
+                </tr>
+              
+                <tr>
+                  <td>order_by</td>
+                  <td><a href="#operations_ecosys.OrderByUser">OrderByUser</a></td>
+                  <td></td>
+                  <td><p>Order the queries, by default the order is desc by creation date </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="operations_ecosys.UsersResponse">UsersResponse</h3>
+        <p>Passing around multiple users in one message.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>response</td>
+                  <td><a href="#operations_ecosys.Response">Response</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user</td>
+                  <td><a href="#operations_ecosys.User">User</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="operations_ecosys.AvailabilityFilter.Field">AvailabilityFilter.Field</h3>
+        <p>More fields can be added in the future.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>AVAILABILITY_ID</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>WEEK</td>
+                <td>1</td>
+                <td><p>Week of the year</p></td>
+              </tr>
+            
+              <tr>
+                <td>YEAR</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GUARD_ID</td>
+                <td>3</td>
+                <td><p>Note: single user ID</p></td>
+              </tr>
+            
+              <tr>
+                <td>SUN</td>
+                <td>4</td>
+                <td><p>Day of the week to look at
+The values for these fields in Filter comparisons
+should be an empty string</p></td>
+              </tr>
+            
+              <tr>
+                <td>MON</td>
+                <td>5</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>TUES</td>
+                <td>6</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>WED</td>
+                <td>7</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>THURS</td>
+                <td>8</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FRI</td>
+                <td>9</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SAT</td>
+                <td>10</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>NEXT_SUN</td>
+                <td>11</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.Broadcast.BroadcastType">Broadcast.BroadcastType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ANNOUNCEMENT</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ASSIGNMENT</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.Broadcast.UrgencyType">Broadcast.UrgencyType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>LOW</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>MEDIUM</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>HIGH</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.BroadcastFilter.Field">BroadcastFilter.Field</h3>
+        <p>More fields can be added in the future.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>BROADCAST_ID</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>TYPE</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CONTENT</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CREATION_DATE</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DEADLINE</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CREATOR_ID</td>
+                <td>5</td>
+                <td><p>Creator and recipient values should 
+be the user id of these users</p></td>
+              </tr>
+            
+              <tr>
+                <td>RECEIPEIENT_ID</td>
+                <td>6</td>
+                <td><p>Note: Single recipient</p></td>
+              </tr>
+            
+              <tr>
+                <td>NUM_RECEIPIENTS</td>
+                <td>7</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>URGENCY</td>
+                <td>8</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>AIFS_ID</td>
+                <td>9</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>BROADCAST_RECIPIENT_TABLE_ID</td>
+                <td>10</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.ClientFilter.Field">ClientFilter.Field</h3>
+        <p>More fields can be added in the future.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>CLIENT_ID</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.Filter.Comparisons">Filter.Comparisons</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>GREATER</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GREATER_EQ</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>EQUAL</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>LESSER_EQ</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>LESSER</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CONTAINS</td>
+                <td>5</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>IN</td>
+                <td>6</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>NOT_IN</td>
+                <td>7</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.OrderBy">OrderBy</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ASC</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DESC</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.Response.Type">Response.Type</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ACK</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ERROR</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.Roster.Status">Roster.Status</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>IS_DEFAULT</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>PENDING</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CONFIRMED</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REJECTED</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.RosterFilter.Field">RosterFilter.Field</h3>
+        <p>More fields can be added in the future.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ROSTER_ID</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ROSTER_ASSIGNMENT_ID</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ROSTER_AIFS_CLIENT_ID</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>AIFS_ID</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GUARD_ASSIGNED_ID</td>
+                <td>4</td>
+                <td><p>Note: single user ID</p></td>
+              </tr>
+            
+              <tr>
+                <td>CLIENT_ID</td>
+                <td>5</td>
+                <td><p>Note: single client ID</p></td>
+              </tr>
+            
+              <tr>
+                <td>GUARD_ASSIGNMENT_CONFIRMATION</td>
+                <td>6</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GUARD_ASSIGNMENT_ATTENDED</td>
+                <td>7</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>START_TIME</td>
+                <td>8</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>END_TIME</td>
+                <td>9</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>IS_ASSIGNED</td>
+                <td>10</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DEFAULT_ROSTERING_DAY_OF_WEEK</td>
+                <td>11</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GUARD_ASSIGNMENT_REJECTION</td>
+                <td>12</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.User.UserType">User.UserType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ISPECIALIST</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SECURITY_GUARD</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CONTROLLER</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>MANAGER</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="operations_ecosys.UserFilter.Field">UserFilter.Field</h3>
+        <p>More fields can be added in the future.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>USER_ID</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>TYPE</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>NAME</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>EMAIL</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>PHONE_NUMBER</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>TELEGRAM_HANDLE</td>
+                <td>5</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>IS_PART_TIMER</td>
+                <td>6</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+        <h3 id="operations_ecosys.AdminServices">AdminServices</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>AddUser</td>
+                <td><a href="#operations_ecosys.User">User</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p>User</p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateUser</td>
+                <td><a href="#operations_ecosys.User">User</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteUser</td>
+                <td><a href="#operations_ecosys.User">User</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FindUsers</td>
+                <td><a href="#operations_ecosys.UserQuery">UserQuery</a></td>
+                <td><a href="#operations_ecosys.UsersResponse">UsersResponse</a> stream</td>
+                <td><p>TODO change user response to have user scoring and stuff</p></td>
+              </tr>
+            
+              <tr>
+                <td>AddClient</td>
+                <td><a href="#operations_ecosys.Client">Client</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p>Client</p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateClient</td>
+                <td><a href="#operations_ecosys.Client">Client</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteClient</td>
+                <td><a href="#operations_ecosys.Client">Client</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FindClients</td>
+                <td><a href="#operations_ecosys.ClientQuery">ClientQuery</a></td>
+                <td><a href="#operations_ecosys.ClientResponse">ClientResponse</a> stream</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+        <h3 id="operations_ecosys.BroadcastServices">BroadcastServices</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>AddBroadcast</td>
+                <td><a href="#operations_ecosys.Broadcast">Broadcast</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateBroadcast</td>
+                <td><a href="#operations_ecosys.Broadcast">Broadcast</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p>Note that this update does not update the broadcast&#39;s recipient&#39;s inner status 
+such as the acknowledgement or rejection status but only if the recipient 
+is part of the broadcast.</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteBroadcast</td>
+                <td><a href="#operations_ecosys.Broadcast">Broadcast</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FindBroadcasts</td>
+                <td><a href="#operations_ecosys.BroadcastQuery">BroadcastQuery</a></td>
+                <td><a href="#operations_ecosys.BroadcastResponse">BroadcastResponse</a> stream</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateBroadcastRecipient</td>
+                <td><a href="#operations_ecosys.BroadcastRecipient">BroadcastRecipient</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p>Updating of broadcast recipients</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+        <h3 id="operations_ecosys.RosterServices">RosterServices</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>AddRoster</td>
+                <td><a href="#operations_ecosys.BulkRosters">BulkRosters</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p>Add multiple rosters for different AIFS at the same time</p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateRoster</td>
+                <td><a href="#operations_ecosys.BulkRosters">BulkRosters</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p>Note that this update does not update the roster&#39;s guard&#39;s inner status 
+such as the acknowledgement or attended status but only if the guard 
+is part of the roster.</p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteRoster</td>
+                <td><a href="#operations_ecosys.Roster">Roster</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FindRosters</td>
+                <td><a href="#operations_ecosys.RosterQuery">RosterQuery</a></td>
+                <td><a href="#operations_ecosys.RosterResponse">RosterResponse</a> stream</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GetAvailableUsers</td>
+                <td><a href="#operations_ecosys.AvailabilityQuery">AvailabilityQuery</a></td>
+                <td><a href="#operations_ecosys.EmployeeEvaluationResponse">EmployeeEvaluationResponse</a> stream</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FindRosterAssignments</td>
+                <td><a href="#operations_ecosys.RosterQuery">RosterQuery</a></td>
+                <td><a href="#operations_ecosys.RosterAssignmentResponse">RosterAssignmentResponse</a> stream</td>
+                <td><p>Specifically for the roster assignments</p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateRosterAssignment</td>
+                <td><a href="#operations_ecosys.RosterAssignement">RosterAssignement</a></td>
+                <td><a href="#operations_ecosys.Response">Response</a></td>
+                <td><p>Updates the individual roster assignment</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
+      </thead>
+      <tbody>
+        
+          <tr id="double">
+            <td>double</td>
+            <td></td>
+            <td>double</td>
+            <td>double</td>
+            <td>float</td>
+            <td>float64</td>
+            <td>double</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="float">
+            <td>float</td>
+            <td></td>
+            <td>float</td>
+            <td>float</td>
+            <td>float</td>
+            <td>float32</td>
+            <td>float</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="int32">
+            <td>int32</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="int64">
+            <td>int64</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="uint32">
+            <td>uint32</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int/long</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="uint64">
+            <td>uint64</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint32">
+            <td>sint32</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint64">
+            <td>sint64</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="fixed32">
+            <td>fixed32</td>
+            <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="fixed64">
+            <td>fixed64</td>
+            <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="sfixed32">
+            <td>sfixed32</td>
+            <td>Always four bytes.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sfixed64">
+            <td>sfixed64</td>
+            <td>Always eight bytes.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="bool">
+            <td>bool</td>
+            <td></td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>boolean</td>
+            <td>bool</td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>TrueClass/FalseClass</td>
+          </tr>
+        
+          <tr id="string">
+            <td>string</td>
+            <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+            <td>string</td>
+            <td>String</td>
+            <td>str/unicode</td>
+            <td>string</td>
+            <td>string</td>
+            <td>string</td>
+            <td>String (UTF-8)</td>
+          </tr>
+        
+          <tr id="bytes">
+            <td>bytes</td>
+            <td>May contain any arbitrary sequence of bytes.</td>
+            <td>string</td>
+            <td>ByteString</td>
+            <td>str</td>
+            <td>[]byte</td>
+            <td>ByteString</td>
+            <td>string</td>
+            <td>String (ASCII-8BIT)</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </body>
+</html>
+
