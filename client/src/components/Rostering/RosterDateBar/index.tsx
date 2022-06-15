@@ -1,7 +1,7 @@
 import { ActionIcon, Button, Group } from "@mantine/core";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
-import { ChevronLeft, ChevronRight, Send } from "tabler-icons-react";
+import { ChevronLeft, ChevronRight, Refresh, Send } from "tabler-icons-react";
 import getOverallRosterStatus from "../../../helpers/getOverallRosterStatus";
 import {
   submitNewRoster,
@@ -21,6 +21,7 @@ export default function RosterDateBar() {
     rosterBaskets,
     publishDisabled,
     setPublishDisabled,
+    refreshState,
   } = useRostering();
 
   const handleLeftClick = () => {
@@ -95,6 +96,9 @@ export default function RosterDateBar() {
       >
         Publish
       </Button>
+      <ActionIcon onClick={()=>refreshState && refreshState()}>
+          <Refresh size={16} />
+      </ActionIcon>
     </Group>
   );
 }

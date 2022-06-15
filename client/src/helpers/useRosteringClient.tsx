@@ -31,6 +31,7 @@ import {
 
 interface RosteringContextInterface {
   rosterBaskets: Roster.AsObject[];
+  refreshState?():void;
   rosterDates: Date[];
   setRosterDates?: Dispatch<Date[]>;
   offset: number;
@@ -165,10 +166,13 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     updateRosterDates();
   }, [offset]);
 
-  useEffect(() => {
+  const refreshState = () => {
     resetStates(formatSelectedDateForState(selectedDate));
     updateRosterBaskets();
     getAvailableGuards();
+  }
+  useEffect(() => {
+    refreshState()
   }, [selectedDate]);
 
   // useEffect(() => {
@@ -189,6 +193,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
         setGuardsAssigned,
         publishDisabled,
         setPublishDisabled,
+        refreshState,
       }}
     >
       {children}

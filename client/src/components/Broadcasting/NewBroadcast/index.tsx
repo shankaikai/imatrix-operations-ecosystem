@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import React, { Dispatch, useState } from "react";
 import { Send } from "tabler-icons-react";
-import { submitNewBroadcast } from "../../../helpers/useBroadcastClient";
+import { submitNewBroadcast, useBroadcast } from "../../../helpers/useBroadcastClient";
 import CustomRecipientsBadge from "./CustomRecipientsBadge";
 import CustomUrgencyBadge from "./CustomUrgencyBadge";
 
@@ -31,13 +31,16 @@ export default function NewBroadcast({ setModelOpen }: NewBroadcastProps) {
   const [urgency, setUrgency] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
-  const handleSubmit = async () => {
-    console.log("Submitting new broadcast");
+  const {setBroadcasts} = useBroadcast();
 
+  const handleSubmit = async () => {
+
+    setBroadcasts &&
     await submitNewBroadcast({
       recipient,
       urgency,
       message,
+      setBroadcasts
     });
 
     // TODO: Loading overlay before closing modal

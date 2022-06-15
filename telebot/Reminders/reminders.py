@@ -2,7 +2,7 @@ from telegram.ext import Updater, CallbackContext
 from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Update, ParseMode, Message
 
 # Timings
-BROADCAST_REMINDER_SECONDS = 30
+BROADCAST_REMINDER_SECONDS = 5
 ROSTER_REMINDER_SECONDS = 5# TODO 30
 
 # Job context keys

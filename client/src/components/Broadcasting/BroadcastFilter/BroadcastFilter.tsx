@@ -1,6 +1,6 @@
-import { Button, Group, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Group, Select, Text, TextInput } from "@mantine/core";
 import React, { Dispatch } from "react";
-import { Plus, Search } from "tabler-icons-react";
+import { Plus, Search, Refresh } from "tabler-icons-react";
 import { useBroadcast } from "../../../helpers/useBroadcastClient";
 
 interface BroadcastFilterProps {
@@ -17,6 +17,8 @@ export default function BroadcastFilter({
     setSelectValue,
     filterValue,
     setFilterValue,
+    updateBroadcasts,
+    setBroadcasts
   } = useBroadcast();
 
   const handleNewClick = () => {
@@ -94,6 +96,11 @@ export default function BroadcastFilter({
             width: "100px",
           }}
         />
+      </Group>
+      <Group>
+        <ActionIcon onClick={()=>{(updateBroadcasts && setBroadcasts) && updateBroadcasts(0, setBroadcasts , true)}}>
+          <Refresh size={14} />
+        </ActionIcon>
       </Group>
     </Group>
   );

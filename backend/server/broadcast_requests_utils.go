@@ -108,13 +108,10 @@ func (s *Server) notifyAIFSofNewBroadcast(broadcast *pb.Broadcast) {
 }
 
 func (s *Server) notifyAIFSofBroadcastAck(broadcastRecipient *pb.BroadcastRecipient) {
-	switch broadcastRecipient.AifsId {
-	case TEST_BROADCAST_LED_AIFS_ID:
-		resp, err := http.Get(fmt.Sprintf("%s/%s", *s.testLEDAddr, AIFS_LED_BROADCAST_URGENT_URI))
-		if err != nil {
-			fmt.Println("notifyAIFSofBroadcastAck ERROR:", err)
-		}
-
-		fmt.Println("notifyAIFSofBroadcastAck RESPONSE:", resp)
+	resp, err := http.Get(fmt.Sprintf("%s/%s", *s.testLEDAddr, AIFS_LED_DEFAULT_URI))
+	if err != nil {
+		fmt.Println("notifyAIFSofBroadcastAck ERROR:", err)
 	}
+
+	fmt.Println("notifyAIFSofBroadcastAck RESPONSE:", resp)
 }
