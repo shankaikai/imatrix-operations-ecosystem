@@ -32,6 +32,9 @@ func (s *Server) GetAvailableIspecialistsWithScore(query *pb.AvailabilityQuery) 
 
 	// First get all users who are not yet assigned
 	unassignedUsers, err := s.getUnassignedIspecialists(query)
+
+	// TODO
+	fmt.Println("available", unassignedUsers)
 	if err != nil {
 		fmt.Println("getUnassignedIspecialists err here", err)
 		return availEmployeeEvals, unavailEmployeeEvals, err
@@ -66,6 +69,9 @@ func (s *Server) getUnassignedIspecialists(query *pb.AvailabilityQuery) ([]*pb.U
 	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_START_TIME, pb.Filter_GREATER_EQ, query.StartTime)
 	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_END_TIME, pb.Filter_LESSER_EQ, query.EndTime)
 	rosterAssignements, err := db_pck.GetRosterAssingments(s.db, rosterAssignmentQuery, -1)
+
+	//TODO
+	fmt.Println("already assigned", rosterAssignements)
 
 	if err != nil {
 		return unassignedUsers, err

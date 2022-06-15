@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strconv"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
@@ -45,6 +46,7 @@ func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Re
 }
 
 func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
+	fmt.Println("UPDATE ROSTER SEARCH HERE", rosters.Rosters[0].RosteringId)
 	res := pb.Response{Type: pb.Response_ACK}
 	for _, roster := range rosters.Rosters {
 
@@ -190,10 +192,12 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 
 func (s *Server) UpdateRosterAssignment(cxt context.Context, RosterAssignement *pb.RosterAssignement) (*pb.Response, error) {
 	res := pb.Response{Type: pb.Response_ACK}
-
+	query := &pb.RosterQuery{}
+	db_pck.AddRosterFilter(query, pb.RosterFilter_ROSTER_ASSIGNMENT_ID, pb.Filter_EQUAL, strconv.Itoa(int(RosterAssignement.RosterAssignmentId)))
 	numAffected, err := db_pck.UpdateRosterAssignments(
 		s.db,
 		RosterAssignement,
+		query,
 	)
 
 	if err != nil {

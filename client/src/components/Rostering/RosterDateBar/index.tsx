@@ -40,13 +40,14 @@ export default function RosterDateBar() {
     if (getOverallRosterStatus(rosterBaskets) === Roster.Status.REJECTED) {
       selectedDate &&
         setPublishDisabled &&
-        submitUpdateRoster(guardsAssigned, selectedDate, setPublishDisabled);
-    }
+        submitUpdateRoster(guardsAssigned, selectedDate, setPublishDisabled, rosterBaskets);
+      }
     if (getOverallRosterStatus(rosterBaskets) === Roster.Status.IS_DEFAULT) {
       selectedDate &&
         setPublishDisabled &&
         submitNewRoster(guardsAssigned, selectedDate, setPublishDisabled);
     }
+  
   };
 
   useEffect(() => {
