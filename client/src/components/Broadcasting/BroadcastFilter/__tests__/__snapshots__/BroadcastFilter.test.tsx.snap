@@ -7,6 +7,7 @@ exports[`BroadcastFilter matches snapshot 1`] = `
   >
     <button
       class="mantine-Button-filled mantine-Button-root mantine-Group-child mantine-2phkfh"
+      data-testid="newBroadcastButton"
       type="button"
     >
       <div
@@ -62,10 +63,10 @@ exports[`BroadcastFilter matches snapshot 1`] = `
         Sort by:
       </div>
       <div
-        class="mantine-Select-root mantine-Group-child mantine-1rilmrs"
+        class="mantine-Select-root mantine-Group-child mantine-1k2zk11"
       >
         <div
-          aria-controls="mantine-8x0csukb0"
+          aria-controls="mantine-xfwph5ngo"
           aria-expanded="false"
           aria-haspopup="listbox"
           role="combobox"
@@ -84,10 +85,11 @@ exports[`BroadcastFilter matches snapshot 1`] = `
               autocomplete="nope"
               class="mantine-Select-unstyledVariant mantine-Select-input mantine-bxo24b"
               data-mantine-stop-propagation="false"
-              id="mantine-8x0csukb0"
+              data-testid="sortBy"
+              id="mantine-xfwph5ngo"
               readonly=""
               type="text"
-              value="Lastest First"
+              value="Latest First"
             />
             <div
               class="mantine-bl0c8b mantine-Select-rightSection"
@@ -122,10 +124,10 @@ exports[`BroadcastFilter matches snapshot 1`] = `
         Filter by:
       </div>
       <div
-        class="mantine-Select-root mantine-Group-child mantine-1rilmrs"
+        class="mantine-Select-root mantine-Group-child mantine-1k2zk11"
       >
         <div
-          aria-controls="mantine-lxy6tcdv8"
+          aria-controls="mantine-cr0ru0ol9"
           aria-expanded="false"
           aria-haspopup="listbox"
           role="combobox"
@@ -144,7 +146,8 @@ exports[`BroadcastFilter matches snapshot 1`] = `
               autocomplete="nope"
               class="mantine-Select-unstyledVariant mantine-Select-input mantine-bxo24b"
               data-mantine-stop-propagation="false"
-              id="mantine-lxy6tcdv8"
+              data-testid="filterBy"
+              id="mantine-cr0ru0ol9"
               readonly=""
               type="text"
               value="All"
@@ -172,6 +175,39 @@ exports[`BroadcastFilter matches snapshot 1`] = `
           </div>
         </div>
       </div>
+    </div>
+    <div
+      class="mantine-Group-root mantine-Group-child mantine-zah578"
+    >
+      <button
+        class="mantine-ActionIcon-hover mantine-ActionIcon-root mantine-Group-child mantine-1r9bacs"
+        type="button"
+      >
+        <svg
+          class="icon icon-tabler icon-tabler-refresh"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+            stroke="none"
+          />
+          <path
+            d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"
+          />
+          <path
+            d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"
+          />
+        </svg>
+      </button>
     </div>
   </div>
 </div>
