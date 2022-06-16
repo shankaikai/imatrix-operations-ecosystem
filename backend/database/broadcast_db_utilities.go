@@ -444,7 +444,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 // list that is needed. Ie, it inserts and deletes recipients at will.
 func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.BroadcastQuery, dbLock *sync.Mutex) error {
 	// Get all recipients
-	currentRecipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
+	currentRecipients, err := GetBroadcastRecipients(db, query, -1)
 	if err != nil {
 		fmt.Println("updateRecipientsOfBroadcast ERROR::", err)
 		return err
@@ -500,7 +500,7 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 	fmt.Println("Deleting Recipients IDs:", currentRecIds)
 	// See if any need to be deleted
 	for _, id := range currentRecIds {
-		_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{BroadcastRecipientsId: int64(id)})
+		_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{BroadcastRecipientsId: int64(id), Recipient: &pb.User{UserId: int64(id)}})
 		if err != nil {
 			fmt.Println("UpdateBroadcast ERROR::", err)
 			return err

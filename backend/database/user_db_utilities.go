@@ -241,7 +241,7 @@ func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
 
 	user := &pb.User{}
 
-	if err == nil {
+	if err == nil && len(users) > 0 {
 		user = users[0]
 	}
 
