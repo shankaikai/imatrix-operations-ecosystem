@@ -27,7 +27,7 @@ interface BroadcastContextInterface {
   setSelectValue?: Dispatch<string>;
   filterValue: string;
   setFilterValue?: Dispatch<string>;
-  updateBroadcasts?: () => void;
+  updateBroadcasts?: (skip: number, setBroadcasts: Dispatch<Broadcast[]>, clear?:boolean) => void;
 }
 
 const BroadcastContext = createContext<BroadcastContextInterface>({
@@ -41,30 +41,37 @@ interface BroadcastProviderProps {
   children: JSX.Element | JSX.Element[];
 }
 
+const updateBroadcasts = (skip: number, setBroadcasts: Dispatch<Broadcast[]>, clear?: boolean) => {
+  console.log("updateBroadcasts called");
+
+  //@ts-ignore
+  clear && setBroadcasts(() => []);
+
+  const client = getBroadcastClient();
+
+  const query = new BroadcastQuery();
+  query.setSkip(skip);
+
+  const stream = client.findBroadcasts(query);
+
+  // On every data received, add it to the state
+  stream.on("data", (response: BroadcastResponse) => {
+    //@ts-ignore
+    setBroadcasts((oldState) => [...oldState, response.getBroadcast()!]);
+  });
+};
+
 export function BroadcastProvider({ children }: BroadcastProviderProps) {
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
   const [search, setSearch] = useState("");
   const [selectValue, setSelectValue] = useState("latest");
   const [filterValue, setFilterValue] = useState("all");
 
-  const updateBroadcasts = () => {
-    console.log("updateBroadcasts called");
-    const client = getBroadcastClient();
-
-    const query = new BroadcastQuery();
-    query.setSkip(broadcasts.length);
-
-    const stream = client.findBroadcasts(query);
-
-    // On every data received, add it to the state
-    stream.on("data", (response: BroadcastResponse) => {
-      setBroadcasts((oldState) => [...oldState, response.getBroadcast()!]);
-    });
-  };
+  
 
   // Call once when first render
   useEffect(() => {
-    updateBroadcasts();
+    updateBroadcasts(broadcasts.length, setBroadcasts);
   }, []);
 
   return (
@@ -99,10 +106,12 @@ export async function submitNewBroadcast({
   recipient,
   urgency,
   message,
+  setBroadcasts
 }: {
   recipient: string[];
   urgency: string;
   message: string;
+  setBroadcasts: Dispatch<Broadcast[]>
 }) {
   const client = getBroadcastClient();
 
@@ -139,7 +148,7 @@ export async function submitNewBroadcast({
   console.log(recipientList);
   // TODO: Discuss recipient logic
   broadcast.setRecipientsList(recipientList);
-  broadcast.setUrgency(urgencyMap[urgency[0]]);
+  broadcast.setUrgency(urgencyMap[urgency]);
   broadcast.setContent(message);
   broadcast.setType(Broadcast.BroadcastType.ANNOUNCEMENT);
   // TODO: Change to user context
@@ -153,7 +162,7 @@ export async function submitNewBroadcast({
     .addBroadcast(broadcast, {})
     .then((response) => {
       showBroadcastSuccessNotification();
-      console.log(response);
+      updateBroadcasts(0, setBroadcasts, true)
     })
     .catch((error) => {
       // TODO: Error toast

@@ -443,12 +443,13 @@ func UpdateRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex) (int64, []i
 // This function assumes that the roster recipient id is correct.
 // Returns the number of rows affected and any errors.
 // In this case, number of rows affected is either 0 or 1.
-func UpdateRosterAssignments(db *sql.DB, rosterAssignment *pb.RosterAssignement) (int64, error) {
+func UpdateRosterAssignments(db *sql.DB, rosterAssignment *pb.RosterAssignement, query *pb.RosterQuery) (int64, error) {
 	newFields := getFilledRosterASGNFields(rosterAssignment)
-	filters := getRosterIdFormattedFilter(
-		int(rosterAssignment.RosterAssignmentId),
-		ROSTER_ASSIGNMENT_DB_TABLE_NAME, false,
-	)
+	filters := getFormattedRosterFilters(query, ROSTER_ASSIGNMENT_DB_TABLE_NAME, false, false)
+	// filters := getRosterIdFormattedFilter(
+	// 	int(rosterAssignment.RosterAssignmentId),
+	// 	ROSTER_ASSIGNMENT_DB_TABLE_NAME, false,
+	// )
 
 	rowsAffected, err := Update(db, ROSTER_ASSIGNMENT_DB_TABLE_NAME, newFields, filters)
 
