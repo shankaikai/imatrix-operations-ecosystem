@@ -240,8 +240,8 @@ func DeleteBroadcast(db *sql.DB, broadcast *pb.Broadcast) (int64, error) {
 }
 
 // Delete a particular broadcast recipient
-func DeleteBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecipient) (int64, error) {
-	filters := fmt.Sprintf("WHERE %s=%d", BC_REC_DB_ID, broadcastRecipient.BroadcastRecipientsId)
+func DeleteBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecipient, query *pb.BroadcastQuery) (int64, error) {
+	filters := getFormattedBroadcastFilters(query, BROADCAST_RECIPIENT_TABLE_NAME, false, false)
 
 	rowsAffected, err := Delete(db, BROADCAST_RECIPIENT_TABLE_NAME, filters)
 	return rowsAffected, err

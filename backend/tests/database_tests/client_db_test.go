@@ -210,3 +210,10 @@ func createFakeClient(id int) *pb.Client {
 		PhoneNumber:  TEST_CLIENT_PHONE,
 	}
 }
+
+func getSingleClientDbRow(id int) *sqlmock.Rows {
+	return sqlmock.NewRows([]string{"client_id", "name", "abbreviation", "email", "address", "postal", "phone_number"}).
+		AddRow(id, TEST_CLIENT_NAME, TEST_CLIENT_ABBR,
+			TEST_CLIENT_EMAIL, TEST_CLIENT_ADDR, TEST_CLIENT_POSTAL, TEST_CLIENT_PHONE,
+		)
+}

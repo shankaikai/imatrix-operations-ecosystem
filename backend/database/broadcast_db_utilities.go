@@ -500,7 +500,13 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 	fmt.Println("Deleting Recipients IDs:", currentRecIds)
 	// See if any need to be deleted
 	for _, id := range currentRecIds {
-		_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{BroadcastRecipientsId: int64(id), Recipient: &pb.User{UserId: int64(id)}})
+		query := &pb.BroadcastQuery{}
+		AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
+		AddBroadcastFilter(query, pb.BroadcastFilter_RECEIPEIENT_ID, pb.Filter_EQUAL, strconv.Itoa(id))
+		_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{
+			BroadcastRecipientsId: int64(id),
+			Recipient:             &pb.User{UserId: int64(id)},
+		}, query)
 		if err != nil {
 			fmt.Println("UpdateBroadcast ERROR::", err)
 			return err

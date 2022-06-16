@@ -368,12 +368,13 @@ func TestUpdateBroadcastNotRecipients(t *testing.T) {
 	assert.Equal(t, 1, int(numRows), "The number of rows updated 1")
 }
 
-// TODO:
-// func UpdateBroadcast(db *sql.DB, broadcast *pb.Broadcast, dbLock *sync.Mutex) (int64, error) {
-// 			add users and delete users
-
 func TestUpdateBroadcastChangeRecipients(t *testing.T) {
-	broadcast := createFakeBroadcast(1, true, 2)
+	broadcast := &pb.Broadcast{BroadcastId: 1, Recipients: make([]*pb.AIFSBroadcastRecipient, 0)}
+	broadcast.Recipients = append(broadcast.Recipients, &pb.AIFSBroadcastRecipient{Recipient: make([]*pb.BroadcastRecipient, 0)})
+	broadcast.Recipients = append(broadcast.Recipients, &pb.AIFSBroadcastRecipient{Recipient: make([]*pb.BroadcastRecipient, 0)})
+	broadcast.Recipients[0].Recipient = append(broadcast.Recipients[0].Recipient, &pb.BroadcastRecipient{Recipient: createFakeUser(1)})
+	broadcast.Recipients[1].Recipient = append(broadcast.Recipients[1].Recipient, &pb.BroadcastRecipient{Recipient: createFakeUser(2)})
+
 	t.Log("created", broadcast)
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -391,9 +392,7 @@ func TestUpdateBroadcastChangeRecipients(t *testing.T) {
 	mock.ExpectQuery("SELECT \\* FROM user WHERE user_id =").WillReturnRows(getSingleUserDbRow(3))
 	mock.ExpectExec("INSERT INTO broadcast_recepients.*VALUES \\(1,1").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectExec("INSERT INTO broadcast_recepients.*VALUES \\(1,2").WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("DELETE FROM broadcast_recepients WHERE broadcast_recipients_id=1").WillReturnResult(sqlmock.NewResult(1, 1))
-
-	mock.ExpectExec("UPDATE broadcast SET .*content=.*WHERE broadcast_id = '1'").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("DELETE FROM broadcast_recepients WHERE related_broadcast = '1' AND recipient = '3'").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	numRows, err := db_pck.UpdateBroadcast(db, broadcast, &sync.Mutex{})
 
@@ -475,9 +474,12 @@ func TestDeleteBroadcastRecipient(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectExec("DELETE FROM broadcast_recepients WHERE broadcast_recipients_id=1").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("DELETE FROM broadcast_recepients WHERE broadcast_recipients_id = '1'").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	numRows, err := db_pck.DeleteBroadcastRecipients(db, broadcast)
+	query := &pb.BroadcastQuery{}
+	db_pck.AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_RECIPIENT_TABLE_ID, pb.Filter_EQUAL, "1")
+
+	numRows, err := db_pck.DeleteBroadcastRecipients(db, broadcast, query)
 
 	if err != nil {
 		t.Errorf("error was not expected while deleting broadcast: %s", err)
@@ -493,16 +495,16 @@ func TestDeleteBroadcastRecipient(t *testing.T) {
 
 // Add new broadcast filters from empty query
 func TestAddBroadcastFilterEmpty(t *testing.T) {
-	expectedQuery := &pb.UserQuery{Filters: make([]*pb.UserFilter, 0)}
-	expectedQuery.Filters = append(expectedQuery.Filters, &pb.UserFilter{
-		Field: pb.UserFilter_USER_ID,
+	expectedQuery := &pb.BroadcastQuery{Filters: make([]*pb.BroadcastFilter, 0)}
+	expectedQuery.Filters = append(expectedQuery.Filters, &pb.BroadcastFilter{
+		Field: pb.BroadcastFilter_BROADCAST_ID,
 		Comparisons: &pb.Filter{
 			Value: "1", Comparison: pb.Filter_EQUAL,
 		},
 	})
 
-	inputQuery := &pb.UserQuery{}
-	db_pck.AddUserFilter(inputQuery, pb.UserFilter_USER_ID, pb.Filter_EQUAL, "1")
+	inputQuery := &pb.BroadcastQuery{}
+	db_pck.AddBroadcastFilter(inputQuery, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, "1")
 	// Check if the filter is added correctly
 	assert.Equal(t, 1, len(inputQuery.Filters), "The number of filters expected is not correct")
 	assert.Equal(t, true, proto.Equal(inputQuery, expectedQuery), "The query is not equal to the expected.")
@@ -511,29 +513,28 @@ func TestAddBroadcastFilterEmpty(t *testing.T) {
 
 // Add new broadcast filters from query that already has something
 func TestAddBroadcastFilterAlreadyContains(t *testing.T) {
-	expectedQuery := &pb.UserQuery{Filters: make([]*pb.UserFilter, 0), Limit: 7}
-	expectedQuery.Filters = append(expectedQuery.Filters, &pb.UserFilter{
-		Field: pb.UserFilter_USER_ID,
+	expectedQuery := &pb.BroadcastQuery{Filters: make([]*pb.BroadcastFilter, 0)}
+	expectedQuery.Filters = append(expectedQuery.Filters, &pb.BroadcastFilter{
+		Field: pb.BroadcastFilter_BROADCAST_ID,
 		Comparisons: &pb.Filter{
 			Value: "1", Comparison: pb.Filter_EQUAL,
 		},
 	})
-	expectedQuery.Filters = append(expectedQuery.Filters, &pb.UserFilter{
-		Field: pb.UserFilter_TELEGRAM_HANDLE,
-		Comparisons: &pb.Filter{
-			Value: "5", Comparison: pb.Filter_GREATER,
-		},
-	})
-
-	inputQuery := &pb.UserQuery{Filters: make([]*pb.UserFilter, 0), Limit: 7}
-	inputQuery.Filters = append(inputQuery.Filters, &pb.UserFilter{
-		Field: pb.UserFilter_USER_ID,
+	expectedQuery.Filters = append(expectedQuery.Filters, &pb.BroadcastFilter{
+		Field: pb.BroadcastFilter_CREATOR_ID,
 		Comparisons: &pb.Filter{
 			Value: "1", Comparison: pb.Filter_EQUAL,
 		},
 	})
 
-	db_pck.AddUserFilter(inputQuery, pb.UserFilter_TELEGRAM_HANDLE, pb.Filter_GREATER, "5")
+	inputQuery := &pb.BroadcastQuery{Filters: make([]*pb.BroadcastFilter, 0)}
+	inputQuery.Filters = append(inputQuery.Filters, &pb.BroadcastFilter{
+		Field: pb.BroadcastFilter_BROADCAST_ID,
+		Comparisons: &pb.Filter{
+			Value: "1", Comparison: pb.Filter_EQUAL,
+		},
+	})
+	db_pck.AddBroadcastFilter(inputQuery, pb.BroadcastFilter_CREATOR_ID, pb.Filter_EQUAL, "1")
 	// Check if the filter is added correctly
 	assert.Equal(t, 2, len(inputQuery.Filters), "The number of filters expected is not correct")
 	assert.Equal(t, true, proto.Equal(inputQuery, expectedQuery), "The query is not equal to the expected.")

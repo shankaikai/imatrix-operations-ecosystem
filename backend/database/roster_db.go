@@ -461,6 +461,7 @@ func UpdateRosterAssignments(db *sql.DB, rosterAssignment *pb.RosterAssignement,
 	return rowsAffected, err
 }
 
+// NOTE: untested because unused
 // Update a specific recipient row in the table
 // This function assumes that the roster recipient id is correct.
 // Returns the number of rows affected and any errors.

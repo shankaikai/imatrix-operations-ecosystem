@@ -605,6 +605,7 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 	return newRosterAssignmentsPk, nil
 }
 
+// NOTE: UNTESTED because unused
 // This function is different from UpdateRosterAssignements()
 // in the idea that this function finds out who the existing
 // recipients are and make the necessary changes so that the
