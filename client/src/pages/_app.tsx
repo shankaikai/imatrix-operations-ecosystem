@@ -43,9 +43,7 @@ export default function App(props: AppProps) {
           }}
         >
           <NotificationsProvider>
-            <Layout>
               <Component {...pageProps} />
-            </Layout>
           </NotificationsProvider>
         </MantineProvider>
       </ColorSchemeProvider>

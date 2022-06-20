@@ -1,11 +1,23 @@
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { isLoggedIn } from "../helpers/userService";
 
 
 const Home: NextPage = () => {
-  return (
-    <div>
-      <h1>Home</h1>
-    </div>
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoggedIn()) {
+        router.push('/login');
+    } else {
+        router.push('/dashboard')
+    }
+}, []);
+return (
+    <>
+    </>
   );
 };
 

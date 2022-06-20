@@ -1,10 +1,11 @@
 import type { NextPage } from "next";
+import Layout from "../../components/Layout/Layout";
 
 const Camera: NextPage = () => {
   return (
-    <div>
+    <Layout>
       <h1>Camera</h1>
-    </div>
+    </Layout>
   );
 };
 
