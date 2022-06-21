@@ -26,8 +26,8 @@ func main() {
 	if *fakeServerFlag {
 		fake_server.InitServer(serverAddrFlag, serverPortFlag)
 	} else if *teleClientFlag {
-		// tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
-		tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
+		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
+		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
 		server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag)
 	} else {

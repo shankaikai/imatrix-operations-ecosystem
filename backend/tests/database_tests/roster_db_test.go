@@ -24,13 +24,6 @@ const (
 	TEST_ROSTER_ASGN_DB_IS_ASSIGNED  = false
 	TEST_ROSTER_ASGN_DB_REJECTED     = false
 	TEST_AIFS_CLIENT_DB_PATROL_ORDER = 1
-
-	// Default Rostering table fields
-	DEFAULT_ROSTERING_DB_ID             = "default_rostering_id"
-	DEFAULT_ROSTERING_DB_DAY_OF_WEEK    = "day_of_week"
-	DEFAULT_ROSTERING_DB_AIFS1_SCHEDULE = "aifs1_schedule"
-	DEFAULT_ROSTERING_DB_AIFS2_SCHEDULE = "aifs2_schedule"
-	DEFAULT_ROSTERING_DB_AIFS3_SCHEDULE = "aifs3_schedule"
 )
 
 func TestInsertRoster(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 )
 
 // First in list
-func TestInsertRosterFirst(t *testing.T) {
+func TestBinarySearchFirst(t *testing.T) {
 	list := []int{4, 5, 7, 8, 10, 78}
 	found, index := common.BinarySearch(list, 0, 5, 4)
 	assert.Equal(t, true, found, "The number should be in the list")
@@ -16,7 +16,7 @@ func TestInsertRosterFirst(t *testing.T) {
 }
 
 // Last in list
-func TestInsertRosterLast(t *testing.T) {
+func TestBinarySearchLast(t *testing.T) {
 	list := []int{4, 5, 7, 8, 10, 78}
 	found, index := common.BinarySearch(list, 0, 5, 78)
 	assert.Equal(t, true, found, "The number should be in the list")
@@ -24,7 +24,7 @@ func TestInsertRosterLast(t *testing.T) {
 }
 
 // middle of list
-func TestInsertRosterMiddle(t *testing.T) {
+func TestBinarySearchMiddle(t *testing.T) {
 	list := []int{4, 5, 7, 8, 10, 78}
 	found, index := common.BinarySearch(list, 0, 5, 8)
 	assert.Equal(t, true, found, "The number should be in the list")
@@ -32,7 +32,7 @@ func TestInsertRosterMiddle(t *testing.T) {
 }
 
 // not in list
-func TestInsertRosterNotInList(t *testing.T) {
+func TestBinarySearchNotInList(t *testing.T) {
 	list := []int{4, 5, 7, 8, 10, 78}
 	found, index := common.BinarySearch(list, 0, 5, 4324)
 	assert.Equal(t, false, found, "The number should be in the list")

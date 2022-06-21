@@ -86,8 +86,8 @@ func (s *Server) sendNewBroadcastsOut(broadcastId int64) {
 	if len(broadcasts) == 0 {
 		fmt.Println("sendNewBroadcastToTele: No broadcast found for id", broadcastId)
 	}
-
-	tclient.InsertBroadcast(s.teleServerAddr, s.teleServerPort, broadcasts[0])
+	teleClient := tclient.TelegramClient{}
+	teleClient.InsertBroadcast(s.teleServerAddr, s.teleServerPort, broadcasts[0])
 	s.notifyAIFSofNewBroadcast(broadcasts[0])
 }
 
