@@ -47,3 +47,17 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9091:9091"
+
+  database:
+    container_name: database
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: operations_ecosystem
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    ports:
+      - "3306:3306"
+    
