@@ -13,6 +13,8 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 	rs "capstone.operations_ecosystem/backend/rating_system"
 	_ "github.com/go-sql-driver/mysql"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -559,6 +561,11 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 	missingAsgnIndex := make([]int, 0)
 
 	for i, asgn := range roster.GuardAssigned {
+		// Ensure not nil
+		if asgn.GuardAssigned.Employee == nil {
+			return newRosterAssignmentsPk, status.Errorf(codes.InvalidArgument, "Employee field of guards in roster assignment must not be nil")
+		}
+
 		found, index := common.BinarySearch(currentAsgnIds, 0, len(currentAsgnIds)-1, int(asgn.GuardAssigned.Employee.UserId))
 		if found {
 			fmt.Println("Found updated recipient in current recipient")
@@ -574,7 +581,15 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 		// Ensure the start and end custom times of the guard assigned
 		// is the same as the roster
 		roster.GuardAssigned[asgnIndex].CustomStartTime, err = DBDatetimeToPB(roster.StartTime)
+		if err != nil {
+			fmt.Println("updateAssignmentsOfRoster ERROR::", err)
+			return newRosterAssignmentsPk, err
+		}
 		roster.GuardAssigned[asgnIndex].CustomEndTime, err = DBDatetimeToPB(roster.EndTime)
+		if err != nil {
+			fmt.Println("updateAssignmentsOfRoster ERROR::", err)
+			return newRosterAssignmentsPk, err
+		}
 		rosterAsgnPk, err := InsertRosterASGN(db, roster.GuardAssigned[asgnIndex], roster.RosteringId, dbLock)
 		if err != nil {
 			fmt.Println("updateAssignmentsOfRoster ERROR::", err)

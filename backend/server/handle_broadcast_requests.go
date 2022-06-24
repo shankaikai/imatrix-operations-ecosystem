@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
+	"github.com/getsentry/sentry-go"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -13,6 +14,8 @@ import (
 )
 
 func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 
 	getDefaultBroadcastFields(broadcast)
@@ -41,6 +44,8 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 }
 
 func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	numAffected, err := db_pck.UpdateBroadcast(
 		s.db,
@@ -59,6 +64,8 @@ func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 }
 
 func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteBroadcast(
 		s.db,
@@ -76,6 +83,8 @@ func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 }
 
 func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
+	defer sentry.Recover()
+
 	fmt.Println("FindBroadcasts Start")
 	res := pb.Response{Type: pb.Response_ACK}
 
@@ -108,6 +117,8 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 }
 
 func (s *Server) UpdateBroadcastRecipient(cxt context.Context, broadcastRecipient *pb.BroadcastRecipient) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	fmt.Println("UpdateBroadcastRecipient", broadcastRecipient)
 	res := pb.Response{Type: pb.Response_ACK}
 	numAffected, err := db_pck.UpdateBroadcastRecipients(

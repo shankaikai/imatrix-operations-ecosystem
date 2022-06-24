@@ -4,6 +4,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/joho/godotenv"
 
 	client "capstone.operations_ecosystem/backend/fake_client"
 	"capstone.operations_ecosystem/backend/fake_server"
@@ -23,17 +30,43 @@ func main() {
 	teleClientFlag := flag.Bool("is_tclient", false, "Is this terminal for the server or the test client?")
 	flag.Parse()
 
+	// Set up sentry
+	initSentry()
+	// Flush buffered events before the program terminates.
+	defer sentry.Flush(2 * time.Second)
+	defer sentry.Recover()
+
 	if *fakeServerFlag {
 		fake_server.InitServer(serverAddrFlag, serverPortFlag)
 	} else if *teleClientFlag {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
+
 		server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag)
+
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
 		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
 		client.TestRosteringClient(serverAddrFlag, serverPortFlag)
+	}
+}
+
+func initSentry() {
+	envFilePath := ".env"
+	err := godotenv.Load(envFilePath)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = sentry.Init(sentry.ClientOptions{
+		Dsn:              os.Getenv("SENTRY_DNS"),
+		TracesSampleRate: 1.0,
+		AttachStacktrace: true,
+	})
+	if err != nil {
+		log.Fatalf("sentry.Init: %s", err)
 	}
 }
