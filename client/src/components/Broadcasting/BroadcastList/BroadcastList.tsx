@@ -16,13 +16,21 @@ import BroadcastCard from "../BroadcastCard/BroadcastCard";
 interface BroadcastListProps {}
 
 export default function BroadcastList({}: BroadcastListProps) {
-  const { broadcasts, search, selectValue, filterValue, updateBroadcasts } =
-    useBroadcast();
+  const {
+    broadcasts,
+    setBroadcasts,
+    search,
+    selectValue,
+    filterValue,
+    updateBroadcasts,
+  } = useBroadcast();
 
   const handleLoadMoreClick = () => {
     // console.log(broadcasts);
     // console.log(filteredBroadcasts);
-    updateBroadcasts && updateBroadcasts();
+    setBroadcasts &&
+      updateBroadcasts &&
+      updateBroadcasts(broadcasts.length, setBroadcasts);
   };
 
   const [filteredBroadcasts, setFilteredBroadcasts] = useState<Broadcast[]>([]);
