@@ -65,7 +65,7 @@ func orderBroadcastFields(broadcast *pb.Broadcast) string {
 	output := ""
 
 	output += "'" + getBroadcastDBTypeStringFromProto(broadcast.Type) + "'" + ", "
-	output += "'" + broadcast.Content + "'" + ", "
+	output += "\"" + strings.ReplaceAll(broadcast.Content, "\"", "'") + "\"" + ", "
 	output += "'" + broadcast.CreationDate.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
 	output += "'" + broadcast.Deadline.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
 	output += "'" + strconv.Itoa(int(broadcast.Creator.UserId)) + "'" + ", "
@@ -127,7 +127,7 @@ func getFilledBroadcastFields(broadcast *pb.Broadcast) string {
 	broadcastTableFields := []string{formatFieldEqVal(BC_DB_TYPE, getBroadcastDBTypeStringFromProto(broadcast.Type), true)}
 
 	if len(broadcast.Content) > 0 {
-		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CONTENT, broadcast.Content, true))
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CONTENT, strings.ReplaceAll(broadcast.Content, "\"", "'"), true))
 	}
 	if broadcast.CreationDate != nil {
 		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CREATION_DATE, broadcast.CreationDate.AsTime().Format(common.DATETIME_FORMAT), true))

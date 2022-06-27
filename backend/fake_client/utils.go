@@ -51,7 +51,7 @@ func CreateFakeBroadcast(id int, hasRecipient bool) *pb.Broadcast {
 	return &pb.Broadcast{
 		BroadcastId:  int64(id),
 		Type:         pb.Broadcast_ANNOUNCEMENT,
-		Content:      "content" + strconv.Itoa(id),
+		Content:      "content" + strconv.Itoa(id) + " with some other quotes \"test test 'test'",
 		CreationDate: timestamppb.Now(),
 		Deadline:     &timestamppb.Timestamp{Seconds: int64(time.Now().Add(30).Unix())},
 		Creator:      createFakeUser(1),
@@ -152,7 +152,7 @@ func CreateFakeIncidentReportContent(id int) *pb.IncidentReportContent {
 		IncidentTime:          time.Now().Format(common.DATETIME_FORMAT),
 		IsPoliceNotified:      false,
 		Title:                 "Title",
-		Description:           "Description",
+		Description:           "So there is something here \"a description quotes\" test test",
 		HasActionTaken:        false,
 		ActionTaken:           "",
 		HasInjury:             true,
