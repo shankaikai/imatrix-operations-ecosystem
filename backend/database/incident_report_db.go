@@ -26,10 +26,10 @@ func InsertIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock 
 	}
 
 	// Create and insert main incidentReport and get it's pk
-	incidentReportTbFields := getIncidentReportTableFields(originalContentPk)
-	incidentReportValues := orderIncidentReportFields(incidentReport)
+	incidentReportTbFields := getIncidentReportTableFields()
+	incidentReportValues := orderIncidentReportFields(incidentReport, originalContentPk)
 
-	incidentReportPk, err := Insert(db, ROSTER_DB_TABLE_NAME, incidentReportTbFields, incidentReportValues, dbLock)
+	incidentReportPk, err := Insert(db, INCIDENT_REPORT_DB_TABLE_NAME, incidentReportTbFields, incidentReportValues, dbLock)
 
 	if err != nil {
 		// Delete the incidentReport that was just inserted, it should cascade
@@ -43,13 +43,13 @@ func InsertIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock 
 
 // Inserts a new content to the database
 // Returns the primary key of the recipient row and any errors.
-func InsertIncidentReportContent(db *sql.DB, assignment *pb.IncidentReportContent, dbLock *sync.Mutex) (int64, error) {
+func InsertIncidentReportContent(db *sql.DB, content *pb.IncidentReportContent, dbLock *sync.Mutex) (int64, error) {
 	// get fields and values for this particular recipient
 	fields := getIncidentReportContentTableFields()
-	values := orderIncidentReportContentFields(assignment)
+	values := orderIncidentReportContentFields(content)
 
 	// Add recipient to DB
-	pk, err := Insert(db, ROSTER_ASSIGNMENT_DB_TABLE_NAME, fields, values, dbLock)
+	pk, err := Insert(db, INCIDENT_REPORT_CONTENT_DB_TABLE_NAME, fields, values, dbLock)
 
 	return pk, err
 }
@@ -60,7 +60,7 @@ func GetIncidentReports(db *sql.DB, query *pb.IncidentReportQuery) ([]*pb.Incide
 	fmt.Println("Getting IncidentReports...")
 	incidentReports := make([]*pb.IncidentReport, 0)
 
-	// Join the incidentReport and assignment tables and aifs client tables
+	// Join the incident Report, original and modified content tables
 	// in order to easily filter conditions relating to all tables
 
 	// Set default query limits if needed
@@ -68,22 +68,18 @@ func GetIncidentReports(db *sql.DB, query *pb.IncidentReportQuery) ([]*pb.Incide
 		query.Limit = DEFAULT_LIMIT
 	}
 
-	// We ignore any filters to do with the client aifs table first
-	requestedLimit := query.Limit
-
 	fields := ALL_COLS
 
-	// tables are joined on the main incidentReport id
-	fistOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_ASSIGNMENT_DB_TABLE_NAME+"."+ROSTER_ASGN_DB_RELATED_ROSTER, false)
-	secondOnCondition := formatFieldEqVal(ROSTER_DB_ID, ROSTER_AIFS_CLIENT_DB_TABLE_NAME+"."+AIFS_CLIENT_DB_RELATED_ROSTER, false)
+	// tables are joined on the original and modified content table ids
+	fistOnCondition := formatFieldEqVal(INCIDENT_REPORT_DB_ORIGINAL_CONTENT, ORIGINAL_INCIDENT_REPORT_TABLE_ALIAS+"."+INCIDENT_REPORT_CONTENT_DB_ID, false)
+	secondOnCondition := formatFieldEqVal(INCIDENT_REPORT_DB_MODIFIED_CONTENT, MODIFIED_INCIDENT_REPORT_TABLE_ALIAS+"."+INCIDENT_REPORT_CONTENT_DB_ID, false)
 
 	// Format filters
-	// temporarily give the query limit the max
-	query.Limit = MAX_LIMIT
-	filters := getFormattedIncidentReportFilters(query, ROSTER_DB_TABLE_NAME, true, true)
+	filters := getFormattedIncidentReportFilters(query, INCIDENT_REPORT_DB_TABLE_NAME, true, true)
 
-	rows, err := QueryThreeTablesLeftJoin(db, ROSTER_DB_TABLE_NAME,
-		ROSTER_ASSIGNMENT_DB_TABLE_NAME, ROSTER_AIFS_CLIENT_DB_TABLE_NAME,
+	rows, err := QueryThreeTablesLeftJoin(db, INCIDENT_REPORT_DB_TABLE_NAME,
+		INCIDENT_REPORT_CONTENT_DB_TABLE_NAME+" AS "+ORIGINAL_INCIDENT_REPORT_TABLE_ALIAS,
+		INCIDENT_REPORT_CONTENT_DB_TABLE_NAME+" AS "+MODIFIED_INCIDENT_REPORT_TABLE_ALIAS,
 		fistOnCondition, secondOnCondition, fields, filters)
 
 	if err != nil {
@@ -92,170 +88,153 @@ func GetIncidentReports(db *sql.DB, query *pb.IncidentReportQuery) ([]*pb.Incide
 
 	// convert query rows into incidentReports
 	// give back the query the original limit
-	query.Limit = requestedLimit
 	err = convertDbRowsToFullIncidentReport(db, &incidentReports, rows, query)
-
-	// Set status of incidentReports
-	setIncidentReportStatus(incidentReports)
 
 	return incidentReports, err
 }
 
 // Get all the incidentReport recipient rows in a table that meets specifications.
 // Returns an array of incidentReport recipients and any errors.
-func GetIncidentReportAssingments(db *sql.DB, query *pb.IncidentReportQuery, mainIncidentReportID int64) ([]*pb.IncidentReportContent, error) {
-	fmt.Println("Getting IncidentReports Assignments...")
-	incidentReportRecipients := make([]*pb.IncidentReportContent, 0)
+func GetIncidentReportContents(db *sql.DB, query *pb.IncidentReportQuery, mainIncidentReportID int64) ([]*pb.IncidentReportContent, error) {
+	fmt.Println("Getting IncidentReports Contents...")
+	incidentReportContents := make([]*pb.IncidentReportContent, 0)
 
 	fields := ALL_COLS
 
 	// Format filters
 	// Get for a specific main incidentReport if needed
 	if mainIncidentReportID != -1 {
-		AddIncidentReportFilter(query, pb.IncidentReportFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainIncidentReportID)))
+		AddIncidentReportFilter(query, pb.IncidentReportFilter_REPORT_ID, pb.Filter_EQUAL, strconv.Itoa(int(mainIncidentReportID)))
 	}
 
-	filters := getFormattedIncidentReportFilters(query, ROSTER_ASSIGNMENT_DB_TABLE_NAME, true, true)
+	filters := getFormattedIncidentReportFilters(query, INCIDENT_REPORT_CONTENT_DB_TABLE_NAME, true, true)
 
-	rows, err := Query(db, ROSTER_ASSIGNMENT_DB_TABLE_NAME, fields, filters)
+	rows, err := Query(db, INCIDENT_REPORT_CONTENT_DB_TABLE_NAME, fields, filters)
 
 	if err != nil {
-		return incidentReportRecipients, err
+		return incidentReportContents, err
 	}
+
+	retrievedUsers := make(map[int64]*pb.User)
 
 	// convert query rows into incidentReports assignments
 	for rows.Next() {
-		assignment := &pb.IncidentReportContent{}
-		employeeEval := &pb.EmployeeEvaluation{}
-		assignment.GuardAssigned = employeeEval
+		content := &pb.IncidentReportContent{}
 
-		// fields that cannot be auto converted
-		guardId := -1
-		// related incidentReport is not necessary, but for simplicity
-		// and for possible future use, we get it back in the query.
-		relatedIncidentReport := ""
-
-		// confirmation is nullable
-		var confirmation sql.NullBool
-
-		// Datetimes
-		startTimeString := ""
-		endTimeString := ""
-		var attendanceTimeString sql.NullString
+		// original content
+		contentUser := -1
+		// nullable content
+		var actionTaken sql.NullString
+		var injury sql.NullString
+		var stolenItem sql.NullString
+		var img sql.NullString
 
 		// cast each row to a incidentReport
-		err = rows.Scan(
-			&assignment.IncidentReportAssignmentId,
-			&relatedIncidentReport,
-			&guardId,
-			&startTimeString,
-			&endTimeString,
-			&confirmation,
-			&assignment.Attended,
-			&attendanceTimeString,
-			&assignment.IsAssigned,
-			&assignment.Rejected,
+		err := rows.Scan(
+			// Original IncidentReport Details
+			&content.ReportContentId,
+			&content.LastModifiedDate,
+			&contentUser,
+			&content.Address,
+			&content.IncidentTime,
+			&content.Title,
+			&content.IsPoliceNotified,
+			&content.Description,
+			&content.HasActionTaken,
+			&actionTaken,
+			&content.HasInjury,
+			&injury,
+			&content.HasStolenItem,
+			&stolenItem,
+			&img,
 		)
 
 		if err != nil {
-			fmt.Println("GetIncidentReportAssingments ERROR::", err)
-			break
-		}
-
-		// Add Datetimes
-		assignment.CustomStartTime, err = DBDatetimeToPB(startTimeString)
-		if err != nil {
-			fmt.Println("GetIncidentReportAssingments:", err.Error())
-			continue
-		}
-		assignment.CustomEndTime, err = DBDatetimeToPB(endTimeString)
-		if err != nil {
-			fmt.Println("GetIncidentReportAssingments:", err.Error())
+			fmt.Println("GetIncidentReportContents ERROR:", err)
 			continue
 		}
 
-		if attendanceTimeString.Valid {
-			assignment.AttendanceTime, err = DBDatetimeToPB(attendanceTimeString.String)
-			if err != nil {
-				fmt.Println("GetIncidentReportAssingments:", err.Error())
-				continue
-			}
-		}
-
-		if confirmation.Valid {
-			assignment.Confirmed = confirmation.Bool
-			if err != nil {
-				fmt.Println("GetIncidentReportAssingments:", err.Error())
-				continue
-			}
-		}
-		// TODO think about whether I can store the users in cache rather than
-		// get the same few users over and over
-		assignment.GuardAssigned.Employee, err = idUserByUserId(db, guardId)
+		// fields that are necessary regardless of content type returned
+		content.LastModifedUser, err = getUserFromCache(db, &retrievedUsers, int64(contentUser))
 		if err != nil {
-			fmt.Println("GetIncidentReportAssingments:", err)
+			fmt.Println("GetIncidentReportContents ERROR:", err)
 			continue
 		}
 
-		incidentReportRecipients = append(incidentReportRecipients, assignment)
+		if actionTaken.Valid {
+			content.ActionTaken = actionTaken.String
+		}
+		if injury.Valid {
+			content.InjuryDescription = injury.String
+		}
+		if stolenItem.Valid {
+			content.StolenItemDescription = stolenItem.String
+		}
+		if img.Valid {
+			content.ReportImageLink = img.String
+		}
+
+		incidentReportContents = append(incidentReportContents, content)
 	}
 
-	return incidentReportRecipients, err
+	return incidentReportContents, err
 }
 
 // Update a specific incidentReport in the table
 // Only fields that have been filled in the incidentReport object will be updated.
 // Returns the number of main incidentReport rows updated as well as the a list of
 // all the primary keys of newly inserted incidentReport assignments into the db.
-// Note that this update does not update the incidentReport's guards's inner status
-// such as the acknowledgement or attended status but only if the guard
-// is part of the incidentReport. Same for the clients
+// For this implementation, only the original content and the newest updated content is kept
+// To update the content of the report, delete any existing non-original contents
+// and update the modified content id in the original report with the new content.
 func UpdateIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock *sync.Mutex) (int64, error) {
-
-	// Update the main incidentReport first
-	newFields := getFilledIncidentReportFields(incidentReport)
-
-	filters := getIncidentReportIdFormattedFilter(
-		int(incidentReport.IncidentReportId),
-		ROSTER_DB_TABLE_NAME, true,
-	)
-
-	var err error
 	rowsAffected := int64(0)
+	newContentPk := int64(-1)
+	var err error
+
+	query := &pb.IncidentReportQuery{Limit: 1}
+	AddIncidentReportFilter(query, pb.IncidentReportFilter_REPORT_ID,
+		pb.Filter_EQUAL, strconv.Itoa(int(incidentReport.IncidentReportId)))
+
+	// Insert the new incident report if any
+	if incidentReport.IncidentReportContent != nil {
+		newContentPk, err = InsertIncidentReportContent(db, incidentReport.IncidentReportContent, dbLock)
+		if err != nil {
+			return 0, err
+		}
+
+		// Get old incident report
+		reports, err := GetIncidentReports(db, query)
+		if err != nil {
+			// Delete the new content that was just inserted
+			DeleteIncidentReportContent(db, &pb.IncidentReportContent{ReportContentId: newContentPk})
+			return 0, err
+		}
+
+		// check if the content has any existing modified content
+
+		if len(reports) > 0 && !reports[0].IsOriginal {
+			// Delete the old incident report content
+			_, err := DeleteIncidentReportContent(db, reports[0].IncidentReportContent)
+			if err != nil {
+				// Delete the new content that was just inserted
+				DeleteIncidentReportContent(db, &pb.IncidentReportContent{ReportContentId: newContentPk})
+				return 0, err
+			}
+		}
+
+	}
+
+	// Update the main incidentReport
+	newFields := getFilledIncidentReportFields(incidentReport, -1, int64(newContentPk))
+	filters := getFormattedIncidentReportFilters(query, INCIDENT_REPORT_DB_TABLE_NAME, false, false)
 
 	if len(newFields) > 0 {
-		rowsAffected, err = Update(db, ROSTER_DB_TABLE_NAME, newFields, filters)
+		rowsAffected, err = Update(db, INCIDENT_REPORT_DB_TABLE_NAME, newFields, filters)
 		if err != nil {
 			fmt.Println("UpdateIncidentReport ERROR::", err)
 			return rowsAffected, err
 		}
-	}
-
-	// Update clients if necessary
-	if incidentReport.Clients != nil {
-		err = updateClientsOfIncidentReport(db, incidentReport, dbLock)
-	}
-
-	return rowsAffected, err
-}
-
-// Update a specific recipient row in the table
-// This function assumes that the incidentReport recipient id is correct.
-// Returns the number of rows affected and any errors.
-// In this case, number of rows affected is either 0 or 1.
-func UpdateIncidentReportAssignments(db *sql.DB, incidentReportContent *pb.IncidentReportContent, query *pb.IncidentReportQuery) (int64, error) {
-	newFields := getFilledIncidentReportASGNFields(incidentReportContent)
-	filters := getFormattedIncidentReportFilters(query, ROSTER_ASSIGNMENT_DB_TABLE_NAME, false, false)
-	// filters := getIncidentReportIdFormattedFilter(
-	// 	int(incidentReportAssignment.IncidentReportAssignmentId),
-	// 	ROSTER_ASSIGNMENT_DB_TABLE_NAME, false,
-	// )
-
-	rowsAffected, err := Update(db, ROSTER_ASSIGNMENT_DB_TABLE_NAME, newFields, filters)
-
-	if err != nil {
-		fmt.Println("UpdateIncidentReportRecipients ERROR::", err)
-		return rowsAffected, err
 	}
 
 	return rowsAffected, err
@@ -267,10 +246,10 @@ func UpdateIncidentReportAssignments(db *sql.DB, incidentReportContent *pb.Incid
 func DeleteIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport) (int64, error) {
 	filters := getIncidentReportIdFormattedFilter(
 		int(incidentReport.IncidentReportId),
-		ROSTER_DB_TABLE_NAME, true,
+		INCIDENT_REPORT_DB_TABLE_NAME,
 	)
 
-	rowsAffected, err := Delete(db, ROSTER_DB_TABLE_NAME, filters)
+	rowsAffected, err := Delete(db, INCIDENT_REPORT_DB_TABLE_NAME, filters)
 	return rowsAffected, err
 }
 
@@ -278,8 +257,8 @@ func DeleteIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport) (int64,
 func DeleteIncidentReportContent(db *sql.DB, incidentReportContent *pb.IncidentReportContent) (int64, error) {
 	filters := getIncidentReportIdFormattedFilter(
 		int(incidentReportContent.ReportContentId),
-		ROSTER_ASSIGNMENT_DB_TABLE_NAME, false,
+		INCIDENT_REPORT_CONTENT_DB_TABLE_NAME,
 	)
-	rowsAffected, err := Delete(db, ROSTER_ASSIGNMENT_DB_TABLE_NAME, filters)
+	rowsAffected, err := Delete(db, INCIDENT_REPORT_CONTENT_DB_TABLE_NAME, filters)
 	return rowsAffected, err
 }

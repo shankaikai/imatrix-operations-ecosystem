@@ -247,3 +247,19 @@ func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
 
 	return user, err
 }
+
+// Get a particular user from a map of users
+// If the user is not in the map, get the user from the db
+// and add the new user to the map.
+func getUserFromCache(db *sql.DB, userCache *map[int64]*pb.User, userId int64) (*pb.User, error) {
+	user, ok := (*userCache)[userId]
+	if ok {
+		return user, nil
+	} else {
+		user, err := idUserByUserId(db, int(userId))
+		if err != nil {
+			(*userCache)[userId] = user
+		}
+		return user, err
+	}
+}

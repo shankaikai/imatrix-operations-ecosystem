@@ -8,12 +8,12 @@ USE operations_ecosystem;
 -- DROP TABLE IF EXISTS `broadcast_recepients`;
 -- DROP TABLE IF EXISTS `broadcast`;
 -- DROP TABLE IF EXISTS `user`;
-DROP TABLE IF EXISTS `client`;
-DROP TABLE IF EXISTS `schedule`;
-DROP TABLE IF EXISTS `schedule_detail`;
-DROP TABLE IF EXISTS `aifs_client_schedule`;
-DROP TABLE IF EXISTS `availability`;
-DROP TABLE IF EXISTS `default_rostering`;
+-- DROP TABLE IF EXISTS `client`;
+-- DROP TABLE IF EXISTS `schedule`;
+-- DROP TABLE IF EXISTS `schedule_detail`;
+-- DROP TABLE IF EXISTS `aifs_client_schedule`;
+-- DROP TABLE IF EXISTS `availability`;
+-- DROP TABLE IF EXISTS `default_rostering`;
 
 -- Create Tables
 -- Admin Tables 
@@ -146,6 +146,46 @@ CREATE TABLE IF NOT EXISTS `availability` (
 	next_sunday JSON,
     
 	FOREIGN KEY (guard) 
+		REFERENCES `user` (user_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS `incident_report_content` (
+    report_content_id INT PRIMARY KEY AUTO_INCREMENT,
+    last_modified_date DATETIME NOT NULL, 
+    last_modifed_user INT NOT NULL,
+    address VARCHAR(500) NOT NULL,
+    incident_time DATETIME NOT NULL, 
+    title VARCHAR(500) NOT NULL,
+    is_police_notified BOOLEAN NOT NULL DEFAULT FALSE,
+    description VARCHAR(1000) NOT NULL,
+    has_action_taken BOOLEAN NOT NULL DEFAULT FALSE,
+    action_taken VARCHAR(1000),
+    has_injury BOOLEAN NOT NULL DEFAULT FALSE,
+    injury_description VARCHAR(1000),
+    has_stolen_item BOOLEAN NOT NULL DEFAULT FALSE,
+    stolen_item_description VARCHAR(1000),
+    report_image VARCHAR(1000)
+);
+
+
+CREATE TABLE IF NOT EXISTS `incident_report` (
+    report_id INT PRIMARY KEY AUTO_INCREMENT,
+    report_type  ENUM('Fire Alarm','Intruder', 'Others') NOT NULL,
+    original_content INT NOT NULL,
+	modified_content INT NOT NULL,
+    is_approved BOOLEAN NOT NULL DEFAULT FALSE,
+    signature INT,
+    approval_date DATETIME, 
+
+	FOREIGN KEY (original_content) 
+		REFERENCES `incident_report_content` (report_content_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE,
+    FOREIGN KEY (modified_content) 
+		REFERENCES `incident_report_content` (report_content_id)
+        ON UPDATE RESTRICT,
+    FOREIGN KEY (signature) 
 		REFERENCES `user` (user_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );

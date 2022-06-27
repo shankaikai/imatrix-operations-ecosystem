@@ -16,6 +16,7 @@ type Server struct {
 	pb.AdminServicesServer
 	pb.BroadcastServicesServer
 	pb.RosterServicesServer
+	pb.IncidentReportServicesServer
 
 	db     *sql.DB
 	dbLock *sync.Mutex

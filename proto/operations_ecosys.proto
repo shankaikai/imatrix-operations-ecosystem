@@ -522,7 +522,7 @@ message IncidentReportContent {
     string injury_description = 12;
     bool has_stolen_item = 13;
     string stolen_item_description = 14;    
-    repeated bytes report_image_bytes = 15; 
+    string report_image_link = 15; 
     // Should there be a string here?
 }
 
@@ -539,21 +539,15 @@ message IncidentReportFilter {
 
     // More fields can be added in the future. 
     enum Field{
-        ROSTER_ID = 0;
-        ROSTER_ASSIGNMENT_ID = 1;
-        ROSTER_AIFS_CLIENT_ID = 2;
-        AIFS_ID = 3;
-        // Note: single user ID
-        GUARD_ASSIGNED_ID = 4;
-        // Note: single client ID
-        CLIENT_ID = 5;
-        GUARD_ASSIGNMENT_CONFIRMATION = 6;
-        GUARD_ASSIGNMENT_ATTENDED = 7;
-        START_TIME = 8;
-        END_TIME = 9;
-        IS_ASSIGNED = 10;
-        DEFAULT_ROSTERING_DAY_OF_WEEK = 11;
-        GUARD_ASSIGNMENT_REJECTION = 12;
+        REPORT_ID = 0;
+        REPORT_CONTENT_ID = 1;
+        REPORT_TYPE = 2;
+        MODIFIER = 3;
+        LAST_MODIFIED_DATE = 5;
+        GET_ORIGINAL = 6;
+        IS_APPROVED = 7;
+        SIGNATURE = 8;
+        APPROVAL_DATE = 9;
     }
 }
 
