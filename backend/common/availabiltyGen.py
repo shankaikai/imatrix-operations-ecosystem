@@ -5,7 +5,7 @@ query = "INSERT INTO " + \
 "VALUES({}, 2022, {},'{}', '{}','{}','{}','{}','{}','{}','{}');"
 
 with open("avail.txt", "w") as f:
-    for userId in range(1, 15):
+    for userId in range(1, 6):
         for week in range(1, 56):
             f.write(query.format(week, userId, timing, timing, timing, timing, timing, timing, timing, timing))
             f.write("\n")

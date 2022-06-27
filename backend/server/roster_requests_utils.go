@@ -14,6 +14,7 @@ import (
 	db_pck "capstone.operations_ecosystem/backend/database"
 	rs "capstone.operations_ecosystem/backend/rating_system"
 	tclient "capstone.operations_ecosystem/backend/telegram_client"
+	"github.com/getsentry/sentry-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -535,6 +536,8 @@ func getDefaultEndTime(query *pb.AvailabilityQuery) error {
 }
 
 func (s *Server) sendNewRostersToTele(rosterIds []int64) {
+	defer sentry.Recover()
+
 	query := &pb.RosterQuery{Limit: int64(len(rosterIds))}
 	idStrings := make([]string, 0)
 

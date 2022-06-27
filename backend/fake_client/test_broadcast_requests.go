@@ -16,11 +16,11 @@ func TestBroadcastClient(serverAddr *string, serverPort *int) {
 	broadcast := CreateFakeBroadcast(1, true)
 	pk := InsertBroadcast(serverAddr, serverPort, broadcast)
 	broadcast.BroadcastId = pk
-	// InsertBroadcastAIFSID(serverAddr, serverPort)
+	InsertBroadcastAIFSID(serverAddr, serverPort)
 
-	// ConsolidatedFindBroadcastTest(serverAddr, serverPort)
-	// ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
-	// DeleteBroadcast(serverAddr, serverPort, &pb.Broadcast{BroadcastId: 5})
+	ConsolidatedFindBroadcastTest(serverAddr, serverPort)
+	ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
+	DeleteBroadcast(serverAddr, serverPort, &pb.Broadcast{BroadcastId: 5})
 }
 
 func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) int64 {

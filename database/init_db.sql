@@ -43,12 +43,12 @@ CREATE TABLE IF NOT EXISTS `client` (
 CREATE TABLE IF NOT EXISTS `broadcast` (
 	broadcast_id INT PRIMARY KEY AUTO_INCREMENT,
     type ENUM('announcement','assignment') NOT NULL,
-    title VARCHAR(500) NOT NULL, 
     content VARCHAR(1000) NOT NULL,
     creation_date DATETIME NOT NULL,
     deadline DATETIME NOT NULL,
     creator INT NOT NULL,
-	
+	urgency ENUM('Low', 'Medium', 'High') NOT NULL,
+
 	FOREIGN KEY (creator) 
 		REFERENCES `user` (user_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `broadcast_recepients` (
     acknowledged BOOLEAN DEFAULT false NOT NULL,
     rejected BOOLEAN DEFAULT false NOT NULL,
 	last_replied DATETIME, 
-    aids_id INT NOT NULL,
+    aifs_id INT NOT NULL,
     FOREIGN KEY (related_broadcast)
         REFERENCES `broadcast` (broadcast_id)
         ON UPDATE RESTRICT ON DELETE CASCADE,
@@ -103,7 +103,8 @@ CREATE TABLE IF NOT EXISTS `aifs_client_schedule` (
     aifs_client_schedule_id INT PRIMARY KEY AUTO_INCREMENT,
     schedule INT NOT NULL,
     related_client INT NOT NULL,
-
+    patrol_order INT NOT NULL, 
+    
     FOREIGN KEY (schedule)
         REFERENCES `schedule` (schedule_id)
         ON UPDATE RESTRICT ON DELETE CASCADE,
@@ -118,7 +119,6 @@ CREATE TABLE IF NOT EXISTS `default_rostering` (
     aifs1_schedule INT NOT NULL,
     aifs2_schedule INT NOT NULL,
     aifs3_schedule INT NOT NULL,
-    related_client INT NOT NULL,
  
     FOREIGN KEY (aifs1_schedule)
         REFERENCES `schedule` (schedule_id)
