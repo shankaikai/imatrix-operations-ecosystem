@@ -126,3 +126,39 @@ func createFakeEmployeeEval(id int) *pb.EmployeeEvaluation {
 		IsAvailable:   true,
 	}
 }
+
+func CreateFakeIncidentReport(id int) *pb.IncidentReport {
+	return &pb.IncidentReport{
+		IncidentReportId:      int64(id),
+		Type:                  pb.IncidentReport_INTRUDER,
+		Creator:               createFakeUser(id),
+		CreationDate:          time.Now().Format(common.DATETIME_FORMAT),
+		LastModifiedDate:      time.Now().Format(common.DATETIME_FORMAT),
+		LastModifedUser:       createFakeUser(id),
+		IsOriginal:            id%2 == 0,
+		IsApproved:            id%2 != 0,
+		Signature:             nil,
+		ApprovalDate:          "",
+		IncidentReportContent: CreateFakeIncidentReportContent(id),
+	}
+}
+
+func CreateFakeIncidentReportContent(id int) *pb.IncidentReportContent {
+	return &pb.IncidentReportContent{
+		ReportContentId:       1,
+		LastModifiedDate:      time.Now().Format(common.DATETIME_FORMAT),
+		LastModifedUser:       createFakeUser(id),
+		Address:               "address",
+		IncidentTime:          time.Now().Format(common.DATETIME_FORMAT),
+		IsPoliceNotified:      false,
+		Title:                 "Title",
+		Description:           "Description",
+		HasActionTaken:        false,
+		ActionTaken:           "",
+		HasInjury:             true,
+		InjuryDescription:     "InjuryDescription",
+		HasStolenItem:         true,
+		StolenItemDescription: "StolenItemDescription",
+		ReportImageLink:       "",
+	}
+}

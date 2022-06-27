@@ -52,5 +52,7 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 	pb.RegisterAdminServicesServer(grpcServer, &server)
 	pb.RegisterBroadcastServicesServer(grpcServer, &server)
 	pb.RegisterRosterServicesServer(grpcServer, &server)
+	pb.RegisterIncidentReportServicesServer(grpcServer, &server)
+
 	grpcServer.Serve(lis)
 }

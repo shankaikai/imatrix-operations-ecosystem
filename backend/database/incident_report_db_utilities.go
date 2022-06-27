@@ -195,7 +195,7 @@ func getFormattedIncidentReportFilters(query *pb.IncidentReportQuery, table stri
 			hasQuotes = false
 		}
 		switch filter.Field {
-		case pb.IncidentReportFilter_REPORT_ID, pb.IncidentReportFilter_REPORT_CONTENT_ID, pb.IncidentReportFilter_REPORT_TYPE,
+		case pb.IncidentReportFilter_REPORT_ID, pb.IncidentReportFilter_REPORT_TYPE,
 			pb.IncidentReportFilter_SIGNATURE, pb.IncidentReportFilter_APPROVAL_DATE:
 			if hasQuotes {
 				whereFilters = append(
@@ -214,13 +214,14 @@ func getFormattedIncidentReportFilters(query *pb.IncidentReportQuery, table stri
 					GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value),
 			)
 		// This can either refer to the original or the new content
-		case pb.IncidentReportFilter_MODIFIER, pb.IncidentReportFilter_LAST_MODIFIED_DATE:
+		case pb.IncidentReportFilter_MODIFIER, pb.IncidentReportFilter_LAST_MODIFIED_DATE,
+			pb.IncidentReportFilter_REPORT_CONTENT_ID:
 			if table == INCIDENT_REPORT_DB_TABLE_NAME {
 				whereFilters = append(
 					whereFilters, fmt.Sprintf("(%s.%s %s '%s' OR %s.%s %s '%s')",
-						incidentReportFilterToDBCol(filter.Field, table), ORIGINAL_INCIDENT_REPORT_TABLE_ALIAS,
+						ORIGINAL_INCIDENT_REPORT_TABLE_ALIAS, incidentReportFilterToDBCol(filter.Field, table),
 						GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value,
-						incidentReportFilterToDBCol(filter.Field, table), MODIFIED_INCIDENT_REPORT_TABLE_ALIAS,
+						MODIFIED_INCIDENT_REPORT_TABLE_ALIAS, incidentReportFilterToDBCol(filter.Field, table),
 						GetFilterComparisonSign(filter.Comparisons.Comparison), filter.Comparisons.Value),
 				)
 			} else {
@@ -252,7 +253,7 @@ func getFormattedIncidentReportFilters(query *pb.IncidentReportQuery, table stri
 			output += fmt.Sprintf(" %s %s %s", ORDER_BY_KEYWORD, incidentReportFilterToDBCol(query.OrderBy.Field, table), orderByProtoToDB(query.OrderBy.OrderBy))
 		} else if table == INCIDENT_REPORT_DB_TABLE_NAME {
 			// By default we order incidentReports by the aifs id
-			output += fmt.Sprintf(" %s %s %s", ORDER_BY_KEYWORD, incidentReportFilterToDBCol(pb.IncidentReportFilter_LAST_MODIFIED_DATE, table), ASC_KEYWORD)
+			output += fmt.Sprintf(" %s %s.%s %s", ORDER_BY_KEYWORD, MODIFIED_INCIDENT_REPORT_TABLE_ALIAS, incidentReportFilterToDBCol(pb.IncidentReportFilter_LAST_MODIFIED_DATE, table), DESC_KEYWORD)
 		}
 	}
 

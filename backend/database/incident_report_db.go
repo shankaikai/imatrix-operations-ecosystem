@@ -196,6 +196,8 @@ func UpdateIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock 
 	AddIncidentReportFilter(query, pb.IncidentReportFilter_REPORT_ID,
 		pb.Filter_EQUAL, strconv.Itoa(int(incidentReport.IncidentReportId)))
 
+	var oldReport *pb.IncidentReport
+
 	// Insert the new incident report if any
 	if incidentReport.IncidentReportContent != nil {
 		newContentPk, err = InsertIncidentReportContent(db, incidentReport.IncidentReportContent, dbLock)
@@ -206,23 +208,14 @@ func UpdateIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock 
 		// Get old incident report
 		reports, err := GetIncidentReports(db, query)
 		if err != nil {
-			// Delete the new content that was just inserted
+			// Delete the report content that was just added
 			DeleteIncidentReportContent(db, &pb.IncidentReportContent{ReportContentId: newContentPk})
 			return 0, err
 		}
 
-		// check if the content has any existing modified content
-
-		if len(reports) > 0 && !reports[0].IsOriginal {
-			// Delete the old incident report content
-			_, err := DeleteIncidentReportContent(db, reports[0].IncidentReportContent)
-			if err != nil {
-				// Delete the new content that was just inserted
-				DeleteIncidentReportContent(db, &pb.IncidentReportContent{ReportContentId: newContentPk})
-				return 0, err
-			}
+		if len(reports) > 0 {
+			oldReport = reports[0]
 		}
-
 	}
 
 	// Update the main incidentReport
@@ -234,6 +227,19 @@ func UpdateIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock 
 		if err != nil {
 			fmt.Println("UpdateIncidentReport ERROR::", err)
 			return rowsAffected, err
+		}
+	}
+
+	// Now that the new content is tied to the main report
+	// delete the previous content
+	if incidentReport.IncidentReportContent != nil {
+		// check if the content has any existing modified content
+		if oldReport != nil && !oldReport.IsOriginal {
+			// Delete the old incident report content
+			_, err := DeleteIncidentReportContent(db, oldReport.IncidentReportContent)
+			if err != nil {
+				return 0, err
+			}
 		}
 	}
 

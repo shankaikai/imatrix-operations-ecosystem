@@ -47,7 +47,8 @@ func main() {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
 		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
-		client.TestRosteringClient(serverAddrFlag, serverPortFlag)
+		// client.TestRosteringClient(serverAddrFlag, serverPortFlag)
+		client.TestIncidentReportClient(serverAddrFlag, serverPortFlag)
 	}
 }
 
