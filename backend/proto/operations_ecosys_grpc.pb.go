@@ -1074,3 +1074,226 @@ var RosterServices_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "proto/operations_ecosys.proto",
 }
+
+// IncidentReportServicesClient is the client API for IncidentReportServices service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type IncidentReportServicesClient interface {
+	AddIncidentReport(ctx context.Context, in *IncidentReport, opts ...grpc.CallOption) (*Response, error)
+	UpdateIncidentReport(ctx context.Context, in *IncidentReport, opts ...grpc.CallOption) (*Response, error)
+	DeleteIncidentReport(ctx context.Context, in *IncidentReport, opts ...grpc.CallOption) (*Response, error)
+	FindIncidentReports(ctx context.Context, in *IncidentReportQuery, opts ...grpc.CallOption) (IncidentReportServices_FindIncidentReportsClient, error)
+}
+
+type incidentReportServicesClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewIncidentReportServicesClient(cc grpc.ClientConnInterface) IncidentReportServicesClient {
+	return &incidentReportServicesClient{cc}
+}
+
+func (c *incidentReportServicesClient) AddIncidentReport(ctx context.Context, in *IncidentReport, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.IncidentReportServices/AddIncidentReport", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *incidentReportServicesClient) UpdateIncidentReport(ctx context.Context, in *IncidentReport, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.IncidentReportServices/UpdateIncidentReport", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *incidentReportServicesClient) DeleteIncidentReport(ctx context.Context, in *IncidentReport, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.IncidentReportServices/DeleteIncidentReport", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *incidentReportServicesClient) FindIncidentReports(ctx context.Context, in *IncidentReportQuery, opts ...grpc.CallOption) (IncidentReportServices_FindIncidentReportsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &IncidentReportServices_ServiceDesc.Streams[0], "/operations_ecosys.IncidentReportServices/FindIncidentReports", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &incidentReportServicesFindIncidentReportsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type IncidentReportServices_FindIncidentReportsClient interface {
+	Recv() (*IncidentReportResponse, error)
+	grpc.ClientStream
+}
+
+type incidentReportServicesFindIncidentReportsClient struct {
+	grpc.ClientStream
+}
+
+func (x *incidentReportServicesFindIncidentReportsClient) Recv() (*IncidentReportResponse, error) {
+	m := new(IncidentReportResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// IncidentReportServicesServer is the server API for IncidentReportServices service.
+// All implementations must embed UnimplementedIncidentReportServicesServer
+// for forward compatibility
+type IncidentReportServicesServer interface {
+	AddIncidentReport(context.Context, *IncidentReport) (*Response, error)
+	UpdateIncidentReport(context.Context, *IncidentReport) (*Response, error)
+	DeleteIncidentReport(context.Context, *IncidentReport) (*Response, error)
+	FindIncidentReports(*IncidentReportQuery, IncidentReportServices_FindIncidentReportsServer) error
+	mustEmbedUnimplementedIncidentReportServicesServer()
+}
+
+// UnimplementedIncidentReportServicesServer must be embedded to have forward compatible implementations.
+type UnimplementedIncidentReportServicesServer struct {
+}
+
+func (UnimplementedIncidentReportServicesServer) AddIncidentReport(context.Context, *IncidentReport) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddIncidentReport not implemented")
+}
+func (UnimplementedIncidentReportServicesServer) UpdateIncidentReport(context.Context, *IncidentReport) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateIncidentReport not implemented")
+}
+func (UnimplementedIncidentReportServicesServer) DeleteIncidentReport(context.Context, *IncidentReport) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteIncidentReport not implemented")
+}
+func (UnimplementedIncidentReportServicesServer) FindIncidentReports(*IncidentReportQuery, IncidentReportServices_FindIncidentReportsServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindIncidentReports not implemented")
+}
+func (UnimplementedIncidentReportServicesServer) mustEmbedUnimplementedIncidentReportServicesServer() {
+}
+
+// UnsafeIncidentReportServicesServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to IncidentReportServicesServer will
+// result in compilation errors.
+type UnsafeIncidentReportServicesServer interface {
+	mustEmbedUnimplementedIncidentReportServicesServer()
+}
+
+func RegisterIncidentReportServicesServer(s grpc.ServiceRegistrar, srv IncidentReportServicesServer) {
+	s.RegisterService(&IncidentReportServices_ServiceDesc, srv)
+}
+
+func _IncidentReportServices_AddIncidentReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IncidentReport)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IncidentReportServicesServer).AddIncidentReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.IncidentReportServices/AddIncidentReport",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IncidentReportServicesServer).AddIncidentReport(ctx, req.(*IncidentReport))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IncidentReportServices_UpdateIncidentReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IncidentReport)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IncidentReportServicesServer).UpdateIncidentReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.IncidentReportServices/UpdateIncidentReport",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IncidentReportServicesServer).UpdateIncidentReport(ctx, req.(*IncidentReport))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IncidentReportServices_DeleteIncidentReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IncidentReport)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IncidentReportServicesServer).DeleteIncidentReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.IncidentReportServices/DeleteIncidentReport",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IncidentReportServicesServer).DeleteIncidentReport(ctx, req.(*IncidentReport))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IncidentReportServices_FindIncidentReports_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(IncidentReportQuery)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(IncidentReportServicesServer).FindIncidentReports(m, &incidentReportServicesFindIncidentReportsServer{stream})
+}
+
+type IncidentReportServices_FindIncidentReportsServer interface {
+	Send(*IncidentReportResponse) error
+	grpc.ServerStream
+}
+
+type incidentReportServicesFindIncidentReportsServer struct {
+	grpc.ServerStream
+}
+
+func (x *incidentReportServicesFindIncidentReportsServer) Send(m *IncidentReportResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// IncidentReportServices_ServiceDesc is the grpc.ServiceDesc for IncidentReportServices service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var IncidentReportServices_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "operations_ecosys.IncidentReportServices",
+	HandlerType: (*IncidentReportServicesServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddIncidentReport",
+			Handler:    _IncidentReportServices_AddIncidentReport_Handler,
+		},
+		{
+			MethodName: "UpdateIncidentReport",
+			Handler:    _IncidentReportServices_UpdateIncidentReport_Handler,
+		},
+		{
+			MethodName: "DeleteIncidentReport",
+			Handler:    _IncidentReportServices_DeleteIncidentReport_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "FindIncidentReports",
+			Handler:       _IncidentReportServices_FindIncidentReports_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "proto/operations_ecosys.proto",
+}
