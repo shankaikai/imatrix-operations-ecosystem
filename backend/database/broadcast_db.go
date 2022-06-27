@@ -112,6 +112,7 @@ func GetBroadcasts(db *sql.DB, query *pb.BroadcastQuery) ([]*pb.Broadcast, error
 func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastID int64) ([]*pb.BroadcastRecipient, error) {
 	fmt.Println("Getting Broadcasts Recipients...")
 	broadcastRecipients := make([]*pb.BroadcastRecipient, 0)
+	retrievedUsers := make(map[int64]*pb.User)
 
 	fields := ALL_COLS
 
@@ -162,9 +163,8 @@ func GetBroadcastRecipients(db *sql.DB, query *pb.BroadcastQuery, mainBroadcastI
 			}
 		}
 
-		// TODO think about whether I can store the users in cache rather than
-		// get the same few users over and over
-		recipient.Recipient, err = idUserByUserId(db, recipientId)
+		recipient.Recipient, err = getUserFromCache(db, &retrievedUsers, int64(recipientId))
+
 		if err != nil {
 			fmt.Println("GetBroadcasts:", err.Error())
 			continue

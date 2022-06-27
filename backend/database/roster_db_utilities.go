@@ -333,6 +333,8 @@ func getFormattedRosterFilters(query *pb.RosterQuery, table string, needLimit bo
 // Modifies the roster array in place.
 func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows, query *pb.RosterQuery) error {
 	rosterMap := make(map[int64]*pb.Roster)
+	retrievedUsers := make(map[int64]*pb.User)
+	retrievedClients := make(map[int64]*pb.Client)
 
 	for rows.Next() {
 		roster := &pb.Roster{
@@ -418,7 +420,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		if !guardAssignmentExists {
 			convertFromDbRosterAssignment(db, rosterAssignment, assignedUserId,
 				customStartTimeString, customEndTimeString,
-				attendanceTimeString, confirmation)
+				attendanceTimeString, confirmation, &retrievedUsers)
 			// Add assignment to roster
 			roster.GuardAssigned = append(roster.GuardAssigned, rosterAssignment)
 		}
@@ -433,7 +435,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		}
 
 		if !clientExists {
-			convertFromDbRosterAifsClient(db, aifsClient, clientId)
+			convertFromDbRosterAifsClient(db, aifsClient, clientId, &retrievedClients)
 			// Add assignment to roster
 			roster.Clients = append(roster.Clients, aifsClient)
 		}
@@ -465,10 +467,10 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 // modifies the roster Assignment in place
 func convertFromDbRosterAssignment(db *sql.DB, rosterAssignment *pb.RosterAssignement, assignedUserId int,
 	customStartTimeString string, customEndTimeString string,
-	attendanceTimeString sql.NullString, confirmation sql.NullBool) error {
+	attendanceTimeString sql.NullString, confirmation sql.NullBool, retrievedUsers *map[int64]*pb.User) error {
 
 	var err error
-	rosterAssignment.GuardAssigned.Employee, err = idUserByUserId(db, assignedUserId)
+	rosterAssignment.GuardAssigned.Employee, err = getUserFromCache(db, retrievedUsers, int64(assignedUserId))
 
 	if err != nil {
 		fmt.Println("convertFromDbRosterAssignment:", err.Error())
@@ -514,9 +516,9 @@ func convertFromDbRosterAssignment(db *sql.DB, rosterAssignment *pb.RosterAssign
 	return nil
 }
 
-func convertFromDbRosterAifsClient(db *sql.DB, aifsClient *pb.AIFSClientRoster, clientId int) error {
+func convertFromDbRosterAifsClient(db *sql.DB, aifsClient *pb.AIFSClientRoster, clientId int, retrievedClients *map[int64]*pb.Client) error {
 	var err error
-	aifsClient.Client, err = IdClientByClientId(db, clientId)
+	aifsClient.Client, err = getClientFromCache(db, retrievedClients, int64(clientId))
 
 	if err != nil {
 		fmt.Println("convertFromDbRosterAifsClient:", err.Error())

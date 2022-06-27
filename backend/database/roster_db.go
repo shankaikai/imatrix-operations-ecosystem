@@ -204,6 +204,7 @@ func GetDefaultRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) 
 func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64) ([]*pb.RosterAssignement, error) {
 	fmt.Println("Getting Rosters Assignments...")
 	rosterRecipients := make([]*pb.RosterAssignement, 0)
+	retrievedUsers := make(map[int64]*pb.User)
 
 	fields := ALL_COLS
 
@@ -287,9 +288,9 @@ func GetRosterAssingments(db *sql.DB, query *pb.RosterQuery, mainRosterID int64)
 				continue
 			}
 		}
-		// TODO think about whether I can store the users in cache rather than
-		// get the same few users over and over
-		assignment.GuardAssigned.Employee, err = idUserByUserId(db, guardId)
+
+		assignment.GuardAssigned.Employee, err = getUserFromCache(db, &retrievedUsers, int64(guardId))
+
 		if err != nil {
 			fmt.Println("GetRosterAssingments:", err)
 			continue

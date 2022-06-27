@@ -312,6 +312,7 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 // Modifies the broadcast array in place.
 func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Rows, query *pb.BroadcastQuery) error {
 	broadcastMap := make(map[int64]*pb.Broadcast)
+	retrievedUsers := make(map[int64]*pb.User)
 
 	for rows.Next() {
 		broadcast := &pb.Broadcast{Recipients: make([]*pb.AIFSBroadcastRecipient, 0)}
@@ -360,13 +361,13 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 				continue
 			}
 			broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
-			creator, err := idUserByUserId(db, creatorUserId)
-			broadcast.Urgency = getBroadcastUrgencyProtoTypeStringFromDB(urgencyType)
-
+			creator, err := getUserFromCache(db, &retrievedUsers, int64(creatorUserId))
 			if err != nil {
 				fmt.Println("GetBroadcasts ERROR:", err)
 				continue
 			}
+
+			broadcast.Urgency = getBroadcastUrgencyProtoTypeStringFromDB(urgencyType)
 
 			broadcast.Creator = creator
 
@@ -385,7 +386,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 			broadcastMap[broadcast.BroadcastId] = broadcast
 		}
 
-		broadcastRecipient.Recipient, err = idUserByUserId(db, recipientUserId)
+		broadcastRecipient.Recipient, err = getUserFromCache(db, &retrievedUsers, int64(recipientUserId))
 		if err != nil {
 			fmt.Println("GetBroadcasts:", err.Error())
 			continue
