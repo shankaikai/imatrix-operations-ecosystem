@@ -10,8 +10,11 @@ import {
 } from "@mantine/core";
 import React from "react";
 import { IoSave } from "react-icons/io5";
+import { useReporting } from "../../../helpers/useReportingClient";
 
 export default function ReportContainer() {
+  const { selectedReport } = useReporting();
+
   const handleSave = () => {
     console.log("handleSave called");
   };
@@ -20,6 +23,7 @@ export default function ReportContainer() {
     <Card
       sx={{
         width: "50%",
+        display: selectedReport === -1 ? "none" : "default",
       }}
     >
       <Stack>
@@ -58,10 +62,16 @@ export default function ReportContainer() {
           cupidatat
         </Text>
         <Space />
-        <CheckboxGroup>
-          <Checkbox label="Test" />
-          <Checkbox />
-        </CheckboxGroup>
+        <Stack>
+          <Group>
+            <Text size="xs">Was police notified?</Text>
+            <Checkbox size="xs" checked={true} />
+          </Group>
+          <Group>
+            <Text size="xs">Was anything stolen?</Text>
+            <Checkbox size="xs" checked={false} />
+          </Group>
+        </Stack>
       </Stack>
     </Card>
   );

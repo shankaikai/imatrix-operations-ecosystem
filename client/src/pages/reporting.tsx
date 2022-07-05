@@ -3,16 +3,19 @@ import type { NextPage } from "next";
 import ReportContainer from "../components/Reporting/ReportContainer";
 import ReportsBar from "../components/Reporting/ReportsBar";
 import ReportsList from "../components/Reporting/ReportsList";
+import { ReportingProvider } from "../helpers/useReportingClient";
 
 const Reporting: NextPage = () => {
   return (
-    <Stack>
-      <ReportsBar />
-      <Group align="flex-start">
-        <ReportsList />
-        <ReportContainer />
-      </Group>
-    </Stack>
+    <ReportingProvider>
+      <Stack>
+        <ReportsBar />
+        <Group align="flex-start">
+          <ReportsList />
+          <ReportContainer />
+        </Group>
+      </Stack>
+    </ReportingProvider>
   );
 };
 

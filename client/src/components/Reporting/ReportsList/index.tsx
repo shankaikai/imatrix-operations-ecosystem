@@ -1,20 +1,23 @@
-import { Stack } from "@mantine/core";
+import { ScrollArea, Stack } from "@mantine/core";
 import React from "react";
 import ReportSmallCard from "../ReportSmallCard";
 
 export default function ReportsList() {
   return (
-    <Stack
+    <ScrollArea
       sx={{
-        width: "30%",
+        width: "35%",
+        height: "calc(100vh - 132px)",
       }}
     >
-      <ReportSmallCard />
-      <ReportSmallCard />
-      <ReportSmallCard />
-      <ReportSmallCard />
-      <ReportSmallCard />
-      <ReportSmallCard />
-    </Stack>
+      <Stack>
+        <ReportSmallCard selected/>
+        <ReportSmallCard />
+        <ReportSmallCard />
+        <ReportSmallCard />
+        <ReportSmallCard />
+        <ReportSmallCard />
+      </Stack>
+    </ScrollArea>
   );
 }
