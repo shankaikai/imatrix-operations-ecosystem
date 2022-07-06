@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { Check, Edit, EditOff, Forms } from "tabler-icons-react";
 import {
+  approveReport,
   submitUpdateReport,
   useReporting,
 } from "../../../helpers/useReportingClient";
@@ -28,7 +29,8 @@ import { useForm } from "@mantine/form";
 import { IoClose } from "react-icons/io5";
 
 export default function ReportContainer() {
-  const { selectedReport } = useReporting();
+  const { selectedReport, setSelectedReport, setReports, reports } =
+    useReporting();
 
   const [editOn, setEditOn] = useState(false);
 
@@ -40,26 +42,41 @@ export default function ReportContainer() {
   const handleClose = () => {
     console.log("handleClose called");
     setEditOn(false);
-    // TODO: Call updateIncidentReport
   };
 
-  const handleApprove = () => {
-    // TODO: Call approveIncidentReport
+  const handleApprove = async () => {
+    const id =
+      selectedReport &&
+      setReports &&
+      (await approveReport(selectedReport.incidentReportId, setReports));
+    setSelectedReport &&
+      setSelectedReport(
+        reports.find(
+          (report) => report.incidentReportId === id
+        ) as IncidentReport.AsObject
+      );
+    forceUpdate();
   };
+
+  const [, updateState] = React.useState();
+  //@ts-ignore
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   useEffect(() => {
     selectedReport &&
-      console.log(selectedReport?.incidentReportContent?.hasStolenItem);
-    form.setValues({
-      title: selectedReport?.incidentReportContent?.title || "",
-      address: selectedReport?.incidentReportContent?.address || "",
-      time: selectedReport?.incidentReportContent?.incidentTime || "",
-      description: selectedReport?.incidentReportContent?.description || "",
-      isPoliceNotified:
-        selectedReport?.incidentReportContent?.isPoliceNotified || false,
-      hasStolenItem:
-        selectedReport?.incidentReportContent?.hasStolenItem || false,
-    });
+      form.setValues({
+        title: selectedReport?.incidentReportContent?.title || "",
+        address: selectedReport?.incidentReportContent?.address || "",
+        time:
+          dayjs(selectedReport?.incidentReportContent?.incidentTime).format(
+            "YYYY-MM-DD[T]HH:mm"
+          ) || "",
+        description: selectedReport?.incidentReportContent?.description || "",
+        isPoliceNotified:
+          selectedReport?.incidentReportContent?.isPoliceNotified || false,
+        hasStolenItem:
+          selectedReport?.incidentReportContent?.hasStolenItem || false,
+      });
   }, [selectedReport]);
 
   const form = useForm({
@@ -86,7 +103,8 @@ export default function ReportContainer() {
           onSubmit={form.onSubmit((values) =>
             submitUpdateReport(
               values,
-              selectedReport?.incidentReportId as number
+              selectedReport?.incidentReportId as number,
+              setReports as React.Dispatch<IncidentReport.AsObject[]>
             )
           )}
           style={{
@@ -202,9 +220,11 @@ export default function ReportContainer() {
             <Text size="lg" weight={500}>
               {selectedReport?.incidentReportContent?.title}
             </Text>
-            <ActionIcon onClick={handleEdit}>
-              <Edit />
-            </ActionIcon>
+            {!selectedReport.isApproved && (
+              <ActionIcon onClick={handleEdit}>
+                <Edit />
+              </ActionIcon>
+            )}
           </Group>
           <Divider my="sm" />
           <ScrollArea
@@ -256,14 +276,16 @@ export default function ReportContainer() {
               </Group>
             </Stack>
           </ScrollArea>
-          <Button
-            color="green"
-            variant="filled"
-            mt="xl"
-            onClick={handleApprove}
-          >
-            Approve
-          </Button>
+          {!selectedReport.isApproved && (
+            <Button
+              color="green"
+              variant="filled"
+              mt="xl"
+              onClick={handleApprove}
+            >
+              Approve
+            </Button>
+          )}
         </Stack>
       )}
     </Card>

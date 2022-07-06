@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   createContext,
   Dispatch,
@@ -13,6 +14,10 @@ import {
   IncidentReportResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import {
+  showApproveReportSuccessNotification,
+  showUpdateReportSuccessNotification,
+} from "./notifications";
 
 interface RosteringContextInterface {
   reports: IncidentReport.AsObject[];
@@ -120,8 +125,11 @@ export interface UpdateReport {
   hasStolenItem: boolean;
 }
 
-export async function submitUpdateReport(values: UpdateReport, id: number) {
-  debugger;
+export async function submitUpdateReport(
+  values: UpdateReport,
+  id: number,
+  setReports: Dispatch<IncidentReport.AsObject[]>
+) {
   const client = getReportingClient();
 
   const incidentReport = new IncidentReport();
@@ -131,7 +139,9 @@ export async function submitUpdateReport(values: UpdateReport, id: number) {
   user.setUserId(1); //TODO: swap with actual user's id when logged in
   incidentReportContent.setTitle(values.title);
   incidentReportContent.setAddress(values.address);
-  incidentReportContent.setIncidentTime(values.time);
+  incidentReportContent.setIncidentTime(
+    dayjs(values.time, "YYYY-MM-DD[T]HH:mm").format("YYYY-MM-DD HH:mm")
+  );
   incidentReportContent.setDescription(values.description);
   incidentReportContent.setIsPoliceNotified(values.isPoliceNotified);
   incidentReportContent.setHasStolenItem(values.hasStolenItem);
@@ -139,10 +149,34 @@ export async function submitUpdateReport(values: UpdateReport, id: number) {
   incidentReport.setLastModifedUser(user);
   incidentReport.setIncidentReportId(id);
   incidentReport.setIncidentReportContent(incidentReportContent);
+
   await client
     .updateIncidentReport(incidentReport, {})
     .then((response) => {
       console.log(response);
+      showUpdateReportSuccessNotification();
     })
     .catch((e) => console.log(e));
+
+  updateReports(0, setReports, true);
+}
+
+export async function approveReport(
+  id: number,
+  setReports: Dispatch<IncidentReport.AsObject[]>
+) {
+  const client = getReportingClient();
+
+  const incidentReport = new IncidentReport();
+  incidentReport.setIsApproved(true);
+  incidentReport.setIncidentReportId(id);
+  incidentReport.setApprovalDate(dayjs(Date.now()).format("YYYY-MM-DD HH:mm"));
+
+  await client.updateIncidentReport(incidentReport, {}).then((response) => {
+    showApproveReportSuccessNotification();
+  });
+
+  updateReports(0, setReports, true);
+
+  return id
 }
