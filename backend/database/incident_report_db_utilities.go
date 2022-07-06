@@ -162,33 +162,35 @@ func getFilledIncidentReportFields(incidentReport *pb.IncidentReport, originalCo
 	return strings.Join(incidentReportTableFields, ",")
 }
 
-func fillUpdatedIncidentReport(newReportContent *pb.IncidentReportContent, oldReportContent *pb.IncidentReportContent) error {
-	if len(newReportContent.LastModifiedDate) == 0 {
-		newReportContent.LastModifiedDate = time.Now().Format(common.DATETIME_FORMAT)
+func fillUpdatedIncidentReport(newReport *pb.IncidentReport, oldReportContent *pb.IncidentReportContent) error {
+	newReport.IncidentReportContent.LastModifedUser = newReport.LastModifedUser
+
+	if len(newReport.IncidentReportContent.LastModifiedDate) == 0 {
+		newReport.IncidentReportContent.LastModifiedDate = time.Now().Format(common.DATETIME_FORMAT)
 	}
-	if len(newReportContent.Address) == 0 {
-		newReportContent.Address = oldReportContent.Address
+	if len(newReport.IncidentReportContent.Address) == 0 {
+		newReport.IncidentReportContent.Address = oldReportContent.Address
 	}
-	if len(newReportContent.IncidentTime) == 0 {
-		newReportContent.IncidentTime = oldReportContent.IncidentTime
+	if len(newReport.IncidentReportContent.IncidentTime) == 0 {
+		newReport.IncidentReportContent.IncidentTime = oldReportContent.IncidentTime
 	}
-	if len(newReportContent.Title) == 0 {
-		newReportContent.Title = oldReportContent.Title
+	if len(newReport.IncidentReportContent.Title) == 0 {
+		newReport.IncidentReportContent.Title = oldReportContent.Title
 	}
-	if len(newReportContent.Description) == 0 {
-		newReportContent.Description = oldReportContent.Description
+	if len(newReport.IncidentReportContent.Description) == 0 {
+		newReport.IncidentReportContent.Description = oldReportContent.Description
 	}
-	if len(newReportContent.ActionTaken) == 0 {
-		newReportContent.ActionTaken = oldReportContent.ActionTaken
+	if len(newReport.IncidentReportContent.ActionTaken) == 0 {
+		newReport.IncidentReportContent.ActionTaken = oldReportContent.ActionTaken
 	}
-	if len(newReportContent.InjuryDescription) == 0 {
-		newReportContent.InjuryDescription = oldReportContent.InjuryDescription
+	if len(newReport.IncidentReportContent.InjuryDescription) == 0 {
+		newReport.IncidentReportContent.InjuryDescription = oldReportContent.InjuryDescription
 	}
-	if len(newReportContent.StolenItemDescription) == 0 {
-		newReportContent.StolenItemDescription = oldReportContent.StolenItemDescription
+	if len(newReport.IncidentReportContent.StolenItemDescription) == 0 {
+		newReport.IncidentReportContent.StolenItemDescription = oldReportContent.StolenItemDescription
 	}
-	if len(newReportContent.ReportImageLink) == 0 {
-		newReportContent.ReportImageLink = oldReportContent.ReportImageLink
+	if len(newReport.IncidentReportContent.ReportImageLink) == 0 {
+		newReport.IncidentReportContent.ReportImageLink = oldReportContent.ReportImageLink
 	}
 	return nil
 }
