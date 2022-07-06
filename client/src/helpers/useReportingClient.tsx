@@ -22,8 +22,8 @@ interface RosteringContextInterface {
   setSelectValue?: Dispatch<string>;
   modalOpen: boolean;
   setModalOpen?: Dispatch<boolean>;
-  selectedReport: number;
-  setSelectedReport?: Dispatch<number>;
+  selectedReport?: IncidentReport.AsObject;
+  setSelectedReport?: Dispatch<IncidentReport.AsObject>;
   updateReports?: (
     skip: number,
     setRosters: Dispatch<IncidentReport.AsObject[]>,
@@ -36,7 +36,6 @@ const ReportingContext = createContext<RosteringContextInterface>({
   search: "",
   selectValue: "latest",
   modalOpen: false,
-  selectedReport: -1,
 });
 
 interface ReportingProviderProps {
@@ -48,15 +47,12 @@ export function ReportingProvider({ children }: ReportingProviderProps) {
   const [search, setSearch] = useState("");
   const [selectValue, setSelectValue] = useState("latest");
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState(-1);
+  const [selectedReport, setSelectedReport] = useState<IncidentReport.AsObject>();
 
-<<<<<<< Updated upstream
-=======
   useEffect(() => {
     updateReports(reports.length, setReports);
   }, []);
 
->>>>>>> Stashed changes
   return (
     <ReportingContext.Provider
       value={{

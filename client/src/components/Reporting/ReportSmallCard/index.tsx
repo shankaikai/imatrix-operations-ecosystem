@@ -1,22 +1,37 @@
 import { Avatar, Card, Group, Stack, Text } from "@mantine/core";
+import dayjs from "dayjs";
 import React from "react";
 import { useReporting } from "../../../helpers/useReportingClient";
+import { IncidentReport } from "../../../proto/operations_ecosys_pb";
 
 interface ReportSmallCardProps {
-  id?: number;
-  title?: string;
-  sender?: string;
+  id: number;
+  title: string;
+  sender: string;
+  senderImg: string;
   aifsId?: number;
-  updateDate?: Date;
+  creationDate: string;
+  updateDate: string;
   selected?: boolean;
+  report?:IncidentReport.AsObject
 }
 
-export default function ReportSmallCard({ selected }: ReportSmallCardProps) {
+export default function ReportSmallCard({
+  selected,
+  id,
+  title,
+  sender,
+  senderImg,
+  aifsId,
+  creationDate,
+  updateDate,
+  report,
+}: ReportSmallCardProps) {
   const { setSelectedReport } = useReporting();
 
   const handleClick = () => {
-    console.log("ReportSmallCard clicked");
-    setSelectedReport && setSelectedReport(1);
+    console.log("set id to ", id);
+    setSelectedReport && report && setSelectedReport(report);
   };
 
   return (
@@ -40,15 +55,17 @@ export default function ReportSmallCard({ selected }: ReportSmallCardProps) {
       onClick={handleClick}
     >
       <Stack>
-        <Text weight={500}>Camera Faulty.doc</Text>
+        <Text weight={500}>{title}</Text>
         <Group spacing="xs">
-          <Avatar radius="xl" />
+          <Avatar radius="xl" src={senderImg}/>
           <Text size="xs" color="dimmed">
-            Philip Wee (AIFS1)
+            {sender}
           </Text>
           <Text>•</Text>
           <Text size="xs" color="dimmed">
-            Updated on 7/6/22 at 19:04
+            {`Updated on ${dayjs(updateDate, "YYYY-MM-DD HH:mm:ss").format(
+              "D/M/YY [at] HH:mm"
+            )}`}
           </Text>
         </Group>
       </Stack>

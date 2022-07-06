@@ -8,12 +8,13 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import React from "react";
+import dayjs from "dayjs";
+import React, { useState } from "react";
 import { IoSave } from "react-icons/io5";
 import { useReporting } from "../../../helpers/useReportingClient";
 
 export default function ReportContainer() {
-  const { selectedReport } = useReporting();
+  const { selectedReport, reports } = useReporting();
 
   const handleSave = () => {
     console.log("handleSave called");
@@ -22,14 +23,14 @@ export default function ReportContainer() {
   return (
     <Card
       sx={{
-        width: "50%",
-        display: selectedReport === -1 ? "none" : "default",
+        flex: "1",
+        display: selectedReport?.incidentReportId ? "default" : "none",
       }}
     >
       <Stack>
         <Group position="apart">
           <Text size="lg" weight={500}>
-            Camera Faulty at NOK Site
+            {selectedReport?.incidentReportContent?.title}
           </Text>
           <ActionIcon onClick={handleSave}>
             <IoSave />
@@ -37,39 +38,36 @@ export default function ReportContainer() {
         </Group>
         <Space />
         <Stack spacing={0}>
-          <Text size="xs">{`Name:`}</Text>
-          <Text size="xs">{`Reported on:`}</Text>
-          <Text size="xs">{`Last updated:`}</Text>
-          <Text size="xs">{`Address:`}</Text>
+          <Text size="xs">{`Name: ${selectedReport?.creator?.name}`}</Text>
+          <Text size="xs">{`Reported on: ${dayjs(
+            selectedReport?.creationDate,
+            "YYYY-MM-DD HH:mm:ss"
+          ).format("D/M/YY [at] HH:mm")}`}</Text>
+          <Text size="xs">{`Last updated: ${dayjs(
+            selectedReport?.lastModifiedDate,
+            "YYYY-MM-DD HH:mm:ss"
+          ).format("D/M/YY [at] HH:mm")}`}</Text>
+          <Text size="xs">{`Address: ${selectedReport?.incidentReportContent?.address}`}</Text>
         </Stack>
         <Space />
         <Text size="xs">
-          Aliqua id fugiat nostrud irure ex duis ea quis id quis ad et. Sunt qui
-          esse pariatur duis deserunt mollit dolore cillum minim tempor enim.
-          Elit aute irure tempor cupidatat incididunt sint deserunt ut voluptate
-          aute id deserunt nisi. Pasd lasdnpwasd pwoel 12pm asknxcloa oasjdpiwh
-          pasijndasd noianc pojposjadnwpo asopjd mkxcklwpojd poa aojapsodj
-          apojpoawjdpias oapwjd asojd asjd p osjf sdif soefj poc kashdoiawhdp
-          flm spd aoj w0e d asd axc es f rerwet oto so spdfk sodvxclv nlxckv
-          psoefwe sadicspodf we0u apsdo jsdpfo jpdouw e0-s jdsdosfj woe0u=-ue0=
-          ew jwopdajpodjpo fop spof 0e if0sd-fi -0sif 0sier 0qir 39-r uq9e u
-          w0ri -0e -0sdfj aop 0ur9 selkfsjdpfdirg r0soeip suep s9eoe ir 0sp9f
-          pse 9f. Aliqua id fugiat nostrud irure ex duis ea quis id quis ad et.
-          Sunt qui esse pariatur duis deserunt mollit dolore cillum minim tempor
-          enim. Elit aute irure tempor cupidatat. Aliqua id fugiat nostrud irure
-          ex duis ea quis id quis ad et. Sunt qui esse pariatur duis deserunt
-          mollit dolore cillum minim tempor enim. Elit aute irure tempor
-          cupidatat
+          {selectedReport?.incidentReportContent?.description}
         </Text>
         <Space />
         <Stack>
           <Group>
             <Text size="xs">Was police notified?</Text>
-            <Checkbox size="xs" checked={true} />
+            <Checkbox
+              size="xs"
+              checked={selectedReport?.incidentReportContent?.isPoliceNotified}
+            />
           </Group>
           <Group>
             <Text size="xs">Was anything stolen?</Text>
-            <Checkbox size="xs" checked={false} />
+            <Checkbox
+              size="xs"
+              checked={selectedReport?.incidentReportContent?.hasStolenItem}
+            />
           </Group>
         </Stack>
       </Stack>
