@@ -200,22 +200,23 @@ func UpdateIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock 
 
 	// Insert the new incident report if any
 	if incidentReport.IncidentReportContent != nil {
+		// Get old incident report
+		reports, err := GetIncidentReports(db, query)
+		if err != nil {
+			return 0, err
+		}
+		if len(reports) > 0 {
+			oldReport = reports[0]
+		}
+
+		// get all fields that were nil
+		fillUpdatedIncidentReport(incidentReport.IncidentReportContent, oldReport.IncidentReportContent)
+
 		newContentPk, err = InsertIncidentReportContent(db, incidentReport.IncidentReportContent, dbLock)
 		if err != nil {
 			return 0, err
 		}
 
-		// Get old incident report
-		reports, err := GetIncidentReports(db, query)
-		if err != nil {
-			// Delete the report content that was just added
-			DeleteIncidentReportContent(db, &pb.IncidentReportContent{ReportContentId: newContentPk})
-			return 0, err
-		}
-
-		if len(reports) > 0 {
-			oldReport = reports[0]
-		}
 	}
 
 	// Update the main incidentReport
