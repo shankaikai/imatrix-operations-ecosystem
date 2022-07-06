@@ -210,7 +210,7 @@ func UpdateIncidentReport(db *sql.DB, incidentReport *pb.IncidentReport, dbLock 
 		}
 
 		// get all fields that were nil
-		fillUpdatedIncidentReport(incidentReport.IncidentReportContent, oldReport.IncidentReportContent)
+		fillUpdatedIncidentReport(incidentReport, oldReport.IncidentReportContent)
 
 		newContentPk, err = InsertIncidentReportContent(db, incidentReport.IncidentReportContent, dbLock)
 		if err != nil {
