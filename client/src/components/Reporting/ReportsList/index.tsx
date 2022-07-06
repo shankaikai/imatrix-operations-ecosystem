@@ -22,7 +22,7 @@ export default function ReportsList() {
             title={report.incidentReportContent?.title || ""}
             sender={report.creator?.name || ""}
             senderImg={report.creator?.userSecurityImg || ""}
-            aifsId={1}
+            aifsId={1} //TODO: do we need this?
             id={report.incidentReportId}
             creationDate={report.creationDate}
             updateDate={report.lastModifiedDate}

@@ -47,7 +47,8 @@ export function ReportingProvider({ children }: ReportingProviderProps) {
   const [search, setSearch] = useState("");
   const [selectValue, setSelectValue] = useState("latest");
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState<IncidentReport.AsObject>();
+  const [selectedReport, setSelectedReport] =
+    useState<IncidentReport.AsObject>();
 
   useEffect(() => {
     updateReports(reports.length, setReports);
@@ -81,7 +82,7 @@ export function useReporting() {
   return useContext(ReportingContext);
 }
 
-const updateReports = (
+export const updateReports = (
   skip: number,
   setReports: Dispatch<IncidentReport.AsObject[]>,
   clear?: boolean
@@ -108,3 +109,13 @@ const updateReports = (
     ]);
   });
 };
+
+export function submitUpdateReport() {
+  const client = getReportingClient();
+
+  const incidentReport = new IncidentReport();
+  
+  client.updateIncidentReport(incidentReport, null).then((response) => {
+    console.log(response);
+  });
+}
