@@ -11,6 +11,7 @@ import {
   IncidentReportContent,
   IncidentReportQuery,
   IncidentReportResponse,
+  User,
 } from "../proto/operations_ecosys_pb";
 
 interface RosteringContextInterface {
@@ -110,12 +111,37 @@ export const updateReports = (
   });
 };
 
-export function submitUpdateReport() {
+export interface UpdateReport {
+  title: string;
+  address: string;
+  time: string;
+  description: string;
+  isPoliceNotified: boolean;
+  hasStolenItem: boolean;
+}
+
+export async function submitUpdateReport(values: UpdateReport, id: number) {
   const client = getReportingClient();
 
   const incidentReport = new IncidentReport();
-  
-  client.updateIncidentReport(incidentReport, null).then((response) => {
-    console.log(response);
-  });
+  const incidentReportContent = new IncidentReportContent();
+  const user = new User();
+
+  user.setUserId(1); //TODO: swap with actual user's id when logged in
+  incidentReportContent.setTitle(values.title);
+  incidentReportContent.setAddress(values.address);
+  incidentReportContent.setIncidentTime(values.time);
+  incidentReportContent.setDescription(values.description);
+  incidentReportContent.setIsPoliceNotified(values.isPoliceNotified);
+  incidentReportContent.setHasStolenItem(values.hasStolenItem);
+
+  incidentReport.setLastModifedUser(user);
+  incidentReport.setIncidentReportId(id);
+  incidentReport.setIncidentReportContent(incidentReportContent);
+  await client
+    .updateIncidentReport(incidentReport, {})
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((e) => console.log(e));
 }

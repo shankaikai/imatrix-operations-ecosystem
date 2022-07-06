@@ -12,11 +12,15 @@ import {
   Button,
   ScrollArea,
   Divider,
+  Loader,
 } from "@mantine/core";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { Check, Edit, EditOff, Forms } from "tabler-icons-react";
-import { useReporting } from "../../../helpers/useReportingClient";
+import {
+  submitUpdateReport,
+  useReporting,
+} from "../../../helpers/useReportingClient";
 import _ from "lodash";
 import { IncidentReport } from "../../../proto/operations_ecosys_pb";
 import { useForm } from "@mantine/form";
@@ -68,7 +72,7 @@ export default function ReportContainer() {
     },
   });
 
-  return (
+  return selectedReport ? (
     <Card
       sx={{
         flex: "1",
@@ -78,7 +82,12 @@ export default function ReportContainer() {
     >
       {editOn ? (
         <form
-          onSubmit={form.onSubmit((values) => console.log(values))}
+          onSubmit={form.onSubmit((values) =>
+            submitUpdateReport(
+              values,
+              selectedReport?.incidentReportId as number
+            )
+          )}
           style={{
             height: "100%",
             justifyContent: "space-between",
@@ -171,7 +180,9 @@ export default function ReportContainer() {
                   Stolen Items:
                 </Text>
                 <Checkbox
-                  {...form.getInputProps("hasStolenItem", { type: "checkbox" })}
+                  {...form.getInputProps("hasStolenItem", {
+                    type: "checkbox",
+                  })}
                 />
               </Group>
             </Stack>
@@ -200,7 +211,7 @@ export default function ReportContainer() {
               <Text size="xs">{`Name: ${selectedReport?.creator?.name}`}</Text>
               <Text size="xs">
                 {`Reported on: ${dayjs(
-                  selectedReport?.creationDate,
+                  selectedReport?.incidentReportContent?.incidentTime,
                   "YYYY-MM-DD HH:mm:ss"
                 ).format("D/M/YY [at] HH:mm")}`}{" "}
               </Text>
@@ -251,5 +262,7 @@ export default function ReportContainer() {
         </Stack>
       )}
     </Card>
+  ) : (
+    <div />
   );
 }

@@ -44,6 +44,7 @@ func (s *Server) UpdateIncidentReport(cxt context.Context, incidentReport *pb.In
 	defer sentry.Recover()
 
 	fmt.Println("UPDATE INCIDENT REPORT ", incidentReport.IncidentReportId)
+	fmt.Println("hdsfdsfds", incidentReport)
 	res := pb.Response{Type: pb.Response_ACK}
 
 	numAffected, err := db_pck.UpdateIncidentReport(
@@ -106,6 +107,7 @@ func (s *Server) FindIncidentReports(query *pb.IncidentReportQuery, stream pb.In
 	for _, incidentReport := range foundIncidentReports {
 		incidentReportRes := pb.IncidentReportResponse{Response: &res}
 		incidentReportRes.IncidentReport = incidentReport
+		fmt.Println(incidentReport)
 		if err := stream.Send(&incidentReportRes); err != nil {
 			return err
 		}
