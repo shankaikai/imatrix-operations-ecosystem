@@ -21,7 +21,7 @@ func TestIncidentReportClient(serverAddr *string, serverPort *int) {
 	// report.IncidentReportId = 1 //pk
 
 	// ConsolidatedFindIncidentReportTest(serverAddr, serverPort)
-	// ConsolidatedUpdateIncidentReportTest(serverAddr, serverPort, report)
+	ConsolidatedUpdateIncidentReportTest(serverAddr, serverPort, report)
 	// DeleteIncidentReport(serverAddr, serverPort, &pb.IncidentReport{IncidentReportId: 5})
 }
 

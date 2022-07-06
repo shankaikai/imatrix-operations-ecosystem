@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	pb "capstone.operations_ecosystem/backend/proto"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -158,6 +160,37 @@ func getFilledIncidentReportFields(incidentReport *pb.IncidentReport, originalCo
 	}
 
 	return strings.Join(incidentReportTableFields, ",")
+}
+
+func fillUpdatedIncidentReport(newReportContent *pb.IncidentReportContent, oldReportContent *pb.IncidentReportContent) error {
+	if len(newReportContent.LastModifiedDate) == 0 {
+		newReportContent.LastModifiedDate = time.Now().Format(common.DATETIME_FORMAT)
+	}
+	if len(newReportContent.Address) == 0 {
+		newReportContent.Address = oldReportContent.Address
+	}
+	if len(newReportContent.IncidentTime) == 0 {
+		newReportContent.IncidentTime = oldReportContent.IncidentTime
+	}
+	if len(newReportContent.Title) == 0 {
+		newReportContent.Title = oldReportContent.Title
+	}
+	if len(newReportContent.Description) == 0 {
+		newReportContent.Description = oldReportContent.Description
+	}
+	if len(newReportContent.ActionTaken) == 0 {
+		newReportContent.ActionTaken = oldReportContent.ActionTaken
+	}
+	if len(newReportContent.InjuryDescription) == 0 {
+		newReportContent.InjuryDescription = oldReportContent.InjuryDescription
+	}
+	if len(newReportContent.StolenItemDescription) == 0 {
+		newReportContent.StolenItemDescription = oldReportContent.StolenItemDescription
+	}
+	if len(newReportContent.ReportImageLink) == 0 {
+		newReportContent.ReportImageLink = oldReportContent.ReportImageLink
+	}
+	return nil
 }
 
 // Helper function to add a new filter to the list of existing
