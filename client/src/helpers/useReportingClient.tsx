@@ -121,6 +121,7 @@ export interface UpdateReport {
 }
 
 export async function submitUpdateReport(values: UpdateReport, id: number) {
+  debugger;
   const client = getReportingClient();
 
   const incidentReport = new IncidentReport();

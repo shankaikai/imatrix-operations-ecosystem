@@ -13,6 +13,7 @@ import {
   ScrollArea,
   Divider,
   Loader,
+  Input,
 } from "@mantine/core";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -136,7 +137,11 @@ export default function ReportContainer() {
                 >
                   Time of incident:
                 </Text>
-                <TextInput sx={{ flex: "1" }} {...form.getInputProps("time")} />
+                <Input
+                  type="datetime-local"
+                  sx={{ flex: "1" }}
+                  {...form.getInputProps("time")}
+                />
               </Group>
               <Group
                 sx={{

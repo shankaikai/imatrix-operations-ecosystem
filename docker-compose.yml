@@ -4,42 +4,41 @@ volumes:
   node_modules:
 
 services:
-
   gateway-envoy:
     container_name: envoy
     build:
       context: ./envoy
       dockerfile: Dockerfile
     ports:
-      - '8080:8080'
+      - "8080:8080"
 
   client:
     container_name: client
     volumes:
-          - ./client:/client
-          - node_modules:/client/node_modules
+      - ./client:/client
+      - node_modules:/client/node_modules
     build:
       context: ./client
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
 
-
   backend:
     container_name: backend
     volumes:
-          - ./backend:/backend
+      - ./backend:/backend
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
-
+    environment:
+      - TZ=Asia/Singapore
 
   telebot:
     container_name: telebot
     environment:
-        PYTHONUNBUFFERED: 1
+      PYTHONUNBUFFERED: 1
     volumes:
       - ./telebot:/telebot
     build:
