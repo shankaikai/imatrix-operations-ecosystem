@@ -1,6 +1,17 @@
-import { createContext, Dispatch, useContext, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { IncidentReportServicesClient } from "../proto/Operations_ecosysServiceClientPb";
-import { IncidentReport } from "../proto/operations_ecosys_pb";
+import {
+  IncidentReport,
+  IncidentReportContent,
+  IncidentReportQuery,
+  IncidentReportResponse,
+} from "../proto/operations_ecosys_pb";
 
 interface RosteringContextInterface {
   reports: IncidentReport.AsObject[];
@@ -39,6 +50,13 @@ export function ReportingProvider({ children }: ReportingProviderProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(-1);
 
+<<<<<<< Updated upstream
+=======
+  useEffect(() => {
+    updateReports(reports.length, setReports);
+  }, []);
+
+>>>>>>> Stashed changes
   return (
     <ReportingContext.Provider
       value={{
@@ -66,3 +84,31 @@ export function getReportingClient(): IncidentReportServicesClient {
 export function useReporting() {
   return useContext(ReportingContext);
 }
+
+const updateReports = (
+  skip: number,
+  setReports: Dispatch<IncidentReport.AsObject[]>,
+  clear?: boolean
+) => {
+  console.log("updateReports called");
+
+  //@ts-ignore
+  clear && setReports(() => []);
+
+  const client = getReportingClient();
+
+  const query = new IncidentReportQuery();
+  query.setSkip(skip);
+
+  const stream = client.findIncidentReports(query);
+
+  // On every data received, add it to the state
+  stream.on("data", (response: IncidentReportResponse) => {
+    console.log(response.getIncidentReport()?.toObject());
+    //@ts-ignore
+    setReports((oldState) => [
+      ...oldState,
+      response.getIncidentReport()?.toObject(),
+    ]);
+  });
+};
