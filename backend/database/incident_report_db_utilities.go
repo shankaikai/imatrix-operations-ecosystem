@@ -352,6 +352,7 @@ func convertDbRowsToFullIncidentReport(db *sql.DB, incidentReports *[]*pb.Incide
 			&incidentReport.IsApproved,
 			&signature,
 			&approvalDate,
+			&incidentReport.AifsId,
 
 			// Original IncidentReport Details
 			&originalIncidentReportContent.ReportContentId,

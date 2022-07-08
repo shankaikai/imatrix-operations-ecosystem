@@ -178,6 +178,7 @@ CREATE TABLE IF NOT EXISTS `incident_report` (
     is_approved BOOLEAN NOT NULL DEFAULT FALSE,
     signature INT,
     approval_date DATETIME, 
+    aifs_id INT NOT NULL DEFAULT -1, 
 
 	FOREIGN KEY (original_content) 
 		REFERENCES `incident_report_content` (report_content_id)

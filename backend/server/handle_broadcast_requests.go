@@ -18,7 +18,7 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 
 	res := pb.Response{Type: pb.Response_ACK}
 
-	getDefaultBroadcastFields(broadcast)
+	s.getDefaultBroadcastFields(broadcast)
 	// Add creation datetime
 	broadcast.CreationDate = timestamppb.Now()
 	// TODO: define deadline
