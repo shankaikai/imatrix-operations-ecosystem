@@ -112,7 +112,7 @@ export const updateReports = (
 
   // On every data received, add it to the state
   stream.on("data", (response: IncidentReportResponse) => {
-    console.log(response.getIncidentReport()?.toObject());
+    // console.log(response.getIncidentReport()?.toObject());
     //@ts-ignore
     setReports((oldState) => [
       ...oldState,
@@ -197,6 +197,7 @@ export async function createNewReport(
   const user = new User();
 
   user.setUserId(1); //TODO: swap with actual user's id when logged in
+
   incidentReportContent.setTitle(values.title);
   incidentReportContent.setAddress(values.address);
   incidentReportContent.setIncidentTime(
@@ -208,7 +209,15 @@ export async function createNewReport(
   incidentReportContent.setInjuryDescription("");
   incidentReportContent.setActionTaken("");
   incidentReportContent.setStolenItemDescription("");
-  incidentReport.setLastModifedUser(user);
+  incidentReportContent.setReportImageLink("");
+
+  incidentReport.setCreator(user);
+  incidentReport.setCreationDate(dayjs(Date.now()).format("YYYY-MM-DD HH:mm"));
+  incidentReport.setLastModifiedDate(
+    dayjs(Date.now()).format("YYYY-MM-DD HH:mm")
+  );
+  incidentReport.setIsApproved(false);
+  incidentReport.setIsOriginal(true);
   incidentReport.setIncidentReportContent(incidentReportContent);
 
   await client
