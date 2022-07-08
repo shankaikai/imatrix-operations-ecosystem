@@ -1,4 +1,4 @@
-import { Button, ScrollArea, Stack } from "@mantine/core";
+import { Button, Group, ScrollArea, Stack } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import getFilteredReports from "../../../helpers/getFilteredReports";
 import {
@@ -54,7 +54,9 @@ export default function ReportsList() {
             )
         )}
       </Stack>
-      <Button onClick={handleLoadMore}>Load More</Button>
+      <Group position="center" mt="lg">
+        <Button onClick={handleLoadMore}>Load More</Button>
+      </Group>
     </ScrollArea>
   );
 }
