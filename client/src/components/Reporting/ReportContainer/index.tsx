@@ -113,6 +113,7 @@ export default function ReportContainer() {
             justifyContent: "space-between",
             display: "flex",
             flexDirection: "column",
+            width:'100%'
           }}
         >
           <Stack>

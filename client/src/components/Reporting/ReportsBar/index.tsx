@@ -42,12 +42,6 @@ export default function ReportsBar() {
         New
       </Button>
       <Group>
-        <ActionIcon variant="light">
-          <List />
-        </ActionIcon>
-        <ActionIcon variant="light">
-          <GridDots />
-        </ActionIcon>
         <Text color="dimmed" size="sm">
           Sort by:
         </Text>

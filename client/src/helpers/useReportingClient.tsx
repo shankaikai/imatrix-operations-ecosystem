@@ -35,6 +35,10 @@ interface RosteringContextInterface {
     setRosters: Dispatch<IncidentReport.AsObject[]>,
     clear?: boolean
   ) => void;
+  createNewReport?: (
+    values: UpdateReport,
+    setReports: Dispatch<IncidentReport.AsObject[]>
+  ) => Promise<void>;
 }
 
 const ReportingContext = createContext<RosteringContextInterface>({
@@ -73,6 +77,7 @@ export function ReportingProvider({ children }: ReportingProviderProps) {
         setModalOpen,
         selectedReport,
         setSelectedReport,
+        createNewReport,
       }}
     >
       {children}
@@ -178,5 +183,41 @@ export async function approveReport(
 
   updateReports(0, setReports, true);
 
-  return id
+  return id;
+}
+
+export async function createNewReport(
+  values: UpdateReport,
+  setReports: Dispatch<IncidentReport.AsObject[]>
+) {
+  const client = getReportingClient();
+
+  const incidentReport = new IncidentReport();
+  const incidentReportContent = new IncidentReportContent();
+  const user = new User();
+
+  user.setUserId(1); //TODO: swap with actual user's id when logged in
+  incidentReportContent.setTitle(values.title);
+  incidentReportContent.setAddress(values.address);
+  incidentReportContent.setIncidentTime(
+    dayjs(values.time, "YYYY-MM-DD[T]HH:mm").format("YYYY-MM-DD HH:mm")
+  );
+  incidentReportContent.setDescription(values.description);
+  incidentReportContent.setIsPoliceNotified(values.isPoliceNotified);
+  incidentReportContent.setHasStolenItem(values.hasStolenItem);
+  incidentReportContent.setInjuryDescription("");
+  incidentReportContent.setActionTaken("");
+  incidentReportContent.setStolenItemDescription("");
+  incidentReport.setLastModifedUser(user);
+  incidentReport.setIncidentReportContent(incidentReportContent);
+
+  await client
+    .addIncidentReport(incidentReport, {})
+    .then((response) => {
+      console.log("ADD INCIDENT FAILED", response);
+      showUpdateReportSuccessNotification();
+    })
+    .catch((e) => console.log(e));
+
+  updateReports(0, setReports, true);
 }
