@@ -94,7 +94,7 @@ export default function ReportContainer() {
     <Card
       sx={{
         flex: "1",
-        display: selectedReport?.incidentReportId ? "default" : "none",
+        display: selectedReport?.incidentReportId ? "flex" : "none",
         height: "calc(100vh - 132px)",
       }}
     >
@@ -229,7 +229,7 @@ export default function ReportContainer() {
           <Divider my="sm" />
           <ScrollArea
             sx={{
-              height: "480px",
+              flex:'1',
             }}
           >
             <Stack spacing={0} sx={{ fontStyle: "italic" }}>
