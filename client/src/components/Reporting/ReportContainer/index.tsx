@@ -96,6 +96,7 @@ export default function ReportContainer() {
         flex: "1",
         display: selectedReport?.incidentReportId ? "flex" : "none",
         height: "calc(100vh - 132px)",
+        width:'100%'
       }}
     >
       {editOn ? (
@@ -215,7 +216,7 @@ export default function ReportContainer() {
           </Button>
         </form>
       ) : (
-        <Stack spacing={0}>
+        <Stack spacing={0} sx={{width:'100%'}}>
           <Group position="apart">
             <Text size="lg" weight={500}>
               {selectedReport?.incidentReportContent?.title}
