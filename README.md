@@ -35,3 +35,7 @@ restart all services: `docker-compose restart`
 to stop all services, run `docker-compose down`
 
 to view logs (e.g. print statements), run `docker logs CONTAINER_NAME`
+
+# Deployment
+Currently a testing env is deployed on lunarlcloud.org:29131 VM
+ask JW/Gab/Hannah for details
