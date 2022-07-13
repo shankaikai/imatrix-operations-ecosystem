@@ -14,7 +14,8 @@ func (s *Server) AddIncidentReport(cxt context.Context, incidentReport *pb.Incid
 
 	fmt.Println("AddIncidentReport")
 	res := &pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
-
+	
+	fmt.Println("reportsss",incidentReport)
 	// Fill up the blank values of the pb message
 	err := s.insertDefaultIncidentReportValues(incidentReport)
 	if err != nil {
@@ -41,6 +42,7 @@ func (s *Server) UpdateIncidentReport(cxt context.Context, incidentReport *pb.In
 	defer sentry.Recover()
 
 	fmt.Println("UPDATE INCIDENT REPORT ", incidentReport.IncidentReportId)
+	fmt.Println("hdsfdsfds", incidentReport)
 	res := pb.Response{Type: pb.Response_ACK}
 
 	numAffected, err := db_pck.UpdateIncidentReport(
@@ -103,6 +105,7 @@ func (s *Server) FindIncidentReports(query *pb.IncidentReportQuery, stream pb.In
 	for _, incidentReport := range foundIncidentReports {
 		incidentReportRes := pb.IncidentReportResponse{Response: &res}
 		incidentReportRes.IncidentReport = incidentReport
+		// fmt.Println(incidentReport)
 		if err := stream.Send(&incidentReportRes); err != nil {
 			return err
 		}

@@ -746,5 +746,242 @@ export class RosterServicesClient {
       this.methodDescriptorGetAvailableUsers);
   }
 
+  methodDescriptorFindRosterAssignments = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.RosterServices/FindRosterAssignments',
+    grpcWeb.MethodType.SERVER_STREAMING,
+    operations_ecosys_pb.RosterQuery,
+    operations_ecosys_pb.RosterAssignmentResponse,
+    (request: operations_ecosys_pb.RosterQuery) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.RosterAssignmentResponse.deserializeBinary
+  );
+
+  findRosterAssignments(
+    request: operations_ecosys_pb.RosterQuery,
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<operations_ecosys_pb.RosterAssignmentResponse> {
+    return this.client_.serverStreaming(
+      this.hostname_ +
+        '/operations_ecosys.RosterServices/FindRosterAssignments',
+      request,
+      metadata || {},
+      this.methodDescriptorFindRosterAssignments);
+  }
+
+  methodDescriptorUpdateRosterAssignment = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.RosterServices/UpdateRosterAssignment',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.RosterAssignement,
+    operations_ecosys_pb.Response,
+    (request: operations_ecosys_pb.RosterAssignement) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.Response.deserializeBinary
+  );
+
+  updateRosterAssignment(
+    request: operations_ecosys_pb.RosterAssignement,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
+
+  updateRosterAssignment(
+    request: operations_ecosys_pb.RosterAssignement,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
+
+  updateRosterAssignment(
+    request: operations_ecosys_pb.RosterAssignement,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.RosterServices/UpdateRosterAssignment',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateRosterAssignment,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.RosterServices/UpdateRosterAssignment',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateRosterAssignment);
+  }
+
+}
+
+export class IncidentReportServicesClient {
+  client_: grpcWeb.AbstractClientBase;
+  hostname_: string;
+  credentials_: null | { [index: string]: string; };
+  options_: null | { [index: string]: any; };
+
+  constructor (hostname: string,
+               credentials?: null | { [index: string]: string; },
+               options?: null | { [index: string]: any; }) {
+    if (!options) options = {};
+    if (!credentials) credentials = {};
+    options['format'] = 'binary';
+
+    this.client_ = new grpcWeb.GrpcWebClientBase(options);
+    this.hostname_ = hostname;
+    this.credentials_ = credentials;
+    this.options_ = options;
+  }
+
+  methodDescriptorAddIncidentReport = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.IncidentReportServices/AddIncidentReport',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.IncidentReport,
+    operations_ecosys_pb.Response,
+    (request: operations_ecosys_pb.IncidentReport) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.Response.deserializeBinary
+  );
+
+  addIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
+
+  addIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
+
+  addIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.IncidentReportServices/AddIncidentReport',
+        request,
+        metadata || {},
+        this.methodDescriptorAddIncidentReport,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.IncidentReportServices/AddIncidentReport',
+    request,
+    metadata || {},
+    this.methodDescriptorAddIncidentReport);
+  }
+
+  methodDescriptorUpdateIncidentReport = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.IncidentReportServices/UpdateIncidentReport',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.IncidentReport,
+    operations_ecosys_pb.Response,
+    (request: operations_ecosys_pb.IncidentReport) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.Response.deserializeBinary
+  );
+
+  updateIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
+
+  updateIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
+
+  updateIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.IncidentReportServices/UpdateIncidentReport',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateIncidentReport,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.IncidentReportServices/UpdateIncidentReport',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateIncidentReport);
+  }
+
+  methodDescriptorDeleteIncidentReport = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.IncidentReportServices/DeleteIncidentReport',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.IncidentReport,
+    operations_ecosys_pb.Response,
+    (request: operations_ecosys_pb.IncidentReport) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.Response.deserializeBinary
+  );
+
+  deleteIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
+
+  deleteIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
+
+  deleteIncidentReport(
+    request: operations_ecosys_pb.IncidentReport,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.IncidentReportServices/DeleteIncidentReport',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteIncidentReport,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.IncidentReportServices/DeleteIncidentReport',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteIncidentReport);
+  }
+
+  methodDescriptorFindIncidentReports = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.IncidentReportServices/FindIncidentReports',
+    grpcWeb.MethodType.SERVER_STREAMING,
+    operations_ecosys_pb.IncidentReportQuery,
+    operations_ecosys_pb.IncidentReportResponse,
+    (request: operations_ecosys_pb.IncidentReportQuery) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.IncidentReportResponse.deserializeBinary
+  );
+
+  findIncidentReports(
+    request: operations_ecosys_pb.IncidentReportQuery,
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<operations_ecosys_pb.IncidentReportResponse> {
+    return this.client_.serverStreaming(
+      this.hostname_ +
+        '/operations_ecosys.IncidentReportServices/FindIncidentReports',
+      request,
+      metadata || {},
+      this.methodDescriptorFindIncidentReports);
+  }
+
 }
 

@@ -59,6 +59,6 @@ func (s *Server) insertDefaultIncidentReportValues(report *pb.IncidentReport) er
 	}
 
 	report.IncidentReportContent.LastModifedUser = report.Creator
-
+	report.IncidentReportContent.LastModifiedDate = report.CreationDate
 	return nil
 }

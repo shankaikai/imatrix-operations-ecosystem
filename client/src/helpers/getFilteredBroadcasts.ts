@@ -12,7 +12,7 @@ export default function getFilteredBroadcasts(
   // TODO: Add filtering logic
   let filtered = broadcasts.filter((broadcast) => {
     const content = broadcast.getContent();
-    const includesSearch = content.includes(search);
+    const includesSearch = content.toLowerCase().includes(search.toLowerCase());
 
     let includesFilter = true;
 
