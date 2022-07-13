@@ -60,6 +60,13 @@ service RosterServices{
     
 }
 
+service IncidentReportServices{
+    rpc AddIncidentReport(IncidentReport) returns (Response) {}
+    rpc UpdateIncidentReport(IncidentReport) returns (Response) {}
+    rpc DeleteIncidentReport(IncidentReport) returns (Response) {}
+    rpc FindIncidentReports(IncidentReportQuery) returns (stream IncidentReportResponse) {}
+}
+
 // Admin
 /***************************************************************************
 *                              USER MESSAGES                               *
@@ -469,6 +476,104 @@ message EmployeeEvaluation {
     // specified time.
     bool is_available = 3; 
 }
+
+/***************************************************************************
+*                       INCIDENT REPORTING MESSAGES                         *
+****************************************************************************/
+// The default fields of an incident report
+message IncidentReport {
+    // Report IDs are only useful for the backend database. 
+    int64 incident_report_id = 1;
+    ReportType type = 2;
+    User creator = 3;
+
+    // Format must be in: YYYY-MM-DD HH:MM:SS
+    string creation_date = 4;
+    string last_modified_date = 5;
+
+    User last_modifed_user = 6;
+    bool is_original = 7;
+    bool is_approved = 8;
+    User signature = 9;
+    string approval_date = 10;
+    IncidentReportContent incident_report_content = 11;
+
+    // Which AIFS was the creator from
+    int64 aifs_id = 12;
+
+    enum ReportType {
+        FIRE_ALARM = 0;
+        INTRUDER = 1;
+        OTHERS = 2;
+    }
+}
+
+// The actual content of the report
+message IncidentReportContent {
+    int64 report_content_id = 1;
+    // Format must be in: YYYY-MM-DD HH:MM:SS
+    string last_modified_date = 2;    
+    User last_modifed_user = 3;
+    string address = 4;
+    string incident_time = 5;
+    bool is_police_notified = 6;
+    string title = 7;
+    string description = 8;    
+    bool has_action_taken = 9;
+    string action_taken = 10;
+    bool has_injury = 11;
+    string injury_description = 12;
+    bool has_stolen_item = 13;
+    string stolen_item_description = 14;    
+    string report_image_link = 15; 
+    // Should there be a string here?
+}
+
+// Passing around multiple reports in one message. 
+message IncidentReportResponse {
+    Response response = 1;
+    IncidentReport incident_report = 2;
+}
+
+// Filter the types of incident reports to be returned. 
+message IncidentReportFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        REPORT_ID = 0;
+        REPORT_CONTENT_ID = 1;
+        REPORT_TYPE = 2;
+        MODIFIER = 3;
+        LAST_MODIFIED_DATE = 5;
+        GET_ORIGINAL = 6;
+        IS_APPROVED = 7;
+        SIGNATURE = 8;
+        APPROVAL_DATE = 9;
+    }
+}
+
+// Get specific types rosters as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message IncidentReportQuery {
+    repeated IncidentReportFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2; 
+    // Skip n rows from the database
+    int64 skip = 3;
+
+    // Order the queries, by default the order is desc by creation date
+    OrderByIncidentReport order_by = 4;
+}
+
+message OrderByIncidentReport{
+    IncidentReportFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
+
 
 /***************************************************************************
 *                              COMMON MESSAGES                              *

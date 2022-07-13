@@ -51,7 +51,7 @@ func CreateFakeBroadcast(id int, hasRecipient bool) *pb.Broadcast {
 	return &pb.Broadcast{
 		BroadcastId:  int64(id),
 		Type:         pb.Broadcast_ANNOUNCEMENT,
-		Content:      "content" + strconv.Itoa(id),
+		Content:      "content" + strconv.Itoa(id) + " with some other quotes \"test test 'test'",
 		CreationDate: timestamppb.Now(),
 		Deadline:     &timestamppb.Timestamp{Seconds: int64(time.Now().Add(30).Unix())},
 		Creator:      createFakeUser(1),
@@ -124,5 +124,41 @@ func createFakeEmployeeEval(id int) *pb.EmployeeEvaluation {
 		Employee:      createFakeUser(id),
 		EmployeeScore: float32(5 - 0.01*float32(id)),
 		IsAvailable:   true,
+	}
+}
+
+func CreateFakeIncidentReport(id int) *pb.IncidentReport {
+	return &pb.IncidentReport{
+		IncidentReportId:      int64(id),
+		Type:                  pb.IncidentReport_INTRUDER,
+		Creator:               createFakeUser(id),
+		CreationDate:          time.Now().Format(common.DATETIME_FORMAT),
+		LastModifiedDate:      time.Now().Format(common.DATETIME_FORMAT),
+		LastModifedUser:       createFakeUser(id),
+		IsOriginal:            id%2 == 0,
+		IsApproved:            id%2 != 0,
+		Signature:             nil,
+		ApprovalDate:          "",
+		IncidentReportContent: CreateFakeIncidentReportContent(id),
+	}
+}
+
+func CreateFakeIncidentReportContent(id int) *pb.IncidentReportContent {
+	return &pb.IncidentReportContent{
+		ReportContentId:       1,
+		LastModifiedDate:      time.Now().Format(common.DATETIME_FORMAT),
+		LastModifedUser:       createFakeUser(id),
+		Address:               "address",
+		IncidentTime:          time.Now().Format(common.DATETIME_FORMAT),
+		IsPoliceNotified:      false,
+		Title:                 "Title",
+		Description:           "So there is something here \"a description quotes\" test test",
+		HasActionTaken:        false,
+		ActionTaken:           "",
+		HasInjury:             true,
+		InjuryDescription:     "InjuryDescription",
+		HasStolenItem:         true,
+		StolenItemDescription: "StolenItemDescription",
+		ReportImageLink:       "",
 	}
 }
