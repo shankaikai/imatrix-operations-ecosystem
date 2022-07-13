@@ -13,6 +13,8 @@ Capstone Project
 ### Protocol Buffer Generation
 ```
 protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/operations_ecosys.proto
+
+protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/iot_prototype.proto
 ```
 #### Protocol Buffer Mock Class Generation
 ```

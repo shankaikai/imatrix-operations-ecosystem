@@ -4,7 +4,7 @@ isort:skip_file
 """
 import abc
 import grpc
-from . import iot_prototype_pb2
+import iot_prototype_pb2
 import typing
 
 class IotControlPrototypeServiceStub:
@@ -27,6 +27,10 @@ class IotControlPrototypeServiceStub:
     GetFireAlarmState: grpc.UnaryStreamMultiCallable[
         iot_prototype_pb2.FireAlarm,
         iot_prototype_pb2.FireAlarmState]
+
+    GetCpuTemp: grpc.UnaryStreamMultiCallable[
+        iot_prototype_pb2.CpuTemp,
+        iot_prototype_pb2.CpuTempState]
 
 
 class IotControlPrototypeServiceServicer(metaclass=abc.ABCMeta):
@@ -55,6 +59,12 @@ class IotControlPrototypeServiceServicer(metaclass=abc.ABCMeta):
         request: iot_prototype_pb2.FireAlarm,
         context: grpc.ServicerContext,
     ) -> typing.Iterator[iot_prototype_pb2.FireAlarmState]: ...
+
+    @abc.abstractmethod
+    def GetCpuTemp(self,
+        request: iot_prototype_pb2.CpuTemp,
+        context: grpc.ServicerContext,
+    ) -> typing.Iterator[iot_prototype_pb2.CpuTempState]: ...
 
 
 def add_IotControlPrototypeServiceServicer_to_server(servicer: IotControlPrototypeServiceServicer, server: grpc.Server) -> None: ...

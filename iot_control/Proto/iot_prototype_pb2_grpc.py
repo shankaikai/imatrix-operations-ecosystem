@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import iot_prototype_pb2 as iot__prototype__pb2
+import iot_prototype_pb2 as iot__prototype__pb2
 
 
 class IotControlPrototypeServiceStub(object):
@@ -28,6 +28,11 @@ class IotControlPrototypeServiceStub(object):
                 '/gate_prototype.IotControlPrototypeService/GetFireAlarmState',
                 request_serializer=iot__prototype__pb2.FireAlarm.SerializeToString,
                 response_deserializer=iot__prototype__pb2.FireAlarmState.FromString,
+                )
+        self.GetCpuTemp = channel.unary_stream(
+                '/gate_prototype.IotControlPrototypeService/GetCpuTemp',
+                request_serializer=iot__prototype__pb2.CpuTemp.SerializeToString,
+                response_deserializer=iot__prototype__pb2.CpuTempState.FromString,
                 )
 
 
@@ -58,6 +63,12 @@ class IotControlPrototypeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetCpuTemp(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_IotControlPrototypeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -75,6 +86,11 @@ def add_IotControlPrototypeServiceServicer_to_server(servicer, server):
                     servicer.GetFireAlarmState,
                     request_deserializer=iot__prototype__pb2.FireAlarm.FromString,
                     response_serializer=iot__prototype__pb2.FireAlarmState.SerializeToString,
+            ),
+            'GetCpuTemp': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetCpuTemp,
+                    request_deserializer=iot__prototype__pb2.CpuTemp.FromString,
+                    response_serializer=iot__prototype__pb2.CpuTempState.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -134,5 +150,22 @@ class IotControlPrototypeService(object):
         return grpc.experimental.unary_stream(request, target, '/gate_prototype.IotControlPrototypeService/GetFireAlarmState',
             iot__prototype__pb2.FireAlarm.SerializeToString,
             iot__prototype__pb2.FireAlarmState.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetCpuTemp(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/gate_prototype.IotControlPrototypeService/GetCpuTemp',
+            iot__prototype__pb2.CpuTemp.SerializeToString,
+            iot__prototype__pb2.CpuTempState.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13iot_prototype.proto\x12\x0egate_prototype\"\x12\n\x04Gate\x12\n\n\x02id\x18\x01 \x01(\x03\"\x8c\x01\n\tGateState\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x35\n\x05state\x18\x02 \x01(\x0e\x32&.gate_prototype.GateState.GatePosition\"<\n\x0cGatePosition\x12\n\n\x06\x43LOSED\x10\x00\x12\x08\n\x04OPEN\x10\x01\x12\t\n\x05\x45RROR\x10\x02\x12\x0b\n\x07INITIAL\x10\x03\"\x17\n\tFireAlarm\x12\n\n\x02id\x18\x01 \x01(\x03\"\x80\x01\n\x0e\x46ireAlarmState\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x38\n\x05state\x18\x02 \x01(\x0e\x32).gate_prototype.FireAlarmState.AlarmState\"(\n\nAlarmState\x12\x07\n\x03OFF\x10\x00\x12\x06\n\x02ON\x10\x01\x12\t\n\x05\x45RROR\x10\x02\x32\x81\x02\n\x1aIotControlPrototypeService\x12\x43\n\x0cGetGateState\x12\x14.gate_prototype.Gate\x1a\x19.gate_prototype.GateState\"\x00\x30\x01\x12J\n\x0cSetGateState\x12\x19.gate_prototype.GateState\x1a\x19.gate_prototype.GateState\"\x00(\x01\x30\x01\x12R\n\x11GetFireAlarmState\x12\x19.gate_prototype.FireAlarm\x1a\x1e.gate_prototype.FireAlarmState\"\x00\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13iot_prototype.proto\x12\x0egate_prototype\"\x12\n\x04Gate\x12\n\n\x02id\x18\x01 \x01(\x03\"\x8c\x01\n\tGateState\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x35\n\x05state\x18\x02 \x01(\x0e\x32&.gate_prototype.GateState.GatePosition\"<\n\x0cGatePosition\x12\n\n\x06\x43LOSED\x10\x00\x12\x08\n\x04OPEN\x10\x01\x12\t\n\x05\x45RROR\x10\x02\x12\x0b\n\x07INITIAL\x10\x03\"\x17\n\tFireAlarm\x12\n\n\x02id\x18\x01 \x01(\x03\"\x80\x01\n\x0e\x46ireAlarmState\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x38\n\x05state\x18\x02 \x01(\x0e\x32).gate_prototype.FireAlarmState.AlarmState\"(\n\nAlarmState\x12\x07\n\x03OFF\x10\x00\x12\x06\n\x02ON\x10\x01\x12\t\n\x05\x45RROR\x10\x02\"\x15\n\x07\x43puTemp\x12\n\n\x02id\x18\x01 \x01(\x03\"(\n\x0c\x43puTempState\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0c\n\x04temp\x18\x02 \x01(\x01\x32\xca\x02\n\x1aIotControlPrototypeService\x12\x43\n\x0cGetGateState\x12\x14.gate_prototype.Gate\x1a\x19.gate_prototype.GateState\"\x00\x30\x01\x12J\n\x0cSetGateState\x12\x19.gate_prototype.GateState\x1a\x19.gate_prototype.GateState\"\x00(\x01\x30\x01\x12R\n\x11GetFireAlarmState\x12\x19.gate_prototype.FireAlarm\x1a\x1e.gate_prototype.FireAlarmState\"\x00\x30\x01\x12G\n\nGetCpuTemp\x12\x17.gate_prototype.CpuTemp\x1a\x1c.gate_prototype.CpuTempState\"\x00\x30\x01\x62\x06proto3')
 
 
 
@@ -22,6 +22,8 @@ _GATE = DESCRIPTOR.message_types_by_name['Gate']
 _GATESTATE = DESCRIPTOR.message_types_by_name['GateState']
 _FIREALARM = DESCRIPTOR.message_types_by_name['FireAlarm']
 _FIREALARMSTATE = DESCRIPTOR.message_types_by_name['FireAlarmState']
+_CPUTEMP = DESCRIPTOR.message_types_by_name['CpuTemp']
+_CPUTEMPSTATE = DESCRIPTOR.message_types_by_name['CpuTempState']
 _GATESTATE_GATEPOSITION = _GATESTATE.enum_types_by_name['GatePosition']
 _FIREALARMSTATE_ALARMSTATE = _FIREALARMSTATE.enum_types_by_name['AlarmState']
 Gate = _reflection.GeneratedProtocolMessageType('Gate', (_message.Message,), {
@@ -52,6 +54,20 @@ FireAlarmState = _reflection.GeneratedProtocolMessageType('FireAlarmState', (_me
   })
 _sym_db.RegisterMessage(FireAlarmState)
 
+CpuTemp = _reflection.GeneratedProtocolMessageType('CpuTemp', (_message.Message,), {
+  'DESCRIPTOR' : _CPUTEMP,
+  '__module__' : 'iot_prototype_pb2'
+  # @@protoc_insertion_point(class_scope:gate_prototype.CpuTemp)
+  })
+_sym_db.RegisterMessage(CpuTemp)
+
+CpuTempState = _reflection.GeneratedProtocolMessageType('CpuTempState', (_message.Message,), {
+  'DESCRIPTOR' : _CPUTEMPSTATE,
+  '__module__' : 'iot_prototype_pb2'
+  # @@protoc_insertion_point(class_scope:gate_prototype.CpuTempState)
+  })
+_sym_db.RegisterMessage(CpuTempState)
+
 _IOTCONTROLPROTOTYPESERVICE = DESCRIPTOR.services_by_name['IotControlPrototypeService']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
@@ -68,6 +84,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _FIREALARMSTATE._serialized_end=356
   _FIREALARMSTATE_ALARMSTATE._serialized_start=316
   _FIREALARMSTATE_ALARMSTATE._serialized_end=356
-  _IOTCONTROLPROTOTYPESERVICE._serialized_start=359
-  _IOTCONTROLPROTOTYPESERVICE._serialized_end=616
+  _CPUTEMP._serialized_start=358
+  _CPUTEMP._serialized_end=379
+  _CPUTEMPSTATE._serialized_start=381
+  _CPUTEMPSTATE._serialized_end=421
+  _IOTCONTROLPROTOTYPESERVICE._serialized_start=424
+  _IOTCONTROLPROTOTYPESERVICE._serialized_end=754
 # @@protoc_insertion_point(module_scope)

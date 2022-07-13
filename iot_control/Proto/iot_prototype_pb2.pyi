@@ -96,3 +96,30 @@ class FireAlarmState(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","state",b"state"]) -> None: ...
 global___FireAlarmState = FireAlarmState
+
+class CpuTemp(google.protobuf.message.Message):
+    """The request message containing the fire alarm's id."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    ID_FIELD_NUMBER: builtins.int
+    id: builtins.int
+    def __init__(self,
+        *,
+        id: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id",b"id"]) -> None: ...
+global___CpuTemp = CpuTemp
+
+class CpuTempState(google.protobuf.message.Message):
+    """The response message containing the state of the stepper"""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    ID_FIELD_NUMBER: builtins.int
+    TEMP_FIELD_NUMBER: builtins.int
+    id: builtins.int
+    temp: builtins.float
+    def __init__(self,
+        *,
+        id: builtins.int = ...,
+        temp: builtins.float = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id",b"id","temp",b"temp"]) -> None: ...
+global___CpuTempState = CpuTempState
