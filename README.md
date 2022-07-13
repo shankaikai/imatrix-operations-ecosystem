@@ -38,6 +38,18 @@ Without Type Checking
 python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --grpc_python_out=telebot/Protos proto/operations_ecosys.proto
 ```
 
+## IoT Gate Prototype
+### Protocol Buffer Generation
+#### Install Type Checking Protobuf Library
+```
+pip3 install mypy-protobuf
+```
+#### Generation
+With Type Checking
+```
+python -m grpc_tools.protoc -I proto --python_out=iot_control/Proto --mypy_out=iot_control/Proto --grpc_python_out=iot_control/Proto --mypy_grpc_out=iot_control/Proto proto/iot_prototype.proto
+```
+
 # Docker
 
 To start all services, run `docker-compose up -d`
