@@ -213,9 +213,9 @@ export async function createNewReport(
 
   incidentReport.setCreator(user);
   incidentReport.setCreationDate(dayjs(Date.now()).format("YYYY-MM-DD HH:mm"));
-  incidentReport.setLastModifiedDate(
-    dayjs(Date.now()).format("YYYY-MM-DD HH:mm")
-  );
+  // incidentReport.setLastModifiedDate(
+  //   dayjs(Date.now()).format("YYYY-MM-DD HH:mm")
+  // );
   incidentReport.setIsApproved(false);
   incidentReport.setIsOriginal(true);
   incidentReport.setIncidentReportContent(incidentReportContent);
@@ -223,7 +223,6 @@ export async function createNewReport(
   await client
     .addIncidentReport(incidentReport, {})
     .then((response) => {
-      console.log("ADD INCIDENT FAILED", response);
       showUpdateReportSuccessNotification();
     })
     .catch((e) => console.log(e));
