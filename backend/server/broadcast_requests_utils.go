@@ -15,10 +15,6 @@ import (
 )
 
 const (
-	AIFS1_USER_ID = 8
-	AIFS2_USER_ID = 9
-	AIFS3_USER_ID = 10
-
 	// AIFS LED light triggers for broadcasting
 	AIFS_LED_DEFAULT_URI          = "win&PL=2"
 	AIFS_LED_BROADCAST_URGENT_URI = "win&PL=1"
@@ -29,7 +25,7 @@ const (
 // change the recipients to be actual users
 // If the
 // Modified the broadcast in place
-func getDefaultBroadcastFields(broadcast *pb.Broadcast) {
+func (s *Server) getDefaultBroadcastFields(broadcast *pb.Broadcast) {
 	defaultAck := broadcast.Urgency != pb.Broadcast_HIGH
 	var ackTime time.Time
 
@@ -40,7 +36,7 @@ func getDefaultBroadcastFields(broadcast *pb.Broadcast) {
 	for _, rec := range broadcast.Recipients {
 		newRecipients := make([]*pb.BroadcastRecipient, 0)
 
-		users := getAIFSDuty(rec.AifsId)
+		users := s.getAIFSDuty(rec.AifsId)
 		for _, user := range users {
 			newRecipients = append(newRecipients, &pb.BroadcastRecipient{
 				Recipient:    user,
@@ -55,20 +51,20 @@ func getDefaultBroadcastFields(broadcast *pb.Broadcast) {
 }
 
 // Fixed duty
-func getAIFSDuty(aifsId int64) []*pb.User {
+func (s *Server) getAIFSDuty(aifsId int64) []*pb.User {
 	users := make([]*pb.User, 0)
 	switch aifsId {
 	case 1:
 		users = append(users, &pb.User{
-			UserId: int64(AIFS1_USER_ID),
+			UserId: int64(s.Config.Aifs1Id),
 		})
 	case 2:
 		users = append(users, &pb.User{
-			UserId: int64(AIFS2_USER_ID),
+			UserId: int64(s.Config.Aifs2Id),
 		})
 	default:
 		users = append(users, &pb.User{
-			UserId: int64(AIFS3_USER_ID),
+			UserId: int64(s.Config.Aifs3Id),
 		})
 	}
 

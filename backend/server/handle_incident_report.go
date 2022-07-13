@@ -15,8 +15,6 @@ func (s *Server) AddIncidentReport(cxt context.Context, incidentReport *pb.Incid
 	fmt.Println("AddIncidentReport")
 	res := &pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 
-	incidentReportIds := make([]int64, 0)
-
 	// Fill up the blank values of the pb message
 	err := s.insertDefaultIncidentReportValues(incidentReport)
 	if err != nil {
@@ -34,7 +32,6 @@ func (s *Server) AddIncidentReport(cxt context.Context, incidentReport *pb.Incid
 		res.ErrorMessage = err.Error()
 	}
 
-	incidentReportIds = append(incidentReportIds, pk)
 	res.PrimaryKey = pk
 
 	return res, nil

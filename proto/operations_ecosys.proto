@@ -498,6 +498,9 @@ message IncidentReport {
     string approval_date = 10;
     IncidentReportContent incident_report_content = 11;
 
+    // Which AIFS was the creator from
+    int64 aifs_id = 12;
+
     enum ReportType {
         FIRE_ALARM = 0;
         INTRUDER = 1;
