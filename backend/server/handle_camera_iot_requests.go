@@ -34,7 +34,7 @@ func (s *Server) SetGateState(cxt context.Context, gateState *pb.GateState) (*pb
 	}
 
 	// Send the gate state request to the correct device
-	err = s.setGateStatus(cameraIotAttributes[0].GateId)
+	err = s.setGateStatus(cameraIotAttributes[0].GateId, gateState.State)
 	if err != nil {
 		res := pb.Response{Type: pb.Response_ERROR}
 		res.ErrorMessage = err.Error()
@@ -81,8 +81,11 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 		s.subscribeToAllDevices(mainChannel, threadId, attribute.CameraIotId)
 
 		// Get Gate Status
+		cameraIot.Gate = &pb.GateState{State: s.CameraIot.GateStates[attribute.CameraIotId]}
 		// Get Fire Alarm Status
+		cameraIot.FireAlarm = &pb.FireAlarmState{State: s.CameraIot.FireAlarmStates[attribute.CameraIotId]}
 		// Get Cpu Temperature Status
+		cameraIot.CpuTemperature = &pb.CpuTempState{Temp: s.CameraIot.CpuTempStates[attribute.CameraIotId]}
 
 		cameraIotRes.CameraIot = cameraIot
 		err = stream.Send(&cameraIotRes)
