@@ -14,9 +14,26 @@ Capstone Project
 ```
 protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/operations_ecosys.proto
 ```
+#### Protocol Buffer Mock Class Generation
+```
+mockgen capstone.operations_ecosystem/backend/proto AdminServicesClient > ../mock_proto/admin_grpc_mock.go
+mockgen capstone.operations_ecosystem/backend/proto BroadcastServicesClient > ../mock_proto/broadcast_grpc_mock.go
+mockgen capstone.operations_ecosystem/backend/proto RosterServicesClient > ../mock_proto/roster_grpc_mock.go
+```
 
 ## Telegram Bot
 ### Protocol Buffer Generation
+#### Install Type Checking Protobuf Library
+```
+pip3 install mypy-protobuf
+```
+#### Generation
+With Type Checking
+```
+python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/operations_ecosys.proto
+```
+
+Without Type Checking
 ```
 python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --grpc_python_out=telebot/Protos proto/operations_ecosys.proto
 ```

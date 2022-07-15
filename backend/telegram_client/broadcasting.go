@@ -11,9 +11,9 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
-func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) (int64, error) {
+func (t *TelegramClient) InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) (int64, error) {
 	fmt.Println("Sending Broadcast to Telegram Server:", broadcast.BroadcastId)
-	client, conn := CreateBroadcastClient(serverAddr, serverPort)
+	client, conn := t.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.AddBroadcast(context.Background(), broadcast)
@@ -31,7 +31,7 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	return res.PrimaryKey, err
 }
 
-func CreateBroadcastClient(serverAddr *string, serverPort *int) (pb.BroadcastServicesClient, *grpc.ClientConn) {
+func (t *TelegramClient) CreateBroadcastClient(serverAddr *string, serverPort *int) (pb.BroadcastServicesClient, *grpc.ClientConn) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 

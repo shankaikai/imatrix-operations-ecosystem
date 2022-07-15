@@ -187,3 +187,19 @@ func IdClientByClientId(db *sql.DB, clientId int) (*pb.Client, error) {
 
 	return client, err
 }
+
+// Get a particular client from a map of clients
+// If the client is not in the map, get the client from the db
+// and add the new client to the map.
+func getClientFromCache(db *sql.DB, clientCache *map[int64]*pb.Client, clientId int64) (*pb.Client, error) {
+	client, ok := (*clientCache)[clientId]
+	if ok {
+		return client, nil
+	} else {
+		client, err := IdClientByClientId(db, int(clientId))
+		if err != nil {
+			(*clientCache)[clientId] = client
+		}
+		return client, err
+	}
+}

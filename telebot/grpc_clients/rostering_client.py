@@ -18,9 +18,10 @@ def get_roster_assignment(roster_assignment_id: int) -> operations_ecosys_pb2.Br
         )
     )
     roster_filter = operations_ecosys_pb2.RosterQuery(
-        filters = [roster_filter],
-        limit = 1,
+        filters=[roster_filter],
+        limit=1,
     )
+
     roster_assgn_responses = stub.FindRosterAssignments(roster_filter)
     roster_res = None
 

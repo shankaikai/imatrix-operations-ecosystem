@@ -9,9 +9,12 @@ import (
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
+	"github.com/getsentry/sentry-go"
 )
 
 func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	fmt.Println("AddRoster")
 	res := &pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 
@@ -46,6 +49,8 @@ func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Re
 }
 
 func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	fmt.Println("UPDATE ROSTER SEARCH HERE", rosters.Rosters[0].RosteringId)
 	res := pb.Response{Type: pb.Response_ACK}
 	for _, roster := range rosters.Rosters {
@@ -68,6 +73,8 @@ func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb
 }
 
 func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteRoster(
 		s.db,
@@ -85,6 +92,8 @@ func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Respo
 }
 
 func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_FindRostersServer) error {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 
 	// Ensure that the start time is found
@@ -145,6 +154,8 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 
 // Send back all the available users that are not yet assigned for the particular day
 func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.RosterServices_GetAvailableUsersServer) error {
+	defer sentry.Recover()
+
 	fmt.Println("GetAvailableUsers")
 
 	res := pb.Response{Type: pb.Response_ACK}
@@ -191,6 +202,8 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 }
 
 func (s *Server) UpdateRosterAssignment(cxt context.Context, RosterAssignement *pb.RosterAssignement) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	query := &pb.RosterQuery{}
 	db_pck.AddRosterFilter(query, pb.RosterFilter_ROSTER_ASSIGNMENT_ID, pb.Filter_EQUAL, strconv.Itoa(int(RosterAssignement.RosterAssignmentId)))
@@ -211,6 +224,8 @@ func (s *Server) UpdateRosterAssignment(cxt context.Context, RosterAssignement *
 }
 
 func (s *Server) FindRosterAssignments(query *pb.RosterQuery, stream pb.RosterServices_FindRosterAssignmentsServer) error {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 
 	foundRosterAssignments, err := db_pck.GetRosterAssingments(

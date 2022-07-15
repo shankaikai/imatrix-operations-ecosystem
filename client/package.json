@@ -16,6 +16,8 @@
     "@mantine/hooks": "^4.2.5",
     "@mantine/next": "^4.2.5",
     "@mantine/notifications": "^4.2.5",
+    "@sentry/react": "^7.3.0",
+    "@sentry/tracing": "^7.3.0",
     "@types/google-protobuf": "^3.15.6",
     "@types/lodash": "^4.14.182",
     "dayjs": "^1.11.2",
