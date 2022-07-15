@@ -20,7 +20,7 @@ import (
 
 const (
 	// IOT_POLLING_FREQUENCY = 10 * time.Second
-	IOT_POLLING_FREQUENCY = 2 * time.Second
+	IOT_POLLING_FREQUENCY = 20 * time.Second
 
 	// Values expected from thingsboard
 	GATE_OPEN_KEYWORD   = "open"
