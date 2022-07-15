@@ -1,8 +1,10 @@
 // Showcasing the capabilities of protobuf with gRPC
 
 syntax = "proto3";
+import "proto/iot_prototype.proto";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "/operations_ecosys";
 
@@ -66,6 +68,16 @@ service IncidentReportServices{
     rpc DeleteIncidentReport(IncidentReport) returns (Response) {}
     rpc FindIncidentReports(IncidentReportQuery) returns (stream IncidentReportResponse) {}
 }
+
+service CameraIotServices{
+    rpc SetGateState(gate_prototype.GateState) returns (Response) {}
+    // Continuously provides the states of the gates, fire alarms and cpu temperature
+    // as well as the camera endpoints. 
+    // Responses are sent only when there is a change in state
+    // Upon connection, all states are sent for all locations are sent. 
+    rpc GetIotState(google.protobuf.Empty) returns (stream CameraIotResponse) {}
+}
+
 
 // Admin
 /***************************************************************************
@@ -575,6 +587,63 @@ message OrderByIncidentReport{
 }
 
 
+/***************************************************************************
+*                          CAMERA IOT MESSAGES                             *
+****************************************************************************/
+// Camera and Iot Monitoring and Controls
+message CameraIot {
+    // The ID ties the request to a paricular location
+    int64 camera_iot_id = 1;
+    string name = 2;
+
+    // Devices
+    Camera camera = 3;
+    gate_prototype.GateState gate = 4;
+    gate_prototype.FireAlarmState fire_alarm = 5;
+    gate_prototype.CpuTempState cpu_temperature = 6;
+}
+
+// camera identifier
+message Camera {
+    string url = 1;
+}
+
+message CameraIotResponse {
+    Response response = 1;
+    CameraIot camera_iot = 2;
+}
+
+
+// Filter the types of camera iot attributes to be returned. 
+message CameraIotFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        CAMERA_IOT_ID = 0;
+    }
+}
+
+// Get specific types camera Iot attributes as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message CameraIotQuery {
+    repeated CameraIotFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2; 
+    // Skip n rows from the database
+    int64 skip = 3;
+
+    // Order the queries, by default the order is desc id
+    OrderByCameraIot order_by = 4;
+}
+
+message OrderByCameraIot{
+    CameraIotFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
 /***************************************************************************
 *                              COMMON MESSAGES                              *
 ****************************************************************************/

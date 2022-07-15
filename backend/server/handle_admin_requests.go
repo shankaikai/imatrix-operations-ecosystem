@@ -1,5 +1,3 @@
-// TODO: Add validation
-
 package server
 
 import (

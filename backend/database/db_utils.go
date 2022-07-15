@@ -1,4 +1,3 @@
-// This whole file does not work yet. TODO: FIX
 // Interact with the database through these functions
 package database
 

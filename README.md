@@ -13,6 +13,8 @@ Capstone Project
 ### Protocol Buffer Generation
 ```
 protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/operations_ecosys.proto
+
+protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/iot_prototype.proto
 ```
 #### Protocol Buffer Mock Class Generation
 ```
@@ -36,6 +38,18 @@ python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=tele
 Without Type Checking
 ```
 python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --grpc_python_out=telebot/Protos proto/operations_ecosys.proto
+```
+
+## IoT Gate Prototype
+### Protocol Buffer Generation
+#### Install Type Checking Protobuf Library
+```
+pip3 install mypy-protobuf
+```
+#### Generation
+With Type Checking
+```
+python -m grpc_tools.protoc -I proto --python_out=iot_control/Proto --mypy_out=iot_control/Proto --grpc_python_out=iot_control/Proto --mypy_grpc_out=iot_control/Proto proto/iot_prototype.proto
 ```
 
 # Docker
