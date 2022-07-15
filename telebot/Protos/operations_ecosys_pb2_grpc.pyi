@@ -3,7 +3,9 @@
 isort:skip_file
 """
 import abc
+import google.protobuf.empty_pb2
 import grpc
+from . import iot_prototype_pb2
 from . import operations_ecosys_pb2
 import typing
 
@@ -33,6 +35,10 @@ class AdminServicesStub:
         operations_ecosys_pb2.UserQuery,
         operations_ecosys_pb2.UsersResponse]
     """TODO change user response to have user scoring and stuff"""
+
+    GetWANonce: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.User,
+        operations_ecosys_pb2.ResponseNonce]
 
     AddClient: grpc.UnaryUnaryMultiCallable[
         operations_ecosys_pb2.Client,
@@ -87,6 +93,12 @@ class AdminServicesServicer(metaclass=abc.ABCMeta):
     ) -> typing.Iterator[operations_ecosys_pb2.UsersResponse]:
         """TODO change user response to have user scoring and stuff"""
         pass
+
+    @abc.abstractmethod
+    def GetWANonce(self,
+        request: operations_ecosys_pb2.User,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.ResponseNonce: ...
 
     @abc.abstractmethod
     def AddClient(self,
@@ -280,3 +292,88 @@ class RosterServicesServicer(metaclass=abc.ABCMeta):
 
 
 def add_RosterServicesServicer_to_server(servicer: RosterServicesServicer, server: grpc.Server) -> None: ...
+
+class IncidentReportServicesStub:
+    def __init__(self, channel: grpc.Channel) -> None: ...
+    AddIncidentReport: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.IncidentReport,
+        operations_ecosys_pb2.Response]
+
+    UpdateIncidentReport: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.IncidentReport,
+        operations_ecosys_pb2.Response]
+
+    DeleteIncidentReport: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.IncidentReport,
+        operations_ecosys_pb2.Response]
+
+    FindIncidentReports: grpc.UnaryStreamMultiCallable[
+        operations_ecosys_pb2.IncidentReportQuery,
+        operations_ecosys_pb2.IncidentReportResponse]
+
+
+class IncidentReportServicesServicer(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def AddIncidentReport(self,
+        request: operations_ecosys_pb2.IncidentReport,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.Response: ...
+
+    @abc.abstractmethod
+    def UpdateIncidentReport(self,
+        request: operations_ecosys_pb2.IncidentReport,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.Response: ...
+
+    @abc.abstractmethod
+    def DeleteIncidentReport(self,
+        request: operations_ecosys_pb2.IncidentReport,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.Response: ...
+
+    @abc.abstractmethod
+    def FindIncidentReports(self,
+        request: operations_ecosys_pb2.IncidentReportQuery,
+        context: grpc.ServicerContext,
+    ) -> typing.Iterator[operations_ecosys_pb2.IncidentReportResponse]: ...
+
+
+def add_IncidentReportServicesServicer_to_server(servicer: IncidentReportServicesServicer, server: grpc.Server) -> None: ...
+
+class CameraIotServicesStub:
+    def __init__(self, channel: grpc.Channel) -> None: ...
+    SetGateState: grpc.UnaryUnaryMultiCallable[
+        iot_prototype_pb2.GateState,
+        operations_ecosys_pb2.Response]
+
+    GetIotState: grpc.UnaryStreamMultiCallable[
+        google.protobuf.empty_pb2.Empty,
+        operations_ecosys_pb2.CameraIotResponse]
+    """Continuously provides the states of the gates, fire alarms and cpu temperature
+    as well as the camera endpoints. 
+    Responses are sent only when there is a change in state
+    Upon connection, all states are sent for all locations are sent.
+    """
+
+
+class CameraIotServicesServicer(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def SetGateState(self,
+        request: iot_prototype_pb2.GateState,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.Response: ...
+
+    @abc.abstractmethod
+    def GetIotState(self,
+        request: google.protobuf.empty_pb2.Empty,
+        context: grpc.ServicerContext,
+    ) -> typing.Iterator[operations_ecosys_pb2.CameraIotResponse]:
+        """Continuously provides the states of the gates, fire alarms and cpu temperature
+        as well as the camera endpoints. 
+        Responses are sent only when there is a change in state
+        Upon connection, all states are sent for all locations are sent.
+        """
+        pass
+
+
+def add_CameraIotServicesServicer_to_server(servicer: CameraIotServicesServicer, server: grpc.Server) -> None: ...

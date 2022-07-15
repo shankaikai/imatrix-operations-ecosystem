@@ -6,6 +6,16 @@ import grpc
 
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
 
+def get_webapp_nonce(user:operations_ecosys_pb2.User) -> str:
+    stub = get_admin_stub()
+    wanonce_res = stub.GetWANonce(user)
+    # Consult hannah
+    #if wanonce_res.response.type == operations_ecosys_pb2.Response.ACK:
+    if wanonce_res.response.type == operations_ecosys_pb2.Response.ACK:
+        return wanonce_res.nonce
+    else:
+        print("Error obtaining webapp nonce:", wanonce_res)
+
 def get_users(user_query) -> list[operations_ecosys_pb2.User]:
     stub = get_admin_stub()
     userResponses = stub.FindUsers(user_query)

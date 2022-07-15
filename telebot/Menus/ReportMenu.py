@@ -6,6 +6,7 @@ from telegram.files.photosize import PhotoSize
 
 import os.path
 
+from grpc_clients import user_client
 from TelegramController import TelegramController, TelegramMenu, CMD_IDENTIFIER
 
 class ReportMenu(TelegramMenu):
@@ -15,8 +16,8 @@ class ReportMenu(TelegramMenu):
     def handler(self, update:Update, context:CallbackContext):
         # Web app stuff
         wa_url = os.getenv('WEBAPP_URL')
-        # user_wa_url = os.path.join(wa_url, "/?")
-        testWAInfo = WebAppInfo(wa_url)
+        params = "/?twan=" + user_client.get_webapp_nonce(self.TController.user)
+        testWAInfo = WebAppInfo(wa_url + params)
         # end of web app stuff
         cKeyboardVals = [
         [KeyboardButton(text=CMD_IDENTIFIER+"HoTo")],

@@ -25,12 +25,15 @@ def get_from_handle(user_tele_handle: str) -> operations_ecosys_pb2.User:
     
     return users[0] if len(users) >0 else None
 
-def login(user_tele_handle: str, chat_id: int) -> bool:
+def login(user_tele_handle: str, chat_id: int) -> operations_ecosys_pb2.User:
     user = get_from_handle(user_tele_handle)
     if user == None:
         print("Error: Unable to login:", user_tele_handle, " at chat ID:", chat_id)
-        return False
+        return None
     user.tele_chat_id = chat_id
     print("User Login:")
     print(user)
-    return user_client.update_user(user)
+    if not user_client.update_user(user):
+        print("Error updating user")
+        return None
+    return user

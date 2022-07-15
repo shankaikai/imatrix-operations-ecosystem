@@ -1,7 +1,7 @@
 // Showcasing the capabilities of protobuf with gRPC
 
 syntax = "proto3";
-import "proto/iot_prototype.proto";
+import "iot_prototype.proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
@@ -23,6 +23,7 @@ service AdminServices {
     rpc DeleteUser(User) returns (Response) {}
     // TODO change user response to have user scoring and stuff
     rpc FindUsers(UserQuery) returns (stream UsersResponse) {}
+    rpc GetWANonce(User) returns (ResponseNonce) {}
 
     // Client
     rpc AddClient(Client) returns (Response) {}
@@ -204,6 +205,19 @@ message OrderByClient{
     ClientFilter.Field field = 1;
     OrderBy order_by = 2;
 }
+
+
+/***************************************************************************
+*                             SECURITY MESSAGES                            *
+****************************************************************************/
+
+// Used to provide nonces
+message ResponseNonce {
+    Response response = 1;
+    string nonce = 2;
+    
+}
+
 
 /***************************************************************************
 *                          BROADCASTING MESSAGES                           *
@@ -660,6 +674,7 @@ message Response {
         ERROR = 1;
     }
 }
+
 
 // This is used to indicate what kind of objects should be returned that
 // fit this critera. 
