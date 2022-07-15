@@ -1,5 +1,10 @@
 {
     "AIFS1_USER_ID": 8,
     "AIFS2_USER_ID": 9,
-    "AIFS3_USER_ID": 10
+    "AIFS3_USER_ID": 10,
+
+    "THINGSBOARD_URL": "https://demo.thingsboard.io",
+    "THINGSBOARD_AUTH_RELATIVE_URL": "api/auth/login",
+    "THINGSBOARD_GET_DEVICE_STATE_RELATIVE_URL": "api/plugins/telemetry/DEVICE/%s/values/attributes/CLIENT_SCOPE",
+    "THINGSBOARD_SET_DEVICE_STATE_RELATIVE_URL": "api/plugins/telemetry/DEVICE/%s/SHARED_SCOPE"
 }

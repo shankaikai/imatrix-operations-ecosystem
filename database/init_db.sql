@@ -190,3 +190,16 @@ CREATE TABLE IF NOT EXISTS `incident_report` (
 		REFERENCES `user` (user_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
+
+
+CREATE TABLE IF NOT EXISTS `camera_iot` (
+    camera_iot_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(1000) NOT NULL,
+    camera_url VARCHAR(500) NOT NULL,
+    gate_id VARCHAR(500) NOT NULL,
+    gate_access_key VARCHAR(100) NOT NULL,
+    fire_id VARCHAR(500) NOT NULL,
+    fire_access_key	VARCHAR(100) NOT NULL,
+    cpu_id VARCHAR(500) NOT NULL,
+    cpu_access_key VARCHAR(100) NOT NULL
+);

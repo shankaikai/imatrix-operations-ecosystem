@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,7 +23,6 @@ type AdminServicesClient interface {
 	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
-	// TODO change user response to have user scoring and stuff
 	FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (AdminServices_FindUsersClient, error)
 	// Client
 	AddClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
@@ -165,7 +165,6 @@ type AdminServicesServer interface {
 	AddUser(context.Context, *User) (*Response, error)
 	UpdateUser(context.Context, *User) (*Response, error)
 	DeleteUser(context.Context, *User) (*Response, error)
-	// TODO change user response to have user scoring and stuff
 	FindUsers(*UserQuery, AdminServices_FindUsersServer) error
 	// Client
 	AddClient(context.Context, *Client) (*Response, error)
@@ -1292,6 +1291,164 @@ var IncidentReportServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "FindIncidentReports",
 			Handler:       _IncidentReportServices_FindIncidentReports_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "proto/operations_ecosys.proto",
+}
+
+// CameraIotServicesClient is the client API for CameraIotServices service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CameraIotServicesClient interface {
+	SetGateState(ctx context.Context, in *GateState, opts ...grpc.CallOption) (*Response, error)
+	// Continuously provides the states of the gates, fire alarms and cpu temperature
+	// as well as the camera endpoints.
+	// Responses are sent only when there is a change in state
+	// Upon connection, all states are sent for all locations are sent.
+	GetIotState(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (CameraIotServices_GetIotStateClient, error)
+}
+
+type cameraIotServicesClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCameraIotServicesClient(cc grpc.ClientConnInterface) CameraIotServicesClient {
+	return &cameraIotServicesClient{cc}
+}
+
+func (c *cameraIotServicesClient) SetGateState(ctx context.Context, in *GateState, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.CameraIotServices/SetGateState", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cameraIotServicesClient) GetIotState(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (CameraIotServices_GetIotStateClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CameraIotServices_ServiceDesc.Streams[0], "/operations_ecosys.CameraIotServices/GetIotState", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &cameraIotServicesGetIotStateClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type CameraIotServices_GetIotStateClient interface {
+	Recv() (*CameraIotResponse, error)
+	grpc.ClientStream
+}
+
+type cameraIotServicesGetIotStateClient struct {
+	grpc.ClientStream
+}
+
+func (x *cameraIotServicesGetIotStateClient) Recv() (*CameraIotResponse, error) {
+	m := new(CameraIotResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// CameraIotServicesServer is the server API for CameraIotServices service.
+// All implementations must embed UnimplementedCameraIotServicesServer
+// for forward compatibility
+type CameraIotServicesServer interface {
+	SetGateState(context.Context, *GateState) (*Response, error)
+	// Continuously provides the states of the gates, fire alarms and cpu temperature
+	// as well as the camera endpoints.
+	// Responses are sent only when there is a change in state
+	// Upon connection, all states are sent for all locations are sent.
+	GetIotState(*emptypb.Empty, CameraIotServices_GetIotStateServer) error
+	mustEmbedUnimplementedCameraIotServicesServer()
+}
+
+// UnimplementedCameraIotServicesServer must be embedded to have forward compatible implementations.
+type UnimplementedCameraIotServicesServer struct {
+}
+
+func (UnimplementedCameraIotServicesServer) SetGateState(context.Context, *GateState) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetGateState not implemented")
+}
+func (UnimplementedCameraIotServicesServer) GetIotState(*emptypb.Empty, CameraIotServices_GetIotStateServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetIotState not implemented")
+}
+func (UnimplementedCameraIotServicesServer) mustEmbedUnimplementedCameraIotServicesServer() {}
+
+// UnsafeCameraIotServicesServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CameraIotServicesServer will
+// result in compilation errors.
+type UnsafeCameraIotServicesServer interface {
+	mustEmbedUnimplementedCameraIotServicesServer()
+}
+
+func RegisterCameraIotServicesServer(s grpc.ServiceRegistrar, srv CameraIotServicesServer) {
+	s.RegisterService(&CameraIotServices_ServiceDesc, srv)
+}
+
+func _CameraIotServices_SetGateState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GateState)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CameraIotServicesServer).SetGateState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.CameraIotServices/SetGateState",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CameraIotServicesServer).SetGateState(ctx, req.(*GateState))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CameraIotServices_GetIotState_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CameraIotServicesServer).GetIotState(m, &cameraIotServicesGetIotStateServer{stream})
+}
+
+type CameraIotServices_GetIotStateServer interface {
+	Send(*CameraIotResponse) error
+	grpc.ServerStream
+}
+
+type cameraIotServicesGetIotStateServer struct {
+	grpc.ServerStream
+}
+
+func (x *cameraIotServicesGetIotStateServer) Send(m *CameraIotResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// CameraIotServices_ServiceDesc is the grpc.ServiceDesc for CameraIotServices service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CameraIotServices_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "operations_ecosys.CameraIotServices",
+	HandlerType: (*CameraIotServicesServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SetGateState",
+			Handler:    _CameraIotServices_SetGateState_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetIotState",
+			Handler:       _CameraIotServices_GetIotState_Handler,
 			ServerStreams: true,
 		},
 	},

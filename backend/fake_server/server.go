@@ -17,7 +17,7 @@ type Server struct {
 	pb.BroadcastServicesServer
 	pb.RosterServicesServer
 	pb.IncidentReportServicesServer
-
+	pb.CameraIotServicesServer
 	db     *sql.DB
 	dbLock *sync.Mutex
 }
@@ -42,6 +42,7 @@ func InitServer(serverAddr *string, serverPort *int) {
 	pb.RegisterBroadcastServicesServer(grpcServer, &server)
 	pb.RegisterRosterServicesServer(grpcServer, &server)
 	pb.RegisterIncidentReportServicesServer(grpcServer, &server)
+	pb.RegisterCameraIotServicesServer(grpcServer, &server)
 
 	grpcServer.Serve(lis)
 }
