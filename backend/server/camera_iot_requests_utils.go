@@ -20,7 +20,8 @@ import (
 
 const (
 	// IOT_POLLING_FREQUENCY = 10 * time.Second
-	IOT_POLLING_FREQUENCY = 20 * time.Second
+	IOT_POLLING_FREQUENCY       = 10 * time.Second
+	JWT_TOKEN_REFRESH_FREQUENCY = 1*time.Hour + 30*time.Minute
 
 	// Values expected from thingsboard
 	GATE_OPEN_KEYWORD   = "open"
@@ -43,12 +44,52 @@ type CameraIotStruct struct {
 	// Thingsboard credentials
 	ThingsboardUsername string
 	ThingsboardPassword string
+	// This JWT Token is refreshed periodically
+	// and used for all calls to the thingsboard server.
+	JwtToken string
 
 	// Keep track of the states
 	// Key: CameraIotId, Val: State
 	GateStates      map[int64]pb.GateState_GatePosition
 	FireAlarmStates map[int64]pb.FireAlarmState_AlarmState
 	CpuTempStates   map[int64]float64
+}
+
+func (s *Server) initCameraIotService() error {
+	// Set JWT token once
+	err := s.refreshJwTToken()
+	if err != nil {
+		return err
+	}
+
+	err = s.startAllIoTPolls()
+	if err != nil {
+		return err
+	}
+
+	// Auto refresh jwt token
+	go func() {
+		for range time.Tick(JWT_TOKEN_REFRESH_FREQUENCY) {
+			err := s.refreshJwTToken()
+			if err != nil {
+				fmt.Println("AUTO REFRESH JWT TOKEN ERROR:", err)
+			}
+		}
+	}()
+
+	return nil
+}
+
+func (s *Server) refreshJwTToken() error {
+	jwt, err := s.getJwtToken()
+
+	if err != nil {
+		fmt.Println("autoRefreshJwTToken ERROR", err)
+		return err
+	}
+
+	s.CameraIot.JwtToken = jwt
+	return nil
 }
 
 // Start go routines to all
@@ -77,11 +118,6 @@ func (s *Server) PollGateStatus(cameraIotId int64, gateId string) {
 
 	fmt.Println(gateId)
 	for range time.Tick(IOT_POLLING_FREQUENCY) {
-		jwt, err := s.getJwtToken()
-
-		if err != nil {
-			fmt.Println("Unable to get JWT Token", err)
-		}
 
 		fmt.Println("Polling from gate", gateId)
 
@@ -89,7 +125,7 @@ func (s *Server) PollGateStatus(cameraIotId int64, gateId string) {
 		url = fmt.Sprintf(url, gateId)
 
 		fmt.Println(url)
-		resp, err := common.HttpGetWithJWT(url, jwt)
+		resp, err := common.HttpGetWithJWT(url, s.CameraIot.JwtToken)
 
 		if err != nil {
 			fmt.Println("pollGateStatus ERROR", err)
@@ -120,7 +156,11 @@ func (s *Server) PollGateStatus(cameraIotId int64, gateId string) {
 
 			// keyMatch := keyRegexp.FindStringSubmatch(stringBody)
 			valMatch := valRegexp.FindStringSubmatch(stringBody)
-			// fmt.Println("keyMatch[1]", keyMatch[1])
+			if len(valMatch) == 0 {
+				fmt.Println("pollGateStatus ERROR val 0", stringBody)
+				continue
+			}
+
 			fmt.Println("valMatch[1]", valMatch[1])
 
 			go s.notifyGateSubscribers(cameraIotId, gateId, s.CameraIot.GateStates[cameraIotId], valMatch[1])
@@ -148,19 +188,13 @@ func (s *Server) setGateStatus(gateId string, status pb.GateState_GatePosition) 
 		return err
 	}
 
-	jwt, err := s.getJwtToken()
-
-	if err != nil {
-		fmt.Println("Unable to get JWT Token", err)
-	}
-
 	fmt.Println("Setting state for gate", gateId)
 
 	url := fmt.Sprintf("%s/%s", s.Config.ThingsboardUrl, s.Config.ThingsboardSetDeviceStateRelUrl)
 	url = fmt.Sprintf(url, gateId)
 
 	fmt.Println(url)
-	resp, err := common.HttpPostWithJWT(url, jwt, string(postBody))
+	resp, err := common.HttpPostWithJWT(url, s.CameraIot.JwtToken, string(postBody))
 
 	if err != nil {
 		fmt.Println("setGateStatus ERROR", err)
@@ -183,11 +217,6 @@ func (s *Server) PollFireAlarmStatus(cameraIotId int64, fireAlarmId string) {
 	fmt.Println(fireAlarmId)
 
 	for range time.Tick(IOT_POLLING_FREQUENCY) {
-		jwt, err := s.getJwtToken()
-
-		if err != nil {
-			fmt.Println("Unable to get JWT Token", err)
-		}
 
 		fmt.Println("Polling from Fire Alarm", fireAlarmId)
 
@@ -195,7 +224,7 @@ func (s *Server) PollFireAlarmStatus(cameraIotId int64, fireAlarmId string) {
 		url = fmt.Sprintf(url, fireAlarmId)
 
 		fmt.Println(url)
-		resp, err := common.HttpGetWithJWT(url, jwt)
+		resp, err := common.HttpGetWithJWT(url, s.CameraIot.JwtToken)
 
 		if err != nil {
 			fmt.Println("PollFireAlarmStatus ERROR", err)
@@ -220,7 +249,11 @@ func (s *Server) PollFireAlarmStatus(cameraIotId int64, fireAlarmId string) {
 
 			// keyMatch := keyRegexp.FindStringSubmatch(stringBody)
 			valMatch := valRegexp.FindStringSubmatch(stringBody)
-			// fmt.Println("keyMatch[1]", keyMatch[1])
+			if len(valMatch) == 0 {
+				fmt.Println("PollFireAlarmStatus ERROR val 0", stringBody)
+				continue
+			}
+
 			fmt.Println("valMatch[1]", valMatch[1])
 
 			go s.notifyFireAlarmSubscribers(cameraIotId, fireAlarmId, s.CameraIot.FireAlarmStates[cameraIotId], valMatch[1])
@@ -237,19 +270,13 @@ func (s *Server) PollCpuTempStatus(cameraIotId int64, cpuId string) {
 	}
 
 	for range time.Tick(IOT_POLLING_FREQUENCY) {
-		jwt, err := s.getJwtToken()
-
-		if err != nil {
-			fmt.Println("Unable to get JWT Token", err)
-		}
-
 		fmt.Println("Polling from cpu", cpuId)
 
 		url := fmt.Sprintf("%s/%s", s.Config.ThingsboardUrl, s.Config.ThingsboardGetDeviceStateRelUrl)
 		url = fmt.Sprintf(url, cpuId)
 
 		fmt.Println(url)
-		resp, err := common.HttpGetWithJWT(url, jwt)
+		resp, err := common.HttpGetWithJWT(url, s.CameraIot.JwtToken)
 
 		if err != nil {
 			fmt.Println("PollCpuTempStatus ERROR", err)
@@ -272,13 +299,12 @@ func (s *Server) PollCpuTempStatus(cameraIotId int64, cpuId string) {
 				continue
 			}
 
-			// keyMatch := keyRegexp.FindStringSubmatch(stringBody)
 			valMatch := valRegexp.FindStringSubmatch(stringBody)
 			if len(valMatch) == 0 {
 				fmt.Println("PollCpuTempStatus ERROR val 0", stringBody)
 				continue
 			}
-			// fmt.Println("keyMatch[1]", keyMatch[1])
+
 			fmt.Println("valMatch[1]", valMatch[1])
 
 			newState, err := strconv.ParseFloat(valMatch[1], 64)
@@ -337,7 +363,11 @@ func (s *Server) getJwtToken() (string, error) {
 	}
 
 	jwtMatch := tokenRegexp.FindStringSubmatch(stringBody)
-	// fmt.Println("jwtMatch[1]", jwtMatch[1])
+	if len(jwtMatch) == 0 {
+		fmt.Println("getJwtToken ERROR val 0", stringBody)
+		return "", fmt.Errorf("getJwtToken ERROR: cannot get token")
+	}
+
 	return jwtMatch[1], nil
 }
 
