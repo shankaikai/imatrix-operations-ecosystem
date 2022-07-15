@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from GrpcClient import utils
+from . import utils
 
 import grpc
 

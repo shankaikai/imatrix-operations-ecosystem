@@ -5,7 +5,7 @@ from telegram.files.photosize import PhotoSize
 
 import os.path
 
-from TelegramController import TelegramController, TelegramMenu
+from TelegramController import TelegramController, TelegramMenu, CMD_IDENTIFIER
 
 class SOSMenu(TelegramMenu):
     def __init__(self, parent = None, name = "", triggerWords = []):
@@ -13,7 +13,7 @@ class SOSMenu(TelegramMenu):
         self.name = "SOS Menu"
     def handler(self, update:Update, context:CallbackContext):
         cKeyboardVals = [
-            [KeyboardButton(text="Cancel")]
+            [KeyboardButton(text=CMD_IDENTIFIER+"Cancel")]
         ]
         cKeyboard = ReplyKeyboardMarkup(keyboard=cKeyboardVals)
         context.bot.send_message(chat_id=update.effective_chat.id, text="Dialing HQCC in 5 seconds!", reply_markup=cKeyboard)

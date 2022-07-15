@@ -1,7 +1,7 @@
 from concurrent import futures
 
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
-from . import rostering
+from subscriptions.subscription_modules import rostering
 
 from telegram.ext import Updater
 

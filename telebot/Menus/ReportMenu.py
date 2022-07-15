@@ -1,28 +1,34 @@
 from __future__ import annotations
 from typing import List
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, WebAppInfo
 from telegram.ext import CallbackContext
 from telegram.files.photosize import PhotoSize
 
 import os.path
 
-from TelegramController import TelegramController, TelegramMenu
+from TelegramController import TelegramController, TelegramMenu, CMD_IDENTIFIER
 
 class ReportMenu(TelegramMenu):
     def __init__(self, parent = None, name = "", triggerWords = []):
         super().__init__(parent, name, triggerWords)
         self.name = "Report Menu"
     def handler(self, update:Update, context:CallbackContext):
+        # Web app stuff
+        wa_url = os.getenv('WEBAPP_URL')
+        # user_wa_url = os.path.join(wa_url, "/?")
+        testWAInfo = WebAppInfo(wa_url)
+        # end of web app stuff
         cKeyboardVals = [
-        [KeyboardButton(text="HoTo")],
-        [KeyboardButton(text="Faulty Equipment")],
-        [KeyboardButton(text="Trespassing")],
-        [KeyboardButton(text="Other Reports")],
-        [KeyboardButton(text="Back")]
+        [KeyboardButton(text=CMD_IDENTIFIER+"HoTo")],
+        [KeyboardButton(text=CMD_IDENTIFIER+"Faulty Equipment")],
+        [KeyboardButton(text=CMD_IDENTIFIER+"Trespassing")],
+        [KeyboardButton(text=CMD_IDENTIFIER+"Other Reports")],
+        [KeyboardButton(text=CMD_IDENTIFIER+"Back")]
         ]
+        inlineKBs = InlineKeyboardMarkup([[InlineKeyboardButton(text="Report", web_app=testWAInfo)]])
         cKeyboard = ReplyKeyboardMarkup(keyboard=cKeyboardVals)
         context.bot.send_message(chat_id=update.effective_chat.id, text=self.name, reply_markup=cKeyboard)
-        pass
+        context.bot.send_message(chat_id=update.effective_chat.id, text=self.name, reply_markup=inlineKBs)
 
 class HoToReportMenu(TelegramMenu):
     def __init__(self, parent=None, name="", triggerWords=...):
@@ -41,7 +47,7 @@ class HoToReportMenu(TelegramMenu):
         if self.currentQuestion == "!Exit":
             context.bot.send_message(chat_id=update.effective_chat.id, text="HoTo report cancelled.")
             self.IsExpectingRawText = False
-            self.TController.backHandler(update, context)
+            self.backHandler(update, context)
         if self.currentQuestion == "Qn1":
             context.bot.send_message(chat_id=update.effective_chat.id, text="Starting HoTo report...")
             context.bot.send_message(chat_id=update.effective_chat.id, text="Type !Exit to cancel report making.")
@@ -56,5 +62,5 @@ class HoToReportMenu(TelegramMenu):
             replyText = "Handing over to " + self.answers[1] + " with fuel percentage at " + self.answers[2]
             context.bot.send_message(chat_id=update.effective_chat.id, text=replyText)
             self.IsExpectingRawText = False
-            self.TController.backHandler(update, context)
+            self.backHandler(update, context)
         pass

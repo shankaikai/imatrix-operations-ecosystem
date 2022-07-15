@@ -1,7 +1,7 @@
 from concurrent import futures
 
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
-from Broadcast import broadcast as bc
+from subscriptions.subscription_modules import broadcast as bc
 
 from telegram.ext import Updater
 

@@ -1,5 +1,5 @@
-from Broadcast import broadcast_grpc_server as bc_server
-from Rostering import rostering_grpc_server as roster_server
+from . import broadcast_server as bc_server
+from . import rostering_server as roster_server
 
 from concurrent import futures
 import logging

@@ -8,7 +8,7 @@ import os
 
 
 
-from TelegramController import TelegramController, TelegramMenu
+from TelegramController import TelegramController, TelegramMenu, CMD_IDENTIFIER
 
 class AttendanceMenu(TelegramMenu):
     def __init__(self, parent = None, name = "", triggerWords = []):
@@ -17,7 +17,7 @@ class AttendanceMenu(TelegramMenu):
         self.attendance_save_path = os.getenv('SAVE_PATH')
     def handler(self, update:Update, context:CallbackContext):
         cKeyboardVals = [
-            [KeyboardButton(text="Cancel")]
+            [KeyboardButton(text=CMD_IDENTIFIER+"Cancel")]
         ]
         cKeyboard = ReplyKeyboardMarkup(keyboard=cKeyboardVals)
         context.bot.send_message(chat_id=update.effective_chat.id, text="Please send your photo.", reply_markup=cKeyboard)
@@ -35,5 +35,5 @@ class AttendanceMenu(TelegramMenu):
             photo.download(os.path.join(self.attendance_save_path, fileName))
             print("Attendance photo for " + update.effective_user.username + " obtained.")
             context.bot.send_message(chat_id=update.effective_chat.id, text="Your attendance has been submitted.")
-            self.TController.backHandler(update, context)
+            self.backHandler(update, context)
             return
