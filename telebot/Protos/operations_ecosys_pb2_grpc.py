@@ -2,6 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from . import iot_prototype_pb2 as iot__prototype__pb2
 from . import operations_ecosys_pb2 as operations__ecosys__pb2
 
 
@@ -39,6 +41,11 @@ class AdminServicesStub(object):
                 '/operations_ecosys.AdminServices/FindUsers',
                 request_serializer=operations__ecosys__pb2.UserQuery.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.UsersResponse.FromString,
+                )
+        self.GetWANonce = channel.unary_unary(
+                '/operations_ecosys.AdminServices/GetWANonce',
+                request_serializer=operations__ecosys__pb2.User.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.ResponseNonce.FromString,
                 )
         self.AddClient = channel.unary_unary(
                 '/operations_ecosys.AdminServices/AddClient',
@@ -97,6 +104,12 @@ class AdminServicesServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetWANonce(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def AddClient(self, request, context):
         """Client
         """
@@ -144,6 +157,11 @@ def add_AdminServicesServicer_to_server(servicer, server):
                     servicer.FindUsers,
                     request_deserializer=operations__ecosys__pb2.UserQuery.FromString,
                     response_serializer=operations__ecosys__pb2.UsersResponse.SerializeToString,
+            ),
+            'GetWANonce': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetWANonce,
+                    request_deserializer=operations__ecosys__pb2.User.FromString,
+                    response_serializer=operations__ecosys__pb2.ResponseNonce.SerializeToString,
             ),
             'AddClient': grpc.unary_unary_rpc_method_handler(
                     servicer.AddClient,
@@ -246,6 +264,23 @@ class AdminServices(object):
         return grpc.experimental.unary_stream(request, target, '/operations_ecosys.AdminServices/FindUsers',
             operations__ecosys__pb2.UserQuery.SerializeToString,
             operations__ecosys__pb2.UsersResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetWANonce(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/GetWANonce',
+            operations__ecosys__pb2.User.SerializeToString,
+            operations__ecosys__pb2.ResponseNonce.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -776,5 +811,263 @@ class RosterServices(object):
         return grpc.experimental.unary_unary(request, target, '/operations_ecosys.RosterServices/UpdateRosterAssignment',
             operations__ecosys__pb2.RosterAssignement.SerializeToString,
             operations__ecosys__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class IncidentReportServicesStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.AddIncidentReport = channel.unary_unary(
+                '/operations_ecosys.IncidentReportServices/AddIncidentReport',
+                request_serializer=operations__ecosys__pb2.IncidentReport.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.Response.FromString,
+                )
+        self.UpdateIncidentReport = channel.unary_unary(
+                '/operations_ecosys.IncidentReportServices/UpdateIncidentReport',
+                request_serializer=operations__ecosys__pb2.IncidentReport.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.Response.FromString,
+                )
+        self.DeleteIncidentReport = channel.unary_unary(
+                '/operations_ecosys.IncidentReportServices/DeleteIncidentReport',
+                request_serializer=operations__ecosys__pb2.IncidentReport.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.Response.FromString,
+                )
+        self.FindIncidentReports = channel.unary_stream(
+                '/operations_ecosys.IncidentReportServices/FindIncidentReports',
+                request_serializer=operations__ecosys__pb2.IncidentReportQuery.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.IncidentReportResponse.FromString,
+                )
+
+
+class IncidentReportServicesServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def AddIncidentReport(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateIncidentReport(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteIncidentReport(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def FindIncidentReports(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_IncidentReportServicesServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'AddIncidentReport': grpc.unary_unary_rpc_method_handler(
+                    servicer.AddIncidentReport,
+                    request_deserializer=operations__ecosys__pb2.IncidentReport.FromString,
+                    response_serializer=operations__ecosys__pb2.Response.SerializeToString,
+            ),
+            'UpdateIncidentReport': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateIncidentReport,
+                    request_deserializer=operations__ecosys__pb2.IncidentReport.FromString,
+                    response_serializer=operations__ecosys__pb2.Response.SerializeToString,
+            ),
+            'DeleteIncidentReport': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteIncidentReport,
+                    request_deserializer=operations__ecosys__pb2.IncidentReport.FromString,
+                    response_serializer=operations__ecosys__pb2.Response.SerializeToString,
+            ),
+            'FindIncidentReports': grpc.unary_stream_rpc_method_handler(
+                    servicer.FindIncidentReports,
+                    request_deserializer=operations__ecosys__pb2.IncidentReportQuery.FromString,
+                    response_serializer=operations__ecosys__pb2.IncidentReportResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'operations_ecosys.IncidentReportServices', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class IncidentReportServices(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def AddIncidentReport(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.IncidentReportServices/AddIncidentReport',
+            operations__ecosys__pb2.IncidentReport.SerializeToString,
+            operations__ecosys__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateIncidentReport(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.IncidentReportServices/UpdateIncidentReport',
+            operations__ecosys__pb2.IncidentReport.SerializeToString,
+            operations__ecosys__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteIncidentReport(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.IncidentReportServices/DeleteIncidentReport',
+            operations__ecosys__pb2.IncidentReport.SerializeToString,
+            operations__ecosys__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def FindIncidentReports(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/operations_ecosys.IncidentReportServices/FindIncidentReports',
+            operations__ecosys__pb2.IncidentReportQuery.SerializeToString,
+            operations__ecosys__pb2.IncidentReportResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class CameraIotServicesStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.SetGateState = channel.unary_unary(
+                '/operations_ecosys.CameraIotServices/SetGateState',
+                request_serializer=iot__prototype__pb2.GateState.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.Response.FromString,
+                )
+        self.GetIotState = channel.unary_stream(
+                '/operations_ecosys.CameraIotServices/GetIotState',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.CameraIotResponse.FromString,
+                )
+
+
+class CameraIotServicesServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def SetGateState(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetIotState(self, request, context):
+        """Continuously provides the states of the gates, fire alarms and cpu temperature
+        as well as the camera endpoints. 
+        Responses are sent only when there is a change in state
+        Upon connection, all states are sent for all locations are sent. 
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_CameraIotServicesServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'SetGateState': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetGateState,
+                    request_deserializer=iot__prototype__pb2.GateState.FromString,
+                    response_serializer=operations__ecosys__pb2.Response.SerializeToString,
+            ),
+            'GetIotState': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetIotState,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=operations__ecosys__pb2.CameraIotResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'operations_ecosys.CameraIotServices', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class CameraIotServices(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def SetGateState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.CameraIotServices/SetGateState',
+            iot__prototype__pb2.GateState.SerializeToString,
+            operations__ecosys__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetIotState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/operations_ecosys.CameraIotServices/GetIotState',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            operations__ecosys__pb2.CameraIotResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -10,6 +10,7 @@ import (
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/grpc"
+
 )
 
 type Server struct {
@@ -18,6 +19,7 @@ type Server struct {
 	pb.RosterServicesServer
 	pb.IncidentReportServicesServer
 	pb.CameraIotServicesServer
+	pb.WebAppServicesServer
 	db     *sql.DB
 	dbLock *sync.Mutex
 }
@@ -43,6 +45,8 @@ func InitServer(serverAddr *string, serverPort *int) {
 	pb.RegisterRosterServicesServer(grpcServer, &server)
 	pb.RegisterIncidentReportServicesServer(grpcServer, &server)
 	pb.RegisterCameraIotServicesServer(grpcServer, &server)
+	pb.RegisterWebAppServicesServer(grpcServer, &server)
 
+	go Proxy_main()
 	grpcServer.Serve(lis)
 }

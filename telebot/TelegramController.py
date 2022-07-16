@@ -15,6 +15,8 @@ from administration import user
 import os.path
 import time
 
+from Protos import operations_ecosys_pb2
+
 CMD_IDENTIFIER = "‎" 
 
 class TelegramController:
@@ -24,6 +26,7 @@ class TelegramController:
         self.RootMenu:TelegramMenu = None
         self.Menus:list[TelegramMenu]= []
         self.CurrentMenu:TelegramMenu = None
+        self.user:operations_ecosys_pb2.User = None
     def buildMenuTree(self, rootMenu:TelegramMenu):
         if self.Menus == None or len(self.Menus) == 0:
             print("Unable to build tree as no menus are given.")
@@ -50,6 +53,7 @@ class TelegramController:
     # Handlers that need to be attached directly to Tele Bot
     def mainHandler(self, update: Update, context: CallbackContext):
         text:str = update.message.text
+        print(text)
         if len(text) > 1 and text[0] == CMD_IDENTIFIER and text[1] != CMD_IDENTIFIER:
             text = text[1:]
             if text == "Back" or text == "Cancel":
@@ -64,11 +68,13 @@ class TelegramController:
         else:
             self.CurrentMenu.textHandler(update, context)
     def startHandler(self, update: Update, context: CallbackContext):
-        if user.login(update.effective_chat.username, update.effective_chat.id):
+        logged_in_user = user.login(update.effective_chat.username, update.effective_chat.id)
+        if logged_in_user == None:
+            context.bot.send_message(chat_id=update.effective_chat.id, text="You are not authorised to use this bot. Please contact your administator if you believe otherwise.")
+        else:
+            self.user = logged_in_user
             context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
             self.RootMenu.handler(update, context)
-        else:
-            context.bot.send_message(chat_id=update.effective_chat.id, text="You are not authorised to use this bot. Please contact your administator if you believe otherwise.")
         
     def attachmentHandler(self, update:Update, context:CallbackContext):
         self.CurrentMenu.attachmentHandler(update, context)
