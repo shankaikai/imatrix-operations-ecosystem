@@ -1,16 +1,17 @@
 import { Stack } from "@mantine/core";
 import type { NextPage } from "next";
 import CameraBar from "../components/Camera/CameraBar";
-import Stream from "../components/Camera/Stream";
-import StreamContainer from "../components/Camera/StreamContainer";
 import StreamsGroup from "../components/Camera/StreamsGroup";
+import { CameraIotProvider } from "../helpers/useCameraIotClient";
 
 const Camera: NextPage = () => {
   return (
-    <Stack>
-      <CameraBar />
-      <StreamsGroup />
-    </Stack>
+    <CameraIotProvider>
+      <Stack>
+        <CameraBar />
+        <StreamsGroup />
+      </Stack>
+    </CameraIotProvider>
   );
 };
 
