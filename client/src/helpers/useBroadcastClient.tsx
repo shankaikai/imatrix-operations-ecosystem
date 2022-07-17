@@ -27,7 +27,11 @@ interface BroadcastContextInterface {
   setSelectValue?: Dispatch<string>;
   filterValue: string;
   setFilterValue?: Dispatch<string>;
-  updateBroadcasts?: (skip: number, setBroadcasts: Dispatch<Broadcast[]>, clear?:boolean) => void;
+  updateBroadcasts?: (
+    skip: number,
+    setBroadcasts: Dispatch<Broadcast[]>,
+    clear?: boolean
+  ) => void;
 }
 
 const BroadcastContext = createContext<BroadcastContextInterface>({
@@ -41,7 +45,11 @@ interface BroadcastProviderProps {
   children: JSX.Element | JSX.Element[];
 }
 
-const updateBroadcasts = (skip: number, setBroadcasts: Dispatch<Broadcast[]>, clear?: boolean) => {
+const updateBroadcasts = (
+  skip: number,
+  setBroadcasts: Dispatch<Broadcast[]>,
+  clear?: boolean
+) => {
   console.log("updateBroadcasts called");
 
   //@ts-ignore
@@ -66,8 +74,6 @@ export function BroadcastProvider({ children }: BroadcastProviderProps) {
   const [search, setSearch] = useState("");
   const [selectValue, setSelectValue] = useState("latest");
   const [filterValue, setFilterValue] = useState("all");
-
-  
 
   // Call once when first render
   useEffect(() => {
@@ -106,12 +112,12 @@ export async function submitNewBroadcast({
   recipient,
   urgency,
   message,
-  setBroadcasts
+  setBroadcasts,
 }: {
   recipient: string[];
   urgency: string;
   message: string;
-  setBroadcasts: Dispatch<Broadcast[]>
+  setBroadcasts: Dispatch<Broadcast[]>;
 }) {
   const client = getBroadcastClient();
 
@@ -162,7 +168,7 @@ export async function submitNewBroadcast({
     .addBroadcast(broadcast, {})
     .then((response) => {
       showBroadcastSuccessNotification();
-      updateBroadcasts(0, setBroadcasts, true)
+      updateBroadcasts(0, setBroadcasts, true);
     })
     .catch((error) => {
       // TODO: Error toast

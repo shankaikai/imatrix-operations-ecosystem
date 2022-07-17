@@ -1,10 +1,12 @@
 // Showcasing the capabilities of protobuf with gRPC
 
 syntax = "proto3";
-import "proto/iot_prototype.proto";
+import "iot_prototype.proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+
+import "google/api/annotations.proto";
 
 option go_package = "/operations_ecosys";
 
@@ -143,7 +145,6 @@ message UserQuery {
     // Order the queries, by default the order is desc by creation date
     OrderByUser order_by = 4;
 }
-
 
 message OrderByUser{
     UserFilter.Field field = 1;
