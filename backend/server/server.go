@@ -84,7 +84,7 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 	pb.RegisterRosterServicesServer(grpcServer, &server)
 	pb.RegisterIncidentReportServicesServer(grpcServer, &server)
 	pb.RegisterCameraIotServicesServer(grpcServer, &server)
-	server.startAllIoTPolls()
+	server.initCameraIotService()
 	grpcServer.Serve(lis)
 }
 
