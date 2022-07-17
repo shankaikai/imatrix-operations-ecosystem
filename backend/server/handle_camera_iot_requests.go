@@ -48,7 +48,7 @@ func (s *Server) SetGateState(cxt context.Context, gateState *pb.GateState) (*pb
 func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices_GetIotStateServer) error {
 	defer sentry.Recover()
 
-	fmt.Println("")
+	fmt.Println("GetIotState")
 	cameraIotAttributes, err := db_pck.GetCameraIotDetails(s.db, &pb.CameraIotQuery{})
 
 	if err != nil {
@@ -81,10 +81,21 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 		s.subscribeToAllDevices(mainChannel, threadId, attribute.CameraIotId)
 
 		// Get Gate Status
+		if _, ok := s.CameraIot.GateStates[attribute.CameraIotId]; !ok {
+			s.CameraIot.GateStates[attribute.CameraIotId] = pb.GateState_CLOSED
+		}
 		cameraIot.Gate = &pb.GateState{State: s.CameraIot.GateStates[attribute.CameraIotId]}
+
 		// Get Fire Alarm Status
+		if _, ok := s.CameraIot.FireAlarmStates[attribute.CameraIotId]; !ok {
+			s.CameraIot.FireAlarmStates[attribute.CameraIotId] = pb.FireAlarmState_OFF
+		}
 		cameraIot.FireAlarm = &pb.FireAlarmState{State: s.CameraIot.FireAlarmStates[attribute.CameraIotId]}
+
 		// Get Cpu Temperature Status
+		if _, ok := s.CameraIot.CpuTempStates[attribute.CameraIotId]; !ok {
+			s.CameraIot.CpuTempStates[attribute.CameraIotId] = -1
+		}
 		cameraIot.CpuTemperature = &pb.CpuTempState{Temp: s.CameraIot.CpuTempStates[attribute.CameraIotId]}
 
 		cameraIotRes.CameraIot = cameraIot
