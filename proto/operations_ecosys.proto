@@ -615,6 +615,15 @@ message CameraIot {
     gate_prototype.GateState gate = 4;
     gate_prototype.FireAlarmState fire_alarm = 5;
     gate_prototype.CpuTempState cpu_temperature = 6;
+
+    MessageType type = 7;
+
+     enum MessageType{
+        INITIAL = 0;
+        CHANGE_GATE = 1;
+        CHANGE_FIRE_ALARM = 2;
+        CHANGE_CPU_TEMP = 3;
+     }
 }
 
 // camera identifier

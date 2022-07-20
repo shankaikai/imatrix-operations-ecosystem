@@ -74,6 +74,7 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 			CameraIotId: attribute.CameraIotId,
 			Name:        attribute.Name,
 			Camera:      &pb.Camera{Url: attribute.CameraUrl},
+			Type:        pb.CameraIot_INITIAL,
 		}
 		fmt.Println("attribute", attribute)
 
