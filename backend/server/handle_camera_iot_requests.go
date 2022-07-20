@@ -117,6 +117,7 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 			fmt.Println("sending...", cameraIotRes.CameraIot)
 			err = stream.Send(&cameraIotRes)
 			if err != nil {
+				fmt.Println("GetIotState ERROR:", err)
 				return err
 			}
 		case <-time.After(GATE_CONSISTENCY_UPDATE_FREQUENCY):
@@ -131,6 +132,7 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 				fmt.Println("sending...", cameraIotRes.CameraIot)
 				err = stream.Send(&cameraIotRes)
 				if err != nil {
+					fmt.Println("GetIotState ERROR:", err)
 					return err
 				}
 			}
