@@ -1,22 +1,20 @@
 from __future__ import annotations
 import contextvars
-# from turtle import update
 from setuptools import Command
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext, CallbackQueryHandler
-from telegram.ext import Updater
+from telegram.ext import Updater, Dispatcher
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 from telegram.files.photosize import PhotoSize
 from telegram import File as tFile
-from Keyboard import keyboard_data
 
 import os.path
 import time
 
 from TelegramController import TelegramController, TelegramMenu
-from Menus import MainMenu, AttendanceMenu, ReportMenu, SOSMenu, HelpMenu
-from grpcServer import serve
+from menus import MainMenu, AttendanceMenu, ReportMenu, SOSMenu, HelpMenu
+from grpc_servers.grpc_server import serve
 
 from dotenv import load_dotenv
 
@@ -25,9 +23,9 @@ load_dotenv()
 # CONFIG Params
 TOKEN = os.getenv('TOKEN')
 
-# Get TeleBot updated and dispatcher
-updater = Updater(token=TOKEN, use_context=True)
-dispatcher = updater.dispatcher
+# Get TeleBot updater and dispatcher
+updater:Updater= Updater(token=TOKEN, use_context=True)
+dispatcher:Dispatcher = updater.dispatcher
     
 # Init and configure the TController
 TController = TelegramController(updater, dispatcher)
@@ -51,10 +49,11 @@ TController.CurrentMenu = mainMenu
 start_handler = CommandHandler('start', TController.startHandler)
 echo_handler = MessageHandler(Filters.text & (~Filters.command), TController.mainHandler)
 attachment_handler = MessageHandler(Filters.attachment & (~Filters.command), TController.attachmentHandler)
+callbackquery_handler = CallbackQueryHandler(TController.callbackqueryHandler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(attachment_handler)
-dispatcher.add_handler(CallbackQueryHandler(keyboard_data.keyboardCallback))
+dispatcher.add_handler(callbackquery_handler)
 
 # Start grpc server
 grpc_server = serve(updater)

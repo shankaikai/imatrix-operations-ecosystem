@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "proto/operations_ecosys.proto";
+
+option go_package = "/operations_ecosys";
+
+package http_webapp;
+
+service WebAppServices{
+    // <><> Telegram WebApp - HTTP <><>
+    rpc GetRosterAssignmentsForWebApp(HTTPRosterMessage) returns (HTTPMessage) {
+        option (google.api.http) = {
+            get: "/http/rosters/{roster_id}"
+        };
+    }
+
+    // rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
+    //     option (google.api.http) = {
+    //         post: "/http/post_report"
+    //         body: "*"
+    //     };
+    // }
+
+    rpc PostWReportFromWebApp(operations_ecosys.IncidentReport) returns (HTTPMessage) {
+        option (google.api.http) = {
+            post: "/http/post_report"
+            body: "*"
+        };
+    }
+}
+
+message HTTPMessage{
+    string value = 1;
+}
+
+message HTTPRosterMessage{
+    int64 roster_id = 1;
+}
+
+message HTTPFormMessage{
+    string value = 1;
+}

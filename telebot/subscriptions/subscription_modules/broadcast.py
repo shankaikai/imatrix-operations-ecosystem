@@ -2,11 +2,24 @@ from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Update, P
 from telegram.ext import Updater, CallbackContext
 from google.protobuf.timestamp_pb2 import Timestamp
 
-from Keyboard.keyboard_data import KeyboardData
+from ..subscription_message import SubscriptionMessage
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
-from GrpcClient import broadcast_client
-from Reminders import reminders
+from grpc_clients import broadcast_client
 
+from typing import Tuple
+
+from .. import reminders
+
+IDENTIFIER = "broadcast"
+
+# Boolean reflects if the handle supports the msg; str returns some comment/text
+def handle_sub_message(sub_msg:SubscriptionMessage) -> Tuple[bool, str]:
+    if IDENTIFIER not in sub_msg.feature:
+        return False, None
+    if sub_msg.feature == SubscriptionMessage.BROADCAST_FEATURE:
+        if acknowledge_broadcast(sub_msg.pb_msg_id):
+            return True, "Acknowledged"
+        return False, "Error when updating broadcast."
 
 def send_broadcast_message(updater : Updater, message: str, chat_id: int, broadcast_recipient_id: int, urgency):
     print("sendBroadcastMessage", message, chat_id)
@@ -14,7 +27,7 @@ def send_broadcast_message(updater : Updater, message: str, chat_id: int, broadc
             [[
                 InlineKeyboardButton(
                     text="Acknowledge",
-                    callback_data=str(KeyboardData(KeyboardData.BROADCAST_FEATURE, broadcast_recipient_id, chat_id))
+                    callback_data=str(SubscriptionMessage(SubscriptionMessage.BROADCAST_FEATURE, broadcast_recipient_id, chat_id))
                 )
             ]]
     )

@@ -1,14 +1,31 @@
+from typing import Tuple
 from telegram import Chat, InlineKeyboardMarkup, InlineKeyboardButton, Message, ParseMode
 from telegram.ext import Updater, ContextTypes, CallbackContext
 from google.protobuf.timestamp_pb2 import Timestamp
 
-from Keyboard.keyboard_data import KeyboardData
+from ..subscription_message import SubscriptionMessage
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
-from GrpcClient import rostering_client
-from Reminders import reminders
+from grpc_clients import rostering_client
+from .. import reminders
 
 from datetime import datetime
 
+IDENTIFIER = "rostering"
+ACCEPT_FEATURE = "_accept"
+REJECT_FEATURE = "_reject"
+
+# Boolean reflects if the handle supports the msg; str returns some comment/text
+def handle_sub_message(sub_msg:SubscriptionMessage) -> Tuple[bool, str]:
+    if IDENTIFIER not in sub_msg.feature:
+        return False, None
+    if sub_msg.feature == IDENTIFIER + ACCEPT_FEATURE:
+        if acknowledge_roster(sub_msg.pb_msg_id):
+            return True, "Acknowledged"
+        return False, "Error when updating roster accept."
+    if sub_msg.feature == IDENTIFIER + REJECT_FEATURE:
+        if reject_roster(sub_msg.pb_msg_id):
+            return True, "Rejected"
+        return False, "Error when updating roster reject. "
 
 def send_roster_message(updater : Updater, chat_id: int, 
         roster_assignment: operations_ecosys_pb2.RosterAssignement, 
@@ -20,8 +37,8 @@ def send_roster_message(updater : Updater, chat_id: int,
             [[
                 InlineKeyboardButton(
                     text="Acknowledge",
-                    callback_data=str(KeyboardData(
-                        KeyboardData.ROSTERING_ACCEPT_FEATURE, 
+                    callback_data=str(SubscriptionMessage(
+                        SubscriptionMessage.ROSTERING_ACCEPT_FEATURE, 
                         roster_assignment.roster_assignment_id, 
                         chat_id
                     ))
@@ -29,8 +46,8 @@ def send_roster_message(updater : Updater, chat_id: int,
 
                 InlineKeyboardButton(
                     text="Reject",
-                    callback_data=str(KeyboardData(
-                        KeyboardData.ROSTERING_REJECT_FEATURE, 
+                    callback_data=str(SubscriptionMessage(
+                        SubscriptionMessage.ROSTERING_REJECT_FEATURE, 
                         roster_assignment.roster_assignment_id, 
                         chat_id
                     ))                

@@ -388,7 +388,12 @@ func (s *Server) notifyGateSubscribers(cameraIotId int64, gateId string, oldStat
 	}
 
 	// Create message to notify subscribers
-	message := &pb.CameraIot{CameraIotId: cameraIotId, Gate: &pb.GateState{}}
+	message := &pb.CameraIot{
+		CameraIotId: cameraIotId,
+		Gate:        &pb.GateState{},
+		Type:        pb.CameraIot_CHANGE_GATE,
+	}
+
 	switch newState {
 	case GATE_OPEN_KEYWORD:
 		message.Gate.State = pb.GateState_OPEN
@@ -420,7 +425,11 @@ func (s *Server) notifyFireAlarmSubscribers(cameraIotId int64, fireAlarmId strin
 	}
 
 	// Create message to notify subscribers
-	message := &pb.CameraIot{CameraIotId: cameraIotId, FireAlarm: &pb.FireAlarmState{}}
+	message := &pb.CameraIot{
+		CameraIotId: cameraIotId,
+		FireAlarm:   &pb.FireAlarmState{},
+		Type:        pb.CameraIot_CHANGE_FIRE_ALARM,
+	}
 	switch newState {
 	case FIRE_ALARM_OFF_KEYWORD:
 		message.FireAlarm.State = pb.FireAlarmState_OFF
@@ -445,7 +454,11 @@ func (s *Server) notifyCpuTempSubscribers(cameraIotId int64, cpuId string, oldSt
 	}
 
 	// Create message to notify subscribers
-	message := &pb.CameraIot{CameraIotId: cameraIotId, CpuTemperature: &pb.CpuTempState{}}
+	message := &pb.CameraIot{
+		CameraIotId:    cameraIotId,
+		CpuTemperature: &pb.CpuTempState{},
+		Type:           pb.CameraIot_CHANGE_CPU_TEMP,
+	}
 
 	message.CpuTemperature.Temp = newState
 	s.CameraIot.CpuTempStates[cameraIotId] = newState

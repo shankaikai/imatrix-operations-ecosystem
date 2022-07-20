@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from GrpcClient import user_client
+from grpc_clients import user_client
 
 import logging
 import random
@@ -9,7 +9,7 @@ import grpc
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
 
 
-def getUserFromHandle(user_tele_handle: str) -> operations_ecosys_pb2.User:
+def get_from_handle(user_tele_handle: str) -> operations_ecosys_pb2.User:
     filter_comparison = operations_ecosys_pb2.Filter(
         comparison=operations_ecosys_pb2.Filter.EQUAL, 
         value=user_tele_handle,
@@ -25,11 +25,15 @@ def getUserFromHandle(user_tele_handle: str) -> operations_ecosys_pb2.User:
     
     return users[0] if len(users) >0 else None
 
-def updateUserChatId(user_tele_handle: str, chat_id: int) -> bool:
-    print("updateUserChatId", user_tele_handle, chat_id)
-    user = getUserFromHandle(user_tele_handle)
-    print("updateUserChatId", user)
+def login(user_tele_handle: str, chat_id: int) -> operations_ecosys_pb2.User:
+    user = get_from_handle(user_tele_handle)
     if user == None:
-        return False
+        print("Error: Unable to login:", user_tele_handle, " at chat ID:", chat_id)
+        return None
     user.tele_chat_id = chat_id
-    return user_client.update_user(user)
+    print("User Login:")
+    print(user)
+    if not user_client.update_user(user):
+        print("Error updating user")
+        return None
+    return user

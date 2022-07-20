@@ -25,6 +25,7 @@ service AdminServices {
     rpc DeleteUser(User) returns (Response) {}
     // TODO change user response to have user scoring and stuff
     rpc FindUsers(UserQuery) returns (stream UsersResponse) {}
+    rpc GetWANonce(User) returns (ResponseNonce) {}
 
     // Client
     rpc AddClient(Client) returns (Response) {}
@@ -61,7 +62,6 @@ service RosterServices{
     rpc FindRosterAssignments(RosterQuery) returns (stream RosterAssignmentResponse) {}
     // Updates the individual roster assignment
     rpc UpdateRosterAssignment(RosterAssignement) returns (Response) {}
-    
 }
 
 service IncidentReportServices{
@@ -69,6 +69,7 @@ service IncidentReportServices{
     rpc UpdateIncidentReport(IncidentReport) returns (Response) {}
     rpc DeleteIncidentReport(IncidentReport) returns (Response) {}
     rpc FindIncidentReports(IncidentReportQuery) returns (stream IncidentReportResponse) {}
+
 }
 
 service CameraIotServices{
@@ -205,6 +206,19 @@ message OrderByClient{
     ClientFilter.Field field = 1;
     OrderBy order_by = 2;
 }
+
+
+/***************************************************************************
+*                             SECURITY MESSAGES                            *
+****************************************************************************/
+
+// Used to provide nonces
+message ResponseNonce {
+    Response response = 1;
+    string nonce = 2;
+    
+}
+
 
 /***************************************************************************
 *                          BROADCASTING MESSAGES                           *
@@ -602,6 +616,15 @@ message CameraIot {
     gate_prototype.GateState gate = 4;
     gate_prototype.FireAlarmState fire_alarm = 5;
     gate_prototype.CpuTempState cpu_temperature = 6;
+
+    MessageType type = 7;
+
+     enum MessageType{
+        INITIAL = 0;
+        CHANGE_GATE = 1;
+        CHANGE_FIRE_ALARM = 2;
+        CHANGE_CPU_TEMP = 3;
+     }
 }
 
 // camera identifier
@@ -661,6 +684,7 @@ message Response {
         ERROR = 1;
     }
 }
+
 
 // This is used to indicate what kind of objects should be returned that
 // fit this critera. 

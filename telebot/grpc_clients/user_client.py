@@ -1,12 +1,22 @@
 from __future__ import print_function
 
-from GrpcClient import utils
+from grpc_clients import utils
 
 import grpc
 
+from typing import List
+
 from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
 
-def get_users(user_query) -> list[operations_ecosys_pb2.User]:
+def get_webapp_nonce(user:operations_ecosys_pb2.User) -> str:
+    stub = get_admin_stub()
+    wanonce_res = stub.GetWANonce(user)
+    if wanonce_res.response.type == operations_ecosys_pb2.Response.ACK:
+        return wanonce_res.nonce
+    else:
+        print("Error obtaining webapp nonce:", wanonce_res)
+
+def get_users(user_query) -> List[operations_ecosys_pb2.User]:
     stub = get_admin_stub()
     userResponses = stub.FindUsers(user_query)
     

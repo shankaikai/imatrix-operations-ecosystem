@@ -21,6 +21,7 @@ type Server struct {
 	pb.RosterServicesServer
 	pb.IncidentReportServicesServer
 	pb.CameraIotServicesServer
+	pb.WebAppServicesServer
 
 	db     *sql.DB
 	dbLock *sync.Mutex
@@ -47,7 +48,8 @@ type ServerConfig struct {
 	ThingsboardSetDeviceStateRelUrl string `json:"THINGSBOARD_SET_DEVICE_STATE_RELATIVE_URL"`
 }
 
-func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int, testLEDAddr *string) {
+func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int,
+	testLEDAddr *string, webProxyAddr *string, webProxyPort *int) {
 	fmt.Println("Starting gRPC server...")
 	server := Server{
 		dbLock:         &sync.Mutex{},
@@ -84,7 +86,11 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 	pb.RegisterRosterServicesServer(grpcServer, &server)
 	pb.RegisterIncidentReportServicesServer(grpcServer, &server)
 	pb.RegisterCameraIotServicesServer(grpcServer, &server)
+	pb.RegisterWebAppServicesServer(grpcServer, &server)
+
 	server.initCameraIotService()
+
+	// go Proxy_main(serverAddr, serverPort, webProxyAddr, webProxyPort)
 	grpcServer.Serve(lis)
 }
 
