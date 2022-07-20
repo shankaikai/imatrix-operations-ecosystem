@@ -108,14 +108,31 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 
 	// Continuously wait for new states
 	for {
-		cameraIot := <-mainChannel
 		res := pb.Response{Type: pb.Response_ACK}
-		cameraIotRes := pb.CameraIotResponse{Response: &res, CameraIot: cameraIot}
-		fmt.Println("sending...", cameraIotRes.CameraIot)
-		err = stream.Send(&cameraIotRes)
-		if err != nil {
-			return err
+
+		select {
+		case cameraIot := <-mainChannel:
+			cameraIotRes := pb.CameraIotResponse{Response: &res, CameraIot: cameraIot}
+			err = stream.Send(&cameraIotRes)
+			if err != nil {
+				return err
+			}
+		case <-time.After(GATE_CONSISTENCY_UPDATE_FREQUENCY):
+			for _, attribute := range cameraIotAttributes {
+				cameraIot := &pb.CameraIot{
+					CameraIotId: attribute.CameraIotId,
+					Name:        attribute.Name,
+					Type:        pb.CameraIot_CHANGE_GATE,
+				}
+				cameraIot.Gate = &pb.GateState{State: s.CameraIot.GateStates[attribute.CameraIotId]}
+				cameraIotRes := pb.CameraIotResponse{Response: &res, CameraIot: cameraIot}
+				err = stream.Send(&cameraIotRes)
+				if err != nil {
+					return err
+				}
+			}
 		}
+
 	}
 
 }

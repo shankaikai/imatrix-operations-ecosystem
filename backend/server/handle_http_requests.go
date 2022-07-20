@@ -17,7 +17,7 @@ func (s *Server) GetRosterAssignmentsForWebApp(cxt context.Context, HTTPRosterMe
 	return &pb.HTTPMessage{}, nil
 }
 
-func (s *Server) PostWReportFromWebApp(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.HTTPMessage, error) {
+func (s *Server) PostWReportFromWebApp(ctx context.Context, incidentReport *pb.IncidentReport) (*pb.HTTPMessage, error) {
 	defer sentry.Recover()
 
 	fmt.Println("PostWReportFromWebApp recieved", incidentReport)
@@ -42,5 +42,11 @@ func (s *Server) PostWReportFromWebApp(cxt context.Context, incidentReport *pb.I
 	}
 
 	res.Value = strconv.Itoa(int(pk))
+
+	// header := metadata.New(map[string]string{"Access-Control-Allow-Origin": "res-123"})
+	// if err := grpc.SendHeader(ctx, header); err != nil {
+	// 	return nil, status.Errorf(codes.Internal, "unable to send 'x-response-id' header")
+	// }
+
 	return res, nil
 }

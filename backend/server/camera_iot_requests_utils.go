@@ -20,8 +20,9 @@ import (
 
 const (
 	// IOT_POLLING_FREQUENCY = 10 * time.Second
-	IOT_POLLING_FREQUENCY       = 10 * time.Second
-	JWT_TOKEN_REFRESH_FREQUENCY = 1*time.Hour + 30*time.Minute
+	IOT_POLLING_FREQUENCY             = 10 * time.Second
+	GATE_CONSISTENCY_UPDATE_FREQUENCY = 5 * time.Second
+	JWT_TOKEN_REFRESH_FREQUENCY       = 1*time.Hour + 30*time.Minute
 
 	// Values expected from thingsboard
 	GATE_OPEN_KEYWORD   = "open"
