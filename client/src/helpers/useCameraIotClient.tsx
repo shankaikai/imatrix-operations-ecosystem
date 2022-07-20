@@ -9,7 +9,6 @@ import {
 import { CameraIotServicesClient } from "../proto/Operations_ecosysServiceClientPb";
 import { CameraIot, CameraIotResponse } from "../proto/operations_ecosys_pb";
 import _ from "lodash";
-import { cli } from "cypress";
 import { GateState } from "../proto/iot_prototype_pb";
 
 interface CameraIotInterface {
@@ -35,7 +34,6 @@ export function CameraIotProvider({ children }: CameraIotProviderProps) {
   useEffect(() => {
     getCameraFeeds(setCameras);
   }, []);
-
   return (
     <CameraIotContext.Provider
       value={{ search, setSearch, cameras, setCameras }}
