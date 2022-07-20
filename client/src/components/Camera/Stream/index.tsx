@@ -1,5 +1,6 @@
 import Hls from "hls.js";
 import { FunctionComponent, useEffect, useState } from "react";
+import { Text } from "@mantine/core";
 
 interface StreamProps {
   src: string;
@@ -19,26 +20,29 @@ const Stream: FunctionComponent<StreamProps> = (props: StreamProps) => {
       hls.attachMedia(video);
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         hls.loadSource(props.src);
-        hls.on(Hls.Events.ERROR, () => {
-          console.log("error");
-          setError(true);
-        });
+        // hls.on(Hls.Events.ERROR, () => {
+        //   console.log("hls error");
+        //   setError(true);
+        // });
         //TODO: Add in plazceholder
-        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          // setError(false);
+          video.play();
+        });
       });
     }
   }, []);
   return (
     <>
       {error ? (
-        <div
+        <Text
           style={{
             width: "100%",
             height: "100px",
           }}
         >
           Error
-        </div>
+        </Text>
       ) : (
         <video
           id={props.id.toString()}

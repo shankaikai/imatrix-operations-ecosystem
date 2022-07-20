@@ -8,6 +8,9 @@ import {
 } from "react";
 import { CameraIotServicesClient } from "../proto/Operations_ecosysServiceClientPb";
 import { CameraIot, CameraIotResponse } from "../proto/operations_ecosys_pb";
+import _ from "lodash";
+import { cli } from "cypress";
+import { GateState } from "../proto/iot_prototype_pb";
 
 interface CameraIotInterface {
   search: string;
@@ -59,10 +62,66 @@ export function getCameraFeeds(setCameras: Dispatch<CameraIot.AsObject[]>) {
 
   stream.on("data", (response: CameraIotResponse) => {
     console.log(response.getCameraIot()?.toObject());
-    //@ts-ignore
-    setCameras((oldState) => [
-      ...oldState,
-      response.getCameraIot()?.toObject(),
-    ]);
+    const type = response.getCameraIot()?.getType();
+    const cameraIot = response.getCameraIot()?.toObject();
+
+    if (type === CameraIot.MessageType.INITIAL) {
+      //@ts-ignore
+      setCameras((oldState) => [...oldState, cameraIot]);
+    } else if (type === CameraIot.MessageType.CHANGE_CPU_TEMP) {
+      //@ts-ignore
+      setCameras((oldState: CameraIot.AsObject[]) => {
+        let newState = _.cloneDeep(oldState);
+        let cam = newState.find(
+          (camera) => camera.cameraIotId === cameraIot?.cameraIotId
+        );
+        if (cam) {
+          cam.cpuTemperature = cameraIot?.cpuTemperature;
+        }
+        return newState;
+      });
+    } else if (type === CameraIot.MessageType.CHANGE_FIRE_ALARM) {
+      //@ts-ignore
+      setCameras((oldState: CameraIot.AsObject[]) => {
+        let newState = _.cloneDeep(oldState);
+        let cam = newState.find(
+          (camera) => camera.cameraIotId === cameraIot?.cameraIotId
+        );
+        if (cam) {
+          cam.fireAlarm = cameraIot?.fireAlarm;
+        }
+        return newState;
+      });
+    } else if (type === CameraIot.MessageType.CHANGE_GATE) {
+      //@ts-ignore
+      setCameras((oldState: CameraIot.AsObject[]) => {
+        let newState = _.cloneDeep(oldState);
+        let cam = newState.find(
+          (camera) => camera.cameraIotId === cameraIot?.cameraIotId
+        );
+        if (cam) {
+          cam.gate = cameraIot?.gate;
+        }
+        return newState;
+      });
+    }
   });
+}
+
+export function openGateSwitch(id: number) {
+  const client = getCameraIotClient();
+
+  const gateState = new GateState();
+  gateState.setState(GateState.GatePosition.OPEN);
+  gateState.setId(id);
+
+  client
+    .setGateState(gateState, null)
+    .then((response) => {
+      //TODO: Notification
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }

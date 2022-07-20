@@ -188,6 +188,49 @@ export class AdminServicesClient {
       this.methodDescriptorFindUsers);
   }
 
+  methodDescriptorGetWANonce = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.AdminServices/GetWANonce',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.User,
+    operations_ecosys_pb.ResponseNonce,
+    (request: operations_ecosys_pb.User) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.ResponseNonce.deserializeBinary
+  );
+
+  getWANonce(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.ResponseNonce>;
+
+  getWANonce(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.ResponseNonce) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.ResponseNonce>;
+
+  getWANonce(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.ResponseNonce) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.AdminServices/GetWANonce',
+        request,
+        metadata || {},
+        this.methodDescriptorGetWANonce,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.AdminServices/GetWANonce',
+    request,
+    metadata || {},
+    this.methodDescriptorGetWANonce);
+  }
+
   methodDescriptorAddClient = new grpcWeb.MethodDescriptor(
     '/operations_ecosys.AdminServices/AddClient',
     grpcWeb.MethodType.UNARY,

@@ -331,6 +331,30 @@ export namespace OrderByClient {
   }
 }
 
+export class ResponseNonce extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): ResponseNonce;
+  hasResponse(): boolean;
+  clearResponse(): ResponseNonce;
+
+  getNonce(): string;
+  setNonce(value: string): ResponseNonce;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ResponseNonce.AsObject;
+  static toObject(includeInstance: boolean, msg: ResponseNonce): ResponseNonce.AsObject;
+  static serializeBinaryToWriter(message: ResponseNonce, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ResponseNonce;
+  static deserializeBinaryFromReader(message: ResponseNonce, reader: jspb.BinaryReader): ResponseNonce;
+}
+
+export namespace ResponseNonce {
+  export type AsObject = {
+    response?: Response.AsObject,
+    nonce: string,
+  }
+}
+
 export class Broadcast extends jspb.Message {
   getBroadcastId(): number;
   setBroadcastId(value: number): Broadcast;
@@ -1343,6 +1367,9 @@ export class CameraIot extends jspb.Message {
   hasCpuTemperature(): boolean;
   clearCpuTemperature(): CameraIot;
 
+  getType(): CameraIot.MessageType;
+  setType(value: CameraIot.MessageType): CameraIot;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CameraIot.AsObject;
   static toObject(includeInstance: boolean, msg: CameraIot): CameraIot.AsObject;
@@ -1359,6 +1386,14 @@ export namespace CameraIot {
     gate?: iot_prototype_pb.GateState.AsObject,
     fireAlarm?: iot_prototype_pb.FireAlarmState.AsObject,
     cpuTemperature?: iot_prototype_pb.CpuTempState.AsObject,
+    type: CameraIot.MessageType,
+  }
+
+  export enum MessageType { 
+    INITIAL = 0,
+    CHANGE_GATE = 1,
+    CHANGE_FIRE_ALARM = 2,
+    CHANGE_CPU_TEMP = 3,
   }
 }
 

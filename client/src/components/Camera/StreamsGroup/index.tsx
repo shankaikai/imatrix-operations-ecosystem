@@ -40,6 +40,7 @@ export default function StreamsGroup() {
           videoSrc={camera.camera?.url}
           lightStatus={camera.fireAlarm?.state}
           cpuTemp={camera.cpuTemperature?.temp}
+          gateStatus={camera.gate?.state}
         />
       ))}
     </Group>
