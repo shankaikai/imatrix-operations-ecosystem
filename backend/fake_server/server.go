@@ -10,7 +10,6 @@ import (
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/grpc"
-
 )
 
 type Server struct {

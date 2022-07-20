@@ -24,10 +24,13 @@ func main() {
 	serverPortFlag := flag.Int("port", 9090, "TCP port for the server to run on.")
 	teleServerAddrFlag := flag.String("tele_addr", "telebot", "TCP address for the server to run on.")
 	teleServerPortFlag := flag.Int("tele_port", 9091, "TCP port for the server to run on.")
+	webProxyServerAddrFlag := flag.String("wproxy_addr", "telebot", "TCP address for the web proxy server to run on.")
+	webProxyServerPortFlag := flag.Int("wproxy_port", 9089, "TCP port for the web proxy server to run on.")
 	testLEDAddrFlag := flag.String("led_addr", "http://192.168.166.238", "IP address of the LED lights on the AIFS for testing")
 	serverFlag := flag.Bool("is_server", true, "Is this terminal for the server or the test client?")
-	fakeServerFlag := flag.Bool("is_fserver", false, "Is this terminal for the server or the test client?")
-	teleClientFlag := flag.Bool("is_tclient", false, "Is this terminal for the server or the test client?")
+	fakeServerFlag := flag.Bool("is_fserver", false, "Start the server or the fake server?")
+	teleClientFlag := flag.Bool("is_tclient", false, "Should we test the server as a telebot client?")
+
 	flag.Parse()
 
 	// Set up sentry
@@ -42,7 +45,7 @@ func main() {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
-		server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag)
+		server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
