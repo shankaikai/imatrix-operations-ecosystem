@@ -90,7 +90,7 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 
 	server.initCameraIotService()
 
-	go Proxy_main(serverAddr, serverPort, webProxyAddr, webProxyPort)
+	// go Proxy_main(serverAddr, serverPort, webProxyAddr, webProxyPort)
 	grpcServer.Serve(lis)
 }
 
