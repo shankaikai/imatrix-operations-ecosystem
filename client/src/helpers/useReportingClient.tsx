@@ -14,6 +14,7 @@ import {
   IncidentReportResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import { ENVOY_ADDRESS } from "../utils/constant";
 import {
   showApproveReportSuccessNotification,
   showUpdateReportSuccessNotification,
@@ -86,7 +87,7 @@ export function ReportingProvider({ children }: ReportingProviderProps) {
 }
 
 export function getReportingClient(): IncidentReportServicesClient {
-  return new IncidentReportServicesClient("http://localhost:8080", null);
+  return new IncidentReportServicesClient(ENVOY_ADDRESS, null);
 }
 
 export function useReporting() {

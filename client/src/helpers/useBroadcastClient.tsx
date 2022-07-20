@@ -13,6 +13,7 @@ import {
   BroadcastResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import { ENVOY_ADDRESS } from "../utils/constant";
 import {
   showErrorNotification,
   showBroadcastSuccessNotification,
@@ -101,7 +102,7 @@ export function BroadcastProvider({ children }: BroadcastProviderProps) {
 
 export function getBroadcastClient(): BroadcastServicesClient {
   // TODO: add the envoy address into .env
-  return new BroadcastServicesClient("http://localhost:8080", null, {});
+  return new BroadcastServicesClient(ENVOY_ADDRESS, null, {});
 }
 
 export function useBroadcast() {

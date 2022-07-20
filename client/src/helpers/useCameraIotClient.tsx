@@ -10,6 +10,7 @@ import { CameraIotServicesClient } from "../proto/Operations_ecosysServiceClient
 import { CameraIot, CameraIotResponse } from "../proto/operations_ecosys_pb";
 import _ from "lodash";
 import { GateState } from "../proto/iot_prototype_pb";
+import { ENVOY_ADDRESS } from "../utils/constant";
 
 interface CameraIotInterface {
   search: string;
@@ -44,7 +45,7 @@ export function CameraIotProvider({ children }: CameraIotProviderProps) {
 }
 
 export function getCameraIotClient(): CameraIotServicesClient {
-  return new CameraIotServicesClient("http://localhost:8080", null);
+  return new CameraIotServicesClient(ENVOY_ADDRESS, null);
 }
 
 export function useCameraIot() {
