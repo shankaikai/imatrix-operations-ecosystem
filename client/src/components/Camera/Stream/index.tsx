@@ -1,5 +1,5 @@
 import Hls from "hls.js";
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 
 interface StreamProps {
   src: string;
@@ -7,6 +7,8 @@ interface StreamProps {
 }
 
 const Stream: FunctionComponent<StreamProps> = (props: StreamProps) => {
+  const [error, setError] = useState(false);
+
   useEffect(() => {
     if (Hls.isSupported()) {
       let video = document.getElementById(
@@ -18,7 +20,8 @@ const Stream: FunctionComponent<StreamProps> = (props: StreamProps) => {
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         hls.loadSource(props.src);
         hls.on(Hls.Events.ERROR, () => {
-          console.log("lol");
+          console.log("error");
+          setError(true);
         });
         //TODO: Add in plazceholder
         hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
@@ -27,12 +30,23 @@ const Stream: FunctionComponent<StreamProps> = (props: StreamProps) => {
   }, []);
   return (
     <>
-      <video
-        id={props.id.toString()}
-        style={{
-          width: "100%",
-        }}
-      />
+      {error ? (
+        <div
+          style={{
+            width: "100%",
+            height: "100px",
+          }}
+        >
+          Error
+        </div>
+      ) : (
+        <video
+          id={props.id.toString()}
+          style={{
+            width: "100%",
+          }}
+        />
+      )}
     </>
   );
 };

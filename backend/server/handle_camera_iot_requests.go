@@ -110,6 +110,7 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 		cameraIot := <-mainChannel
 		res := pb.Response{Type: pb.Response_ACK}
 		cameraIotRes := pb.CameraIotResponse{Response: &res, CameraIot: cameraIot}
+		fmt.Println("sending...", cameraIotRes.CameraIot)
 		err = stream.Send(&cameraIotRes)
 		if err != nil {
 			return err

@@ -1,11 +1,25 @@
 import { Empty } from "google-protobuf/google/protobuf/empty_pb";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { CameraIotServicesClient } from "../proto/Operations_ecosysServiceClientPb";
-import { CameraIotResponse } from "../proto/operations_ecosys_pb";
+import { CameraIot, CameraIotResponse } from "../proto/operations_ecosys_pb";
 
-interface CameraIotInterface {}
+interface CameraIotInterface {
+  search: string;
+  setSearch?: Dispatch<string>;
+  cameras: CameraIot.AsObject[];
+  setCameras?: Dispatch<CameraIot.AsObject[]>;
+}
 
-const CameraIotContext = createContext<CameraIotInterface>({});
+const CameraIotContext = createContext<CameraIotInterface>({
+  search: "",
+  cameras: [],
+});
 
 interface CameraIotProviderProps {
   children: JSX.Element | JSX.Element[];
@@ -13,13 +27,16 @@ interface CameraIotProviderProps {
 
 export function CameraIotProvider({ children }: CameraIotProviderProps) {
   const [search, setSearch] = useState<string>("");
+  const [cameras, setCameras] = useState<CameraIot.AsObject[]>([]);
 
   useEffect(() => {
-    getCameraFeeds();
-  });
+    getCameraFeeds(setCameras);
+  }, []);
 
   return (
-    <CameraIotContext.Provider value={{ search, setSearch }}>
+    <CameraIotContext.Provider
+      value={{ search, setSearch, cameras, setCameras }}
+    >
       {children}
     </CameraIotContext.Provider>
   );
@@ -33,7 +50,7 @@ export function useCameraIot() {
   return useContext(CameraIotContext);
 }
 
-export function getCameraFeeds() {
+export function getCameraFeeds(setCameras: Dispatch<CameraIot.AsObject[]>) {
   console.log("getCameraFeeds called");
 
   const client = getCameraIotClient();
@@ -41,6 +58,11 @@ export function getCameraFeeds() {
   const stream = client.getIotState(new Empty());
 
   stream.on("data", (response: CameraIotResponse) => {
-    console.log(response);
+    console.log(response.getCameraIot()?.toObject());
+    //@ts-ignore
+    setCameras((oldState) => [
+      ...oldState,
+      response.getCameraIot()?.toObject(),
+    ]);
   });
 }

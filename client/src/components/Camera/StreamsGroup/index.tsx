@@ -1,5 +1,6 @@
 import { Group } from "@mantine/core";
 import React from "react";
+import { useCameraIot } from "../../../helpers/useCameraIotClient";
 import StreamContainer from "../StreamContainer";
 
 const fakeData = [
@@ -27,15 +28,18 @@ const fakeData = [
 ];
 
 export default function StreamsGroup() {
+  const { cameras } = useCameraIot();
+
   return (
     <Group>
-      {fakeData.map(({ id, videoSrc, lightStatus, cpuTemp }) => (
+      {cameras.map((camera) => (
         <StreamContainer
-          key={id}
-          id={id}
-          videoSrc={videoSrc}
-          lightStatus={lightStatus}
-          cpuTemp={cpuTemp}
+          key={camera.cameraIotId}
+          id={camera.cameraIotId}
+          name={camera.name}
+          videoSrc={camera.camera?.url}
+          lightStatus={camera.fireAlarm?.state}
+          cpuTemp={camera.cpuTemperature?.temp}
         />
       ))}
     </Group>
