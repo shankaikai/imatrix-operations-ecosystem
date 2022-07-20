@@ -65,7 +65,7 @@ func orderBroadcastFields(broadcast *pb.Broadcast) string {
 	output := ""
 
 	output += "'" + getBroadcastDBTypeStringFromProto(broadcast.Type) + "'" + ", "
-	output += "'" + broadcast.Content + "'" + ", "
+	output += "\"" + strings.ReplaceAll(broadcast.Content, "\"", "'") + "\"" + ", "
 	output += "'" + broadcast.CreationDate.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
 	output += "'" + broadcast.Deadline.AsTime().Format(common.DATETIME_FORMAT) + "'" + ", "
 	output += "'" + strconv.Itoa(int(broadcast.Creator.UserId)) + "'" + ", "
@@ -127,7 +127,7 @@ func getFilledBroadcastFields(broadcast *pb.Broadcast) string {
 	broadcastTableFields := []string{formatFieldEqVal(BC_DB_TYPE, getBroadcastDBTypeStringFromProto(broadcast.Type), true)}
 
 	if len(broadcast.Content) > 0 {
-		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CONTENT, broadcast.Content, true))
+		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CONTENT, strings.ReplaceAll(broadcast.Content, "\"", "'"), true))
 	}
 	if broadcast.CreationDate != nil {
 		broadcastTableFields = append(broadcastTableFields, formatFieldEqVal(BC_DB_CREATION_DATE, broadcast.CreationDate.AsTime().Format(common.DATETIME_FORMAT), true))
@@ -312,6 +312,7 @@ func getFormattedBroadcastFilters(query *pb.BroadcastQuery, table string, needLi
 // Modifies the broadcast array in place.
 func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Rows, query *pb.BroadcastQuery) error {
 	broadcastMap := make(map[int64]*pb.Broadcast)
+	retrievedUsers := make(map[int64]*pb.User)
 
 	for rows.Next() {
 		broadcast := &pb.Broadcast{Recipients: make([]*pb.AIFSBroadcastRecipient, 0)}
@@ -360,13 +361,13 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 				continue
 			}
 			broadcast.Type = getBroadcastProtoTypeStringFromDB(broadcastType)
-			creator, err := idUserByUserId(db, creatorUserId)
-			broadcast.Urgency = getBroadcastUrgencyProtoTypeStringFromDB(urgencyType)
-
+			creator, err := getUserFromCache(db, &retrievedUsers, int64(creatorUserId))
 			if err != nil {
 				fmt.Println("GetBroadcasts ERROR:", err)
 				continue
 			}
+
+			broadcast.Urgency = getBroadcastUrgencyProtoTypeStringFromDB(urgencyType)
 
 			broadcast.Creator = creator
 
@@ -385,7 +386,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 			broadcastMap[broadcast.BroadcastId] = broadcast
 		}
 
-		broadcastRecipient.Recipient, err = idUserByUserId(db, recipientUserId)
+		broadcastRecipient.Recipient, err = getUserFromCache(db, &retrievedUsers, int64(recipientUserId))
 		if err != nil {
 			fmt.Println("GetBroadcasts:", err.Error())
 			continue
@@ -444,7 +445,7 @@ func convertDbRowsToBcNBcR(db *sql.DB, broadcasts *[]*pb.Broadcast, rows *sql.Ro
 // list that is needed. Ie, it inserts and deletes recipients at will.
 func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.BroadcastQuery, dbLock *sync.Mutex) error {
 	// Get all recipients
-	currentRecipients, err := GetBroadcastRecipients(db, query, broadcast.BroadcastId)
+	currentRecipients, err := GetBroadcastRecipients(db, query, -1)
 	if err != nil {
 		fmt.Println("updateRecipientsOfBroadcast ERROR::", err)
 		return err
@@ -500,7 +501,13 @@ func updateRecipientsOfBroadcast(db *sql.DB, broadcast *pb.Broadcast, query *pb.
 	fmt.Println("Deleting Recipients IDs:", currentRecIds)
 	// See if any need to be deleted
 	for _, id := range currentRecIds {
-		_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{BroadcastRecipientsId: int64(id)})
+		query := &pb.BroadcastQuery{}
+		AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcast.BroadcastId)))
+		AddBroadcastFilter(query, pb.BroadcastFilter_RECEIPEIENT_ID, pb.Filter_EQUAL, strconv.Itoa(id))
+		_, err := DeleteBroadcastRecipients(db, &pb.BroadcastRecipient{
+			BroadcastRecipientsId: int64(id),
+			Recipient:             &pb.User{UserId: int64(id)},
+		}, query)
 		if err != nil {
 			fmt.Println("UpdateBroadcast ERROR::", err)
 			return err

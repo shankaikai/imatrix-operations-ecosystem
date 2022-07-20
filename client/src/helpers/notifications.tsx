@@ -37,3 +37,21 @@ export function showRosterUpdateSuccessNotification() {
     icon: <IoCheckmark />,
   });
 }
+
+export function showUpdateReportSuccessNotification() {
+  showNotification({
+    title: "Success",
+    message: "Report has been updated successfully",
+    color: "green",
+    icon: <IoCheckmark />,
+  });
+}
+
+export function showApproveReportSuccessNotification() {
+  showNotification({
+    title: "Success",
+    message: "Report has been approved successfully",
+    color: "green",
+    icon: <IoCheckmark />,
+  });
+}

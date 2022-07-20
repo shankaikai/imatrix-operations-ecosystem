@@ -13,6 +13,8 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 	rs "capstone.operations_ecosystem/backend/rating_system"
 	_ "github.com/go-sql-driver/mysql"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -331,6 +333,8 @@ func getFormattedRosterFilters(query *pb.RosterQuery, table string, needLimit bo
 // Modifies the roster array in place.
 func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows, query *pb.RosterQuery) error {
 	rosterMap := make(map[int64]*pb.Roster)
+	retrievedUsers := make(map[int64]*pb.User)
+	retrievedClients := make(map[int64]*pb.Client)
 
 	for rows.Next() {
 		roster := &pb.Roster{
@@ -416,7 +420,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		if !guardAssignmentExists {
 			convertFromDbRosterAssignment(db, rosterAssignment, assignedUserId,
 				customStartTimeString, customEndTimeString,
-				attendanceTimeString, confirmation)
+				attendanceTimeString, confirmation, &retrievedUsers)
 			// Add assignment to roster
 			roster.GuardAssigned = append(roster.GuardAssigned, rosterAssignment)
 		}
@@ -431,7 +435,7 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 		}
 
 		if !clientExists {
-			convertFromDbRosterAifsClient(db, aifsClient, clientId)
+			convertFromDbRosterAifsClient(db, aifsClient, clientId, &retrievedClients)
 			// Add assignment to roster
 			roster.Clients = append(roster.Clients, aifsClient)
 		}
@@ -463,10 +467,10 @@ func convertDbRowsToFullRoster(db *sql.DB, rosters *[]*pb.Roster, rows *sql.Rows
 // modifies the roster Assignment in place
 func convertFromDbRosterAssignment(db *sql.DB, rosterAssignment *pb.RosterAssignement, assignedUserId int,
 	customStartTimeString string, customEndTimeString string,
-	attendanceTimeString sql.NullString, confirmation sql.NullBool) error {
+	attendanceTimeString sql.NullString, confirmation sql.NullBool, retrievedUsers *map[int64]*pb.User) error {
 
 	var err error
-	rosterAssignment.GuardAssigned.Employee, err = idUserByUserId(db, assignedUserId)
+	rosterAssignment.GuardAssigned.Employee, err = getUserFromCache(db, retrievedUsers, int64(assignedUserId))
 
 	if err != nil {
 		fmt.Println("convertFromDbRosterAssignment:", err.Error())
@@ -512,9 +516,9 @@ func convertFromDbRosterAssignment(db *sql.DB, rosterAssignment *pb.RosterAssign
 	return nil
 }
 
-func convertFromDbRosterAifsClient(db *sql.DB, aifsClient *pb.AIFSClientRoster, clientId int) error {
+func convertFromDbRosterAifsClient(db *sql.DB, aifsClient *pb.AIFSClientRoster, clientId int, retrievedClients *map[int64]*pb.Client) error {
 	var err error
-	aifsClient.Client, err = IdClientByClientId(db, clientId)
+	aifsClient.Client, err = getClientFromCache(db, retrievedClients, int64(clientId))
 
 	if err != nil {
 		fmt.Println("convertFromDbRosterAifsClient:", err.Error())
@@ -559,6 +563,11 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 	missingAsgnIndex := make([]int, 0)
 
 	for i, asgn := range roster.GuardAssigned {
+		// Ensure not nil
+		if asgn.GuardAssigned.Employee == nil {
+			return newRosterAssignmentsPk, status.Errorf(codes.InvalidArgument, "Employee field of guards in roster assignment must not be nil")
+		}
+
 		found, index := common.BinarySearch(currentAsgnIds, 0, len(currentAsgnIds)-1, int(asgn.GuardAssigned.Employee.UserId))
 		if found {
 			fmt.Println("Found updated recipient in current recipient")
@@ -574,7 +583,15 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 		// Ensure the start and end custom times of the guard assigned
 		// is the same as the roster
 		roster.GuardAssigned[asgnIndex].CustomStartTime, err = DBDatetimeToPB(roster.StartTime)
+		if err != nil {
+			fmt.Println("updateAssignmentsOfRoster ERROR::", err)
+			return newRosterAssignmentsPk, err
+		}
 		roster.GuardAssigned[asgnIndex].CustomEndTime, err = DBDatetimeToPB(roster.EndTime)
+		if err != nil {
+			fmt.Println("updateAssignmentsOfRoster ERROR::", err)
+			return newRosterAssignmentsPk, err
+		}
 		rosterAsgnPk, err := InsertRosterASGN(db, roster.GuardAssigned[asgnIndex], roster.RosteringId, dbLock)
 		if err != nil {
 			fmt.Println("updateAssignmentsOfRoster ERROR::", err)
@@ -605,6 +622,7 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 	return newRosterAssignmentsPk, nil
 }
 
+// NOTE: UNTESTED because unused
 // This function is different from UpdateRosterAssignements()
 // in the idea that this function finds out who the existing
 // recipients are and make the necessary changes so that the

@@ -7,12 +7,14 @@ import (
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
+	"github.com/getsentry/sentry-go"
 
 	"context"
 )
 
-// TODO: Add field verification
 func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	pk, err := db_pck.InsertUser(
 		s.db,
@@ -30,8 +32,9 @@ func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, erro
 	return &res, nil
 }
 
-// TODO: Add field verification
 func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	num_affected, err := db_pck.UpdateUser(
 		s.db,
@@ -49,8 +52,9 @@ func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, e
 	return &res, nil
 }
 
-// TODO: Add field verification
 func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteUser(
 		s.db,
@@ -67,8 +71,9 @@ func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, e
 	return &res, nil
 }
 
-// TODO: Add field verification
 func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUsersServer) error {
+	defer sentry.Recover()
+
 	fmt.Println("FindUsers", query)
 	res := pb.Response{Type: pb.Response_ACK}
 	foundUsers, err := db_pck.GetUsers(
@@ -95,8 +100,9 @@ func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUser
 	return nil
 }
 
-// TODO: Add field verification
 func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	pk, err := db_pck.InsertClient(
 		s.db,
@@ -114,8 +120,9 @@ func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response
 	return &res, nil
 }
 
-// TODO: Add field verification
 func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	num_affected, err := db_pck.UpdateClients(
 		s.db,
@@ -132,8 +139,9 @@ func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Respo
 	return &res, nil
 }
 
-// TODO: Add field verification
 func (s *Server) DeleteClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteClient(
 		s.db,
@@ -150,8 +158,9 @@ func (s *Server) DeleteClient(cxt context.Context, client *pb.Client) (*pb.Respo
 	return &res, nil
 }
 
-// TODO: Add field verification
 func (s *Server) FindClients(query *pb.ClientQuery, stream pb.AdminServices_FindClientsServer) error {
+	defer sentry.Recover()
+
 	res := pb.Response{Type: pb.Response_ACK}
 	foundClients, err := db_pck.GetClients(
 		s.db,
