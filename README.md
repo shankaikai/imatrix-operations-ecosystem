@@ -37,8 +37,10 @@ mockgen capstone.operations_ecosystem/backend/proto RosterServicesClient > ../mo
     google.golang.org/protobuf/cmd/protoc-gen-go \
     google.golang.org/grpc/cmd/protoc-gen-go-grpc
 5) Generate the gateway protoc files and the go_grpc files
---> protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/http_webapp.proto
---> protoc -I . --grpc-gateway_out=backend --grpc-gateway_opt=logtostderr=true --grpc-gateway_opt=paths=source_relative proto/http_webapp.proto
+```
+protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/http_webapp.proto
+protoc -I . --grpc-gateway_out=backend --grpc-gateway_opt=logtostderr=true --grpc-gateway_opt=paths=source_relative proto/http_webapp.proto
+```
 
 ## Telegram Bot
 ### Protocol Buffer Generation

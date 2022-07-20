@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "proto/operations_ecosys.proto";
 
 option go_package = "/operations_ecosys";
 
@@ -14,7 +15,14 @@ service WebAppServices{
         };
     }
 
-    rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
+    // rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
+    //     option (google.api.http) = {
+    //         post: "/http/post_report"
+    //         body: "*"
+    //     };
+    // }
+
+    rpc PostWReportFromWebApp(operations_ecosys.IncidentReport) returns (HTTPMessage) {
         option (google.api.http) = {
             post: "/http/post_report"
             body: "*"

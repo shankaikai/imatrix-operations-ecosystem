@@ -84,7 +84,7 @@ func local_request_WebAppServices_GetRosterAssignmentsForWebApp_0(ctx context.Co
 }
 
 func request_WebAppServices_PostWReportFromWebApp_0(ctx context.Context, marshaler runtime.Marshaler, client WebAppServicesClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq HTTPMessage
+	var protoReq IncidentReport
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -101,7 +101,7 @@ func request_WebAppServices_PostWReportFromWebApp_0(ctx context.Context, marshal
 }
 
 func local_request_WebAppServices_PostWReportFromWebApp_0(ctx context.Context, marshaler runtime.Marshaler, server WebAppServicesServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq HTTPMessage
+	var protoReq IncidentReport
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

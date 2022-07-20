@@ -14,9 +14,8 @@ func (s *Server) GetRosterAssignmentsForWebApp(cxt context.Context, HTTPRosterMe
 	return &pb.HTTPMessage{}, nil
 }
 
-func (s *Server) PostWReportFromWebApp(cxt context.Context, HTTPMessage *pb.HTTPMessage) (*pb.HTTPMessage, error) {
+func (s *Server) PostWReportFromWebApp(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.HTTPMessage, error) {
 	fmt.Println("PostWReportFromWebApp")
-	fmt.Println(HTTPMessage)
-	return &pb.HTTPMessage{}, nil
+	fmt.Println(incidentReport)
+	return &pb.HTTPMessage{Value: "OK"}, nil
 }
-

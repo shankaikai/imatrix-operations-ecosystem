@@ -1,7 +1,7 @@
 // Showcasing the capabilities of protobuf with gRPC
 
 syntax = "proto3";
-import "iot_prototype.proto";
+import "proto/iot_prototype.proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
