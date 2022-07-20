@@ -313,7 +313,8 @@ func (s *Server) PollCpuTempStatus(cameraIotId int64, cpuId string) {
 				fmt.Println("PollCpuTempStatus ERROR:", err)
 				continue
 			}
-
+			
+			fmt.Println("newState", newState)
 			go s.notifyCpuTempSubscribers(cameraIotId, cpuId, s.CameraIot.CpuTempStates[cameraIotId], newState)
 		}
 	}
@@ -464,7 +465,9 @@ func (s *Server) notifyCpuTempSubscribers(cameraIotId int64, cpuId string, oldSt
 	message.CpuTemperature.Temp = newState
 	s.CameraIot.CpuTempStates[cameraIotId] = newState
 
+	fmt.Println("before for loop in notifyCpuTempSubscribers")
 	for _, subscriberChannel := range s.CameraIot.GateSubscriptions[cameraIotId] {
+		fmt.Println("notifyCpuTempSubscribers:", subscriberChannel)
 		subscriberChannel <- message
 	}
 }

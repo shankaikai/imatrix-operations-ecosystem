@@ -100,6 +100,7 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 		cameraIot.CpuTemperature = &pb.CpuTempState{Temp: s.CameraIot.CpuTempStates[attribute.CameraIotId]}
 
 		cameraIotRes.CameraIot = cameraIot
+		fmt.Println("sending...", cameraIotRes.CameraIot)
 		err = stream.Send(&cameraIotRes)
 		if err != nil {
 			return err
@@ -113,6 +114,7 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 		select {
 		case cameraIot := <-mainChannel:
 			cameraIotRes := pb.CameraIotResponse{Response: &res, CameraIot: cameraIot}
+			fmt.Println("sending...", cameraIotRes.CameraIot)
 			err = stream.Send(&cameraIotRes)
 			if err != nil {
 				return err
@@ -126,6 +128,7 @@ func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices
 				}
 				cameraIot.Gate = &pb.GateState{State: s.CameraIot.GateStates[attribute.CameraIotId]}
 				cameraIotRes := pb.CameraIotResponse{Response: &res, CameraIot: cameraIot}
+				fmt.Println("sending...", cameraIotRes.CameraIot)
 				err = stream.Send(&cameraIotRes)
 				if err != nil {
 					return err

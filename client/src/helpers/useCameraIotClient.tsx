@@ -64,9 +64,12 @@ export function getCameraFeeds(setCameras: Dispatch<CameraIot.AsObject[]>) {
     const cameraIot = response.getCameraIot()?.toObject();
 
     if (type === CameraIot.MessageType.INITIAL) {
+      console.log("inital");
       //@ts-ignore
       setCameras((oldState) => [...oldState, cameraIot]);
     } else if (type === CameraIot.MessageType.CHANGE_CPU_TEMP) {
+      console.log("cpu temp");
+
       //@ts-ignore
       setCameras((oldState: CameraIot.AsObject[]) => {
         let newState = _.cloneDeep(oldState);
@@ -79,6 +82,8 @@ export function getCameraFeeds(setCameras: Dispatch<CameraIot.AsObject[]>) {
         return newState;
       });
     } else if (type === CameraIot.MessageType.CHANGE_FIRE_ALARM) {
+      console.log("fire alarm");
+
       //@ts-ignore
       setCameras((oldState: CameraIot.AsObject[]) => {
         let newState = _.cloneDeep(oldState);
@@ -91,6 +96,8 @@ export function getCameraFeeds(setCameras: Dispatch<CameraIot.AsObject[]>) {
         return newState;
       });
     } else if (type === CameraIot.MessageType.CHANGE_GATE) {
+      console.log("change gate");
+
       //@ts-ignore
       setCameras((oldState: CameraIot.AsObject[]) => {
         let newState = _.cloneDeep(oldState);
