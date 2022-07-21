@@ -126,6 +126,7 @@ message UserFilter {
         PHONE_NUMBER = 4;
         TELEGRAM_HANDLE = 5;
         IS_PART_TIMER = 6;
+        TELEGRAM_USER_ID = 7;
     }
 }
 
@@ -149,6 +150,14 @@ message UserQuery {
 message OrderByUser{
     UserFilter.Field field = 1;
     OrderBy order_by = 2;
+}
+
+// This message is only used by the internal server
+// This should never be passed around
+// It contains secrets such as nonce
+message InternalFullUser{
+    User user = 1;
+    string nonce =2;
 }
 
 /***************************************************************************

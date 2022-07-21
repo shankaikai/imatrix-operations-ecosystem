@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	user_security_img VARCHAR(1000) NOT NULL,
 	is_part_timer BOOLEAN DEFAULT false NOT NULL,
 	tele_chat_id VARCHAR(250) NOT NULL
+    nonce VARCHAR(250) DEFAULT "" NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS `client` (

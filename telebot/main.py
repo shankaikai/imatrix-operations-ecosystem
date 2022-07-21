@@ -13,7 +13,7 @@ import os.path
 import time
 
 from TelegramController import TelegramController, TelegramMenu
-from menus import MainMenu, AttendanceMenu, ReportMenu, SOSMenu, HelpMenu
+from Menus import MainMenu, AttendanceMenu, ReportMenu, SOSMenu, HelpMenu
 from grpc_servers.grpc_server import serve
 
 from dotenv import load_dotenv
