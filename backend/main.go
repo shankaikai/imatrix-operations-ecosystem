@@ -62,7 +62,7 @@ func main() {
 	//The only reason these are here is to help ensure a clean exit (no zombie processes)
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	go func(){
+	go func() {
 		<-c
 		fmt.Println("Terminating...")
 		os.Exit(0)

@@ -14,11 +14,12 @@ import (
 
 func TestAdminClientUser(serverAddr *string, serverPort *int) {
 	user := createFakeUser(1)
-	pk := InsertUser(serverAddr, serverPort, user)
-	user.UserId = pk
-	ConsolidatedFindUserTest(serverAddr, serverPort)
-	UpdateUserTest(serverAddr, serverPort, user)
-	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
+	// pk := InsertUser(serverAddr, serverPort, user)
+	// user.UserId = pk
+	// ConsolidatedFindUserTest(serverAddr, serverPort)
+	// UpdateUserTest(serverAddr, serverPort, user)
+	// DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
+	GetNonceTest(serverAddr, serverPort, user)
 }
 
 func InsertUser(serverAddr *string, serverPort *int, user *pb.User) int64 {
@@ -226,6 +227,26 @@ func DeleteUserTest(serverAddr *string, serverPort *int, user *pb.User) {
 
 	if res.Type == pb.Response_ERROR {
 		fmt.Println("Client received error response:", res.ErrorMessage)
+	}
+}
+
+func GetNonceTest(serverAddr *string, serverPort *int, user *pb.User) {
+	fmt.Println("GetNonceTest user:", user.UserId)
+	client, conn := createAdminClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.GetWANonce(context.Background(), user)
+	if err != nil {
+		fmt.Println("GetNonceTest ERROR:", err)
+		return
+	}
+
+	fmt.Println("Client received response:", res.Response.Type)
+
+	if res.Response.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.Response.ErrorMessage)
+	} else {
+		fmt.Println("Nonce:", string(res.Nonce), "")
 	}
 }
 

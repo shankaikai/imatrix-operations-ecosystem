@@ -105,7 +105,15 @@ func (s *Server) getUnassignedIspecialists(query *pb.AvailabilityQuery) ([]*pb.U
 		db_pck.AddUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_NOT_IN, assignedUsersString)
 	}
 	db_pck.AddUserFilter(userQuery, pb.UserFilter_TYPE, pb.Filter_EQUAL, "I-Specialist")
-	return db_pck.GetUsers(s.db, userQuery)
+	fullUsers, err := db_pck.GetUsers(s.db, userQuery, true)
+	if err != nil {
+		return unassignedUsers, err
+	}
+
+	for _, fullUser := range fullUsers {
+		unassignedUsers = append(unassignedUsers, fullUser.User)
+	}
+	return unassignedUsers, nil
 }
 
 func getParallelEmployeeScores(unassignedUsers []*pb.User, employeeEvals *[]*pb.EmployeeEvaluation) error {
