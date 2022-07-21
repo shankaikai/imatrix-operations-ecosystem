@@ -24,7 +24,7 @@ func (s *Server) PostWReportFromWebApp(ctx context.Context, incidentReport *pb.I
 
 	res := &pb.HTTPMessage{}
 
-	fmt.Println("reportsss", incidentReport)
+	fmt.Println("Report:\n", incidentReport)
 	// Fill up the blank values of the pb message
 	err := s.insertDefaultIncidentReportValues(incidentReport)
 	if err != nil {
@@ -42,11 +42,6 @@ func (s *Server) PostWReportFromWebApp(ctx context.Context, incidentReport *pb.I
 	}
 
 	res.Value = strconv.Itoa(int(pk))
-
-	// header := metadata.New(map[string]string{"Access-Control-Allow-Origin": "res-123"})
-	// if err := grpc.SendHeader(ctx, header); err != nil {
-	// 	return nil, status.Errorf(codes.Internal, "unable to send 'x-response-id' header")
-	// }
 
 	return res, nil
 }

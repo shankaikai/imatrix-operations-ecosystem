@@ -74,6 +74,7 @@ class TelegramController:
         else:
             self.user = logged_in_user
             context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
+            self.CurrentMenu = self.RootMenu
             self.RootMenu.handler(update, context)
         
     def attachmentHandler(self, update:Update, context:CallbackContext):

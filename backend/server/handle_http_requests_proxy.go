@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"net/http"
+	"regexp"
 
 	"fmt"
 
@@ -31,14 +32,36 @@ func run(mainServerAddr *string, mainServerPort *int, webProxyAddr *string, webP
 	}
 
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
-	return http.ListenAndServe(fmt.Sprintf("%s:%d", *webProxyAddr, *webProxyPort), mux)
+	return http.ListenAndServe(fmt.Sprintf("%s:%d", *webProxyAddr, *webProxyPort), appendCors(mux))
+}
+
+func allowedOrigin(origin string) bool {
+	if matched, _ := regexp.MatchString("https://teleapp.aifs.lunarcloud.org", origin); matched {
+		return true
+	}
+	return false
+}
+
+func appendCors(muxHandler http.Handler) http.Handler {
+	newHandler := http.HandlerFunc(func(respWriter http.ResponseWriter, req *http.Request){
+		if allowedOrigin(req.Header.Get("Origin")){
+			respWriter.Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
+			respWriter.Header().Set("Access-Control-Allow-Methods","POST")
+			respWriter.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType")
+		}
+		if req.Method == "OPTIONS"{
+			return
+		}
+		muxHandler.ServeHTTP(respWriter, req)
+	})
+	return newHandler
 }
 
 func Proxy_main(mainServerAddr *string, mainServerPort *int, webProxyAddr *string, webProxyPort *int) {
 	flag.Parse()
 	defer glog.Flush()
 
-	fmt.Println("Staring GW HTTP-Proxy server on", webProxyPort)
+	fmt.Println("Starting GW HTTP-Proxy server on", *webProxyPort)
 
 	if err := run(mainServerAddr, mainServerPort, webProxyAddr, webProxyPort); err != nil {
 		glog.Fatal(err)

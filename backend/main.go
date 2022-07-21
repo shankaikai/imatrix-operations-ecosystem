@@ -3,10 +3,14 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"strings"
+	"syscall"
 	"time"
 
 	"github.com/getsentry/sentry-go"
@@ -40,12 +44,12 @@ func main() {
 	defer sentry.Recover()
 
 	if *fakeServerFlag {
-		fake_server.InitServer(serverAddrFlag, serverPortFlag)
+		go fake_server.InitServer(serverAddrFlag, serverPortFlag)
 	} else if *teleClientFlag {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
-		server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		go server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
@@ -53,6 +57,37 @@ func main() {
 		// client.TestRosteringClient(serverAddrFlag, serverPortFlag)
 		// client.TestIncidentReportClient(serverAddrFlag, serverPortFlag)
 		client.TestCameraIotClientUser(serverAddrFlag, serverPortFlag)
+	}
+
+	//The only reason these are here is to help ensure a clean exit (no zombie processes)
+	c := make(chan os.Signal, 2)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func(){
+		<-c
+		fmt.Println("Terminating...")
+		os.Exit(0)
+	}()
+
+	reader := bufio.NewReader(os.Stdin)
+mainLoop:
+	for {
+		fmt.Print("> ")
+		text, _ := reader.ReadString('\n')
+
+		// convert CRLF to LF
+		text = strings.Replace(text, "\n", "", -1)
+		if len(text) == 0 {
+			continue
+		}
+		tokenised := strings.Split(text, " ")
+		cmd := tokenised[0]
+		switch cmd {
+		case "exit":
+			fmt.Println("Terminating...")
+			break mainLoop
+		default:
+			fmt.Println("Unrecognised command.")
+		}
 	}
 }
 

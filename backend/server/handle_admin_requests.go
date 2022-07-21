@@ -183,3 +183,14 @@ func (s *Server) FindClients(query *pb.ClientQuery, stream pb.AdminServices_Find
 
 	return nil
 }
+
+//Todo: Return a cryptographic-secure nonce
+func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNonce, error) {
+	fmt.Println("GetWANonce")
+	res := pb.Response{Type: pb.Response_ACK, ErrorMessage: "No error"}
+	resNonce := pb.ResponseNonce{
+		Response: &res,
+		Nonce:    "this_is_a_nonce",
+	}
+	return &resNonce, nil
+}
