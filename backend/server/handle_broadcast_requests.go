@@ -12,6 +12,7 @@ import (
 	"context"
 )
 
+// gRPC defined endpoint. Insert a broadcast into the DB.
 func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -20,7 +21,7 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 	s.getDefaultBroadcastFields(broadcast)
 	// Add creation datetime
 	broadcast.CreationDate = timestamppb.Now()
-	// TODO: define deadline
+	// Set a deadline, currently not in use
 	broadcast.Deadline = timestamppb.Now()
 
 	pk, err := db_pck.InsertBroadcast(
@@ -42,6 +43,7 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 	return &res, nil
 }
 
+// gRPC defined endpoint. Update a broadcast in the DB.
 func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -62,6 +64,7 @@ func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 	return &res, nil
 }
 
+// gRPC defined endpoint. Delete a broadcast in the DB.
 func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -81,6 +84,7 @@ func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 	return &res, nil
 }
 
+// gRPC defined endpoint. Find broadcasts in the DB. The broadcasts are filtered out based the query.
 func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
 	defer sentry.Recover()
 
@@ -115,6 +119,7 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 	return nil
 }
 
+// gRPC defined endpoint. Update a broadcast recipient in the DB.
 func (s *Server) UpdateBroadcastRecipient(cxt context.Context, broadcastRecipient *pb.BroadcastRecipient) (*pb.Response, error) {
 	defer sentry.Recover()
 

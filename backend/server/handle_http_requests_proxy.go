@@ -43,13 +43,13 @@ func allowedOrigin(origin string) bool {
 }
 
 func appendCors(muxHandler http.Handler) http.Handler {
-	newHandler := http.HandlerFunc(func(respWriter http.ResponseWriter, req *http.Request){
-		if allowedOrigin(req.Header.Get("Origin")){
+	newHandler := http.HandlerFunc(func(respWriter http.ResponseWriter, req *http.Request) {
+		if allowedOrigin(req.Header.Get("Origin")) {
 			respWriter.Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
-			respWriter.Header().Set("Access-Control-Allow-Methods","POST")
+			respWriter.Header().Set("Access-Control-Allow-Methods", "POST")
 			respWriter.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType")
 		}
-		if req.Method == "OPTIONS"{
+		if req.Method == "OPTIONS" {
 			return
 		}
 		muxHandler.ServeHTTP(respWriter, req)
@@ -57,6 +57,8 @@ func appendCors(muxHandler http.Handler) http.Handler {
 	return newHandler
 }
 
+// The proxy server is used to listen to HTTP requests to the backend server.
+// This function starts the proxy server.
 func Proxy_main(mainServerAddr *string, mainServerPort *int, webProxyAddr *string, webProxyPort *int) {
 	flag.Parse()
 	defer glog.Flush()

@@ -10,12 +10,14 @@ import (
 	"context"
 )
 
+// gRPC HTTP defined endpoint.
 func (s *Server) GetRosterAssignmentsForWebApp(cxt context.Context, HTTPRosterMessage *pb.HTTPRosterMessage) (*pb.HTTPMessage, error) {
 	fmt.Println("GetRosterAssignmentsFromWebApp")
 	fmt.Println(HTTPRosterMessage)
 	return &pb.HTTPMessage{}, nil
 }
 
+// gRPC HTTP defined endpoint.
 // Insert a new incident report incoming from the telegram bot web
 // Assumes the creator of the incident report is the owner of the nonce in the header
 func (s *Server) PostWReportFromWebApp(ctx context.Context, incidentReport *pb.IncidentReport) (*pb.HTTPMessage, error) {

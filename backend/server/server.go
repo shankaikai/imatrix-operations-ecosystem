@@ -37,17 +37,22 @@ type Server struct {
 	CameraIot *CameraIotStruct
 }
 
+// Configurations for the server as defined in the config.json file.
 type ServerConfig struct {
+	// The IDs of the AIFS official user accounts in the DB.
 	Aifs1Id int `json:"AIFS1_USER_ID"`
 	Aifs2Id int `json:"AIFS2_USER_ID"`
 	Aifs3Id int `json:"AIFS3_USER_ID"`
 
+	// Thingsboard Server URLs
 	ThingsboardUrl                  string `json:"THINGSBOARD_URL"`
 	ThingsboardAuthRelUrl           string `json:"THINGSBOARD_AUTH_RELATIVE_URL"`
 	ThingsboardGetDeviceStateRelUrl string `json:"THINGSBOARD_GET_DEVICE_STATE_RELATIVE_URL"`
 	ThingsboardSetDeviceStateRelUrl string `json:"THINGSBOARD_SET_DEVICE_STATE_RELATIVE_URL"`
 }
 
+// Initialise the gRPC server with all the necessary information.
+// The server will listen to requests incoming to serverAddr:serverPort.
 func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int,
 	testLEDAddr *string, webProxyAddr *string, webProxyPort *int) {
 	fmt.Println("Starting gRPC server...")
@@ -94,6 +99,7 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 	grpcServer.Serve(lis)
 }
 
+// Get all server configurations from the config file.
 func (s *Server) getServerConfigs() {
 	configFilePath := filepath.Join("config.json")
 	fmt.Println("configFilePath", configFilePath)

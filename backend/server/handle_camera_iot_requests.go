@@ -12,6 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
+// gRPC defined endpoint. Opens or closes a particular gate.
 func (s *Server) SetGateState(cxt context.Context, gateState *pb.GateState) (*pb.Response, error) {
 	defer sentry.Recover()
 	res := pb.Response{Type: pb.Response_ACK}
@@ -45,6 +46,8 @@ func (s *Server) SetGateState(cxt context.Context, gateState *pb.GateState) (*pb
 	return &res, nil
 }
 
+// gRPC defined endpoint. This opens a stream that will not close. Periodically, new updates of the IoT device states
+// will be sent to the client.
 func (s *Server) GetIotState(emptypb *emptypb.Empty, stream pb.CameraIotServices_GetIotStateServer) error {
 	defer sentry.Recover()
 

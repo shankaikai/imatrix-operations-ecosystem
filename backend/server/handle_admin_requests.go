@@ -11,6 +11,7 @@ import (
 	"context"
 )
 
+// gRPC defined endpoint. Add a user in the DB.
 func (s *Server) AddUser(cxt context.Context, user *pb.FullUser) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -31,6 +32,7 @@ func (s *Server) AddUser(cxt context.Context, user *pb.FullUser) (*pb.Response, 
 	return &res, nil
 }
 
+// gRPC defined endpoint. Update a user in the DB.
 func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -52,6 +54,7 @@ func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, e
 	return &res, nil
 }
 
+// gRPC defined endpoint. Delete a user in the DB.
 func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -71,6 +74,7 @@ func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, e
 	return &res, nil
 }
 
+// gRPC defined endpoint. Find users in the DB. The users are filtered out based the query.
 func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUsersServer) error {
 	defer sentry.Recover()
 
@@ -101,6 +105,7 @@ func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUser
 	return nil
 }
 
+// gRPC defined endpoint. Add a client in the DB.
 func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -121,6 +126,7 @@ func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response
 	return &res, nil
 }
 
+// gRPC defined endpoint. Update a client in the DB.
 func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -140,6 +146,7 @@ func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Respo
 	return &res, nil
 }
 
+// gRPC defined endpoint. Delete a client in the DB.
 func (s *Server) DeleteClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -159,6 +166,7 @@ func (s *Server) DeleteClient(cxt context.Context, client *pb.Client) (*pb.Respo
 	return &res, nil
 }
 
+// gRPC defined endpoint. Find clients in the DB. The clients are filtered out based the query.
 func (s *Server) FindClients(query *pb.ClientQuery, stream pb.AdminServices_FindClientsServer) error {
 	defer sentry.Recover()
 
@@ -187,7 +195,8 @@ func (s *Server) FindClients(query *pb.ClientQuery, stream pb.AdminServices_Find
 	return nil
 }
 
-// Return a cryptographic-secure nonce
+// gRPC defined endpoint.
+// Returns a cryptographic-secure nonce
 func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNonce, error) {
 	fmt.Println("GetWANonce")
 	res := &pb.Response{Type: pb.Response_ACK, ErrorMessage: "No error"}
@@ -229,6 +238,7 @@ func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNon
 	return &resNonce, nil
 }
 
+// gRPC defined endpoint.
 // Get the user's security string from the DB
 // Either the user's id or email must be filled to identify the user
 // If there are no users to be identified, a random string not attached to any
@@ -284,7 +294,7 @@ func (s *Server) GetSecurityString(cxt context.Context, user *pb.User) (*pb.Secu
 	return &securityStringRes, nil
 }
 
-// User authentication.
+// gRPC defined endpoint. User authentication.
 // User should send a hashed password. The server will check if the password matches the user
 // and if so, sends back a token.
 func (s *Server) AuthenticateUser(cxt context.Context, loginRequest *pb.LoginRequest) (*pb.UserTokenResponse, error) {

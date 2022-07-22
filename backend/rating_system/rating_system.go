@@ -14,7 +14,8 @@ type ScoreStruct struct {
 	ChannelId int
 }
 
-// TODO: Ask Emily for the calculation
+// Gets the user score
+// NOT FULLY IMPLEMENTED (score is unused)
 func GetUserScore(user *pb.User) (float32, error) {
 	return float32(100 - user.UserId), nil
 }
