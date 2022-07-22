@@ -5,11 +5,12 @@ import {
   ColorScheme,
   ColorSchemeProvider,
 } from "@mantine/core";
-import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
+// import * as Sentry from "@sentry/react";
+// import { BrowserTracing } from "@sentry/tracing";
 import { useLocalStorage } from "@mantine/hooks";
 import Layout from "../components/Layout/Layout";
 import { NotificationsProvider } from "@mantine/notifications";
+import { UserProvider } from "../helpers/useUserProvider";
 
 // Sentry.init({
 //   dsn: "https://573a6a0d5f9048e89894a599c5af8a60@o1300472.ingest.sentry.io/6535071",
@@ -54,9 +55,11 @@ export default function App(props: AppProps) {
             colorScheme,
           }}
         >
-          <NotificationsProvider>
+          <UserProvider>
+            <NotificationsProvider>
               <Component {...pageProps} />
-          </NotificationsProvider>
+            </NotificationsProvider>
+          </UserProvider>
         </MantineProvider>
       </ColorSchemeProvider>
     </>
