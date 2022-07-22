@@ -764,6 +764,32 @@ export namespace RosterResponse {
   }
 }
 
+export class RosterAssignmentResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): RosterAssignmentResponse;
+  hasResponse(): boolean;
+  clearResponse(): RosterAssignmentResponse;
+
+  getRosterAssignment(): RosterAssignement | undefined;
+  setRosterAssignment(value?: RosterAssignement): RosterAssignmentResponse;
+  hasRosterAssignment(): boolean;
+  clearRosterAssignment(): RosterAssignmentResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RosterAssignmentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RosterAssignmentResponse): RosterAssignmentResponse.AsObject;
+  static serializeBinaryToWriter(message: RosterAssignmentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RosterAssignmentResponse;
+  static deserializeBinaryFromReader(message: RosterAssignmentResponse, reader: jspb.BinaryReader): RosterAssignmentResponse;
+}
+
+export namespace RosterAssignmentResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    rosterAssignment?: RosterAssignement.AsObject,
+  }
+}
+
 export class RosterFilter extends jspb.Message {
   getField(): RosterFilter.Field;
   setField(value: RosterFilter.Field): RosterFilter;
@@ -1014,6 +1040,272 @@ export namespace EmployeeEvaluation {
     employee?: User.AsObject,
     employeeScore: number,
     isAvailable: boolean,
+  }
+}
+
+export class IncidentReport extends jspb.Message {
+  getIncidentReportId(): number;
+  setIncidentReportId(value: number): IncidentReport;
+
+  getType(): IncidentReport.ReportType;
+  setType(value: IncidentReport.ReportType): IncidentReport;
+
+  getCreator(): User | undefined;
+  setCreator(value?: User): IncidentReport;
+  hasCreator(): boolean;
+  clearCreator(): IncidentReport;
+
+  getCreationDate(): string;
+  setCreationDate(value: string): IncidentReport;
+
+  getLastModifiedDate(): string;
+  setLastModifiedDate(value: string): IncidentReport;
+
+  getLastModifedUser(): User | undefined;
+  setLastModifedUser(value?: User): IncidentReport;
+  hasLastModifedUser(): boolean;
+  clearLastModifedUser(): IncidentReport;
+
+  getIsOriginal(): boolean;
+  setIsOriginal(value: boolean): IncidentReport;
+
+  getIsApproved(): boolean;
+  setIsApproved(value: boolean): IncidentReport;
+
+  getSignature(): User | undefined;
+  setSignature(value?: User): IncidentReport;
+  hasSignature(): boolean;
+  clearSignature(): IncidentReport;
+
+  getApprovalDate(): string;
+  setApprovalDate(value: string): IncidentReport;
+
+  getIncidentReportContent(): IncidentReportContent | undefined;
+  setIncidentReportContent(value?: IncidentReportContent): IncidentReport;
+  hasIncidentReportContent(): boolean;
+  clearIncidentReportContent(): IncidentReport;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): IncidentReport.AsObject;
+  static toObject(includeInstance: boolean, msg: IncidentReport): IncidentReport.AsObject;
+  static serializeBinaryToWriter(message: IncidentReport, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): IncidentReport;
+  static deserializeBinaryFromReader(message: IncidentReport, reader: jspb.BinaryReader): IncidentReport;
+}
+
+export namespace IncidentReport {
+  export type AsObject = {
+    incidentReportId: number,
+    type: IncidentReport.ReportType,
+    creator?: User.AsObject,
+    creationDate: string,
+    lastModifiedDate: string,
+    lastModifedUser?: User.AsObject,
+    isOriginal: boolean,
+    isApproved: boolean,
+    signature?: User.AsObject,
+    approvalDate: string,
+    incidentReportContent?: IncidentReportContent.AsObject,
+  }
+
+  export enum ReportType { 
+    FIRE_ALARM = 0,
+    INTRUDER = 1,
+    OTHERS = 2,
+  }
+}
+
+export class IncidentReportContent extends jspb.Message {
+  getReportContentId(): number;
+  setReportContentId(value: number): IncidentReportContent;
+
+  getLastModifiedDate(): string;
+  setLastModifiedDate(value: string): IncidentReportContent;
+
+  getLastModifedUser(): User | undefined;
+  setLastModifedUser(value?: User): IncidentReportContent;
+  hasLastModifedUser(): boolean;
+  clearLastModifedUser(): IncidentReportContent;
+
+  getAddress(): string;
+  setAddress(value: string): IncidentReportContent;
+
+  getIncidentTime(): string;
+  setIncidentTime(value: string): IncidentReportContent;
+
+  getIsPoliceNotified(): boolean;
+  setIsPoliceNotified(value: boolean): IncidentReportContent;
+
+  getTitle(): string;
+  setTitle(value: string): IncidentReportContent;
+
+  getDescription(): string;
+  setDescription(value: string): IncidentReportContent;
+
+  getHasActionTaken(): boolean;
+  setHasActionTaken(value: boolean): IncidentReportContent;
+
+  getActionTaken(): string;
+  setActionTaken(value: string): IncidentReportContent;
+
+  getHasInjury(): boolean;
+  setHasInjury(value: boolean): IncidentReportContent;
+
+  getInjuryDescription(): string;
+  setInjuryDescription(value: string): IncidentReportContent;
+
+  getHasStolenItem(): boolean;
+  setHasStolenItem(value: boolean): IncidentReportContent;
+
+  getStolenItemDescription(): string;
+  setStolenItemDescription(value: string): IncidentReportContent;
+
+  getReportImageLink(): string;
+  setReportImageLink(value: string): IncidentReportContent;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): IncidentReportContent.AsObject;
+  static toObject(includeInstance: boolean, msg: IncidentReportContent): IncidentReportContent.AsObject;
+  static serializeBinaryToWriter(message: IncidentReportContent, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): IncidentReportContent;
+  static deserializeBinaryFromReader(message: IncidentReportContent, reader: jspb.BinaryReader): IncidentReportContent;
+}
+
+export namespace IncidentReportContent {
+  export type AsObject = {
+    reportContentId: number,
+    lastModifiedDate: string,
+    lastModifedUser?: User.AsObject,
+    address: string,
+    incidentTime: string,
+    isPoliceNotified: boolean,
+    title: string,
+    description: string,
+    hasActionTaken: boolean,
+    actionTaken: string,
+    hasInjury: boolean,
+    injuryDescription: string,
+    hasStolenItem: boolean,
+    stolenItemDescription: string,
+    reportImageLink: string,
+  }
+}
+
+export class IncidentReportResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): IncidentReportResponse;
+  hasResponse(): boolean;
+  clearResponse(): IncidentReportResponse;
+
+  getIncidentReport(): IncidentReport | undefined;
+  setIncidentReport(value?: IncidentReport): IncidentReportResponse;
+  hasIncidentReport(): boolean;
+  clearIncidentReport(): IncidentReportResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): IncidentReportResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: IncidentReportResponse): IncidentReportResponse.AsObject;
+  static serializeBinaryToWriter(message: IncidentReportResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): IncidentReportResponse;
+  static deserializeBinaryFromReader(message: IncidentReportResponse, reader: jspb.BinaryReader): IncidentReportResponse;
+}
+
+export namespace IncidentReportResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    incidentReport?: IncidentReport.AsObject,
+  }
+}
+
+export class IncidentReportFilter extends jspb.Message {
+  getField(): IncidentReportFilter.Field;
+  setField(value: IncidentReportFilter.Field): IncidentReportFilter;
+
+  getComparisons(): Filter | undefined;
+  setComparisons(value?: Filter): IncidentReportFilter;
+  hasComparisons(): boolean;
+  clearComparisons(): IncidentReportFilter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): IncidentReportFilter.AsObject;
+  static toObject(includeInstance: boolean, msg: IncidentReportFilter): IncidentReportFilter.AsObject;
+  static serializeBinaryToWriter(message: IncidentReportFilter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): IncidentReportFilter;
+  static deserializeBinaryFromReader(message: IncidentReportFilter, reader: jspb.BinaryReader): IncidentReportFilter;
+}
+
+export namespace IncidentReportFilter {
+  export type AsObject = {
+    field: IncidentReportFilter.Field,
+    comparisons?: Filter.AsObject,
+  }
+
+  export enum Field { 
+    REPORT_ID = 0,
+    REPORT_CONTENT_ID = 1,
+    REPORT_TYPE = 2,
+    MODIFIER = 3,
+    LAST_MODIFIED_DATE = 5,
+    GET_ORIGINAL = 6,
+    IS_APPROVED = 7,
+    SIGNATURE = 8,
+    APPROVAL_DATE = 9,
+  }
+}
+
+export class IncidentReportQuery extends jspb.Message {
+  getFiltersList(): Array<IncidentReportFilter>;
+  setFiltersList(value: Array<IncidentReportFilter>): IncidentReportQuery;
+  clearFiltersList(): IncidentReportQuery;
+  addFilters(value?: IncidentReportFilter, index?: number): IncidentReportFilter;
+
+  getLimit(): number;
+  setLimit(value: number): IncidentReportQuery;
+
+  getSkip(): number;
+  setSkip(value: number): IncidentReportQuery;
+
+  getOrderBy(): OrderByIncidentReport | undefined;
+  setOrderBy(value?: OrderByIncidentReport): IncidentReportQuery;
+  hasOrderBy(): boolean;
+  clearOrderBy(): IncidentReportQuery;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): IncidentReportQuery.AsObject;
+  static toObject(includeInstance: boolean, msg: IncidentReportQuery): IncidentReportQuery.AsObject;
+  static serializeBinaryToWriter(message: IncidentReportQuery, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): IncidentReportQuery;
+  static deserializeBinaryFromReader(message: IncidentReportQuery, reader: jspb.BinaryReader): IncidentReportQuery;
+}
+
+export namespace IncidentReportQuery {
+  export type AsObject = {
+    filtersList: Array<IncidentReportFilter.AsObject>,
+    limit: number,
+    skip: number,
+    orderBy?: OrderByIncidentReport.AsObject,
+  }
+}
+
+export class OrderByIncidentReport extends jspb.Message {
+  getField(): IncidentReportFilter.Field;
+  setField(value: IncidentReportFilter.Field): OrderByIncidentReport;
+
+  getOrderBy(): OrderBy;
+  setOrderBy(value: OrderBy): OrderByIncidentReport;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OrderByIncidentReport.AsObject;
+  static toObject(includeInstance: boolean, msg: OrderByIncidentReport): OrderByIncidentReport.AsObject;
+  static serializeBinaryToWriter(message: OrderByIncidentReport, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OrderByIncidentReport;
+  static deserializeBinaryFromReader(message: OrderByIncidentReport, reader: jspb.BinaryReader): OrderByIncidentReport;
+}
+
+export namespace OrderByIncidentReport {
+  export type AsObject = {
+    field: IncidentReportFilter.Field,
+    orderBy: OrderBy,
   }
 }
 

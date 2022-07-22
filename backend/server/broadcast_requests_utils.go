@@ -8,16 +8,13 @@ import (
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	tclient "capstone.operations_ecosystem/backend/telegram_client"
+	"github.com/getsentry/sentry-go"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
 const (
-	AIFS1_USER_ID = 8
-	AIFS2_USER_ID = 9
-	AIFS3_USER_ID = 10
-
 	// AIFS LED light triggers for broadcasting
 	AIFS_LED_DEFAULT_URI          = "win&PL=2"
 	AIFS_LED_BROADCAST_URGENT_URI = "win&PL=1"
@@ -28,7 +25,7 @@ const (
 // change the recipients to be actual users
 // If the
 // Modified the broadcast in place
-func getDefaultBroadcastFields(broadcast *pb.Broadcast) {
+func (s *Server) getDefaultBroadcastFields(broadcast *pb.Broadcast) {
 	defaultAck := broadcast.Urgency != pb.Broadcast_HIGH
 	var ackTime time.Time
 
@@ -39,7 +36,7 @@ func getDefaultBroadcastFields(broadcast *pb.Broadcast) {
 	for _, rec := range broadcast.Recipients {
 		newRecipients := make([]*pb.BroadcastRecipient, 0)
 
-		users := getAIFSDuty(rec.AifsId)
+		users := s.getAIFSDuty(rec.AifsId)
 		for _, user := range users {
 			newRecipients = append(newRecipients, &pb.BroadcastRecipient{
 				Recipient:    user,
@@ -54,20 +51,20 @@ func getDefaultBroadcastFields(broadcast *pb.Broadcast) {
 }
 
 // Fixed duty
-func getAIFSDuty(aifsId int64) []*pb.User {
+func (s *Server) getAIFSDuty(aifsId int64) []*pb.User {
 	users := make([]*pb.User, 0)
 	switch aifsId {
 	case 1:
 		users = append(users, &pb.User{
-			UserId: int64(AIFS1_USER_ID),
+			UserId: int64(s.Config.Aifs1Id),
 		})
 	case 2:
 		users = append(users, &pb.User{
-			UserId: int64(AIFS2_USER_ID),
+			UserId: int64(s.Config.Aifs2Id),
 		})
 	default:
 		users = append(users, &pb.User{
-			UserId: int64(AIFS3_USER_ID),
+			UserId: int64(s.Config.Aifs3Id),
 		})
 	}
 
@@ -75,6 +72,8 @@ func getAIFSDuty(aifsId int64) []*pb.User {
 }
 
 func (s *Server) sendNewBroadcastsOut(broadcastId int64) {
+	defer sentry.Recover()
+
 	query := &pb.BroadcastQuery{Limit: 1}
 	db_pck.AddBroadcastFilter(query, pb.BroadcastFilter_BROADCAST_ID, pb.Filter_EQUAL, strconv.Itoa(int(broadcastId)))
 	broadcasts, err := db_pck.GetBroadcasts(s.db, query)
@@ -86,8 +85,8 @@ func (s *Server) sendNewBroadcastsOut(broadcastId int64) {
 	if len(broadcasts) == 0 {
 		fmt.Println("sendNewBroadcastToTele: No broadcast found for id", broadcastId)
 	}
-
-	tclient.InsertBroadcast(s.teleServerAddr, s.teleServerPort, broadcasts[0])
+	teleClient := tclient.TelegramClient{}
+	teleClient.InsertBroadcast(s.teleServerAddr, s.teleServerPort, broadcasts[0])
 	s.notifyAIFSofNewBroadcast(broadcasts[0])
 }
 

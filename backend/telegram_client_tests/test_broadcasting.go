@@ -23,5 +23,6 @@ func testInsertBroadcast(serverAddr *string, serverPort *int) {
 			brep.BroadcastRecipientsId = int64(20 + i)
 		}
 	}
-	tclient.InsertBroadcast(serverAddr, serverPort, broadcast)
+	teleClient := tclient.TelegramClient{}
+	teleClient.InsertBroadcast(serverAddr, serverPort, broadcast)
 }

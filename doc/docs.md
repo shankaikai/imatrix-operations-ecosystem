@@ -21,8 +21,14 @@
     - [EmployeeEvaluation](#operations_ecosys-EmployeeEvaluation)
     - [EmployeeEvaluationResponse](#operations_ecosys-EmployeeEvaluationResponse)
     - [Filter](#operations_ecosys-Filter)
+    - [IncidentReport](#operations_ecosys-IncidentReport)
+    - [IncidentReportContent](#operations_ecosys-IncidentReportContent)
+    - [IncidentReportFilter](#operations_ecosys-IncidentReportFilter)
+    - [IncidentReportQuery](#operations_ecosys-IncidentReportQuery)
+    - [IncidentReportResponse](#operations_ecosys-IncidentReportResponse)
     - [OrderByBroadcast](#operations_ecosys-OrderByBroadcast)
     - [OrderByClient](#operations_ecosys-OrderByClient)
+    - [OrderByIncidentReport](#operations_ecosys-OrderByIncidentReport)
     - [OrderByQuery](#operations_ecosys-OrderByQuery)
     - [OrderByRoster](#operations_ecosys-OrderByRoster)
     - [OrderByUser](#operations_ecosys-OrderByUser)
@@ -44,6 +50,8 @@
     - [BroadcastFilter.Field](#operations_ecosys-BroadcastFilter-Field)
     - [ClientFilter.Field](#operations_ecosys-ClientFilter-Field)
     - [Filter.Comparisons](#operations_ecosys-Filter-Comparisons)
+    - [IncidentReport.ReportType](#operations_ecosys-IncidentReport-ReportType)
+    - [IncidentReportFilter.Field](#operations_ecosys-IncidentReportFilter-Field)
     - [OrderBy](#operations_ecosys-OrderBy)
     - [Response.Type](#operations_ecosys-Response-Type)
     - [Roster.Status](#operations_ecosys-Roster-Status)
@@ -53,6 +61,7 @@
   
     - [AdminServices](#operations_ecosys-AdminServices)
     - [BroadcastServices](#operations_ecosys-BroadcastServices)
+    - [IncidentReportServices](#operations_ecosys-IncidentReportServices)
     - [RosterServices](#operations_ecosys-RosterServices)
   
 - [Scalar Value Types](#scalar-value-types)
@@ -374,6 +383,113 @@ The field to be compared with is in the corresponding XXXFilter message.
 
 
 
+<a name="operations_ecosys-IncidentReport"></a>
+
+### IncidentReport
+The default fields of an incident report
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| incident_report_id | [int64](#int64) |  | Report IDs are only useful for the backend database. |
+| type | [IncidentReport.ReportType](#operations_ecosys-IncidentReport-ReportType) |  |  |
+| creator | [User](#operations_ecosys-User) |  |  |
+| creation_date | [string](#string) |  | Format must be in: YYYY-MM-DD HH:MM:SS |
+| last_modified_date | [string](#string) |  |  |
+| last_modifed_user | [User](#operations_ecosys-User) |  |  |
+| is_original | [bool](#bool) |  |  |
+| is_approved | [bool](#bool) |  |  |
+| signature | [User](#operations_ecosys-User) |  |  |
+| approval_date | [string](#string) |  |  |
+| incident_report_content | [IncidentReportContent](#operations_ecosys-IncidentReportContent) |  |  |
+| aifs_id | [int64](#int64) |  | Which AIFS was the creator from |
+
+
+
+
+
+
+<a name="operations_ecosys-IncidentReportContent"></a>
+
+### IncidentReportContent
+The actual content of the report
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| report_content_id | [int64](#int64) |  |  |
+| last_modified_date | [string](#string) |  | Format must be in: YYYY-MM-DD HH:MM:SS |
+| last_modifed_user | [User](#operations_ecosys-User) |  |  |
+| address | [string](#string) |  |  |
+| incident_time | [string](#string) |  |  |
+| is_police_notified | [bool](#bool) |  |  |
+| title | [string](#string) |  |  |
+| description | [string](#string) |  |  |
+| has_action_taken | [bool](#bool) |  |  |
+| action_taken | [string](#string) |  |  |
+| has_injury | [bool](#bool) |  |  |
+| injury_description | [string](#string) |  |  |
+| has_stolen_item | [bool](#bool) |  |  |
+| stolen_item_description | [string](#string) |  |  |
+| report_image_link | [string](#string) |  | Should there be a string here? |
+
+
+
+
+
+
+<a name="operations_ecosys-IncidentReportFilter"></a>
+
+### IncidentReportFilter
+Filter the types of incident reports to be returned.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [IncidentReportFilter.Field](#operations_ecosys-IncidentReportFilter-Field) |  |  |
+| comparisons | [Filter](#operations_ecosys-Filter) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-IncidentReportQuery"></a>
+
+### IncidentReportQuery
+Get specific types rosters as specified in the Filter. 
+If one wants to get all objects, leave filters empty. 
+A default limit of 10 will be used if the field is empty.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| filters | [IncidentReportFilter](#operations_ecosys-IncidentReportFilter) | repeated |  |
+| limit | [int64](#int64) |  | Limit the number of objects being returned. If only 5 objects should be shown, limit = 5; |
+| skip | [int64](#int64) |  | Skip n rows from the database |
+| order_by | [OrderByIncidentReport](#operations_ecosys-OrderByIncidentReport) |  | Order the queries, by default the order is desc by creation date |
+
+
+
+
+
+
+<a name="operations_ecosys-IncidentReportResponse"></a>
+
+### IncidentReportResponse
+Passing around multiple reports in one message.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| response | [Response](#operations_ecosys-Response) |  |  |
+| incident_report | [IncidentReport](#operations_ecosys-IncidentReport) |  |  |
+
+
+
+
+
+
 <a name="operations_ecosys-OrderByBroadcast"></a>
 
 ### OrderByBroadcast
@@ -399,6 +515,22 @@ The field to be compared with is in the corresponding XXXFilter message.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | field | [ClientFilter.Field](#operations_ecosys-ClientFilter-Field) |  |  |
+| order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-OrderByIncidentReport"></a>
+
+### OrderByIncidentReport
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [IncidentReportFilter.Field](#operations_ecosys-IncidentReportFilter-Field) |  |  |
 | order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
 
 
@@ -759,6 +891,38 @@ More fields can be added in the future.
 
 
 
+<a name="operations_ecosys-IncidentReport-ReportType"></a>
+
+### IncidentReport.ReportType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| FIRE_ALARM | 0 |  |
+| INTRUDER | 1 |  |
+| OTHERS | 2 |  |
+
+
+
+<a name="operations_ecosys-IncidentReportFilter-Field"></a>
+
+### IncidentReportFilter.Field
+More fields can be added in the future.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| REPORT_ID | 0 |  |
+| REPORT_CONTENT_ID | 1 |  |
+| REPORT_TYPE | 2 |  |
+| MODIFIER | 3 |  |
+| LAST_MODIFIED_DATE | 5 |  |
+| GET_ORIGINAL | 6 |  |
+| IS_APPROVED | 7 |  |
+| SIGNATURE | 8 |  |
+| APPROVAL_DATE | 9 |  |
+
+
+
 <a name="operations_ecosys-OrderBy"></a>
 
 ### OrderBy
@@ -884,6 +1048,19 @@ More fields can be added in the future.
 | DeleteBroadcast | [Broadcast](#operations_ecosys-Broadcast) | [Response](#operations_ecosys-Response) |  |
 | FindBroadcasts | [BroadcastQuery](#operations_ecosys-BroadcastQuery) | [BroadcastResponse](#operations_ecosys-BroadcastResponse) stream |  |
 | UpdateBroadcastRecipient | [BroadcastRecipient](#operations_ecosys-BroadcastRecipient) | [Response](#operations_ecosys-Response) | Updating of broadcast recipients |
+
+
+<a name="operations_ecosys-IncidentReportServices"></a>
+
+### IncidentReportServices
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| AddIncidentReport | [IncidentReport](#operations_ecosys-IncidentReport) | [Response](#operations_ecosys-Response) |  |
+| UpdateIncidentReport | [IncidentReport](#operations_ecosys-IncidentReport) | [Response](#operations_ecosys-Response) |  |
+| DeleteIncidentReport | [IncidentReport](#operations_ecosys-IncidentReport) | [Response](#operations_ecosys-Response) |  |
+| FindIncidentReports | [IncidentReportQuery](#operations_ecosys-IncidentReportQuery) | [IncidentReportResponse](#operations_ecosys-IncidentReportResponse) stream |  |
 
 
 <a name="operations_ecosys-RosterServices"></a>

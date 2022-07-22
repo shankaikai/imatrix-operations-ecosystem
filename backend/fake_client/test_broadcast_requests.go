@@ -16,11 +16,11 @@ func TestBroadcastClient(serverAddr *string, serverPort *int) {
 	broadcast := CreateFakeBroadcast(1, true)
 	pk := InsertBroadcast(serverAddr, serverPort, broadcast)
 	broadcast.BroadcastId = pk
-	// InsertBroadcastAIFSID(serverAddr, serverPort)
+	InsertBroadcastAIFSID(serverAddr, serverPort)
 
-	// ConsolidatedFindBroadcastTest(serverAddr, serverPort)
-	// ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
-	// DeleteBroadcast(serverAddr, serverPort, &pb.Broadcast{BroadcastId: 5})
+	ConsolidatedFindBroadcastTest(serverAddr, serverPort)
+	ConsolidatedUpdateBroadcastTest(serverAddr, serverPort, broadcast)
+	DeleteBroadcast(serverAddr, serverPort, &pb.Broadcast{BroadcastId: 5})
 }
 
 func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) int64 {
@@ -33,7 +33,8 @@ func InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcas
 	// }
 
 	fmt.Println("Inserting Broadcast:", broadcast.BroadcastId)
-	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
+	teleClient := telec.TelegramClient{}
+	client, conn := teleClient.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.AddBroadcast(context.Background(), broadcast)
@@ -55,7 +56,8 @@ func InsertBroadcastAIFSID(serverAddr *string, serverPort *int) int64 {
 	broadcast := CreateFakeBroadcast(1, false)
 
 	fmt.Println("Inserting Broadcast through AIFS id:", broadcast.BroadcastId)
-	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
+	teleClient := telec.TelegramClient{}
+	client, conn := teleClient.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.AddBroadcast(context.Background(), broadcast)
@@ -232,7 +234,8 @@ func FindBroadcastsMultipleFilters(serverAddr *string, serverPort *int) {
 
 func FindBroadcastsTest(serverAddr *string, serverPort *int, query *pb.BroadcastQuery) {
 	fmt.Println("Finding broadcasts")
-	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
+	teleClient := telec.TelegramClient{}
+	client, conn := teleClient.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	stream, err := client.FindBroadcasts(context.Background(), query)
@@ -293,7 +296,8 @@ func UpdateBroadcastRecipients(serverAddr *string, serverPort *int, broadcast *p
 
 func UpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
 	fmt.Println("Updating Broadcast...")
-	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
+	teleClient := telec.TelegramClient{}
+	client, conn := teleClient.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.UpdateBroadcast(context.Background(), broadcast)
@@ -311,7 +315,8 @@ func UpdateBroadcastTest(serverAddr *string, serverPort *int, broadcast *pb.Broa
 
 func DeleteBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) {
 	fmt.Println("Deleting Broadcast:", broadcast.BroadcastId)
-	client, conn := telec.CreateBroadcastClient(serverAddr, serverPort)
+	teleClient := telec.TelegramClient{}
+	client, conn := teleClient.CreateBroadcastClient(serverAddr, serverPort)
 	defer conn.Close()
 
 	res, err := client.DeleteBroadcast(context.Background(), broadcast)
