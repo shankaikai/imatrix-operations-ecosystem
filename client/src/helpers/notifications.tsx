@@ -55,3 +55,11 @@ export function showApproveReportSuccessNotification() {
     icon: <IoCheckmark />,
   });
 }
+export function showCreateUserSuccessNotification() {
+  showNotification({
+    title: "Success",
+    message: "User has been created!",
+    color: "green",
+    icon: <IoCheckmark />,
+  });
+}

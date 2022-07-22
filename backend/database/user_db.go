@@ -14,9 +14,11 @@ import (
 // Returns the primary key of the user from the database or any errors.
 func InsertUser(db *sql.DB, user *pb.FullUser, dbLock *sync.Mutex) (int64, error) {
 	fmt.Println("Inserting User", user.User.Name)
-
+	fmt.Println("this is user", user)
 	fields := getUserTableFields()
+	fmt.Println("this is fields",fields )
 	values := orderUserFields(user)
+	fmt.Println("this is values", values)
 	pk, err := Insert(db, USER_DB_TABLE_NAME, fields, values, dbLock)
 
 	return pk, err
