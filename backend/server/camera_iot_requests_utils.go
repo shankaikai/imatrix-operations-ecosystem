@@ -29,8 +29,11 @@ const (
 	JWT_TOKEN_REFRESH_FREQUENCY = 1*time.Hour + 30*time.Minute
 
 	// Values expected from thingsboard
-	GATE_OPEN_KEYWORD   = "open"
-	GATE_CLOSED_KEYWORD = "closed"
+	GATE_SHARED_ATTRIBUTE_KEY = "request"
+	GATE_REQUST_OPEN_KEYWORD   = "open"
+	GATE_REQUEST_CLOSED_KEYWORD = "close"
+	GATE_STATUS_OPEN_KEYWORD = "true"
+	GATE_STATUS_CLOSED_KEYWORD = "false"
 
 	FIRE_ALARM_OFF_KEYWORD = "off"
 	FIRE_ALARM_ON_KEYWORD  = "on"
@@ -147,7 +150,7 @@ func (s *Server) PollGateStatus(cameraIotId int64, gateId string) {
 			stringBody := string(body)
 			fmt.Println("string body", stringBody)
 
-			valRegexp, err := regexp.Compile("\"value\":\"(.*?)\"")
+			valRegexp, err := regexp.Compile("\"key\":\"gate_opened\",\"value\":(.*?)}")
 			if err != nil {
 				fmt.Println("pollGateStatus ERROR:", err)
 				continue
@@ -172,11 +175,11 @@ func (s *Server) setGateStatus(gateId string, status pb.GateState_GatePosition) 
 	switch status {
 	case pb.GateState_OPEN:
 		statusJson = map[string]string{
-			"status": GATE_OPEN_KEYWORD,
+			GATE_SHARED_ATTRIBUTE_KEY: GATE_REQUST_OPEN_KEYWORD,
 		}
 	case pb.GateState_CLOSED:
 		statusJson = map[string]string{
-			"status": GATE_CLOSED_KEYWORD,
+			GATE_SHARED_ATTRIBUTE_KEY: GATE_REQUEST_CLOSED_KEYWORD,
 		}
 	}
 
@@ -382,10 +385,10 @@ func (s *Server) notifyGateSubscribers(cameraIotId int64, gateId string, newStat
 	}
 
 	switch newState {
-	case GATE_OPEN_KEYWORD:
+	case GATE_STATUS_OPEN_KEYWORD:
 		message.Gate.State = pb.GateState_OPEN
 		s.CameraIot.GateStates[cameraIotId] = pb.GateState_OPEN
-	case GATE_CLOSED_KEYWORD:
+	case GATE_STATUS_CLOSED_KEYWORD:
 		message.Gate.State = pb.GateState_CLOSED
 		s.CameraIot.GateStates[cameraIotId] = pb.GateState_CLOSED
 	}

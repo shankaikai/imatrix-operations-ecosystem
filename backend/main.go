@@ -34,6 +34,7 @@ func main() {
 	serverFlag := flag.Bool("is_server", true, "Is this terminal for the server or the test client?")
 	fakeServerFlag := flag.Bool("is_fserver", false, "Start the server or the fake server?")
 	teleClientFlag := flag.Bool("is_tclient", false, "Should we test the server as a telebot client?")
+	cliFlag := flag.Bool("use_cli", false, "Should we start a CLI?")
 
 	flag.Parse()
 
@@ -44,12 +45,20 @@ func main() {
 	defer sentry.Recover()
 
 	if *fakeServerFlag {
-		go fake_server.InitServer(serverAddrFlag, serverPortFlag)
+		if (*cliFlag){
+			go fake_server.InitServer(serverAddrFlag, serverPortFlag)
+		}else{
+			fake_server.InitServer(serverAddrFlag, serverPortFlag)
+		}
 	} else if *teleClientFlag {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
-		go server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		if (*cliFlag){
+			go server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		}else{
+			server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		}
 	} else {
 		client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)

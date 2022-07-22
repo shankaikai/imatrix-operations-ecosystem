@@ -9,7 +9,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import React from "react";
-import { openGateSwitch } from "../../../helpers/useCameraIotClient";
+import { activateGateSwitch } from "../../../helpers/useCameraIotClient";
 import {
   FireAlarmState,
   Gate,
@@ -35,8 +35,8 @@ export default function StreamContainer({
   gateStatus,
 }: StreamContainerProps) {
   const handleGateSwitch = () => {
-    console.log("Opening switch", id);
-    openGateSwitch(id);
+    console.log("Activating switch", id);
+    gateStatus && activateGateSwitch(id, gateStatus);
   };
 
   return (
