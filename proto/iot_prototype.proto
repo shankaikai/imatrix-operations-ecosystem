@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package gate_prototype;
+
+option go_package = "/operations_ecosys";
+
+service IotControlPrototypeService{
+  // A server-to-client streaming RPC.
+  //
+  // Obtains the State of the Stepper.  Results are
+  // streamed rather than returned at once (e.g. in a response message with a
+  // repeated field), as the Stepper's state will change after every action
+  // made by the Controller.
+  rpc GetGateState(Gate) returns (stream GateState) {}
+  rpc SetGateState(stream GateState) returns (stream GateState) {}
+
+  rpc GetFireAlarmState(FireAlarm) returns (stream FireAlarmState) {}
+  rpc GetCpuTemp(CpuTemp) returns (stream CpuTempState) {}
+}
+
+// The request message containing the stepper's name.
+message Gate {
+    int64 id = 1;
+}
+
+// The response message containing the state of the stepper
+message GateState {
+    int64 id = 1;
+    GatePosition state = 2;
+
+    enum GatePosition {
+        CLOSED = 0;
+        OPEN = 1;
+        ERROR = 2;
+        INITIAL = 3;
+    }
+}
+
+// The request message containing the fire alarm's id.
+message FireAlarm {
+    int64 id = 1;
+}
+
+
+// The response message containing the state of the stepper
+message FireAlarmState {
+    int64 id = 1;
+    AlarmState state = 2;
+
+    enum AlarmState {
+        OFF = 0;
+        ON = 1;
+        ERROR = 2;
+    }
+}
+
+
+// The request message containing the fire alarm's id.
+message CpuTemp {
+    int64 id = 1;
+}
+
+
+// The response message containing the state of the stepper
+message CpuTempState {
+    int64 id = 1;
+    double temp = 2;
+}

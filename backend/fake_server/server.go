@@ -17,7 +17,8 @@ type Server struct {
 	pb.BroadcastServicesServer
 	pb.RosterServicesServer
 	pb.IncidentReportServicesServer
-
+	pb.CameraIotServicesServer
+	pb.WebAppServicesServer
 	db     *sql.DB
 	dbLock *sync.Mutex
 }
@@ -42,6 +43,9 @@ func InitServer(serverAddr *string, serverPort *int) {
 	pb.RegisterBroadcastServicesServer(grpcServer, &server)
 	pb.RegisterRosterServicesServer(grpcServer, &server)
 	pb.RegisterIncidentReportServicesServer(grpcServer, &server)
+	pb.RegisterCameraIotServicesServer(grpcServer, &server)
+	pb.RegisterWebAppServicesServer(grpcServer, &server)
 
+	go Proxy_main()
 	grpcServer.Serve(lis)
 }

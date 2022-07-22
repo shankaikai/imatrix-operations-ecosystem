@@ -14,7 +14,6 @@ export default function Sidebar() {
         <MainLinks />
       </Navbar.Section>
       <Navbar.Section>
-        {/* TODO: Change this to accept user data from context */}
         <UserButton image={image} name={name} email={email} />
       </Navbar.Section>
     </Navbar>

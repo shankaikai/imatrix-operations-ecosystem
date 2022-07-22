@@ -1,8 +1,10 @@
 // Showcasing the capabilities of protobuf with gRPC
 
 syntax = "proto3";
+import "proto/iot_prototype.proto";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "/operations_ecosys";
 
@@ -27,6 +29,11 @@ service AdminServices {
     rpc UpdateClient(Client) returns (Response) {}
     rpc DeleteClient(Client) returns (Response) {}
     rpc FindClients(ClientQuery) returns (stream ClientResponse) {}
+
+    // Security Related 
+    rpc GetWANonce(User) returns (ResponseNonce) {}
+    rpc GetSecurityString(User) returns (SecurityStringResponse) {}
+    rpc AuthenticateUser(LoginRequest) returns (UserTokenResponse) {}
 }
 
 service BroadcastServices{
@@ -57,7 +64,6 @@ service RosterServices{
     rpc FindRosterAssignments(RosterQuery) returns (stream RosterAssignmentResponse) {}
     // Updates the individual roster assignment
     rpc UpdateRosterAssignment(RosterAssignement) returns (Response) {}
-    
 }
 
 service IncidentReportServices{
@@ -65,7 +71,18 @@ service IncidentReportServices{
     rpc UpdateIncidentReport(IncidentReport) returns (Response) {}
     rpc DeleteIncidentReport(IncidentReport) returns (Response) {}
     rpc FindIncidentReports(IncidentReportQuery) returns (stream IncidentReportResponse) {}
+
 }
+
+service CameraIotServices{
+    rpc SetGateState(gate_prototype.GateState) returns (Response) {}
+    // Continuously provides the states of the gates, fire alarms and cpu temperature
+    // as well as the camera endpoints. 
+    // Responses are sent only when there is a change in state
+    // Upon connection, all states are sent for all locations are sent. 
+    rpc GetIotState(google.protobuf.Empty) returns (stream CameraIotResponse) {}
+}
+
 
 // Admin
 /***************************************************************************
@@ -113,6 +130,7 @@ message UserFilter {
         PHONE_NUMBER = 4;
         TELEGRAM_HANDLE = 5;
         IS_PART_TIMER = 6;
+        TELEGRAM_USER_ID = 7;
     }
 }
 
@@ -137,6 +155,17 @@ message OrderByUser{
     UserFilter.Field field = 1;
     OrderBy order_by = 2;
 }
+
+// This message is only used by the internal server
+// This should never be passed around
+// It contains secrets such as nonce
+message InternalFullUser{
+    User user = 1;
+    string nonce = 2;
+    string security_string = 3;
+    string hashed_password = 4;
+}
+
 
 /***************************************************************************
 *                              CLIENT MESSAGES                              *
@@ -191,6 +220,85 @@ message ClientQuery {
 message OrderByClient{
     ClientFilter.Field field = 1;
     OrderBy order_by = 2;
+}
+
+/***************************************************************************
+*                          USER TOKEN MESSAGES                              *
+****************************************************************************/
+// Message used to provide a user token to the client
+message UserToken {
+    int64 user_token_id = 1;
+    User user = 2;
+    string token = 3;
+    // Format must be in: YYYY-MM-DD HH:MM:SS
+    string creation_datetime = 4;
+    // Format must be in: YYYY-MM-DD HH:MM:SS
+    string expiry_datetime = 5;
+}
+
+// Replies with a user token
+message UserTokenResponse {
+    Response response = 1;
+    UserToken userToken = 2;
+}
+
+
+// Filter the types of clients to be returned. 
+message UserTokenFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        USER_ID = 0;
+        EXPIRY = 1;
+    }
+}
+
+// Get specific types of user tokens as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message UserTokenQuery {
+    repeated UserTokenFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2;
+
+    // Skip n rows from the database
+    int64 skip = 3;
+    
+    // Order the queries, by default the order is desc by creation date
+    OrderByUserToken order_by = 4;
+}
+
+
+message OrderByUserToken{
+    UserTokenFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
+
+/***************************************************************************
+*                             SECURITY MESSAGES                            *
+****************************************************************************/
+// Any client that wishes to login send their hashed password to the backend  
+// for authentication. 
+message LoginRequest {
+    // The user to login
+    string user_email = 1;
+    string hashed_password = 2;
+}
+
+// Used to provide nonces
+message ResponseNonce {
+    Response response = 1;
+    string nonce = 2;
+    
+}
+
+// Returns the security string that is tied to the user
+message SecurityStringResponse{
+    Response response = 1;
+    string security_string = 2;
 }
 
 /***************************************************************************
@@ -576,6 +684,72 @@ message OrderByIncidentReport{
 
 
 /***************************************************************************
+*                          CAMERA IOT MESSAGES                             *
+****************************************************************************/
+// Camera and Iot Monitoring and Controls
+message CameraIot {
+    // The ID ties the request to a paricular location
+    int64 camera_iot_id = 1;
+    string name = 2;
+
+    // Devices
+    Camera camera = 3;
+    gate_prototype.GateState gate = 4;
+    gate_prototype.FireAlarmState fire_alarm = 5;
+    gate_prototype.CpuTempState cpu_temperature = 6;
+
+    MessageType type = 7;
+
+     enum MessageType{
+        INITIAL = 0;
+        CHANGE_GATE = 1;
+        CHANGE_FIRE_ALARM = 2;
+        CHANGE_CPU_TEMP = 3;
+     }
+}
+
+// camera identifier
+message Camera {
+    string url = 1;
+}
+
+message CameraIotResponse {
+    Response response = 1;
+    CameraIot camera_iot = 2;
+}
+
+
+// Filter the types of camera iot attributes to be returned. 
+message CameraIotFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        CAMERA_IOT_ID = 0;
+    }
+}
+
+// Get specific types camera Iot attributes as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message CameraIotQuery {
+    repeated CameraIotFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2; 
+    // Skip n rows from the database
+    int64 skip = 3;
+
+    // Order the queries, by default the order is desc id
+    OrderByCameraIot order_by = 4;
+}
+
+message OrderByCameraIot{
+    CameraIotFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
+/***************************************************************************
 *                              COMMON MESSAGES                              *
 ****************************************************************************/
 
@@ -591,6 +765,7 @@ message Response {
         ERROR = 1;
     }
 }
+
 
 // This is used to indicate what kind of objects should be returned that
 // fit this critera. 

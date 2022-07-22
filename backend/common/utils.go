@@ -3,7 +3,12 @@
 
 package common
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"strings"
+	"time"
+)
 
 const (
 	CUSTOM_NEG_INF  = -999999999999
@@ -31,4 +36,46 @@ func BinarySearch(list []int, left int, right int, key int) (bool, int) {
 	} else {
 		return BinarySearch(list, mid+1, right, key)
 	}
+}
+
+func HttpGetWithJWT(url, jwt string) (*http.Response, error) {
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("HttpGetWithJWT ERROR %s", err.Error())
+	}
+
+	bearer := "Bearer " + jwt
+	req.Header.Set("Authorization", bearer)
+	response, err := client.Do(req)
+
+	if err != nil {
+		return nil, fmt.Errorf("HttpGetWithJWT ERROR %s", err.Error())
+	}
+
+	return response, nil
+}
+
+func HttpPostWithJWT(url, jwt string, body string) (*http.Response, error) {
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	req, err := http.NewRequest("POST", url, strings.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("HttpPostWithJWT ERROR %s", err.Error())
+	}
+
+	bearer := "Bearer " + jwt
+	req.Header.Set("x-authorization", bearer)
+	req.Header.Set("content-type", "application/json")
+
+	response, err := client.Do(req)
+
+	if err != nil {
+		return nil, fmt.Errorf("HttpPostWithJWT ERROR %s", err.Error())
+	}
+
+	return response, nil
 }

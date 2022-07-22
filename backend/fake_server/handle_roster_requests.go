@@ -134,3 +134,4 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 
 	return nil
 }
+

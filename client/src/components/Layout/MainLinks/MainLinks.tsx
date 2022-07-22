@@ -60,31 +60,31 @@ const links = [
     icon: <LayoutDashboard size={16} />,
     color: "teal",
     label: "Dashboard",
-    link: "/dashboard",
+    link: "/",
   },
   {
     icon: <Message2 size={16} />,
     color: "blue",
     label: "Broadcast",
-    link: "/dashboard/broadcasting",
+    link: "/broadcasting",
   },
   {
     icon: <Forms size={16} />,
     color: "green",
     label: "Rostering",
-    link: "/dashboard/rostering",
+    link: "/rostering",
   },
   {
     icon: <Report size={16} />,
     color: "violet",
     label: "Reports",
-    link: "/dashboard/reporting",
+    link: "/reporting",
   },
   {
     icon: <Camera size={16} />,
     color: "grape",
     label: "Camera",
-    link: "/dashboard/camera",
+    link: "/camera",
   },
 ];
 

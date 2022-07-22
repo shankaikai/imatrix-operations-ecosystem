@@ -87,3 +87,4 @@ func (s *Server) FindIncidentReports(query *pb.IncidentReportQuery, stream pb.In
 
 	return nil
 }
+

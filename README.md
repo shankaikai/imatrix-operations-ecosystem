@@ -13,12 +13,33 @@ Capstone Project
 ### Protocol Buffer Generation
 ```
 protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/operations_ecosys.proto
+
+protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/iot_prototype.proto
 ```
 #### Protocol Buffer Mock Class Generation
 ```
 mockgen capstone.operations_ecosystem/backend/proto AdminServicesClient > ../mock_proto/admin_grpc_mock.go
 mockgen capstone.operations_ecosystem/backend/proto BroadcastServicesClient > ../mock_proto/broadcast_grpc_mock.go
 mockgen capstone.operations_ecosystem/backend/proto RosterServicesClient > ../mock_proto/roster_grpc_mock.go
+```
+
+### Making HTTP work with GRPC
+1) Manually install http.proto and annotations.proto from https://github.com/googleapis/googleapis/blob/master/google/api to wherever your protoc include folder is
+--> Tip: find the location of a file that's already roughly in the same place (find / -type f -name timestamp.proto)
+2) Import google/api/annotations.proto, but not google/api/http.proto
+3) Install protoc-gen-go-grpc, NOT protoc-gen-go
+--> go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
+--> go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+4) Install grpc-gateway (https://github.com/grpc-ecosystem/grpc-gateway)
+--> go install \
+    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+    google.golang.org/protobuf/cmd/protoc-gen-go \
+    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+5) Generate the gateway protoc files and the go_grpc files
+```
+protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/http_webapp.proto
+protoc -I . --grpc-gateway_out=backend --grpc-gateway_opt=logtostderr=true --grpc-gateway_opt=paths=source_relative proto/http_webapp.proto
 ```
 
 ## Telegram Bot
@@ -30,12 +51,26 @@ pip3 install mypy-protobuf
 #### Generation
 With Type Checking
 ```
+python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/iot_prototype.proto
+
 python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/operations_ecosys.proto
 ```
 
 Without Type Checking
 ```
 python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --grpc_python_out=telebot/Protos proto/operations_ecosys.proto
+```
+
+## IoT Gate Prototype
+### Protocol Buffer Generation
+#### Install Type Checking Protobuf Library
+```
+pip3 install mypy-protobuf
+```
+#### Generation
+With Type Checking
+```
+python -m grpc_tools.protoc -I proto --python_out=iot_control/Proto --mypy_out=iot_control/Proto --grpc_python_out=iot_control/Proto --mypy_grpc_out=iot_control/Proto proto/iot_prototype.proto
 ```
 
 # Docker

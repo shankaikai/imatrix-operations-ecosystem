@@ -69,7 +69,7 @@ func TestGetUsersNoFilter(t *testing.T) {
 
 	mock.ExpectQuery("SELECT \\* FROM user").WillReturnRows(rows)
 
-	users, err := db_pck.GetUsers(db, query)
+	users, err := db_pck.GetUsers(db, query, false)
 
 	if err != nil {
 		t.Errorf("error was not expected while selecting users: %s", err)
@@ -114,7 +114,7 @@ func TestGetUsersIdFilter(t *testing.T) {
 
 	mock.ExpectQuery("SELECT \\* FROM user WHERE user_id = '1'.*LIMIT 7").WillReturnRows(rows)
 
-	users, err := db_pck.GetUsers(db, query)
+	users, err := db_pck.GetUsers(db, query, false)
 
 	if err != nil {
 		t.Errorf("error was not expected while selecting users: %s", err)
@@ -155,7 +155,7 @@ func TestGetUsersTeleHandleFilter(t *testing.T) {
 
 	mock.ExpectQuery("SELECT \\* FROM user WHERE telegram_handle = '1'.*LIMIT 1").WillReturnRows(rows)
 
-	users, err := db_pck.GetUsers(db, query)
+	users, err := db_pck.GetUsers(db, query, false)
 
 	if err != nil {
 		t.Errorf("error was not expected while selecting users: %s", err)
@@ -184,7 +184,7 @@ func TestUpdateUsersTeleChatId(t *testing.T) {
 
 	mock.ExpectExec("UPDATE user SET .*tele_chat_id='1'.*WHERE user_id = '1'").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	numRows, err := db_pck.UpdateUser(db, user)
+	numRows, err := db_pck.UpdateUser(db, user, &pb.UserQuery{})
 
 	if err != nil {
 		t.Errorf("error was not expected while updating users: %s", err)

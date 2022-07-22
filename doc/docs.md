@@ -3,51 +3,120 @@
 
 ## Table of Contents
 
-- [operations_ecosys.proto](#operations_ecosys-proto)
-    - [AIFSBroadcastRecipient](#operations_ecosys-AIFSBroadcastRecipient)
-    - [AIFSClientRoster](#operations_ecosys-AIFSClientRoster)
-    - [AvailabilityFilter](#operations_ecosys-AvailabilityFilter)
-    - [AvailabilityQuery](#operations_ecosys-AvailabilityQuery)
-    - [Broadcast](#operations_ecosys-Broadcast)
-    - [BroadcastFilter](#operations_ecosys-BroadcastFilter)
-    - [BroadcastQuery](#operations_ecosys-BroadcastQuery)
-    - [BroadcastRecipient](#operations_ecosys-BroadcastRecipient)
-    - [BroadcastResponse](#operations_ecosys-BroadcastResponse)
-    - [BulkRosters](#operations_ecosys-BulkRosters)
-    - [Client](#operations_ecosys-Client)
-    - [ClientFilter](#operations_ecosys-ClientFilter)
-    - [ClientQuery](#operations_ecosys-ClientQuery)
-    - [ClientResponse](#operations_ecosys-ClientResponse)
-    - [EmployeeEvaluation](#operations_ecosys-EmployeeEvaluation)
-    - [EmployeeEvaluationResponse](#operations_ecosys-EmployeeEvaluationResponse)
-    - [Filter](#operations_ecosys-Filter)
-    - [IncidentReport](#operations_ecosys-IncidentReport)
-    - [IncidentReportContent](#operations_ecosys-IncidentReportContent)
-    - [IncidentReportFilter](#operations_ecosys-IncidentReportFilter)
-    - [IncidentReportQuery](#operations_ecosys-IncidentReportQuery)
-    - [IncidentReportResponse](#operations_ecosys-IncidentReportResponse)
-    - [OrderByBroadcast](#operations_ecosys-OrderByBroadcast)
-    - [OrderByClient](#operations_ecosys-OrderByClient)
-    - [OrderByIncidentReport](#operations_ecosys-OrderByIncidentReport)
-    - [OrderByQuery](#operations_ecosys-OrderByQuery)
-    - [OrderByRoster](#operations_ecosys-OrderByRoster)
-    - [OrderByUser](#operations_ecosys-OrderByUser)
-    - [Response](#operations_ecosys-Response)
-    - [Roster](#operations_ecosys-Roster)
-    - [RosterAssignement](#operations_ecosys-RosterAssignement)
-    - [RosterAssignmentResponse](#operations_ecosys-RosterAssignmentResponse)
-    - [RosterFilter](#operations_ecosys-RosterFilter)
-    - [RosterQuery](#operations_ecosys-RosterQuery)
-    - [RosterResponse](#operations_ecosys-RosterResponse)
-    - [User](#operations_ecosys-User)
-    - [UserFilter](#operations_ecosys-UserFilter)
-    - [UserQuery](#operations_ecosys-UserQuery)
-    - [UsersResponse](#operations_ecosys-UsersResponse)
+- [http_webapp.proto](#http_webapp-proto)
+    - [HTTPFormMessage](#http_webapp-HTTPFormMessage)
+    - [HTTPMessage](#http_webapp-HTTPMessage)
+    - [HTTPRosterMessage](#http_webapp-HTTPRosterMessage)
+  
+    - [WebAppServices](#http_webapp-WebAppServices)
+  
+- [iot_prototype.proto](#iot_prototype-proto)
+    - [CpuTemp](#gate_prototype-CpuTemp)
+    - [CpuTempState](#gate_prototype-CpuTempState)
+    - [FireAlarm](#gate_prototype-FireAlarm)
+    - [FireAlarmState](#gate_prototype-FireAlarmState)
+    - [Gate](#gate_prototype-Gate)
+    - [GateState](#gate_prototype-GateState)
+  
+    - [FireAlarmState.AlarmState](#gate_prototype-FireAlarmState-AlarmState)
+    - [GateState.GatePosition](#gate_prototype-GateState-GatePosition)
+  
+    - [IotControlPrototypeService](#gate_prototype-IotControlPrototypeService)
+  
+- [Protocol Documentation](#protocol-documentation)
+  - [Table of Contents](#table-of-contents)
+  - [http_webapp.proto](#http_webappproto)
+    - [HTTPFormMessage](#httpformmessage)
+    - [HTTPMessage](#httpmessage)
+    - [HTTPRosterMessage](#httprostermessage)
+    - [WebAppServices](#webappservices)
+  - [iot_prototype.proto](#iot_prototypeproto)
+    - [CpuTemp](#cputemp)
+    - [CpuTempState](#cputempstate)
+    - [FireAlarm](#firealarm)
+    - [FireAlarmState](#firealarmstate)
+    - [Gate](#gate)
+    - [GateState](#gatestate)
+    - [FireAlarmState.AlarmState](#firealarmstatealarmstate)
+    - [GateState.GatePosition](#gatestategateposition)
+    - [IotControlPrototypeService](#iotcontrolprototypeservice)
+  - [operations_ecosys.proto](#operations_ecosysproto)
+    - [AIFSBroadcastRecipient](#aifsbroadcastrecipient)
+    - [AIFSClientRoster](#aifsclientroster)
+    - [AvailabilityFilter](#availabilityfilter)
+    - [AvailabilityQuery](#availabilityquery)
+    - [Broadcast](#broadcast)
+    - [BroadcastFilter](#broadcastfilter)
+    - [BroadcastQuery](#broadcastquery)
+    - [BroadcastRecipient](#broadcastrecipient)
+    - [BroadcastResponse](#broadcastresponse)
+    - [BulkRosters](#bulkrosters)
+    - [Camera](#camera)
+    - [CameraIot](#cameraiot)
+    - [CameraIotFilter](#cameraiotfilter)
+    - [CameraIotQuery](#cameraiotquery)
+    - [CameraIotResponse](#cameraiotresponse)
+    - [Client](#client)
+    - [ClientFilter](#clientfilter)
+    - [ClientQuery](#clientquery)
+    - [ClientResponse](#clientresponse)
+    - [EmployeeEvaluation](#employeeevaluation)
+    - [EmployeeEvaluationResponse](#employeeevaluationresponse)
+    - [Filter](#filter)
+    - [IncidentReport](#incidentreport)
+    - [IncidentReportContent](#incidentreportcontent)
+    - [IncidentReportFilter](#incidentreportfilter)
+    - [IncidentReportQuery](#incidentreportquery)
+    - [IncidentReportResponse](#incidentreportresponse)
+    - [InternalFullUser](#internalfulluser)
+    - [OrderByBroadcast](#orderbybroadcast)
+    - [OrderByCameraIot](#orderbycameraiot)
+    - [OrderByClient](#orderbyclient)
+    - [OrderByIncidentReport](#orderbyincidentreport)
+    - [OrderByQuery](#orderbyquery)
+    - [OrderByRoster](#orderbyroster)
+    - [OrderByUser](#orderbyuser)
+    - [Response](#response)
+    - [ResponseNonce](#responsenonce)
+    - [Roster](#roster)
+    - [RosterAssignement](#rosterassignement)
+    - [RosterAssignmentResponse](#rosterassignmentresponse)
+    - [RosterFilter](#rosterfilter)
+    - [RosterQuery](#rosterquery)
+    - [RosterResponse](#rosterresponse)
+    - [User](#user)
+    - [UserFilter](#userfilter)
+    - [UserQuery](#userquery)
+    - [UsersResponse](#usersresponse)
+    - [AvailabilityFilter.Field](#availabilityfilterfield)
+    - [Broadcast.BroadcastType](#broadcastbroadcasttype)
+    - [Broadcast.UrgencyType](#broadcasturgencytype)
+    - [BroadcastFilter.Field](#broadcastfilterfield)
+    - [CameraIot.MessageType](#cameraiotmessagetype)
+    - [CameraIotFilter.Field](#cameraiotfilterfield)
+    - [ClientFilter.Field](#clientfilterfield)
+    - [Filter.Comparisons](#filtercomparisons)
+    - [IncidentReport.ReportType](#incidentreportreporttype)
+    - [IncidentReportFilter.Field](#incidentreportfilterfield)
+    - [OrderBy](#orderby)
+    - [Response.Type](#responsetype)
+    - [Roster.Status](#rosterstatus)
+    - [RosterFilter.Field](#rosterfilterfield)
+    - [User.UserType](#userusertype)
+    - [UserFilter.Field](#userfilterfield)
+    - [AdminServices](#adminservices)
+    - [BroadcastServices](#broadcastservices)
+    - [CameraIotServices](#cameraiotservices)
+    - [IncidentReportServices](#incidentreportservices)
+    - [RosterServices](#rosterservices)
+  - [Scalar Value Types](#scalar-value-types)
   
     - [AvailabilityFilter.Field](#operations_ecosys-AvailabilityFilter-Field)
     - [Broadcast.BroadcastType](#operations_ecosys-Broadcast-BroadcastType)
     - [Broadcast.UrgencyType](#operations_ecosys-Broadcast-UrgencyType)
     - [BroadcastFilter.Field](#operations_ecosys-BroadcastFilter-Field)
+    - [CameraIot.MessageType](#operations_ecosys-CameraIot-MessageType)
+    - [CameraIotFilter.Field](#operations_ecosys-CameraIotFilter-Field)
     - [ClientFilter.Field](#operations_ecosys-ClientFilter-Field)
     - [Filter.Comparisons](#operations_ecosys-Filter-Comparisons)
     - [IncidentReport.ReportType](#operations_ecosys-IncidentReport-ReportType)
@@ -61,10 +130,234 @@
   
     - [AdminServices](#operations_ecosys-AdminServices)
     - [BroadcastServices](#operations_ecosys-BroadcastServices)
+    - [CameraIotServices](#operations_ecosys-CameraIotServices)
     - [IncidentReportServices](#operations_ecosys-IncidentReportServices)
     - [RosterServices](#operations_ecosys-RosterServices)
   
 - [Scalar Value Types](#scalar-value-types)
+
+
+
+<a name="http_webapp-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## http_webapp.proto
+
+
+
+<a name="http_webapp-HTTPFormMessage"></a>
+
+### HTTPFormMessage
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="http_webapp-HTTPMessage"></a>
+
+### HTTPMessage
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="http_webapp-HTTPRosterMessage"></a>
+
+### HTTPRosterMessage
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| roster_id | [int64](#int64) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="http_webapp-WebAppServices"></a>
+
+### WebAppServices
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetRosterAssignmentsForWebApp | [HTTPRosterMessage](#http_webapp-HTTPRosterMessage) | [HTTPMessage](#http_webapp-HTTPMessage) | &lt;&gt;&lt;&gt; Telegram WebApp - HTTP &lt;&gt;&lt;&gt; |
+| PostWReportFromWebApp | [.operations_ecosys.IncidentReport](#operations_ecosys-IncidentReport) | [HTTPMessage](#http_webapp-HTTPMessage) |  |
+
+ 
+
+
+
+<a name="iot_prototype-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## iot_prototype.proto
+
+
+
+<a name="gate_prototype-CpuTemp"></a>
+
+### CpuTemp
+The request message containing the fire alarm&#39;s id.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="gate_prototype-CpuTempState"></a>
+
+### CpuTempState
+The response message containing the state of the stepper
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [int64](#int64) |  |  |
+| temp | [double](#double) |  |  |
+
+
+
+
+
+
+<a name="gate_prototype-FireAlarm"></a>
+
+### FireAlarm
+The request message containing the fire alarm&#39;s id.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="gate_prototype-FireAlarmState"></a>
+
+### FireAlarmState
+The response message containing the state of the stepper
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [int64](#int64) |  |  |
+| state | [FireAlarmState.AlarmState](#gate_prototype-FireAlarmState-AlarmState) |  |  |
+
+
+
+
+
+
+<a name="gate_prototype-Gate"></a>
+
+### Gate
+The request message containing the stepper&#39;s name.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="gate_prototype-GateState"></a>
+
+### GateState
+The response message containing the state of the stepper
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [int64](#int64) |  |  |
+| state | [GateState.GatePosition](#gate_prototype-GateState-GatePosition) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="gate_prototype-FireAlarmState-AlarmState"></a>
+
+### FireAlarmState.AlarmState
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| OFF | 0 |  |
+| ON | 1 |  |
+| ERROR | 2 |  |
+
+
+
+<a name="gate_prototype-GateState-GatePosition"></a>
+
+### GateState.GatePosition
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CLOSED | 0 |  |
+| OPEN | 1 |  |
+| ERROR | 2 |  |
+| INITIAL | 3 |  |
+
+
+ 
+
+ 
+
+
+<a name="gate_prototype-IotControlPrototypeService"></a>
+
+### IotControlPrototypeService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetGateState | [Gate](#gate_prototype-Gate) | [GateState](#gate_prototype-GateState) stream | A server-to-client streaming RPC.
+
+Obtains the State of the Stepper. Results are streamed rather than returned at once (e.g. in a response message with a repeated field), as the Stepper&#39;s state will change after every action made by the Controller. |
+| SetGateState | [GateState](#gate_prototype-GateState) stream | [GateState](#gate_prototype-GateState) stream |  |
+| GetFireAlarmState | [FireAlarm](#gate_prototype-FireAlarm) | [FireAlarmState](#gate_prototype-FireAlarmState) stream |  |
+| GetCpuTemp | [CpuTemp](#gate_prototype-CpuTemp) | [CpuTempState](#gate_prototype-CpuTempState) stream |  |
+
+ 
 
 
 
@@ -254,6 +547,94 @@ Passing around multiple broadcasts in one message.
 
 
 
+<a name="operations_ecosys-Camera"></a>
+
+### Camera
+camera identifier
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| url | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-CameraIot"></a>
+
+### CameraIot
+Camera and Iot Monitoring and Controls
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| camera_iot_id | [int64](#int64) |  | The ID ties the request to a paricular location |
+| name | [string](#string) |  |  |
+| camera | [Camera](#operations_ecosys-Camera) |  | Devices |
+| gate | [gate_prototype.GateState](#gate_prototype-GateState) |  |  |
+| fire_alarm | [gate_prototype.FireAlarmState](#gate_prototype-FireAlarmState) |  |  |
+| cpu_temperature | [gate_prototype.CpuTempState](#gate_prototype-CpuTempState) |  |  |
+| type | [CameraIot.MessageType](#operations_ecosys-CameraIot-MessageType) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-CameraIotFilter"></a>
+
+### CameraIotFilter
+Filter the types of camera iot attributes to be returned.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [CameraIotFilter.Field](#operations_ecosys-CameraIotFilter-Field) |  |  |
+| comparisons | [Filter](#operations_ecosys-Filter) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-CameraIotQuery"></a>
+
+### CameraIotQuery
+Get specific types camera Iot attributes as specified in the Filter. 
+If one wants to get all objects, leave filters empty. 
+A default limit of 10 will be used if the field is empty.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| filters | [CameraIotFilter](#operations_ecosys-CameraIotFilter) | repeated |  |
+| limit | [int64](#int64) |  | Limit the number of objects being returned. If only 5 objects should be shown, limit = 5; |
+| skip | [int64](#int64) |  | Skip n rows from the database |
+| order_by | [OrderByCameraIot](#operations_ecosys-OrderByCameraIot) |  | Order the queries, by default the order is desc id |
+
+
+
+
+
+
+<a name="operations_ecosys-CameraIotResponse"></a>
+
+### CameraIotResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| response | [Response](#operations_ecosys-Response) |  |  |
+| camera_iot | [CameraIot](#operations_ecosys-CameraIot) |  |  |
+
+
+
+
+
+
 <a name="operations_ecosys-Client"></a>
 
 ### Client
@@ -349,7 +730,8 @@ A default limit of 10 will be used if the field is empty.
 <a name="operations_ecosys-EmployeeEvaluationResponse"></a>
 
 ### EmployeeEvaluationResponse
-ROSTERING EMPLOYEE EVALUATION MESSAGES                    *
+
+               ROSTERING EMPLOYEE EVALUATION MESSAGES                    *
 **************************************************************************
 
 
@@ -490,6 +872,24 @@ Passing around multiple reports in one message.
 
 
 
+<a name="operations_ecosys-InternalFullUser"></a>
+
+### InternalFullUser
+This message is only used by the internal server
+This should never be passed around
+It contains secrets such as nonce
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#operations_ecosys-User) |  |  |
+| nonce | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="operations_ecosys-OrderByBroadcast"></a>
 
 ### OrderByBroadcast
@@ -499,6 +899,22 @@ Passing around multiple reports in one message.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | field | [BroadcastFilter.Field](#operations_ecosys-BroadcastFilter-Field) |  |  |
+| order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-OrderByCameraIot"></a>
+
+### OrderByCameraIot
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [CameraIotFilter.Field](#operations_ecosys-CameraIotFilter-Field) |  |  |
 | order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
 
 
@@ -597,6 +1013,22 @@ Generic reponses to add or update requests
 | type | [Response.Type](#operations_ecosys-Response-Type) |  |  |
 | error_message | [string](#string) |  |  |
 | primary_key | [int64](#int64) |  | Return any pk of the row that the query modified |
+
+
+
+
+
+
+<a name="operations_ecosys-ResponseNonce"></a>
+
+### ResponseNonce
+Used to provide nonces
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| response | [Response](#operations_ecosys-Response) |  |  |
+| nonce | [string](#string) |  |  |
 
 
 
@@ -862,6 +1294,31 @@ More fields can be added in the future.
 
 
 
+<a name="operations_ecosys-CameraIot-MessageType"></a>
+
+### CameraIot.MessageType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| INITIAL | 0 |  |
+| CHANGE_GATE | 1 |  |
+| CHANGE_FIRE_ALARM | 2 |  |
+| CHANGE_CPU_TEMP | 3 |  |
+
+
+
+<a name="operations_ecosys-CameraIotFilter-Field"></a>
+
+### CameraIotFilter.Field
+More fields can be added in the future.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CAMERA_IOT_ID | 0 |  |
+
+
+
 <a name="operations_ecosys-ClientFilter-Field"></a>
 
 ### ClientFilter.Field
@@ -1012,6 +1469,7 @@ More fields can be added in the future.
 | PHONE_NUMBER | 4 |  |
 | TELEGRAM_HANDLE | 5 |  |
 | IS_PART_TIMER | 6 |  |
+| TELEGRAM_USER_ID | 7 |  |
 
 
  
@@ -1030,6 +1488,7 @@ More fields can be added in the future.
 | UpdateUser | [User](#operations_ecosys-User) | [Response](#operations_ecosys-Response) |  |
 | DeleteUser | [User](#operations_ecosys-User) | [Response](#operations_ecosys-Response) |  |
 | FindUsers | [UserQuery](#operations_ecosys-UserQuery) | [UsersResponse](#operations_ecosys-UsersResponse) stream | TODO change user response to have user scoring and stuff |
+| GetWANonce | [User](#operations_ecosys-User) | [ResponseNonce](#operations_ecosys-ResponseNonce) |  |
 | AddClient | [Client](#operations_ecosys-Client) | [Response](#operations_ecosys-Response) | Client |
 | UpdateClient | [Client](#operations_ecosys-Client) | [Response](#operations_ecosys-Response) |  |
 | DeleteClient | [Client](#operations_ecosys-Client) | [Response](#operations_ecosys-Response) |  |
@@ -1048,6 +1507,17 @@ More fields can be added in the future.
 | DeleteBroadcast | [Broadcast](#operations_ecosys-Broadcast) | [Response](#operations_ecosys-Response) |  |
 | FindBroadcasts | [BroadcastQuery](#operations_ecosys-BroadcastQuery) | [BroadcastResponse](#operations_ecosys-BroadcastResponse) stream |  |
 | UpdateBroadcastRecipient | [BroadcastRecipient](#operations_ecosys-BroadcastRecipient) | [Response](#operations_ecosys-Response) | Updating of broadcast recipients |
+
+
+<a name="operations_ecosys-CameraIotServices"></a>
+
+### CameraIotServices
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| SetGateState | [.gate_prototype.GateState](#gate_prototype-GateState) | [Response](#operations_ecosys-Response) |  |
+| GetIotState | [.google.protobuf.Empty](#google-protobuf-Empty) | [CameraIotResponse](#operations_ecosys-CameraIotResponse) stream | Continuously provides the states of the gates, fire alarms and cpu temperature as well as the camera endpoints. Responses are sent only when there is a change in state Upon connection, all states are sent for all locations are sent. |
 
 
 <a name="operations_ecosys-IncidentReportServices"></a>

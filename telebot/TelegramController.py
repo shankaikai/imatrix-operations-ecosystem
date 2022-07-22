@@ -1,27 +1,32 @@
 from __future__ import annotations
-import contextvars
-# from turtle import update
-from setuptools import Command
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update
 from telegram.ext import CallbackContext
-from telegram.ext import Updater
-from telegram.ext import CommandHandler
-from telegram.ext import MessageHandler, Filters
+from telegram.ext import Updater, Dispatcher
+
 from telegram.files.photosize import PhotoSize
 from telegram import File as tFile
 
-from Admin import users
+from typing import List
+from abc import ABC, abstractclassmethod, abstractmethod
+
+from subscriptions import subscription_message
+from administration import user
 
 import os.path
 import time
 
+from Protos import operations_ecosys_pb2
+
+CMD_IDENTIFIER = "‎" 
+
 class TelegramController:
-    def __init__(self, updater, dispatcher):
-        self.updated = updater
-        self.dispatcher = dispatcher
+    def __init__(self, updater:Updater, dispatcher:Dispatcher):
+        self.updater:Updater = updater
+        self.dispatcher:Dispatcher = dispatcher
         self.RootMenu:TelegramMenu = None
         self.Menus:list[TelegramMenu]= []
         self.CurrentMenu:TelegramMenu = None
+        self.user:operations_ecosys_pb2.User = None
     def buildMenuTree(self, rootMenu:TelegramMenu):
         if self.Menus == None or len(self.Menus) == 0:
             print("Unable to build tree as no menus are given.")
@@ -48,36 +53,42 @@ class TelegramController:
     # Handlers that need to be attached directly to Tele Bot
     def mainHandler(self, update: Update, context: CallbackContext):
         text:str = update.message.text
-        if self.CurrentMenu.IsExpectingRawText:
-            self.CurrentMenu.textHandler(update, context)
-        else:
+        print(text)
+        if len(text) > 1 and text[0] == CMD_IDENTIFIER and text[1] != CMD_IDENTIFIER:
+            text = text[1:]
             if text == "Back" or text == "Cancel":
-                self.backHandler(update, context)
+                self.CurrentMenu.backHandler(update, context)
                 return
-            for menu in self.Menus:
+            for menu in self.CurrentMenu.children:
                 if text in menu.triggerWords:
                     self.CurrentMenu = menu
                     menu.handler(update, context)
                     break
             self.catchAllHandler(update, context)
-    def startHandler(self, update: Update, context: CallbackContext):
-        # Save chat id
-        saved_chat_id = users.updateUserChatId(update.effective_chat.username, update.effective_chat.id)
-        if saved_chat_id:
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
-            self.RootMenu.handler(update, context)
         else:
+            self.CurrentMenu.textHandler(update, context)
+    def startHandler(self, update: Update, context: CallbackContext):
+        logged_in_user = user.login(update.effective_chat.username, update.effective_chat.id)
+        if logged_in_user == None:
             context.bot.send_message(chat_id=update.effective_chat.id, text="You are not authorised to use this bot. Please contact your administator if you believe otherwise.")
+        else:
+            self.user = logged_in_user
+            context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
+            self.CurrentMenu = self.RootMenu
+            self.RootMenu.handler(update, context)
         
     def attachmentHandler(self, update:Update, context:CallbackContext):
         self.CurrentMenu.attachmentHandler(update, context)
         pass
+    # This handler is for in-line button presses
+    def callbackqueryHandler(self, update:Update, context:CallbackContext):
+        strData = update.callback_query.data
+        callback_type = strData.split(":")[0]
+        if callback_type == subscription_message.IDENTIFIER:
+            subscription_message.callbackqueryHandler(update, context)
+        pass
     # Other handlers
     def backHandler(self, update:Update, context:CallbackContext):
-        #Just for safety
-        if self.CurrentMenu.IsExpectingRawText:
-            self.CurrentMenu.IsExpectingRawText = False
-            print("Check if this was intended.")
         if(self.CurrentMenu.parent == None):
             return
         else:
@@ -87,20 +98,22 @@ class TelegramController:
     def catchAllHandler(self, update: Update, context: CallbackContext):
         pass
 
-class TelegramMenu:
+class TelegramMenu(ABC):
     def __init__(self, parent = None, name = "", triggerWords = []):
-        self.parent = parent
-        self.children = []
-        self.name = name
-        self.triggerWords = triggerWords
+        self.parent:TelegramMenu = parent
+        self.children:List[TelegramMenu] = []
+        self.name:str = name
+        self.triggerWords:List[str] = triggerWords
         self.TController:TelegramController = None
-        self.IsExpectingRawText = False
+    @abstractmethod
     def handler(self, update:Update, context:CallbackContext):
-        print(self.name + "'s handler is not implemented.")
         pass
     def textHandler(self, update:Update, context:CallbackContext):
-        print(self.name + "'s text handler is not implemented.")
         pass
     def attachmentHandler(self, update:Update, context:CallbackContext):
-        print(self.name + "'s attachment handler is ont implemented.")
+        pass
+    # Default backhandle - overwrite to change default behaviour
+    # Note: To back up one level, always call TController
+    def backHandler(self, update:Update, context:CallbackContext):
+        self.TController.backHandler(update, context)
         pass

@@ -20,6 +20,8 @@ type Server struct {
 	pb.BroadcastServicesServer
 	pb.RosterServicesServer
 	pb.IncidentReportServicesServer
+	pb.CameraIotServicesServer
+	pb.WebAppServicesServer
 
 	db     *sql.DB
 	dbLock *sync.Mutex
@@ -31,24 +33,42 @@ type Server struct {
 	testLEDAddr *string
 
 	Config *ServerConfig
+
+	CameraIot *CameraIotStruct
 }
 
 type ServerConfig struct {
 	Aifs1Id int `json:"AIFS1_USER_ID"`
 	Aifs2Id int `json:"AIFS2_USER_ID"`
 	Aifs3Id int `json:"AIFS3_USER_ID"`
+
+	ThingsboardUrl                  string `json:"THINGSBOARD_URL"`
+	ThingsboardAuthRelUrl           string `json:"THINGSBOARD_AUTH_RELATIVE_URL"`
+	ThingsboardGetDeviceStateRelUrl string `json:"THINGSBOARD_GET_DEVICE_STATE_RELATIVE_URL"`
+	ThingsboardSetDeviceStateRelUrl string `json:"THINGSBOARD_SET_DEVICE_STATE_RELATIVE_URL"`
 }
 
-func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int, testLEDAddr *string) {
+func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int,
+	testLEDAddr *string, webProxyAddr *string, webProxyPort *int) {
 	fmt.Println("Starting gRPC server...")
 	server := Server{
 		dbLock:         &sync.Mutex{},
 		teleServerAddr: teleServerAddr,
 		teleServerPort: teleServerPort,
 		testLEDAddr:    testLEDAddr,
+		CameraIot: &CameraIotStruct{
+			GateSubscriptions:      make(map[int64]map[string]chan *pb.CameraIot),
+			FireAlarmSubscriptions: make(map[int64]map[string]chan *pb.CameraIot),
+			CpuTempSubscriptions:   make(map[int64]map[string]chan *pb.CameraIot),
+			GateStates:             make(map[int64]pb.GateState_GatePosition),
+			FireAlarmStates:        make(map[int64]pb.FireAlarmState_AlarmState),
+			CpuTempStates:          make(map[int64]float64),
+		},
 	}
+
 	server.db = db_pck.GetDB()
 	server.getServerConfigs()
+	server.getThingsBoardCreds()
 
 	if server.db == nil {
 		log.Fatalf("InitServer: Failed to connect to DB")
@@ -65,7 +85,12 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 	pb.RegisterBroadcastServicesServer(grpcServer, &server)
 	pb.RegisterRosterServicesServer(grpcServer, &server)
 	pb.RegisterIncidentReportServicesServer(grpcServer, &server)
+	pb.RegisterCameraIotServicesServer(grpcServer, &server)
+	pb.RegisterWebAppServicesServer(grpcServer, &server)
 
+	server.initCameraIotService()
+
+	go Proxy_main(serverAddr, serverPort, webProxyAddr, webProxyPort)
 	grpcServer.Serve(lis)
 }
 
