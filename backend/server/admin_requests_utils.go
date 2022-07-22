@@ -18,7 +18,7 @@ const (
 	TOKEN_EXPIRY_DURATION = time.Hour * 24
 
 	// Cryptographic string lengths
-	SECURITY_STRING_LENGTH = 128
+	SECURITY_STRING_LENGTH = 64
 	TOKEN_STRING_LENGTH    = 128
 )
 

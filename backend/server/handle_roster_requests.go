@@ -11,6 +11,7 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
+// gRPC defined endpoint. Add a roster to the DB.
 func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -47,6 +48,7 @@ func (s *Server) AddRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Re
 	return res, nil
 }
 
+// gRPC defined endpoint. Update multiple rosters in the DB.
 func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -71,6 +73,7 @@ func (s *Server) UpdateRoster(cxt context.Context, rosters *pb.BulkRosters) (*pb
 	return &res, nil
 }
 
+// gRPC defined endpoint. Delete a roster in the DB.
 func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -90,6 +93,7 @@ func (s *Server) DeleteRoster(cxt context.Context, roster *pb.Roster) (*pb.Respo
 	return &res, nil
 }
 
+// gRPC defined endpoint. Find rosters in the DB. The rosters are filtered out based the query.
 func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_FindRostersServer) error {
 	defer sentry.Recover()
 
@@ -151,6 +155,7 @@ func (s *Server) FindRosters(query *pb.RosterQuery, stream pb.RosterServices_Fin
 	return nil
 }
 
+// gRPC defined endpoint.
 // Send back all the available users that are not yet assigned for the particular day
 func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.RosterServices_GetAvailableUsersServer) error {
 	defer sentry.Recover()
@@ -200,6 +205,8 @@ func (s *Server) GetAvailableUsers(query *pb.AvailabilityQuery, stream pb.Roster
 	return nil
 }
 
+// gRPC defined endpoint. Update a particular roster assignment in the DB.
+// This is mostly used to save an acknowledgement or a rejection of a roster assignment.
 func (s *Server) UpdateRosterAssignment(cxt context.Context, RosterAssignement *pb.RosterAssignement) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -222,6 +229,7 @@ func (s *Server) UpdateRosterAssignment(cxt context.Context, RosterAssignement *
 	return &res, nil
 }
 
+// gRPC defined endpoint. Find roster assignments in the DB. The roster assignments are filtered out based the query.
 func (s *Server) FindRosterAssignments(query *pb.RosterQuery, stream pb.RosterServices_FindRosterAssignmentsServer) error {
 	defer sentry.Recover()
 

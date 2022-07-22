@@ -38,6 +38,7 @@ func BinarySearch(list []int, left int, right int, key int) (bool, int) {
 	}
 }
 
+// Sends a HTTP GET request with a JWT token in the header
 func HttpGetWithJWT(url, jwt string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: time.Second * 10,
@@ -58,6 +59,7 @@ func HttpGetWithJWT(url, jwt string) (*http.Response, error) {
 	return response, nil
 }
 
+// Sends a HTTP POST request with a JWT token in the header
 func HttpPostWithJWT(url, jwt string, body string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: time.Second * 10,

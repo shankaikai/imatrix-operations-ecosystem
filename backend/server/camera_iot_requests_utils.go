@@ -29,16 +29,17 @@ const (
 	JWT_TOKEN_REFRESH_FREQUENCY = 1*time.Hour + 30*time.Minute
 
 	// Values expected from thingsboard
-	GATE_SHARED_ATTRIBUTE_KEY = "request"
-	GATE_REQUST_OPEN_KEYWORD   = "open"
+	GATE_SHARED_ATTRIBUTE_KEY   = "request"
+	GATE_REQUST_OPEN_KEYWORD    = "open"
 	GATE_REQUEST_CLOSED_KEYWORD = "close"
-	GATE_STATUS_OPEN_KEYWORD = "true"
-	GATE_STATUS_CLOSED_KEYWORD = "false"
+	GATE_STATUS_OPEN_KEYWORD    = "true"
+	GATE_STATUS_CLOSED_KEYWORD  = "false"
 
 	FIRE_ALARM_OFF_KEYWORD = "off"
 	FIRE_ALARM_ON_KEYWORD  = "on"
 )
 
+// Used to store information about the IoT devices and their states.
 type CameraIotStruct struct {
 	// IoT Subscribers
 	// Key: CameraIotId, Val: map[unique Id from Thread] channel
@@ -63,6 +64,10 @@ type CameraIotStruct struct {
 	CpuTempStates   map[int64]float64
 }
 
+// Initialise the camera and Iot service.
+// This function will try to authenticate with Thingsboard first
+// to get a JWT token. If it is succesfully, it start new goroutines
+// to poll the states of all IoT devices periodically.
 func (s *Server) initCameraIotService() error {
 	// Set JWT token once
 	err := s.refreshJwTToken()
@@ -100,7 +105,7 @@ func (s *Server) refreshJwTToken() error {
 	return nil
 }
 
-// Start go routines to all
+// Start go routines to all polls
 func (s *Server) startAllIoTPolls() error {
 	cameraIotAttributes, err := db_pck.GetCameraIotDetails(s.db, &pb.CameraIotQuery{})
 	if err != nil {
