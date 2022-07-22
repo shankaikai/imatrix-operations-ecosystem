@@ -114,11 +114,18 @@ export function getCameraFeeds(setCameras: Dispatch<CameraIot.AsObject[]>) {
   });
 }
 
-export function openGateSwitch(id: number) {
+export function activateGateSwitch(
+  id: number,
+  gateStatus: GateState.GatePosition
+) {
   const client = getCameraIotClient();
 
   const gateState = new GateState();
-  gateState.setState(GateState.GatePosition.OPEN);
+
+  gateStatus === GateState.GatePosition.CLOSED
+    ? gateState.setState(GateState.GatePosition.OPEN)
+    : gateState.setState(GateState.GatePosition.CLOSED);
+
   gateState.setId(id);
 
   client
