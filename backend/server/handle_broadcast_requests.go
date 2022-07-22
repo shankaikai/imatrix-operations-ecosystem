@@ -20,7 +20,7 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 	s.getDefaultBroadcastFields(broadcast)
 	// Add creation datetime
 	broadcast.CreationDate = timestamppb.Now()
-	// TODO: define deadline
+	// Set a deadline, currently not in use
 	broadcast.Deadline = timestamppb.Now()
 
 	pk, err := db_pck.InsertBroadcast(

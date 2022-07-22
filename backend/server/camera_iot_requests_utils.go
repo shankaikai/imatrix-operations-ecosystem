@@ -19,10 +19,14 @@ import (
 )
 
 const (
-	// IOT_POLLING_FREQUENCY = 10 * time.Second
+	// Frequency at which to update the server's state of the IoT devices
+	// at each client.
 	IOT_POLLING_FREQUENCY             = 10 * time.Second
 	GATE_CONSISTENCY_UPDATE_FREQUENCY = 5 * time.Second
-	JWT_TOKEN_REFRESH_FREQUENCY       = 1*time.Hour + 30*time.Minute
+
+	// Frequency at which the server's Thingsboard JWT Token should be
+	// refreshed
+	JWT_TOKEN_REFRESH_FREQUENCY = 1*time.Hour + 30*time.Minute
 
 	// Values expected from thingsboard
 	GATE_OPEN_KEYWORD   = "open"
