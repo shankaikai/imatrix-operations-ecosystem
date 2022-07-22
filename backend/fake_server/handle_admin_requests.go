@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
+func (s *Server) AddUser(cxt context.Context, user *pb.FullUser) (*pb.Response, error) {
 	fmt.Println("AddUser")
 	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 	return &res, nil

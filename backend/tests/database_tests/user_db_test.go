@@ -24,7 +24,7 @@ const (
 // Successful Test
 func TestInsertUser(t *testing.T) {
 	user := createFakeUser(1)
-
+	fullUser := &pb.FullUser{User: user, HashedPassword: "hashedpassword", SecurityString: "fdsfdfds"}
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error '%s' was not expected when opening a stub database connection", err)
@@ -33,7 +33,7 @@ func TestInsertUser(t *testing.T) {
 
 	mock.ExpectExec("INSERT INTO user").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	pk, err := db_pck.InsertUser(db, user, &sync.Mutex{})
+	pk, err := db_pck.InsertUser(db, fullUser, &sync.Mutex{})
 
 	if err != nil {
 		t.Errorf("error was not expected while inserting user: %s", err)

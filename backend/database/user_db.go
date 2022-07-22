@@ -12,8 +12,8 @@ import (
 
 // Insert a new user into the database table.
 // Returns the primary key of the user from the database or any errors.
-func InsertUser(db *sql.DB, user *pb.User, dbLock *sync.Mutex) (int64, error) {
-	fmt.Println("Inserting User", user.Name)
+func InsertUser(db *sql.DB, user *pb.FullUser, dbLock *sync.Mutex) (int64, error) {
+	fmt.Println("Inserting User", user.User.Name)
 
 	fields := getUserTableFields()
 	values := orderUserFields(user)
@@ -26,9 +26,9 @@ func InsertUser(db *sql.DB, user *pb.User, dbLock *sync.Mutex) (int64, error) {
 // Returns an array of users or errors if any.
 // Note: removeSecret removes the nonce from the Users returned
 // 			This should always be false unless there is a good reason.
-func GetUsers(db *sql.DB, query *pb.UserQuery, removeSecrets bool) ([]*pb.InternalFullUser, error) {
+func GetUsers(db *sql.DB, query *pb.UserQuery, removeSecrets bool) ([]*pb.FullUser, error) {
 	fmt.Println("Getting Users...")
-	users := make([]*pb.InternalFullUser, 0)
+	users := make([]*pb.FullUser, 0)
 
 	fields := ALL_COLS
 
@@ -45,7 +45,7 @@ func GetUsers(db *sql.DB, query *pb.UserQuery, removeSecrets bool) ([]*pb.Intern
 		// convert query rows into users
 		for userRows.Next() {
 			var user pb.User
-			var internalFullUser pb.InternalFullUser
+			var internalFullUser pb.FullUser
 			// Get the string user type and convert it to an enum later.
 			userType := ""
 

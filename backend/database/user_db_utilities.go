@@ -44,6 +44,8 @@ func getUserTableFields() string {
 		USER_DB_IMG,
 		USER_DB_PART_TIMER,
 		USER_DB_TELE_CHAT_ID,
+		USER_DB_SECURITY_STRING,
+		USER_DB_HASHED_PASSWORD,
 	}
 
 	return strings.Join(userTableFields, ",")
@@ -53,17 +55,19 @@ func getUserTableFields() string {
 // order given in getUserTableFields.
 // Returns the values of the user fields in the
 // order that is specified in getUserTableFields
-func orderUserFields(user *pb.User) string {
+func orderUserFields(fullUser *pb.FullUser) string {
 	output := ""
 
-	output += "'" + getUserDBTypeStringFromProto(user.UserType) + "'" + ", "
-	output += "'" + user.Name + "'" + ", "
-	output += "'" + user.Email + "'" + ", "
-	output += "'" + user.PhoneNumber + "'" + ", "
-	output += "'" + user.TelegramHandle + "'" + ", "
-	output += "'" + user.UserSecurityImg + "'" + ", "
-	output += strconv.FormatBool(user.IsPartTimer) + ", "
-	output += "'" + strconv.Itoa(int(user.TeleChatId)) + "'"
+	output += "'" + getUserDBTypeStringFromProto(fullUser.User.UserType) + "'" + ", "
+	output += "'" + fullUser.User.Name + "'" + ", "
+	output += "'" + fullUser.User.Email + "'" + ", "
+	output += "'" + fullUser.User.PhoneNumber + "'" + ", "
+	output += "'" + fullUser.User.TelegramHandle + "'" + ", "
+	output += "'" + fullUser.User.UserSecurityImg + "'" + ", "
+	output += strconv.FormatBool(fullUser.User.IsPartTimer) + ", "
+	output += "'" + strconv.Itoa(int(fullUser.User.TeleChatId)) + "'" + ", "
+	output += "'" + fullUser.SecurityString + "'" + ", "
+	output += "'" + fullUser.HashedPassword + "'"
 	return output
 }
 
@@ -258,13 +262,13 @@ func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
 
 // Get the full user corresponding to a particular user telegram id in the db
 // TODO: userFilterToDBCol CHANGE THIS WHEN FIGURE OUT TELE USER ID
-func IdUserByTelegramId(db *sql.DB, teleUserId int, removeSecret bool) (*pb.InternalFullUser, error) {
+func IdUserByTelegramId(db *sql.DB, teleUserId int, removeSecret bool) (*pb.FullUser, error) {
 	userQuery := &pb.UserQuery{Limit: 1}
 	AddUserFilter(userQuery, pb.UserFilter_TELEGRAM_USER_ID, pb.Filter_EQUAL, strconv.Itoa(teleUserId))
 
 	users, err := GetUsers(db, userQuery, removeSecret)
 
-	user := &pb.InternalFullUser{}
+	user := &pb.FullUser{}
 
 	if err == nil && len(users) > 0 {
 		user = users[0]
