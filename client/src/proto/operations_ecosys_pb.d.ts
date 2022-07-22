@@ -3,7 +3,6 @@ import * as jspb from 'google-protobuf'
 import * as iot_prototype_pb from './iot_prototype_pb';
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 import * as google_protobuf_empty_pb from 'google-protobuf/google/protobuf/empty_pb';
-import * as google_api_annotations_pb from './google/api/annotations_pb';
 
 
 export class User extends jspb.Message {
@@ -120,6 +119,7 @@ export namespace UserFilter {
     PHONE_NUMBER = 4,
     TELEGRAM_HANDLE = 5,
     IS_PART_TIMER = 6,
+    TELEGRAM_USER_ID = 7,
   }
 }
 
@@ -176,6 +176,38 @@ export namespace OrderByUser {
   export type AsObject = {
     field: UserFilter.Field,
     orderBy: OrderBy,
+  }
+}
+
+export class FullUser extends jspb.Message {
+  getUser(): User | undefined;
+  setUser(value?: User): FullUser;
+  hasUser(): boolean;
+  clearUser(): FullUser;
+
+  getNonce(): string;
+  setNonce(value: string): FullUser;
+
+  getSecurityString(): string;
+  setSecurityString(value: string): FullUser;
+
+  getHashedPassword(): string;
+  setHashedPassword(value: string): FullUser;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): FullUser.AsObject;
+  static toObject(includeInstance: boolean, msg: FullUser): FullUser.AsObject;
+  static serializeBinaryToWriter(message: FullUser, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): FullUser;
+  static deserializeBinaryFromReader(message: FullUser, reader: jspb.BinaryReader): FullUser;
+}
+
+export namespace FullUser {
+  export type AsObject = {
+    user?: User.AsObject,
+    nonce: string,
+    securityString: string,
+    hashedPassword: string,
   }
 }
 
@@ -331,6 +363,175 @@ export namespace OrderByClient {
   }
 }
 
+export class UserToken extends jspb.Message {
+  getUserTokenId(): number;
+  setUserTokenId(value: number): UserToken;
+
+  getUser(): User | undefined;
+  setUser(value?: User): UserToken;
+  hasUser(): boolean;
+  clearUser(): UserToken;
+
+  getToken(): string;
+  setToken(value: string): UserToken;
+
+  getCreationDatetime(): string;
+  setCreationDatetime(value: string): UserToken;
+
+  getExpiryDatetime(): string;
+  setExpiryDatetime(value: string): UserToken;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserToken.AsObject;
+  static toObject(includeInstance: boolean, msg: UserToken): UserToken.AsObject;
+  static serializeBinaryToWriter(message: UserToken, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserToken;
+  static deserializeBinaryFromReader(message: UserToken, reader: jspb.BinaryReader): UserToken;
+}
+
+export namespace UserToken {
+  export type AsObject = {
+    userTokenId: number,
+    user?: User.AsObject,
+    token: string,
+    creationDatetime: string,
+    expiryDatetime: string,
+  }
+}
+
+export class UserTokenResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): UserTokenResponse;
+  hasResponse(): boolean;
+  clearResponse(): UserTokenResponse;
+
+  getUsertoken(): UserToken | undefined;
+  setUsertoken(value?: UserToken): UserTokenResponse;
+  hasUsertoken(): boolean;
+  clearUsertoken(): UserTokenResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserTokenResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UserTokenResponse): UserTokenResponse.AsObject;
+  static serializeBinaryToWriter(message: UserTokenResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserTokenResponse;
+  static deserializeBinaryFromReader(message: UserTokenResponse, reader: jspb.BinaryReader): UserTokenResponse;
+}
+
+export namespace UserTokenResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    usertoken?: UserToken.AsObject,
+  }
+}
+
+export class UserTokenFilter extends jspb.Message {
+  getField(): UserTokenFilter.Field;
+  setField(value: UserTokenFilter.Field): UserTokenFilter;
+
+  getComparisons(): Filter | undefined;
+  setComparisons(value?: Filter): UserTokenFilter;
+  hasComparisons(): boolean;
+  clearComparisons(): UserTokenFilter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserTokenFilter.AsObject;
+  static toObject(includeInstance: boolean, msg: UserTokenFilter): UserTokenFilter.AsObject;
+  static serializeBinaryToWriter(message: UserTokenFilter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserTokenFilter;
+  static deserializeBinaryFromReader(message: UserTokenFilter, reader: jspb.BinaryReader): UserTokenFilter;
+}
+
+export namespace UserTokenFilter {
+  export type AsObject = {
+    field: UserTokenFilter.Field,
+    comparisons?: Filter.AsObject,
+  }
+
+  export enum Field { 
+    USER_ID = 0,
+    EXPIRY = 1,
+  }
+}
+
+export class UserTokenQuery extends jspb.Message {
+  getFiltersList(): Array<UserTokenFilter>;
+  setFiltersList(value: Array<UserTokenFilter>): UserTokenQuery;
+  clearFiltersList(): UserTokenQuery;
+  addFilters(value?: UserTokenFilter, index?: number): UserTokenFilter;
+
+  getLimit(): number;
+  setLimit(value: number): UserTokenQuery;
+
+  getSkip(): number;
+  setSkip(value: number): UserTokenQuery;
+
+  getOrderBy(): OrderByUserToken | undefined;
+  setOrderBy(value?: OrderByUserToken): UserTokenQuery;
+  hasOrderBy(): boolean;
+  clearOrderBy(): UserTokenQuery;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserTokenQuery.AsObject;
+  static toObject(includeInstance: boolean, msg: UserTokenQuery): UserTokenQuery.AsObject;
+  static serializeBinaryToWriter(message: UserTokenQuery, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserTokenQuery;
+  static deserializeBinaryFromReader(message: UserTokenQuery, reader: jspb.BinaryReader): UserTokenQuery;
+}
+
+export namespace UserTokenQuery {
+  export type AsObject = {
+    filtersList: Array<UserTokenFilter.AsObject>,
+    limit: number,
+    skip: number,
+    orderBy?: OrderByUserToken.AsObject,
+  }
+}
+
+export class OrderByUserToken extends jspb.Message {
+  getField(): UserTokenFilter.Field;
+  setField(value: UserTokenFilter.Field): OrderByUserToken;
+
+  getOrderBy(): OrderBy;
+  setOrderBy(value: OrderBy): OrderByUserToken;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OrderByUserToken.AsObject;
+  static toObject(includeInstance: boolean, msg: OrderByUserToken): OrderByUserToken.AsObject;
+  static serializeBinaryToWriter(message: OrderByUserToken, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OrderByUserToken;
+  static deserializeBinaryFromReader(message: OrderByUserToken, reader: jspb.BinaryReader): OrderByUserToken;
+}
+
+export namespace OrderByUserToken {
+  export type AsObject = {
+    field: UserTokenFilter.Field,
+    orderBy: OrderBy,
+  }
+}
+
+export class LoginRequest extends jspb.Message {
+  getUserEmail(): string;
+  setUserEmail(value: string): LoginRequest;
+
+  getHashedPassword(): string;
+  setHashedPassword(value: string): LoginRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LoginRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: LoginRequest): LoginRequest.AsObject;
+  static serializeBinaryToWriter(message: LoginRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LoginRequest;
+  static deserializeBinaryFromReader(message: LoginRequest, reader: jspb.BinaryReader): LoginRequest;
+}
+
+export namespace LoginRequest {
+  export type AsObject = {
+    userEmail: string,
+    hashedPassword: string,
+  }
+}
+
 export class ResponseNonce extends jspb.Message {
   getResponse(): Response | undefined;
   setResponse(value?: Response): ResponseNonce;
@@ -352,6 +553,30 @@ export namespace ResponseNonce {
   export type AsObject = {
     response?: Response.AsObject,
     nonce: string,
+  }
+}
+
+export class SecurityStringResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): SecurityStringResponse;
+  hasResponse(): boolean;
+  clearResponse(): SecurityStringResponse;
+
+  getSecurityString(): string;
+  setSecurityString(value: string): SecurityStringResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SecurityStringResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SecurityStringResponse): SecurityStringResponse.AsObject;
+  static serializeBinaryToWriter(message: SecurityStringResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SecurityStringResponse;
+  static deserializeBinaryFromReader(message: SecurityStringResponse, reader: jspb.BinaryReader): SecurityStringResponse;
+}
+
+export namespace SecurityStringResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    securityString: string,
   }
 }
 

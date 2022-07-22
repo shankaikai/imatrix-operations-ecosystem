@@ -1,7 +1,7 @@
 import { AppShell, ScrollArea, useMantineColorScheme } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
-import { isLoggedIn } from "../../helpers/userService";
+import { isLoggedIn } from "../../helpers/useUserProvider";
 import MainHeader from "./MainHeader";
 import Sidebar from "./Sidebar/Sidebar";
 

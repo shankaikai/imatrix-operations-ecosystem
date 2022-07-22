@@ -30,279 +30,30 @@ import {
   showRosterUpdateSuccessNotification,
 } from "./notifications";
 
-interface OnboardingContextInterface {
-  onboardingForm:OnboardingForm
+enum UserType {
+  ISPECIALIST,
+  SECURITY_GUARD,
+  CONTROLLER,
+  MANAGER,
 }
-
 interface OnboardingForm {
-
-}
-const OnboardingContext = createContext<OnboardingContextInterface>({
-  onboardFields: {},
-  offset: 0,
-  rosterBaskets: [],
-  guardsAssigned: {},
-  publishDisabled: false,
-});
-
-interface RosteringProviderProps {
-  children: JSX.Element | JSX.Element[];
+  user_type: UserType;
+  name: string;
+  email: string;
+  phone_number: string;
+  telegram_handle: string;
+  user_security_img: string;
+  is_part_timer: boolean;
+  security_string: string;
+  hashed_password: string;
 }
 
-export interface RosteringGuardsList {
-  [key: string]: EmployeeEvaluation.AsObject[][];
+export function submitOnboardingForm(onboadingForm: OnboardingForm) {
+  const client = getOnboardingClient();
+
+  //todo
 }
 
-const formatSelectedDateForBackend = (date: Date, isStart: boolean) => {
-  if (isStart) {
-    return dayjs(date).format("YYYY-MM-DD 18:00:00");
-  } else {
-    return dayjs(date).format("YYYY-MM-DD 06:00:00");
-  }
-};
-
-const formatSelectedDateForState = (date: Date) => {
-  return dayjs(date).format("YYYY-MM-DD");
-};
-
-export function RosteringProvider({ children }: RosteringProviderProps) {
-  const [rosterDates, setRosterDates] = useState<Date[]>([]);
-  const [offset, setOffset] = useState<number>(0);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [rosterBaskets, setRosterBaskets] = useState<Roster.AsObject[]>([]);
-  const [guardsAssigned, setGuardsAssigned] = useState<RosteringGuardsList>({});
-  const [publishDisabled, setPublishDisabled] = useState<boolean>(false);
-
-  // Update the dates for the date bar from Tues to Sun
-  const updateRosterDates = () => {
-    const dates = getRosterDates(offset);
-    setRosterDates(dates);
-  };
-
-  const resetStates = (date: string) => {
-    setRosterBaskets(() => []);
-
-    let guardsAssignedCopy = _.cloneDeep(guardsAssigned);
-    guardsAssignedCopy[date] = [[]];
-    setGuardsAssigned(guardsAssignedCopy);
-  };
-
-  // Get basket data
-  const updateRosterBaskets = () => {
-    console.log("updateRosterBaskets called");
-
-    const client = getRosterClient();
-    const filter = new RosterFilter();
-    filter.setField(RosterFilter.Field.START_TIME);
-    const filterDate = new Filter();
-    filterDate.setValue(formatSelectedDateForBackend(selectedDate, true));
-    filterDate.setComparison(Filter.Comparisons.EQUAL);
-    filter.setComparisons(filterDate);
-    const query = new RosterQuery();
-    query.addFilters(filter);
-
-    const stream = client.findRosters(query);
-
-    stream.on("data", (response: RosterResponse) => {
-      console.log(response.toObject());
-      const responseRoster = response.getRoster()?.toObject();
-      const responseAssignedGuard = response
-        .getRoster()
-        ?.getGuardAssignedList()[0]
-        .getGuardAssigned()
-        ?.toObject();
-
-      setRosterBaskets((prevBaskets) => {
-        return [...prevBaskets, responseRoster!];
-      });
-
-      setGuardsAssigned((prevGuards) => {
-        let newGuards = prevGuards;
-        console.log(prevGuards);
-        responseRoster &&
-          responseAssignedGuard &&
-          newGuards[formatSelectedDateForState(selectedDate)].splice(
-            responseRoster.aifsId,
-            0,
-            [responseAssignedGuard]
-          );
-        return newGuards;
-      });
-    });
-  };
-
-  const getAvailableGuards = () => {
-    console.log("getAvailableGuards called");
-
-    const client = getRosterClient();
-
-    const query = new AvailabilityQuery();
-    query.setStartTime(formatSelectedDateForBackend(selectedDate, true));
-
-    const stream = client.getAvailableUsers(query);
-
-    stream.on("data", (response: EmployeeEvaluationResponse) => {
-      // console.log(response);
-      const employeeResponse = response.getEmployee()?.toObject();
-      setGuardsAssigned((prevGuards) => {
-        let newGuards = _.cloneDeep(prevGuards);
-        employeeResponse &&
-          newGuards[formatSelectedDateForState(selectedDate)][0].push(
-            employeeResponse
-          );
-        return newGuards;
-      });
-    });
-  };
-
-  useEffect(() => {
-    updateRosterDates();
-  }, [offset]);
-
-  const refreshState = () => {
-    resetStates(formatSelectedDateForState(selectedDate));
-    updateRosterBaskets();
-    getAvailableGuards();
-  };
-  useEffect(() => {
-    refreshState();
-  }, [selectedDate]);
-
-  // useEffect(() => {
-  //   console.log(guardsAssigned);
-  // }, [guardsAssigned]);
-
-  return (
-    <OnboardingContext.Provider
-      value={{
-        rosterDates,
-        setRosterDates,
-        offset,
-        setOffset,
-        selectedDate,
-        setSelectedDate,
-        rosterBaskets,
-        guardsAssigned,
-        setGuardsAssigned,
-        publishDisabled,
-        setPublishDisabled,
-        refreshState,
-      }}
-    >
-      {children}
-    </OnboardingContext.Provider>
-  );
-}
-
-export function getRosterClient(): RosterServicesClient {
-  // TODO: add the envoy address into .env
+export function getOnboardingClient(): RosterServicesClient {
   return new RosterServicesClient(ENVOY_ADDRESS, null, {});
-}
-
-export function useRostering() {
-  return useContext(OnboardingContext);
-}
-
-export function submitNewRoster(
-  guardsAssigned: RosteringGuardsList,
-  date: Date,
-  setPublishDisabled: Dispatch<boolean>
-) {
-  const client = getRosterClient();
-
-  const rosterList: Roster[] = [];
-
-  for (const i of [1, 2, 3]) {
-    const userObject = guardsAssigned[formatSelectedDateForState(date)][i][0];
-
-    const user = new User();
-    userObject.employee && user.setUserId(userObject.employee.userId);
-
-    const employeeEvaluation = new EmployeeEvaluation();
-    employeeEvaluation.setEmployee(user);
-
-    const rosterAssignment = new RosterAssignement();
-    rosterAssignment.setGuardAssigned(employeeEvaluation);
-
-    const roster = new Roster();
-    roster.addGuardAssigned(rosterAssignment);
-    roster.setAifsId(i);
-
-    const endDate = new Date();
-    endDate.setDate(date.getDate() + 1);
-
-    roster.setStartTime(formatSelectedDateForBackend(date, true));
-    roster.setEndTime(formatSelectedDateForBackend(endDate, false));
-
-    rosterList.push(roster);
-  }
-
-  const bulkRoster = new BulkRosters();
-  bulkRoster.setRostersList(rosterList);
-
-  client
-    .addRoster(bulkRoster, {})
-    .then((response) => {
-      showRosterAddSuccessNotification();
-      setPublishDisabled(true);
-      console.log(response);
-      console.log("errormsg", response.getErrorMessage());
-    })
-    .catch((err) => {
-      console.log(err);
-      showErrorNotification();
-    });
-}
-
-export function submitUpdateRoster(
-  guardsAssigned: RosteringGuardsList,
-  date: Date,
-  setPublishDisabled: Dispatch<boolean>,
-  rosterBaskets: Roster.AsObject[]
-) {
-  const client = getRosterClient();
-
-  const rosterList: Roster[] = [];
-
-  for (const i of [1, 2, 3]) {
-    const userObject = guardsAssigned[formatSelectedDateForState(date)][i][0];
-
-    const user = new User();
-    userObject.employee && user.setUserId(userObject.employee.userId);
-
-    const employeeEvaluation = new EmployeeEvaluation();
-    employeeEvaluation.setEmployee(user);
-
-    const rosterAssignment = new RosterAssignement();
-    rosterAssignment.setGuardAssigned(employeeEvaluation);
-
-    const roster = new Roster();
-    roster.addGuardAssigned(rosterAssignment);
-    roster.setAifsId(i);
-    console.log(rosterBaskets[i - 1].rosteringId);
-    roster.setRosteringId(rosterBaskets[i - 1].rosteringId);
-
-    const endDate = new Date();
-    endDate.setDate(date.getDate() + 1);
-
-    roster.setStartTime(formatSelectedDateForBackend(date, true));
-    roster.setEndTime(formatSelectedDateForBackend(endDate, false));
-
-    rosterList.push(roster);
-  }
-
-  const bulkRoster = new BulkRosters();
-  bulkRoster.setRostersList(rosterList);
-  // debugger
-  client
-    .updateRoster(bulkRoster, {})
-    .then((response) => {
-      showRosterUpdateSuccessNotification();
-      setPublishDisabled(true);
-      console.log(response);
-    })
-    .catch((err) => {
-      console.log(err);
-      showErrorNotification();
-    });
 }

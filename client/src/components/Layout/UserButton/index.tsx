@@ -11,7 +11,7 @@ import {
   Button,
 } from "@mantine/core";
 import { ChevronRight } from "tabler-icons-react";
-import { signOut } from "../../../helpers/userService";
+import { signOut } from "../../../helpers/useUserProvider";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
