@@ -152,6 +152,8 @@ func GetRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	return rosters, err
 }
 
+// Get all the default roster rows in a table that meets specifications.
+// Returns an array of rosters and any errors.
 func GetDefaultRosters(db *sql.DB, query *pb.RosterQuery) ([]*pb.Roster, error) {
 	fmt.Println("Getting Default Rosters...")
 

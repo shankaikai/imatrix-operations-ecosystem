@@ -118,8 +118,8 @@ func getClientIdFormattedFilter(clientId int) string {
 }
 
 // Helper function to add a new filter to the list of existing
-// filters in a user query struct.
-// Modifies the user query parameter directly.
+// filters in a client query struct.
+// Modifies the client query parameter directly.
 func AddClientFilter(query *pb.ClientQuery, field pb.ClientFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {

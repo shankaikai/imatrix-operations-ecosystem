@@ -107,8 +107,8 @@ func getFormattedAvailabilityFilters(query *pb.AvailabilityQuery, needLimit bool
 }
 
 // Helper function to add a new filter to the list of existing
-// filters in a user query struct.
-// Modifies the user query parameter directly.
+// filters in an AvailabilityQuery struct.
+// Modifies the AvailabilityQuery query parameter directly.
 func AddAvailabilityFilter(query *pb.AvailabilityQuery, field pb.AvailabilityFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {

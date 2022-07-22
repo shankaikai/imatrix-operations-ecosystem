@@ -11,6 +11,7 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
+// Send a gRPC client request to the telegram bot gRPC server, letting them know that a new roster had been created.
 func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int64 {
 	fmt.Println("insert roster telegram bot")
 	grpcClient, conn := createRosterClient(serverAddr, serverPort)
@@ -36,6 +37,8 @@ func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int
 	return res.PrimaryKey
 }
 
+// Creates and returns a gRPC client for rostering services.
+// Note, it is the caller's responsibility to close the connection afterwards.
 func createRosterClient(serverAddr *string, serverPort *int) (pb.RosterServicesClient, *grpc.ClientConn) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))

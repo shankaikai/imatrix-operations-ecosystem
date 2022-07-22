@@ -120,8 +120,8 @@ func getUserTokenIdFormattedFilter(userToken int) string {
 }
 
 // Helper function to add a new filter to the list of existing
-// filters in a user query struct.
-// Modifies the user query parameter directly.
+// filters in a user token query struct.
+// Modifies the user token query parameter directly.
 func AddUserTokenFilter(query *pb.UserTokenQuery, field pb.UserTokenFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
