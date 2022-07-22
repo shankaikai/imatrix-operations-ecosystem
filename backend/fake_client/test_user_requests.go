@@ -14,11 +14,11 @@ import (
 
 func TestAdminClientUser(serverAddr *string, serverPort *int) {
 	user := createFakeUser(1)
-	// pk := InsertUser(serverAddr, serverPort, user)
-	// user.UserId = pk
-	// ConsolidatedFindUserTest(serverAddr, serverPort)
-	// UpdateUserTest(serverAddr, serverPort, user)
-	// DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
+	pk := InsertUser(serverAddr, serverPort, user)
+	user.UserId = pk
+	ConsolidatedFindUserTest(serverAddr, serverPort)
+	UpdateUserTest(serverAddr, serverPort, user)
+	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
 	GetNonceTest(serverAddr, serverPort, user)
 }
 

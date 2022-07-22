@@ -157,7 +157,9 @@ message OrderByUser{
 // It contains secrets such as nonce
 message InternalFullUser{
     User user = 1;
-    string nonce =2;
+    string nonce = 2;
+    string security_string = 3;
+    string hashed_password = 4;
 }
 
 /***************************************************************************

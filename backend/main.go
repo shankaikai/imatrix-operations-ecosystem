@@ -51,12 +51,12 @@ func main() {
 	} else if *serverFlag {
 		go server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
 	} else {
-		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
+		client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
 		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
 		// client.TestRosteringClient(serverAddrFlag, serverPortFlag)
 		// client.TestIncidentReportClient(serverAddrFlag, serverPortFlag)
-		client.TestCameraIotClientUser(serverAddrFlag, serverPortFlag)
+		// client.TestCameraIotClientUser(serverAddrFlag, serverPortFlag)
 	}
 
 	//The only reason these are here is to help ensure a clean exit (no zombie processes)
