@@ -1,10 +1,7 @@
 package server
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
-	"io"
 	"strconv"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
@@ -196,19 +193,18 @@ func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNon
 	res := &pb.Response{Type: pb.Response_ACK, ErrorMessage: "No error"}
 
 	// Create nonce
-	nonce := make([]byte, 16)
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+	nonce, err := getCryptographicallySecureString(64)
+	if err != nil {
 		fmt.Println("GetWANonce ERROR", err)
 		res.ErrorMessage = err.Error()
 		res.Type = pb.Response_ERROR
 		return &pb.ResponseNonce{Response: res}, nil
 	}
 
-	nonceString := hex.EncodeToString(nonce)
 	// Put nonce in DB
 	userQuery := &pb.UserQuery{}
 	db_pck.AddUserFilter(userQuery, pb.UserFilter_TELEGRAM_USER_ID, pb.Filter_EQUAL, strconv.Itoa(int(user.TeleChatId)))
-	numUpdated, err := db_pck.UpdateUserNonce(s.db, nonceString, userQuery)
+	numUpdated, err := db_pck.UpdateUserNonce(s.db, nonce, userQuery)
 
 	// Check if successfully updated
 	if err != nil {
@@ -227,8 +223,107 @@ func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNon
 	// Return Nonce
 	resNonce := pb.ResponseNonce{
 		Response: res,
-		Nonce:    nonceString,
+		Nonce:    nonce,
 	}
 
 	return &resNonce, nil
+}
+
+// Get the user's security string from the DB
+// Either the user's id or email must be filled to identify the user
+func (s *Server) GetSecurityString(cxt context.Context, user *pb.User) (*pb.SecurityStringResponse, error) {
+	defer sentry.Recover()
+
+	res := pb.Response{Type: pb.Response_ACK}
+	query := &pb.UserQuery{}
+
+	// Identify the user by their DB id or their email
+	if user.UserId > 0 {
+		db_pck.AddUserFilter(query, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(int(user.UserId)))
+	} else if len(user.Email) > 0 {
+		db_pck.AddUserFilter(query, pb.UserFilter_EMAIL, pb.Filter_EQUAL, user.Email)
+	} else {
+		securityStringRes := pb.SecurityStringResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = "User must be identifiable by either their ID or email"
+		return &securityStringRes, nil
+	}
+
+	foundUsers, err := db_pck.GetUsers(
+		s.db,
+		query,
+		false,
+	)
+
+	if err != nil {
+		securityStringRes := pb.SecurityStringResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		return &securityStringRes, nil
+	}
+
+	if len(foundUsers) < 1 {
+		securityStringRes := pb.SecurityStringResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = "Unable to find user"
+		return &securityStringRes, nil
+	}
+
+	securityStringRes := pb.SecurityStringResponse{Response: &res}
+	securityStringRes.SecurityString = foundUsers[0].SecurityString
+
+	return &securityStringRes, nil
+}
+
+// User authentication.
+// User should send a hashed password. The server will check if the password matches the user
+// and if so, sends back a token.
+func (s *Server) AuthenticateUser(cxt context.Context, loginRequest *pb.LoginRequest) (*pb.UserTokenResponse, error) {
+	defer sentry.Recover()
+
+	res := pb.Response{Type: pb.Response_ACK}
+	query := &pb.UserQuery{}
+	db_pck.AddUserFilter(query, pb.UserFilter_EMAIL, pb.Filter_EQUAL, loginRequest.UserEmail)
+	foundUsers, err := db_pck.GetUsers(
+		s.db,
+		query,
+		false,
+	)
+
+	if err != nil {
+		userTokenResponse := pb.UserTokenResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		return &userTokenResponse, nil
+	}
+
+	if len(foundUsers) < 1 {
+		userTokenResponse := pb.UserTokenResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = "Unable to find user"
+		return &userTokenResponse, nil
+	}
+
+	// Check if the passwords are ok
+	err = s.validateUserPassword(foundUsers[0].HashedPassword, loginRequest.HashedPassword)
+	if err != nil {
+		userTokenResponse := pb.UserTokenResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		return &userTokenResponse, nil
+	}
+
+	// Generate token
+	token, err := s.generateUserToken(foundUsers[0].User)
+	if err != nil {
+		userTokenResponse := pb.UserTokenResponse{Response: &res}
+		res.Type = pb.Response_ERROR
+		res.ErrorMessage = err.Error()
+		return &userTokenResponse, nil
+	}
+
+	// Send token
+	userTokenResponse := pb.UserTokenResponse{Response: &res}
+	userTokenResponse.UserToken = token
+	return &userTokenResponse, nil
 }

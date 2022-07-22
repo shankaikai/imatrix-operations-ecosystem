@@ -29,12 +29,15 @@ type AdminServicesClient interface {
 	DeleteUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	// TODO change user response to have user scoring and stuff
 	FindUsers(ctx context.Context, in *UserQuery, opts ...grpc.CallOption) (AdminServices_FindUsersClient, error)
-	GetWANonce(ctx context.Context, in *User, opts ...grpc.CallOption) (*ResponseNonce, error)
 	// Client
 	AddClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
 	UpdateClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
 	DeleteClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error)
 	FindClients(ctx context.Context, in *ClientQuery, opts ...grpc.CallOption) (AdminServices_FindClientsClient, error)
+	// Security Related
+	GetWANonce(ctx context.Context, in *User, opts ...grpc.CallOption) (*ResponseNonce, error)
+	GetSecurityString(ctx context.Context, in *User, opts ...grpc.CallOption) (*SecurityStringResponse, error)
+	AuthenticateUser(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserTokenResponse, error)
 }
 
 type adminServicesClient struct {
@@ -104,15 +107,6 @@ func (x *adminServicesFindUsersClient) Recv() (*UsersResponse, error) {
 	return m, nil
 }
 
-func (c *adminServicesClient) GetWANonce(ctx context.Context, in *User, opts ...grpc.CallOption) (*ResponseNonce, error) {
-	out := new(ResponseNonce)
-	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/GetWANonce", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *adminServicesClient) AddClient(ctx context.Context, in *Client, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/AddClient", in, out, opts...)
@@ -172,6 +166,33 @@ func (x *adminServicesFindClientsClient) Recv() (*ClientResponse, error) {
 	return m, nil
 }
 
+func (c *adminServicesClient) GetWANonce(ctx context.Context, in *User, opts ...grpc.CallOption) (*ResponseNonce, error) {
+	out := new(ResponseNonce)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/GetWANonce", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServicesClient) GetSecurityString(ctx context.Context, in *User, opts ...grpc.CallOption) (*SecurityStringResponse, error) {
+	out := new(SecurityStringResponse)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/GetSecurityString", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminServicesClient) AuthenticateUser(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserTokenResponse, error) {
+	out := new(UserTokenResponse)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/AuthenticateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServicesServer is the server API for AdminServices service.
 // All implementations must embed UnimplementedAdminServicesServer
 // for forward compatibility
@@ -182,12 +203,15 @@ type AdminServicesServer interface {
 	DeleteUser(context.Context, *User) (*Response, error)
 	// TODO change user response to have user scoring and stuff
 	FindUsers(*UserQuery, AdminServices_FindUsersServer) error
-	GetWANonce(context.Context, *User) (*ResponseNonce, error)
 	// Client
 	AddClient(context.Context, *Client) (*Response, error)
 	UpdateClient(context.Context, *Client) (*Response, error)
 	DeleteClient(context.Context, *Client) (*Response, error)
 	FindClients(*ClientQuery, AdminServices_FindClientsServer) error
+	// Security Related
+	GetWANonce(context.Context, *User) (*ResponseNonce, error)
+	GetSecurityString(context.Context, *User) (*SecurityStringResponse, error)
+	AuthenticateUser(context.Context, *LoginRequest) (*UserTokenResponse, error)
 	mustEmbedUnimplementedAdminServicesServer()
 }
 
@@ -207,9 +231,6 @@ func (UnimplementedAdminServicesServer) DeleteUser(context.Context, *User) (*Res
 func (UnimplementedAdminServicesServer) FindUsers(*UserQuery, AdminServices_FindUsersServer) error {
 	return status.Errorf(codes.Unimplemented, "method FindUsers not implemented")
 }
-func (UnimplementedAdminServicesServer) GetWANonce(context.Context, *User) (*ResponseNonce, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetWANonce not implemented")
-}
 func (UnimplementedAdminServicesServer) AddClient(context.Context, *Client) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddClient not implemented")
 }
@@ -221,6 +242,15 @@ func (UnimplementedAdminServicesServer) DeleteClient(context.Context, *Client) (
 }
 func (UnimplementedAdminServicesServer) FindClients(*ClientQuery, AdminServices_FindClientsServer) error {
 	return status.Errorf(codes.Unimplemented, "method FindClients not implemented")
+}
+func (UnimplementedAdminServicesServer) GetWANonce(context.Context, *User) (*ResponseNonce, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWANonce not implemented")
+}
+func (UnimplementedAdminServicesServer) GetSecurityString(context.Context, *User) (*SecurityStringResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSecurityString not implemented")
+}
+func (UnimplementedAdminServicesServer) AuthenticateUser(context.Context, *LoginRequest) (*UserTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateUser not implemented")
 }
 func (UnimplementedAdminServicesServer) mustEmbedUnimplementedAdminServicesServer() {}
 
@@ -310,24 +340,6 @@ func (x *adminServicesFindUsersServer) Send(m *UsersResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _AdminServices_GetWANonce_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServicesServer).GetWANonce(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/operations_ecosys.AdminServices/GetWANonce",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServicesServer).GetWANonce(ctx, req.(*User))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AdminServices_AddClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Client)
 	if err := dec(in); err != nil {
@@ -403,6 +415,60 @@ func (x *adminServicesFindClientsServer) Send(m *ClientResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _AdminServices_GetWANonce_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServicesServer).GetWANonce(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.AdminServices/GetWANonce",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServicesServer).GetWANonce(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminServices_GetSecurityString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServicesServer).GetSecurityString(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.AdminServices/GetSecurityString",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServicesServer).GetSecurityString(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminServices_AuthenticateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServicesServer).AuthenticateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.AdminServices/AuthenticateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServicesServer).AuthenticateUser(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminServices_ServiceDesc is the grpc.ServiceDesc for AdminServices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -423,10 +489,6 @@ var AdminServices_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AdminServices_DeleteUser_Handler,
 		},
 		{
-			MethodName: "GetWANonce",
-			Handler:    _AdminServices_GetWANonce_Handler,
-		},
-		{
 			MethodName: "AddClient",
 			Handler:    _AdminServices_AddClient_Handler,
 		},
@@ -437,6 +499,18 @@ var AdminServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteClient",
 			Handler:    _AdminServices_DeleteClient_Handler,
+		},
+		{
+			MethodName: "GetWANonce",
+			Handler:    _AdminServices_GetWANonce_Handler,
+		},
+		{
+			MethodName: "GetSecurityString",
+			Handler:    _AdminServices_GetSecurityString_Handler,
+		},
+		{
+			MethodName: "AuthenticateUser",
+			Handler:    _AdminServices_AuthenticateUser_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

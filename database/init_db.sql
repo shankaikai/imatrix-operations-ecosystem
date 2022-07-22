@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 	is_part_timer BOOLEAN DEFAULT false NOT NULL,
 	tele_chat_id VARCHAR(250) NOT NULL
     nonce VARCHAR(250) DEFAULT "" NOT NULL,
+    security_string VARCHAR(128) DEFAULT "" NOT NULL,
+    hashed_password VARCHAR(128) DEFAULT "" NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `client` (
@@ -39,6 +41,18 @@ CREATE TABLE IF NOT EXISTS `client` (
     postal_code INT NOT NULL, 
 	phone_number VARCHAR(500) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS `user_tokens`(
+    user_tokens_id	INT PRIMARY KEY AUTO_INCREMENT,
+    user INT NOT NULL,
+    token VARCHAR(256) NOT NULL,
+    creation DATETIME NOT NULL, 
+    expiry DATETIME NOT NULL, 
+
+    FOREIGN KEY (user)
+            REFERENCES `user` (user_id)
+            ON UPDATE RESTRICT ON DELETE CASCADE
+)
 
 -- Broadcasting
 CREATE TABLE IF NOT EXISTS `broadcast` (

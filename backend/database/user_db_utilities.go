@@ -15,16 +15,18 @@ const (
 	USER_DB_TABLE_NAME = "user"
 
 	// User table fields
-	USER_DB_ID           = "user_id"
-	USER_DB_TYPE         = "user_type"
-	USER_DB_NAME         = "name"
-	USER_DB_EMAIL        = "email"
-	USER_DB_PHONE_NUM    = "phone_number"
-	USER_DB_TELE_HANDLE  = "telegram_handle"
-	USER_DB_IMG          = "user_security_img"
-	USER_DB_PART_TIMER   = "is_part_timer"
-	USER_DB_TELE_CHAT_ID = "tele_chat_id"
-	USER_DB_NONCE        = "nonce"
+	USER_DB_ID              = "user_id"
+	USER_DB_TYPE            = "user_type"
+	USER_DB_NAME            = "name"
+	USER_DB_EMAIL           = "email"
+	USER_DB_PHONE_NUM       = "phone_number"
+	USER_DB_TELE_HANDLE     = "telegram_handle"
+	USER_DB_IMG             = "user_security_img"
+	USER_DB_PART_TIMER      = "is_part_timer"
+	USER_DB_TELE_CHAT_ID    = "tele_chat_id"
+	USER_DB_NONCE           = "nonce"
+	USER_DB_SECURITY_STRING = "security_string"
+	USER_DB_HASHED_PASSWORD = "hashed_password"
 )
 
 // Returns the fields of the user table

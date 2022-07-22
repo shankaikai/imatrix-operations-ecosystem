@@ -61,6 +61,8 @@ func GetUsers(db *sql.DB, query *pb.UserQuery, removeSecrets bool) ([]*pb.Intern
 				&user.IsPartTimer,
 				&user.TeleChatId,
 				&internalFullUser.Nonce,
+				&internalFullUser.SecurityString,
+				&internalFullUser.HashedPassword,
 			)
 
 			if err != nil {
@@ -73,6 +75,8 @@ func GetUsers(db *sql.DB, query *pb.UserQuery, removeSecrets bool) ([]*pb.Intern
 			// Remove any confidential information
 			if removeSecrets {
 				internalFullUser.Nonce = ""
+				internalFullUser.SecurityString = ""
+				internalFullUser.HashedPassword = ""
 			}
 
 			users = append(users, &internalFullUser)
