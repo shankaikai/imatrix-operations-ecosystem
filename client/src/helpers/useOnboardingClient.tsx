@@ -27,7 +27,6 @@ export function submitOnboardingForm(onboardingForm: OnboardingForm) {
 
   const user = new User();
 
-  debugger;
   user.setEmail(onboardingForm.email);
   user.setName(onboardingForm.name);
   user.setPhoneNumber(onboardingForm.phone_number);
@@ -48,7 +47,6 @@ export function submitOnboardingForm(onboardingForm: OnboardingForm) {
   request.setUser(user);
   request.setHashedPassword(hash);
 
-  debugger;
   client
     .addUser(request, {})
     .then((response) => {
