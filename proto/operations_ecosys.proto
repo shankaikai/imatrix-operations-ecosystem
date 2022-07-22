@@ -23,13 +23,17 @@ service AdminServices {
     rpc DeleteUser(User) returns (Response) {}
     // TODO change user response to have user scoring and stuff
     rpc FindUsers(UserQuery) returns (stream UsersResponse) {}
-    rpc GetWANonce(User) returns (ResponseNonce) {}
 
     // Client
     rpc AddClient(Client) returns (Response) {}
     rpc UpdateClient(Client) returns (Response) {}
     rpc DeleteClient(Client) returns (Response) {}
     rpc FindClients(ClientQuery) returns (stream ClientResponse) {}
+
+    // Security Related 
+    rpc GetWANonce(User) returns (ResponseNonce) {}
+    rpc GetSecurityString(User) returns (SecurityStringResponse) {}
+    rpc AuthenticateUser(LoginRequest) returns (UserTokenResponse) {}
 }
 
 service BroadcastServices{
@@ -162,6 +166,7 @@ message InternalFullUser{
     string hashed_password = 4;
 }
 
+
 /***************************************************************************
 *                              CLIENT MESSAGES                              *
 ****************************************************************************/
@@ -217,10 +222,71 @@ message OrderByClient{
     OrderBy order_by = 2;
 }
 
+/***************************************************************************
+*                          USER TOKEN MESSAGES                              *
+****************************************************************************/
+// Message used to provide a user token to the client
+message UserToken {
+    int64 user_token_id = 1;
+    User user = 2;
+    string token = 3;
+    // Format must be in: YYYY-MM-DD HH:MM:SS
+    string creation_datetime = 4;
+    // Format must be in: YYYY-MM-DD HH:MM:SS
+    string expiry_datetime = 5;
+}
+
+// Replies with a user token
+message UserTokenResponse {
+    Response response = 1;
+    UserToken userToken = 2;
+}
+
+
+// Filter the types of clients to be returned. 
+message UserTokenFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        USER_ID = 0;
+        EXPIRY = 1;
+    }
+}
+
+// Get specific types of user tokens as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message UserTokenQuery {
+    repeated UserTokenFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2;
+
+    // Skip n rows from the database
+    int64 skip = 3;
+    
+    // Order the queries, by default the order is desc by creation date
+    OrderByUserToken order_by = 4;
+}
+
+
+message OrderByUserToken{
+    UserTokenFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
 
 /***************************************************************************
 *                             SECURITY MESSAGES                            *
 ****************************************************************************/
+// Any client that wishes to login send their hashed password to the backend  
+// for authentication. 
+message LoginRequest {
+    // The user to login
+    string user_email = 1;
+    string hashed_password = 2;
+}
 
 // Used to provide nonces
 message ResponseNonce {
@@ -229,6 +295,11 @@ message ResponseNonce {
     
 }
 
+// Returns the security string that is tied to the user
+message SecurityStringResponse{
+    Response response = 1;
+    string security_string = 2;
+}
 
 /***************************************************************************
 *                          BROADCASTING MESSAGES                           *

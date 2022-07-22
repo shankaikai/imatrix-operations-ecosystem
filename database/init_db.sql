@@ -42,6 +42,18 @@ CREATE TABLE IF NOT EXISTS `client` (
 	phone_number VARCHAR(500) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS `user_tokens`(
+    user_tokens_id	INT PRIMARY KEY AUTO_INCREMENT,
+    user INT NOT NULL,
+    token VARCHAR(256) NOT NULL,
+    creation DATETIME NOT NULL, 
+    expiry DATETIME NOT NULL, 
+
+    FOREIGN KEY (user)
+            REFERENCES `user` (user_id)
+            ON UPDATE RESTRICT ON DELETE CASCADE
+)
+
 -- Broadcasting
 CREATE TABLE IF NOT EXISTS `broadcast` (
 	broadcast_id INT PRIMARY KEY AUTO_INCREMENT,
