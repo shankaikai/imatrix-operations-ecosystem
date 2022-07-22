@@ -114,11 +114,13 @@ export async function submitNewBroadcast({
   urgency,
   message,
   setBroadcasts,
+  userId
 }: {
   recipient: string[];
   urgency: string;
   message: string;
   setBroadcasts: Dispatch<Broadcast[]>;
+  userId: number
 }) {
   const client = getBroadcastClient();
 
@@ -158,9 +160,8 @@ export async function submitNewBroadcast({
   broadcast.setUrgency(urgencyMap[urgency]);
   broadcast.setContent(message);
   broadcast.setType(Broadcast.BroadcastType.ANNOUNCEMENT);
-  // TODO: Change to user context
   const creator = new User();
-  creator.setUserId(2);
+  creator.setUserId(userId);
   broadcast.setCreator(creator);
 
   console.log(broadcast);

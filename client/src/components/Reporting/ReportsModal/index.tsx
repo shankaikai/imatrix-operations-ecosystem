@@ -18,6 +18,7 @@ import {
   UpdateReport,
   useReporting,
 } from "../../../helpers/useReportingClient";
+import { useUserProvider } from "../../../helpers/useUserProvider";
 import { IncidentReport } from "../../../proto/operations_ecosys_pb";
 
 interface ReportsModalProps {}
@@ -26,6 +27,7 @@ const ReportsModal: FunctionComponent<ReportsModalProps> = () => {
   const { modalOpen, setModalOpen, createNewReport, setReports } =
     useReporting();
 
+  const { userId } = useUserProvider();
   const form = useForm({
     initialValues: {
       title: "",
@@ -44,7 +46,7 @@ const ReportsModal: FunctionComponent<ReportsModalProps> = () => {
   const onSubmit = async (values: UpdateReport) => {
     setReports &&
       createNewReport &&
-      (await createNewReport(values, setReports));
+      (await createNewReport(values, setReports, userId));
     closeModal();
   };
   return (

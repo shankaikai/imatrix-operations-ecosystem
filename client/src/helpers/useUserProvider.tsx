@@ -10,6 +10,7 @@ interface UserInterface {
   name: string;
   email: string;
   image: string;
+  userId: number;
   userType: User.UserType;
   setUser?(user: User): void;
 }
@@ -18,6 +19,7 @@ const UserContext = createContext<UserInterface>({
   name: "",
   email: "",
   image: "",
+  userId: -1,
   userType: User.UserType.ISPECIALIST,
 });
 
@@ -29,10 +31,12 @@ export function UserProvider({ children }: UserProviderProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [image, setImage] = useState("");
+  const [userId, setUserId] = useState(-1);
   const [userType, setUserType] = useState<User.UserType>(
     User.UserType.ISPECIALIST
   );
   const setUser = (user: User) => {
+    setUserId(user.getUserId());
     setName(user.getName());
     setEmail(user.getEmail());
     setImage(user.getUserSecurityImg());
@@ -42,6 +46,7 @@ export function UserProvider({ children }: UserProviderProps) {
     <UserContext.Provider
       value={{
         name,
+        userId,
         email,
         image,
         userType,

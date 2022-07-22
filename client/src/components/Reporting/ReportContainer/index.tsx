@@ -27,6 +27,7 @@ import _ from "lodash";
 import { IncidentReport } from "../../../proto/operations_ecosys_pb";
 import { useForm } from "@mantine/form";
 import { IoClose } from "react-icons/io5";
+import { useUserProvider } from "../../../helpers/useUserProvider";
 
 export default function ReportContainer() {
   const { selectedReport, setSelectedReport, setReports, reports } =
@@ -34,6 +35,7 @@ export default function ReportContainer() {
 
   const [editOn, setEditOn] = useState(false);
 
+  const { userId } = useUserProvider();
   const handleEdit = () => {
     console.log("handleEdit called");
     setEditOn(true);
@@ -96,7 +98,7 @@ export default function ReportContainer() {
         flex: "1",
         display: selectedReport?.incidentReportId ? "flex" : "none",
         height: "calc(100vh - 132px)",
-        width:'100%'
+        width: "100%",
       }}
     >
       {editOn ? (
@@ -105,7 +107,8 @@ export default function ReportContainer() {
             submitUpdateReport(
               values,
               selectedReport?.incidentReportId as number,
-              setReports as React.Dispatch<IncidentReport.AsObject[]>
+              setReports as React.Dispatch<IncidentReport.AsObject[]>,
+              userId
             )
           )}
           style={{
@@ -113,7 +116,7 @@ export default function ReportContainer() {
             justifyContent: "space-between",
             display: "flex",
             flexDirection: "column",
-            width:'100%'
+            width: "100%",
           }}
         >
           <Stack>
@@ -217,7 +220,7 @@ export default function ReportContainer() {
           </Button>
         </form>
       ) : (
-        <Stack spacing={0} sx={{width:'100%'}}>
+        <Stack spacing={0} sx={{ width: "100%" }}>
           <Group position="apart">
             <Text size="lg" weight={500}>
               {selectedReport?.incidentReportContent?.title}
@@ -231,7 +234,7 @@ export default function ReportContainer() {
           <Divider my="sm" />
           <ScrollArea
             sx={{
-              flex:'1',
+              flex: "1",
             }}
           >
             <Stack spacing={0} sx={{ fontStyle: "italic" }}>
