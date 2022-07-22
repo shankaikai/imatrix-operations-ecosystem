@@ -13,23 +13,29 @@ import (
 )
 
 func TestAdminClientUser(serverAddr *string, serverPort *int) {
-	// user := createFakeUser(1)
-	// pk := InsertUser(serverAddr, serverPort, user)
-	// user.UserId = pk
-	// ConsolidatedFindUserTest(serverAddr, serverPort)
-	// UpdateUserTest(serverAddr, serverPort, user)
-	// DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
-	// GetNonceTest(serverAddr, serverPort, user)
+	user := createFakeUser(1)
+	pk := InsertUser(serverAddr, serverPort, user)
+	user.UserId = pk
+	ConsolidatedFindUserTest(serverAddr, serverPort)
+	UpdateUserTest(serverAddr, serverPort, user)
+	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
+	GetNonceTest(serverAddr, serverPort, user)
 	GetUserRandomStringTest(serverAddr, serverPort)
 	AuthenticateUserTest(serverAddr, serverPort)
 }
 
 func InsertUser(serverAddr *string, serverPort *int, user *pb.User) int64 {
 	fmt.Println("Inserting user:", user.Name)
+	fullUser := &pb.FullUser{
+		User:           user,
+		SecurityString: "fdsfdsfdsfdsfdsfdfafdc",
+		HashedPassword: "thisisahashedpassword",
+	}
+
 	client, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	res, err := client.AddUser(context.Background(), user)
+	res, err := client.AddUser(context.Background(), fullUser)
 	if err != nil {
 		fmt.Println("InsertUser ERROR:", err)
 		return -1

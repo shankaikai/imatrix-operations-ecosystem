@@ -18,7 +18,7 @@ package operations_ecosys;
 
 service AdminServices {
     // User
-    rpc AddUser(User) returns (Response) {}
+    rpc AddUser(FullUser) returns (Response) {}
     rpc UpdateUser(User) returns (Response) {}
     rpc DeleteUser(User) returns (Response) {}
     // TODO change user response to have user scoring and stuff
@@ -156,10 +156,11 @@ message OrderByUser{
     OrderBy order_by = 2;
 }
 
-// This message is only used by the internal server
-// This should never be passed around
-// It contains secrets such as nonce
-message InternalFullUser{
+// This message is mostly used by the internal server
+// and for the creation of new users only. 
+// There should be no other reasons to pass around these 
+// confidential messages.
+message FullUser{
     User user = 1;
     string nonce = 2;
     string security_string = 3;

@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminServicesClient interface {
 	// User
-	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
+	AddUser(ctx context.Context, in *FullUser, opts ...grpc.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error)
 	// TODO change user response to have user scoring and stuff
@@ -48,7 +48,7 @@ func NewAdminServicesClient(cc grpc.ClientConnInterface) AdminServicesClient {
 	return &adminServicesClient{cc}
 }
 
-func (c *adminServicesClient) AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Response, error) {
+func (c *adminServicesClient) AddUser(ctx context.Context, in *FullUser, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/AddUser", in, out, opts...)
 	if err != nil {
@@ -198,7 +198,7 @@ func (c *adminServicesClient) AuthenticateUser(ctx context.Context, in *LoginReq
 // for forward compatibility
 type AdminServicesServer interface {
 	// User
-	AddUser(context.Context, *User) (*Response, error)
+	AddUser(context.Context, *FullUser) (*Response, error)
 	UpdateUser(context.Context, *User) (*Response, error)
 	DeleteUser(context.Context, *User) (*Response, error)
 	// TODO change user response to have user scoring and stuff
@@ -219,7 +219,7 @@ type AdminServicesServer interface {
 type UnimplementedAdminServicesServer struct {
 }
 
-func (UnimplementedAdminServicesServer) AddUser(context.Context, *User) (*Response, error) {
+func (UnimplementedAdminServicesServer) AddUser(context.Context, *FullUser) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
 }
 func (UnimplementedAdminServicesServer) UpdateUser(context.Context, *User) (*Response, error) {
@@ -266,7 +266,7 @@ func RegisterAdminServicesServer(s grpc.ServiceRegistrar, srv AdminServicesServe
 }
 
 func _AdminServices_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+	in := new(FullUser)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -278,7 +278,7 @@ func _AdminServices_AddUser_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/operations_ecosys.AdminServices/AddUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServicesServer).AddUser(ctx, req.(*User))
+		return srv.(AdminServicesServer).AddUser(ctx, req.(*FullUser))
 	}
 	return interceptor(ctx, in, info, handler)
 }

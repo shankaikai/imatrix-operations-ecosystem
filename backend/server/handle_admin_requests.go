@@ -11,7 +11,7 @@ import (
 	"context"
 )
 
-func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
+func (s *Server) AddUser(cxt context.Context, user *pb.FullUser) (*pb.Response, error) {
 	defer sentry.Recover()
 
 	res := pb.Response{Type: pb.Response_ACK}
@@ -231,6 +231,8 @@ func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNon
 
 // Get the user's security string from the DB
 // Either the user's id or email must be filled to identify the user
+// If there are no users to be identified, a random string not attached to any
+// user will be returned.
 func (s *Server) GetSecurityString(cxt context.Context, user *pb.User) (*pb.SecurityStringResponse, error) {
 	defer sentry.Recover()
 
@@ -243,9 +245,16 @@ func (s *Server) GetSecurityString(cxt context.Context, user *pb.User) (*pb.Secu
 	} else if len(user.Email) > 0 {
 		db_pck.AddUserFilter(query, pb.UserFilter_EMAIL, pb.Filter_EQUAL, user.Email)
 	} else {
+		// User is not identifiable, return a random string that is not tied to anyone
+		randString, err := getCryptographicallySecureString(SECURITY_STRING_LENGTH)
 		securityStringRes := pb.SecurityStringResponse{Response: &res}
-		res.Type = pb.Response_ERROR
-		res.ErrorMessage = "User must be identifiable by either their ID or email"
+		if err != nil {
+			res.Type = pb.Response_ERROR
+			res.ErrorMessage = err.Error()
+			return &securityStringRes, nil
+		} else {
+			securityStringRes.SecurityString = randString
+		}
 		return &securityStringRes, nil
 	}
 

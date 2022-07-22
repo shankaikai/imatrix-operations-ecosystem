@@ -16,6 +16,10 @@ import (
 const (
 	NONCE_HEADER          = "Authorization"
 	TOKEN_EXPIRY_DURATION = time.Hour * 24
+
+	// Cryptographic string lengths
+	SECURITY_STRING_LENGTH = 128
+	TOKEN_STRING_LENGTH    = 128
 )
 
 // Removes a Nonce that has been used from the DB for a particular user.
@@ -94,7 +98,7 @@ func (s *Server) validateUserPassword(actualPassword string, inputPassword strin
 func (s *Server) generateUserToken(user *pb.User) (*pb.UserToken, error) {
 	fmt.Println("Generating user token")
 	// Generate token
-	token, err := getCryptographicallySecureString(128)
+	token, err := getCryptographicallySecureString(TOKEN_STRING_LENGTH)
 	if err != nil {
 		return &pb.UserToken{}, err
 	}
