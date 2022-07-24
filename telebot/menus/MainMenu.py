@@ -13,9 +13,15 @@ class MainMenu(TelegramMenu):
         self.name = "Main Menu"
         
     def handler(self, update:Update, context:CallbackContext):
+        # Report Web App stuff
+        wa_url = os.getenv('WEBAPP_URL')
+        params = "?twan=" + user_client.get_webapp_nonce(self.TController.user)
+        params += "&user_id" + update.effective_user.id
+        reportWAInfo = WebAppInfo(wa_url + params)
         cKeyboardVals = [
             [KeyboardButton(text=CMD_IDENTIFIER+"Attendance")],
-            [KeyboardButton(text=CMD_IDENTIFIER+"Reporting")],
+            # [KeyboardButton(text=CMD_IDENTIFIER+"Reporting")],
+            [KeyboardButton(text="Reporting", web_app=reportWAInfo)],
             [KeyboardButton(text=CMD_IDENTIFIER+"SOS"), KeyboardButton(text=CMD_IDENTIFIER+"Help"),],
         ]
         cKeyboard = ReplyKeyboardMarkup(keyboard=cKeyboardVals)
