@@ -5,8 +5,8 @@ isort:skip_file
 import abc
 import google.protobuf.empty_pb2
 import grpc
-from . import iot_prototype_pb2
-from . import operations_ecosys_pb2
+import iot_prototype_pb2
+import operations_ecosys_pb2
 import typing
 
 class AdminServicesStub:
@@ -19,7 +19,7 @@ class AdminServicesStub:
     """
     def __init__(self, channel: grpc.Channel) -> None: ...
     AddUser: grpc.UnaryUnaryMultiCallable[
-        operations_ecosys_pb2.User,
+        operations_ecosys_pb2.FullUser,
         operations_ecosys_pb2.Response]
     """User"""
 
@@ -35,10 +35,6 @@ class AdminServicesStub:
         operations_ecosys_pb2.UserQuery,
         operations_ecosys_pb2.UsersResponse]
     """TODO change user response to have user scoring and stuff"""
-
-    GetWANonce: grpc.UnaryUnaryMultiCallable[
-        operations_ecosys_pb2.User,
-        operations_ecosys_pb2.ResponseNonce]
 
     AddClient: grpc.UnaryUnaryMultiCallable[
         operations_ecosys_pb2.Client,
@@ -57,6 +53,19 @@ class AdminServicesStub:
         operations_ecosys_pb2.ClientQuery,
         operations_ecosys_pb2.ClientResponse]
 
+    GetWANonce: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.User,
+        operations_ecosys_pb2.ResponseNonce]
+    """Security Related"""
+
+    GetSecurityString: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.User,
+        operations_ecosys_pb2.SecurityStringResponse]
+
+    AuthenticateUser: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.LoginRequest,
+        operations_ecosys_pb2.UserTokenResponse]
+
 
 class AdminServicesServicer(metaclass=abc.ABCMeta):
     """Note for updates:
@@ -68,7 +77,7 @@ class AdminServicesServicer(metaclass=abc.ABCMeta):
     """
     @abc.abstractmethod
     def AddUser(self,
-        request: operations_ecosys_pb2.User,
+        request: operations_ecosys_pb2.FullUser,
         context: grpc.ServicerContext,
     ) -> operations_ecosys_pb2.Response:
         """User"""
@@ -95,12 +104,6 @@ class AdminServicesServicer(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def GetWANonce(self,
-        request: operations_ecosys_pb2.User,
-        context: grpc.ServicerContext,
-    ) -> operations_ecosys_pb2.ResponseNonce: ...
-
-    @abc.abstractmethod
     def AddClient(self,
         request: operations_ecosys_pb2.Client,
         context: grpc.ServicerContext,
@@ -125,6 +128,26 @@ class AdminServicesServicer(metaclass=abc.ABCMeta):
         request: operations_ecosys_pb2.ClientQuery,
         context: grpc.ServicerContext,
     ) -> typing.Iterator[operations_ecosys_pb2.ClientResponse]: ...
+
+    @abc.abstractmethod
+    def GetWANonce(self,
+        request: operations_ecosys_pb2.User,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.ResponseNonce:
+        """Security Related"""
+        pass
+
+    @abc.abstractmethod
+    def GetSecurityString(self,
+        request: operations_ecosys_pb2.User,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.SecurityStringResponse: ...
+
+    @abc.abstractmethod
+    def AuthenticateUser(self,
+        request: operations_ecosys_pb2.LoginRequest,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.UserTokenResponse: ...
 
 
 def add_AdminServicesServicer_to_server(servicer: AdminServicesServicer, server: grpc.Server) -> None: ...

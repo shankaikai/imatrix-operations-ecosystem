@@ -10,7 +10,7 @@ from typing import List
 from abc import ABC, abstractclassmethod, abstractmethod
 
 from subscriptions import subscription_message
-from administration import user
+from administration.TeleUser import TUser
 
 import os.path
 import time
@@ -26,7 +26,7 @@ class TelegramController:
         self.RootMenu:TelegramMenu = None
         self.Menus:list[TelegramMenu]= []
         self.CurrentMenu:TelegramMenu = None
-        self.user:operations_ecosys_pb2.User = None
+        self.user:TeleUser = None
     def buildMenuTree(self, rootMenu:TelegramMenu):
         if self.Menus == None or len(self.Menus) == 0:
             print("Unable to build tree as no menus are given.")
@@ -52,6 +52,8 @@ class TelegramController:
         self.RootMenu = rootMenu
     # Handlers that need to be attached directly to Tele Bot
     def mainHandler(self, update: Update, context: CallbackContext):
+        if not TelegramController.ifPrivateChat(update, context):
+            return
         text:str = update.message.text
         print(text)
         if len(text) > 1 and text[0] == CMD_IDENTIFIER and text[1] != CMD_IDENTIFIER:
@@ -68,20 +70,27 @@ class TelegramController:
         else:
             self.CurrentMenu.textHandler(update, context)
     def startHandler(self, update: Update, context: CallbackContext):
-        logged_in_user = user.login(update.effective_chat.username, update.effective_chat.id)
-        if logged_in_user == None:
+        logging_in_user = TUser.create_Tele_User(update.effective_user.id)
+        if not logging_in_user.oes_user:
             context.bot.send_message(chat_id=update.effective_chat.id, text="You are not authorised to use this bot. Please contact your administator if you believe otherwise.")
+        elif update.effective_user.id != update.effective_chat.id:
+            context.bot.send_message(chat_id=update.effective_chat.id, text="This bot can only be used in private chats.")
         else:
-            self.user = logged_in_user
+            logging_in_user.login(update)
+            self.user = logging_in_user
             context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
             self.CurrentMenu = self.RootMenu
             self.RootMenu.handler(update, context)
         
     def attachmentHandler(self, update:Update, context:CallbackContext):
+        if not TelegramController.ifPrivateChat(update, context):
+            return
         self.CurrentMenu.attachmentHandler(update, context)
         pass
     # This handler is for in-line button presses
     def callbackqueryHandler(self, update:Update, context:CallbackContext):
+        if not TelegramController.ifPrivateChat(update, context):
+            return
         strData = update.callback_query.data
         callback_type = strData.split(":")[0]
         if callback_type == subscription_message.IDENTIFIER:
@@ -97,6 +106,9 @@ class TelegramController:
         pass
     def catchAllHandler(self, update: Update, context: CallbackContext):
         pass
+    # Util
+    def ifPrivateChat(self, update: Update, context: CallbackContext) -> bool:
+        return update.effective_chat.id == update.effective_user.id
 
 class TelegramMenu(ABC):
     def __init__(self, parent = None, name = "", triggerWords = []):

@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	telegram_handle VARCHAR(500) NOT NULL,
 	user_security_img VARCHAR(1000) NOT NULL,
 	is_part_timer BOOLEAN DEFAULT false NOT NULL,
-	tele_chat_id VARCHAR(250) NOT NULL
+	tele_user_id VARCHAR(250) NOT NULL
     nonce VARCHAR(250) DEFAULT "" NOT NULL,
     security_string VARCHAR(128) DEFAULT "" NOT NULL,
     hashed_password VARCHAR(128) DEFAULT "" NOT NULL

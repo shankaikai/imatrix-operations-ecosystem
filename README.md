@@ -15,6 +15,8 @@ Capstone Project
 protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/operations_ecosys.proto
 
 protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/iot_prototype.proto
+
+protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/http_webapp.proto
 ```
 #### Protocol Buffer Mock Class Generation
 ```
@@ -38,8 +40,7 @@ mockgen capstone.operations_ecosystem/backend/proto RosterServicesClient > ../mo
     google.golang.org/grpc/cmd/protoc-gen-go-grpc
 5) Generate the gateway protoc files and the go_grpc files
 ```
-protoc --go_out=backend --go_opt=paths=source_relative --go-grpc_out=backend --go-grpc_opt=paths=source_relative proto/http_webapp.proto
-protoc -I . --grpc-gateway_out=backend --grpc-gateway_opt=logtostderr=true --grpc-gateway_opt=paths=source_relative proto/http_webapp.proto
+protoc -I ./proto --grpc-gateway_out=backend --grpc-gateway_opt=logtostderr=true --grpc-gateway_opt=paths=source_relative proto/http_webapp.proto
 ```
 
 ## Telegram Bot
@@ -51,9 +52,11 @@ pip3 install mypy-protobuf
 #### Generation
 With Type Checking
 ```
-python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/iot_prototype.proto
+python3 -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/iot_prototype.proto
 
-python -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/operations_ecosys.proto
+python3 -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/operations_ecosys.proto
+
+python3 -m grpc_tools.protoc -I proto --python_out=telebot/Protos --mypy_out=telebot/Protos --grpc_python_out=telebot/Protos --mypy_grpc_out=telebot/Protos proto/http_webapp.proto
 ```
 
 Without Type Checking

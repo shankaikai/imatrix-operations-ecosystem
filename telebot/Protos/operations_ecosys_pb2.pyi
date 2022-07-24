@@ -66,7 +66,7 @@ class User(google.protobuf.message.Message):
     TELEGRAM_HANDLE_FIELD_NUMBER: builtins.int
     USER_SECURITY_IMG_FIELD_NUMBER: builtins.int
     IS_PART_TIMER_FIELD_NUMBER: builtins.int
-    TELE_CHAT_ID_FIELD_NUMBER: builtins.int
+    TELE_USER_ID_FIELD_NUMBER: builtins.int
     user_id: builtins.int
     user_type: global___User.UserType.ValueType
     name: typing.Text
@@ -75,7 +75,7 @@ class User(google.protobuf.message.Message):
     telegram_handle: typing.Text
     user_security_img: typing.Text
     is_part_timer: builtins.bool
-    tele_chat_id: builtins.int
+    tele_user_id: builtins.int
     def __init__(self,
         *,
         user_id: builtins.int = ...,
@@ -86,9 +86,9 @@ class User(google.protobuf.message.Message):
         telegram_handle: typing.Text = ...,
         user_security_img: typing.Text = ...,
         is_part_timer: builtins.bool = ...,
-        tele_chat_id: builtins.int = ...,
+        tele_user_id: builtins.int = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["email",b"email","is_part_timer",b"is_part_timer","name",b"name","phone_number",b"phone_number","tele_chat_id",b"tele_chat_id","telegram_handle",b"telegram_handle","user_id",b"user_id","user_security_img",b"user_security_img","user_type",b"user_type"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["email",b"email","is_part_timer",b"is_part_timer","name",b"name","phone_number",b"phone_number","tele_user_id",b"tele_user_id","telegram_handle",b"telegram_handle","user_id",b"user_id","user_security_img",b"user_security_img","user_type",b"user_type"]) -> None: ...
 global___User = User
 
 class UsersResponse(google.protobuf.message.Message):
@@ -124,6 +124,7 @@ class UserFilter(google.protobuf.message.Message):
         PHONE_NUMBER: UserFilter._Field.ValueType  # 4
         TELEGRAM_HANDLE: UserFilter._Field.ValueType  # 5
         IS_PART_TIMER: UserFilter._Field.ValueType  # 6
+        TELEGRAM_USER_ID: UserFilter._Field.ValueType  # 7
     class Field(_Field, metaclass=_FieldEnumTypeWrapper):
         """More fields can be added in the future."""
         pass
@@ -135,6 +136,7 @@ class UserFilter(google.protobuf.message.Message):
     PHONE_NUMBER: UserFilter.Field.ValueType  # 4
     TELEGRAM_HANDLE: UserFilter.Field.ValueType  # 5
     IS_PART_TIMER: UserFilter.Field.ValueType  # 6
+    TELEGRAM_USER_ID: UserFilter.Field.ValueType  # 7
 
     FIELD_FIELD_NUMBER: builtins.int
     COMPARISONS_FIELD_NUMBER: builtins.int
@@ -198,6 +200,33 @@ class OrderByUser(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["field",b"field","order_by",b"order_by"]) -> None: ...
 global___OrderByUser = OrderByUser
+
+class FullUser(google.protobuf.message.Message):
+    """This message is mostly used by the internal server
+    and for the creation of new users only. 
+    There should be no other reasons to pass around these 
+    confidential messages.
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    USER_FIELD_NUMBER: builtins.int
+    NONCE_FIELD_NUMBER: builtins.int
+    SECURITY_STRING_FIELD_NUMBER: builtins.int
+    HASHED_PASSWORD_FIELD_NUMBER: builtins.int
+    @property
+    def user(self) -> global___User: ...
+    nonce: typing.Text
+    security_string: typing.Text
+    hashed_password: typing.Text
+    def __init__(self,
+        *,
+        user: typing.Optional[global___User] = ...,
+        nonce: typing.Text = ...,
+        security_string: typing.Text = ...,
+        hashed_password: typing.Text = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["user",b"user"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["hashed_password",b"hashed_password","nonce",b"nonce","security_string",b"security_string","user",b"user"]) -> None: ...
+global___FullUser = FullUser
 
 class Client(google.protobuf.message.Message):
     """**************************************************************************
@@ -331,13 +360,164 @@ class OrderByClient(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["field",b"field","order_by",b"order_by"]) -> None: ...
 global___OrderByClient = OrderByClient
 
-class ResponseNonce(google.protobuf.message.Message):
+class UserToken(google.protobuf.message.Message):
+    """**************************************************************************
+                             USER TOKEN MESSAGES                              *
+    **************************************************************************
+
+    Message used to provide a user token to the client
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    USER_TOKEN_ID_FIELD_NUMBER: builtins.int
+    USER_FIELD_NUMBER: builtins.int
+    TOKEN_FIELD_NUMBER: builtins.int
+    CREATION_DATETIME_FIELD_NUMBER: builtins.int
+    EXPIRY_DATETIME_FIELD_NUMBER: builtins.int
+    user_token_id: builtins.int
+    @property
+    def user(self) -> global___User: ...
+    token: typing.Text
+    creation_datetime: typing.Text
+    """Format must be in: YYYY-MM-DD HH:MM:SS"""
+
+    expiry_datetime: typing.Text
+    """Format must be in: YYYY-MM-DD HH:MM:SS"""
+
+    def __init__(self,
+        *,
+        user_token_id: builtins.int = ...,
+        user: typing.Optional[global___User] = ...,
+        token: typing.Text = ...,
+        creation_datetime: typing.Text = ...,
+        expiry_datetime: typing.Text = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["user",b"user"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["creation_datetime",b"creation_datetime","expiry_datetime",b"expiry_datetime","token",b"token","user",b"user","user_token_id",b"user_token_id"]) -> None: ...
+global___UserToken = UserToken
+
+class UserTokenResponse(google.protobuf.message.Message):
+    """Replies with a user token"""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    RESPONSE_FIELD_NUMBER: builtins.int
+    USERTOKEN_FIELD_NUMBER: builtins.int
+    @property
+    def response(self) -> global___Response: ...
+    @property
+    def userToken(self) -> global___UserToken: ...
+    def __init__(self,
+        *,
+        response: typing.Optional[global___Response] = ...,
+        userToken: typing.Optional[global___UserToken] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["response",b"response","userToken",b"userToken"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["response",b"response","userToken",b"userToken"]) -> None: ...
+global___UserTokenResponse = UserTokenResponse
+
+class UserTokenFilter(google.protobuf.message.Message):
+    """Filter the types of clients to be returned."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    class _Field:
+        ValueType = typing.NewType('ValueType', builtins.int)
+        V: typing_extensions.TypeAlias = ValueType
+    class _FieldEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[UserTokenFilter._Field.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+        USER_ID: UserTokenFilter._Field.ValueType  # 0
+        EXPIRY: UserTokenFilter._Field.ValueType  # 1
+    class Field(_Field, metaclass=_FieldEnumTypeWrapper):
+        """More fields can be added in the future."""
+        pass
+
+    USER_ID: UserTokenFilter.Field.ValueType  # 0
+    EXPIRY: UserTokenFilter.Field.ValueType  # 1
+
+    FIELD_FIELD_NUMBER: builtins.int
+    COMPARISONS_FIELD_NUMBER: builtins.int
+    field: global___UserTokenFilter.Field.ValueType
+    @property
+    def comparisons(self) -> global___Filter: ...
+    def __init__(self,
+        *,
+        field: global___UserTokenFilter.Field.ValueType = ...,
+        comparisons: typing.Optional[global___Filter] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["comparisons",b"comparisons"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["comparisons",b"comparisons","field",b"field"]) -> None: ...
+global___UserTokenFilter = UserTokenFilter
+
+class UserTokenQuery(google.protobuf.message.Message):
+    """Get specific types of user tokens as specified in the Filter. 
+    If one wants to get all objects, leave filters empty. 
+    A default limit of 10 will be used if the field is empty.
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    FILTERS_FIELD_NUMBER: builtins.int
+    LIMIT_FIELD_NUMBER: builtins.int
+    SKIP_FIELD_NUMBER: builtins.int
+    ORDER_BY_FIELD_NUMBER: builtins.int
+    @property
+    def filters(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___UserTokenFilter]: ...
+    limit: builtins.int
+    """Limit the number of objects being returned. 
+    If only 5 objects should be shown, limit = 5;
+    """
+
+    skip: builtins.int
+    """Skip n rows from the database"""
+
+    @property
+    def order_by(self) -> global___OrderByUserToken:
+        """Order the queries, by default the order is desc by creation date"""
+        pass
+    def __init__(self,
+        *,
+        filters: typing.Optional[typing.Iterable[global___UserTokenFilter]] = ...,
+        limit: builtins.int = ...,
+        skip: builtins.int = ...,
+        order_by: typing.Optional[global___OrderByUserToken] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["order_by",b"order_by"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["filters",b"filters","limit",b"limit","order_by",b"order_by","skip",b"skip"]) -> None: ...
+global___UserTokenQuery = UserTokenQuery
+
+class OrderByUserToken(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    FIELD_FIELD_NUMBER: builtins.int
+    ORDER_BY_FIELD_NUMBER: builtins.int
+    field: global___UserTokenFilter.Field.ValueType
+    order_by: global___OrderBy.ValueType
+    def __init__(self,
+        *,
+        field: global___UserTokenFilter.Field.ValueType = ...,
+        order_by: global___OrderBy.ValueType = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["field",b"field","order_by",b"order_by"]) -> None: ...
+global___OrderByUserToken = OrderByUserToken
+
+class LoginRequest(google.protobuf.message.Message):
     """**************************************************************************
                                 SECURITY MESSAGES                            *
     **************************************************************************
 
-    Used to provide nonces
+    Any client that wishes to login send their hashed password to the backend  
+    for authentication.
     """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    USER_EMAIL_FIELD_NUMBER: builtins.int
+    HASHED_PASSWORD_FIELD_NUMBER: builtins.int
+    user_email: typing.Text
+    """The user to login"""
+
+    hashed_password: typing.Text
+    def __init__(self,
+        *,
+        user_email: typing.Text = ...,
+        hashed_password: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["hashed_password",b"hashed_password","user_email",b"user_email"]) -> None: ...
+global___LoginRequest = LoginRequest
+
+class ResponseNonce(google.protobuf.message.Message):
+    """Used to provide nonces"""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     RESPONSE_FIELD_NUMBER: builtins.int
     NONCE_FIELD_NUMBER: builtins.int
@@ -352,6 +532,23 @@ class ResponseNonce(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["response",b"response"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["nonce",b"nonce","response",b"response"]) -> None: ...
 global___ResponseNonce = ResponseNonce
+
+class SecurityStringResponse(google.protobuf.message.Message):
+    """Returns the security string that is tied to the user"""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    RESPONSE_FIELD_NUMBER: builtins.int
+    SECURITY_STRING_FIELD_NUMBER: builtins.int
+    @property
+    def response(self) -> global___Response: ...
+    security_string: typing.Text
+    def __init__(self,
+        *,
+        response: typing.Optional[global___Response] = ...,
+        security_string: typing.Text = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["response",b"response"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["response",b"response","security_string",b"security_string"]) -> None: ...
+global___SecurityStringResponse = SecurityStringResponse
 
 class Broadcast(google.protobuf.message.Message):
     """**************************************************************************
@@ -1324,12 +1521,30 @@ class CameraIot(google.protobuf.message.Message):
     Camera and Iot Monitoring and Controls
     """
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    class _MessageType:
+        ValueType = typing.NewType('ValueType', builtins.int)
+        V: typing_extensions.TypeAlias = ValueType
+    class _MessageTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[CameraIot._MessageType.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+        INITIAL: CameraIot._MessageType.ValueType  # 0
+        CHANGE_GATE: CameraIot._MessageType.ValueType  # 1
+        CHANGE_FIRE_ALARM: CameraIot._MessageType.ValueType  # 2
+        CHANGE_CPU_TEMP: CameraIot._MessageType.ValueType  # 3
+    class MessageType(_MessageType, metaclass=_MessageTypeEnumTypeWrapper):
+        pass
+
+    INITIAL: CameraIot.MessageType.ValueType  # 0
+    CHANGE_GATE: CameraIot.MessageType.ValueType  # 1
+    CHANGE_FIRE_ALARM: CameraIot.MessageType.ValueType  # 2
+    CHANGE_CPU_TEMP: CameraIot.MessageType.ValueType  # 3
+
     CAMERA_IOT_ID_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     CAMERA_FIELD_NUMBER: builtins.int
     GATE_FIELD_NUMBER: builtins.int
     FIRE_ALARM_FIELD_NUMBER: builtins.int
     CPU_TEMPERATURE_FIELD_NUMBER: builtins.int
+    TYPE_FIELD_NUMBER: builtins.int
     camera_iot_id: builtins.int
     """The ID ties the request to a paricular location"""
 
@@ -1344,6 +1559,7 @@ class CameraIot(google.protobuf.message.Message):
     def fire_alarm(self) -> iot_prototype_pb2.FireAlarmState: ...
     @property
     def cpu_temperature(self) -> iot_prototype_pb2.CpuTempState: ...
+    type: global___CameraIot.MessageType.ValueType
     def __init__(self,
         *,
         camera_iot_id: builtins.int = ...,
@@ -1352,9 +1568,10 @@ class CameraIot(google.protobuf.message.Message):
         gate: typing.Optional[iot_prototype_pb2.GateState] = ...,
         fire_alarm: typing.Optional[iot_prototype_pb2.FireAlarmState] = ...,
         cpu_temperature: typing.Optional[iot_prototype_pb2.CpuTempState] = ...,
+        type: global___CameraIot.MessageType.ValueType = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["camera",b"camera","cpu_temperature",b"cpu_temperature","fire_alarm",b"fire_alarm","gate",b"gate"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["camera",b"camera","camera_iot_id",b"camera_iot_id","cpu_temperature",b"cpu_temperature","fire_alarm",b"fire_alarm","gate",b"gate","name",b"name"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["camera",b"camera","camera_iot_id",b"camera_iot_id","cpu_temperature",b"cpu_temperature","fire_alarm",b"fire_alarm","gate",b"gate","name",b"name","type",b"type"]) -> None: ...
 global___CameraIot = CameraIot
 
 class Camera(google.protobuf.message.Message):

@@ -23,7 +23,7 @@ const (
 	USER_DB_TELE_HANDLE     = "telegram_handle"
 	USER_DB_IMG             = "user_security_img"
 	USER_DB_PART_TIMER      = "is_part_timer"
-	USER_DB_TELE_CHAT_ID    = "tele_chat_id"
+	USER_DB_TELE_USER_ID    = "tele_user_id"
 	USER_DB_NONCE           = "nonce"
 	USER_DB_SECURITY_STRING = "security_string"
 	USER_DB_HASHED_PASSWORD = "hashed_password"
@@ -43,7 +43,7 @@ func getUserTableFields() string {
 		USER_DB_TELE_HANDLE,
 		USER_DB_IMG,
 		USER_DB_PART_TIMER,
-		USER_DB_TELE_CHAT_ID,
+		USER_DB_TELE_USER_ID,
 		USER_DB_SECURITY_STRING,
 		USER_DB_HASHED_PASSWORD,
 	}
@@ -65,7 +65,7 @@ func orderUserFields(fullUser *pb.FullUser) string {
 	output += "'" + fullUser.User.TelegramHandle + "'" + ", "
 	output += "'" + fullUser.User.UserSecurityImg + "'" + ", "
 	output += strconv.FormatBool(fullUser.User.IsPartTimer) + ", "
-	output += "'" + strconv.Itoa(int(fullUser.User.TeleChatId)) + "'" + ", "
+	output += "'" + strconv.Itoa(int(fullUser.User.TeleUserId)) + "'" + ", "
 	output += "'" + fullUser.SecurityString + "'" + ", "
 	output += "'" + fullUser.HashedPassword + "'"
 	return output
@@ -211,8 +211,8 @@ func getFilledUserFields(user *pb.User) string {
 
 	userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer), false))
 
-	if user.TeleChatId > 0 {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_TELE_CHAT_ID, strconv.Itoa(int(user.TeleChatId)), true))
+	if user.TeleUserId > 0 {
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_TELE_USER_ID, strconv.Itoa(int(user.TeleUserId)), true))
 	}
 
 	return strings.Join(userTableFields, ",")
@@ -236,7 +236,7 @@ func userFilterToDBCol(filterField pb.UserFilter_Field) string {
 	case pb.UserFilter_IS_PART_TIMER:
 		output = USER_DB_PART_TIMER
 	case pb.UserFilter_TELEGRAM_USER_ID:
-		output = USER_DB_TELE_CHAT_ID
+		output = USER_DB_TELE_USER_ID
 	}
 
 	return output

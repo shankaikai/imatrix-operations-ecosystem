@@ -34,7 +34,7 @@ func (s *Server) PostWReportFromWebApp(ctx context.Context, incidentReport *pb.I
 	}
 
 	// get the user Id for this particular telegram user
-	fullUser, err := db_pck.IdUserByTelegramId(s.db, int(incidentReport.Creator.TeleChatId), true)
+	fullUser, err := db_pck.IdUserByTelegramId(s.db, int(incidentReport.Creator.TeleUserId), true)
 	if err != nil {
 		return res, err
 	}

@@ -59,7 +59,7 @@ func GetUsers(db *sql.DB, query *pb.UserQuery, removeSecrets bool) ([]*pb.FullUs
 				&user.TelegramHandle,
 				&user.UserSecurityImg,
 				&user.IsPartTimer,
-				&user.TeleChatId,
+				&user.TeleUserId,
 				&internalFullUser.Nonce,
 				&internalFullUser.SecurityString,
 				&internalFullUser.HashedPassword,

@@ -1126,7 +1126,7 @@ TODO: decide if we want to have an inactive field for users
 | telegram_handle | [string](#string) |  |  |
 | user_security_img | [string](#string) |  |  |
 | is_part_timer | [bool](#bool) |  |  |
-| tele_chat_id | [int64](#int64) |  |  |
+| tele_user_id | [int64](#int64) |  |  |
 
 
 

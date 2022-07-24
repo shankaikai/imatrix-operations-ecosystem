@@ -36,7 +36,7 @@ func (s *Server) removeUserNonce(user *pb.User) error {
 		return err
 	}
 	if numUpdated < 1 {
-		return fmt.Errorf("No user's nonce was updated for user with id " + strconv.Itoa(int(user.TeleChatId)))
+		return fmt.Errorf("No user's nonce was updated for user with id " + strconv.Itoa(int(user.TeleUserId)))
 	}
 
 	return nil
@@ -62,7 +62,7 @@ func (s *Server) verifyNonceFromHeaders(ctx context.Context, user *pb.User) erro
 	nonce := vals[0]
 
 	// Find the user
-	fullUser, err := db_pck.IdUserByTelegramId(s.db, int(user.TeleChatId), false)
+	fullUser, err := db_pck.IdUserByTelegramId(s.db, int(user.TeleUserId), false)
 	if err != nil {
 		return err
 	}

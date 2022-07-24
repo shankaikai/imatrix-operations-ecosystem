@@ -13,7 +13,7 @@ class IotControlPrototypeServiceStub:
         iot_prototype_pb2.Gate,
         iot_prototype_pb2.GateState]
     """A server-to-client streaming RPC.
-
+    
     Obtains the State of the Stepper.  Results are
     streamed rather than returned at once (e.g. in a response message with a
     repeated field), as the Stepper's state will change after every action
@@ -40,7 +40,7 @@ class IotControlPrototypeServiceServicer(metaclass=abc.ABCMeta):
         context: grpc.ServicerContext,
     ) -> typing.Iterator[iot_prototype_pb2.GateState]:
         """A server-to-client streaming RPC.
-
+        
         Obtains the State of the Stepper.  Results are
         streamed rather than returned at once (e.g. in a response message with a
         repeated field), as the Stepper's state will change after every action

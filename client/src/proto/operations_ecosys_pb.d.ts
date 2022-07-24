@@ -31,8 +31,8 @@ export class User extends jspb.Message {
   getIsPartTimer(): boolean;
   setIsPartTimer(value: boolean): User;
 
-  getTeleChatId(): number;
-  setTeleChatId(value: number): User;
+  getTeleUserId(): number;
+  setTeleYserId(value: number): User;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): User.AsObject;
@@ -52,7 +52,7 @@ export namespace User {
     telegramHandle: string,
     userSecurityImg: string,
     isPartTimer: boolean,
-    teleChatId: number,
+    teleUserId: number,
   }
 
   export enum UserType { 

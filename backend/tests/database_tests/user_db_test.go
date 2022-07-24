@@ -18,7 +18,7 @@ const (
 	TEST_USER_PHONE       = "1231321"
 	TEST_USER_TELE_HANDLE = "telegram_handle"
 	TEST_USER_IMG         = "img"
-	TEST_TELE_CHAT_ID     = 1
+	TEST_TELE_USER_ID     = 1
 )
 
 // Successful Test
@@ -57,14 +57,14 @@ func TestGetUsersNoFilter(t *testing.T) {
 	}
 	defer db.Close()
 
-	rows := sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_chat_id"}).
+	rows := sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_user_id"}).
 		AddRow(1, "I-Specialist", TEST_USER_NAME, TEST_USER_EMAIL,
 			TEST_USER_PHONE, TEST_USER_TELE_HANDLE, TEST_USER_IMG,
-			false, TEST_TELE_CHAT_ID,
+			false, TEST_TELE_USER_ID,
 		).
 		AddRow(2, "I-Specialist", TEST_USER_NAME, TEST_USER_EMAIL,
 			TEST_USER_PHONE, TEST_USER_TELE_HANDLE, TEST_USER_IMG,
-			false, TEST_TELE_CHAT_ID,
+			false, TEST_TELE_USER_ID,
 		)
 
 	mock.ExpectQuery("SELECT \\* FROM user").WillReturnRows(rows)
@@ -102,14 +102,14 @@ func TestGetUsersIdFilter(t *testing.T) {
 	}
 	defer db.Close()
 
-	rows := sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_chat_id"}).
+	rows := sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_user_id"}).
 		AddRow(1, "I-Specialist", TEST_USER_NAME, TEST_USER_EMAIL,
 			TEST_USER_PHONE, TEST_USER_TELE_HANDLE, TEST_USER_IMG,
-			false, TEST_TELE_CHAT_ID,
+			false, TEST_TELE_USER_ID,
 		).
 		AddRow(2, "I-Specialist", TEST_USER_NAME, TEST_USER_EMAIL,
 			TEST_USER_PHONE, TEST_USER_TELE_HANDLE, TEST_USER_IMG,
-			false, TEST_TELE_CHAT_ID,
+			false, TEST_TELE_USER_ID,
 		)
 
 	mock.ExpectQuery("SELECT \\* FROM user WHERE user_id = '1'.*LIMIT 7").WillReturnRows(rows)
@@ -147,10 +147,10 @@ func TestGetUsersTeleHandleFilter(t *testing.T) {
 	}
 	defer db.Close()
 
-	rows := sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_chat_id"}).
+	rows := sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_user_id"}).
 		AddRow(1, "I-Specialist", TEST_USER_NAME, TEST_USER_EMAIL,
 			TEST_USER_PHONE, TEST_USER_TELE_HANDLE, TEST_USER_IMG,
-			false, TEST_TELE_CHAT_ID,
+			false, TEST_TELE_USER_ID,
 		)
 
 	mock.ExpectQuery("SELECT \\* FROM user WHERE telegram_handle = '1'.*LIMIT 1").WillReturnRows(rows)
@@ -170,10 +170,10 @@ func TestGetUsersTeleHandleFilter(t *testing.T) {
 	assert.Equal(t, true, proto.Equal(users[0], fakeUsers[0]), "The first user returned is not equal to the expected.")
 }
 
-func TestUpdateUsersTeleChatId(t *testing.T) {
+func TestUpdateUsersTeleUserId(t *testing.T) {
 	user := &pb.User{
 		UserId:     1,
-		TeleChatId: TEST_TELE_CHAT_ID,
+		TeleUserId: TEST_TELE_USER_ID,
 	}
 
 	db, mock, err := sqlmock.New()
@@ -182,7 +182,7 @@ func TestUpdateUsersTeleChatId(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectExec("UPDATE user SET .*tele_chat_id='1'.*WHERE user_id = '1'").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("UPDATE user SET .*tele_user_id='1'.*WHERE user_id = '1'").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	numRows, err := db_pck.UpdateUser(db, user, &pb.UserQuery{})
 
@@ -283,15 +283,15 @@ func createFakeUser(id int) *pb.User {
 		PhoneNumber:     TEST_USER_PHONE,
 		TelegramHandle:  TEST_USER_TELE_HANDLE,
 		UserSecurityImg: TEST_USER_IMG,
-		TeleChatId:      TEST_TELE_CHAT_ID,
+		TeleUserId:      TEST_TELE_USER_ID,
 		IsPartTimer:     false,
 	}
 }
 
 func getSingleUserDbRow(id int) *sqlmock.Rows {
-	return sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_chat_id"}).
+	return sqlmock.NewRows([]string{"user_id", "user_type", "name", "email", "phone_number", "telegram_handle", "user_security_img", "is_part_timer", "tele_user_id"}).
 		AddRow(id, "I-Specialist", TEST_USER_NAME, TEST_USER_EMAIL,
 			TEST_USER_PHONE, TEST_USER_TELE_HANDLE, TEST_USER_IMG,
-			false, TEST_TELE_CHAT_ID,
+			false, TEST_TELE_USER_ID,
 		)
 }
