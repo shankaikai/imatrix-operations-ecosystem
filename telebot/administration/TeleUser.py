@@ -14,6 +14,7 @@ class TUser:
     def __init__(self, tele_user_id:int, oes_user:operations_ecosys_pb2.User):
         self.tele_user_id = tele_user_id
         self.oes_user = oes_user
+        self.user_type = oes_user.user_type
         pass
 
     @classmethod
@@ -50,8 +51,8 @@ class TUser:
             return
         self.oes_user.tele_user_id = self.tele_user_id
         self.oes_user.telegram_handle = update.effective_user.username
-        self.oes_user.name = update.effective_user.first_name + " " if update.effective_user.first_name != None else ""
-        self.oes_user.name += update.effective_user.last_name if update.effective_user.last_name != None else ""
+        #self.oes_user.name = update.effective_user.first_name + " " if update.effective_user.first_name != None else ""
+        #self.oes_user.name += update.effective_user.last_name if update.effective_user.last_name != None else ""
         print("User Login:")
         print(self.oes_user)
         if not user_client.update_user(self.oes_user):

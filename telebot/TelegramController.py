@@ -26,6 +26,7 @@ class TelegramController:
         self.RootMenu:TelegramMenu = None
         self.Menus:list[TelegramMenu]= []
         self.CurrentMenu:TelegramMenu = None
+        self.PreviousMenu:TelegramMenu = None
         self.user:TeleUser = None
     def buildMenuTree(self, rootMenu:TelegramMenu):
         if self.Menus == None or len(self.Menus) == 0:
@@ -52,7 +53,7 @@ class TelegramController:
         self.RootMenu = rootMenu
     # Handlers that need to be attached directly to Tele Bot
     def mainHandler(self, update: Update, context: CallbackContext):
-        if not TelegramController.ifPrivateChat(update, context):
+        if not self.ifPrivateChat(update, context):
             return
         text:str = update.message.text
         print(text)
@@ -63,6 +64,7 @@ class TelegramController:
                 return
             for menu in self.CurrentMenu.children:
                 if text in menu.triggerWords:
+                    self.PreviousMenu = self.CurrentMenu
                     self.CurrentMenu = menu
                     menu.handler(update, context)
                     break
@@ -79,17 +81,18 @@ class TelegramController:
             logging_in_user.login(update)
             self.user = logging_in_user
             context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
+            self.PreviousMenu = None
             self.CurrentMenu = self.RootMenu
             self.RootMenu.handler(update, context)
         
     def attachmentHandler(self, update:Update, context:CallbackContext):
-        if not TelegramController.ifPrivateChat(update, context):
+        if not self.ifPrivateChat(update, context):
             return
         self.CurrentMenu.attachmentHandler(update, context)
         pass
     # This handler is for in-line button presses
     def callbackqueryHandler(self, update:Update, context:CallbackContext):
-        if not TelegramController.ifPrivateChat(update, context):
+        if not self.ifPrivateChat(update, context):
             return
         strData = update.callback_query.data
         callback_type = strData.split(":")[0]
