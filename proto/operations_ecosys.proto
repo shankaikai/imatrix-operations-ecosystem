@@ -1,7 +1,7 @@
 // Showcasing the capabilities of protobuf with gRPC
 
 syntax = "proto3";
-import "iot_prototype.proto";
+import "proto/iot_prototype.proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
@@ -251,8 +251,10 @@ message UserTokenFilter {
 
     // More fields can be added in the future. 
     enum Field{
-        USER_ID = 0;
-        EXPIRY = 1;
+        USER_TOKEN_ID = 0;
+        USER_ID = 1;
+        EXPIRY = 2;
+        TOKEN = 3;
     }
 }
 

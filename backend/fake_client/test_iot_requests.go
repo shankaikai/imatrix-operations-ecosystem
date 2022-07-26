@@ -8,9 +8,11 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	pb "capstone.operations_ecosystem/backend/proto"
+	"capstone.operations_ecosystem/backend/server"
 )
 
 func TestCameraIotClientUser(serverAddr *string, serverPort *int) {
@@ -26,10 +28,10 @@ func SetGateStateTest(serverAddr *string, serverPort *int) {
 
 	fmt.Println("Updating gate:", gateState.Id, gateState.State)
 
-	client, conn := createIotClient(serverAddr, serverPort)
+	client, conn, cxt := createIotClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	res, err := client.SetGateState(context.Background(), gateState)
+	res, err := client.SetGateState(cxt, gateState)
 	if err != nil {
 		fmt.Println("SetGateStateTest ERROR:", err)
 		return
@@ -44,10 +46,10 @@ func SetGateStateTest(serverAddr *string, serverPort *int) {
 
 func GetIotStateTest(serverAddr *string, serverPort *int) {
 	fmt.Println("GetIotStateTest")
-	client, conn := createIotClient(serverAddr, serverPort)
+	client, conn, cxt := createIotClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	stream, err := client.GetIotState(context.Background(), &emptypb.Empty{})
+	stream, err := client.GetIotState(cxt, &emptypb.Empty{})
 	if err != nil {
 		fmt.Println("GetIotStateTest ERROR:", err)
 		return
@@ -75,8 +77,10 @@ func GetIotStateTest(serverAddr *string, serverPort *int) {
 	}
 }
 
-func createIotClient(serverAddr *string, serverPort *int) (pb.CameraIotServicesClient, *grpc.ClientConn) {
+func createIotClient(serverAddr *string, serverPort *int) (pb.CameraIotServicesClient, *grpc.ClientConn, context.Context) {
 	var opts []grpc.DialOption
+	ctx := context.Background()
+
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", *serverAddr, *serverPort), opts...)
@@ -85,6 +89,9 @@ func createIotClient(serverAddr *string, serverPort *int) (pb.CameraIotServicesC
 	}
 
 	client := pb.NewCameraIotServicesClient(conn)
+	// md := metadata.New(map[string]string{server.JWT_TOKEN_HEADER: "0lWtzj9wOQevbserbFutaxEiVHy9Sj5ZVaaOJxIWTmaVI01beYObd3Curq4xsBZnseMoil6LaN2lFwN1aWBiXSmOF9sa2Yoj4Wdy89gfsQr3JSl5064Q8NozaRf3dpC6"})
+	md := metadata.New(map[string]string{server.JWT_TOKEN_HEADER: "U6VFo936AGzQ47QQkkTURNVWAbeuaoavx2O6y8WamPgSHd9XN4EniK8TfIEbMCM7iOsCcSWb83JZawa8npZlHCMfOPV1G4ymiCz1zhtkz4ZJLtFFJkptuVTdNwv2D0M2"})
+	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	return client, conn
+	return client, conn, ctx
 }

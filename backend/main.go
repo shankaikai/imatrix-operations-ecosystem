@@ -45,27 +45,27 @@ func main() {
 	defer sentry.Recover()
 
 	if *fakeServerFlag {
-		if (*cliFlag){
+		if *cliFlag {
 			go fake_server.InitServer(serverAddrFlag, serverPortFlag)
-		}else{
+		} else {
 			fake_server.InitServer(serverAddrFlag, serverPortFlag)
 		}
 	} else if *teleClientFlag {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
-		if (*cliFlag){
+		if *cliFlag {
 			go server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
-		}else{
+		} else {
 			server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
 		}
 	} else {
-		client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
+		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
 		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
 		// client.TestRosteringClient(serverAddrFlag, serverPortFlag)
 		// client.TestIncidentReportClient(serverAddrFlag, serverPortFlag)
-		// client.TestCameraIotClientUser(serverAddrFlag, serverPortFlag)
+		client.TestCameraIotClientUser(serverAddrFlag, serverPortFlag)
 	}
 
 	//The only reason these are here is to help ensure a clean exit (no zombie processes)

@@ -86,6 +86,13 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 	var opts []grpc.ServerOption
 
 	grpcServer := grpc.NewServer(opts...)
+
+	// register interceptors
+	// grpcServer := grpc.NewServer(
+	// 	grpc.UnaryInterceptor(unaryServerInterceptor),
+	// 	grpc.StreamInterceptor(streamServerInterceptor),
+	// )
+
 	pb.RegisterAdminServicesServer(grpcServer, &server)
 	pb.RegisterBroadcastServicesServer(grpcServer, &server)
 	pb.RegisterRosterServicesServer(grpcServer, &server)
