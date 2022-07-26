@@ -51,7 +51,6 @@
     - [IncidentReportFilter](#operations_ecosys-IncidentReportFilter)
     - [IncidentReportQuery](#operations_ecosys-IncidentReportQuery)
     - [IncidentReportResponse](#operations_ecosys-IncidentReportResponse)
-    - [InternalFullUser](#operations_ecosys-InternalFullUser)
     - [OrderByBroadcast](#operations_ecosys-OrderByBroadcast)
     - [OrderByCameraIot](#operations_ecosys-OrderByCameraIot)
     - [OrderByClient](#operations_ecosys-OrderByClient)
@@ -91,7 +90,6 @@
   
     - [AdminServices](#operations_ecosys-AdminServices)
     - [BroadcastServices](#operations_ecosys-BroadcastServices)
-    - [CameraIotServices](#operations_ecosys-CameraIotServices)
     - [IncidentReportServices](#operations_ecosys-IncidentReportServices)
     - [RosterServices](#operations_ecosys-RosterServices)
   
@@ -833,24 +831,6 @@ Passing around multiple reports in one message.
 
 
 
-<a name="operations_ecosys-InternalFullUser"></a>
-
-### InternalFullUser
-This message is only used by the internal server
-This should never be passed around
-It contains secrets such as nonce
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user | [User](#operations_ecosys-User) |  |  |
-| nonce | [string](#string) |  |  |
-
-
-
-
-
-
 <a name="operations_ecosys-OrderByBroadcast"></a>
 
 ### OrderByBroadcast
@@ -1468,17 +1448,6 @@ More fields can be added in the future.
 | DeleteBroadcast | [Broadcast](#operations_ecosys-Broadcast) | [Response](#operations_ecosys-Response) |  |
 | FindBroadcasts | [BroadcastQuery](#operations_ecosys-BroadcastQuery) | [BroadcastResponse](#operations_ecosys-BroadcastResponse) stream |  |
 | UpdateBroadcastRecipient | [BroadcastRecipient](#operations_ecosys-BroadcastRecipient) | [Response](#operations_ecosys-Response) | Updating of broadcast recipients |
-
-
-<a name="operations_ecosys-CameraIotServices"></a>
-
-### CameraIotServices
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| SetGateState | [.gate_prototype.GateState](#gate_prototype-GateState) | [Response](#operations_ecosys-Response) |  |
-| GetIotState | [.google.protobuf.Empty](#google-protobuf-Empty) | [CameraIotResponse](#operations_ecosys-CameraIotResponse) stream | Continuously provides the states of the gates, fire alarms and cpu temperature as well as the camera endpoints. Responses are sent only when there is a change in state Upon connection, all states are sent for all locations are sent. |
 
 
 <a name="operations_ecosys-IncidentReportServices"></a>
