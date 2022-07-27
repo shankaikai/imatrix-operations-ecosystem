@@ -4,6 +4,7 @@ isort:skip_file
 """
 import builtins
 import google.protobuf.descriptor
+import google.protobuf.internal.containers
 import google.protobuf.message
 import typing
 import typing_extensions
@@ -12,33 +13,113 @@ DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 class HTTPMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    STATUS_FIELD_NUMBER: builtins.int
     VALUE_FIELD_NUMBER: builtins.int
+    VALUEARR_FIELD_NUMBER: builtins.int
+    status: builtins.int
+    """status==0 denotes no issues. status > 0 denotes some issue."""
+
     value: typing.Text
+    @property
+    def valueArr(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     def __init__(self,
         *,
+        status: builtins.int = ...,
         value: typing.Text = ...,
+        valueArr: typing.Optional[typing.Iterable[typing.Text]] = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["value",b"value"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["status",b"status","value",b"value","valueArr",b"valueArr"]) -> None: ...
 global___HTTPMessage = HTTPMessage
 
-class HTTPRosterMessage(google.protobuf.message.Message):
+class HTTPAssignmentsGetRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
-    ROSTER_ID_FIELD_NUMBER: builtins.int
-    roster_id: builtins.int
+    TWAN_FIELD_NUMBER: builtins.int
+    TELE_USER_ID_FIELD_NUMBER: builtins.int
+    STARTDATE_FIELD_NUMBER: builtins.int
+    ENDDATE_FIELD_NUMBER: builtins.int
+    twan: typing.Text
+    tele_user_id: typing.Text
+    startDate: typing.Text
+    endDate: typing.Text
     def __init__(self,
         *,
-        roster_id: builtins.int = ...,
+        twan: typing.Text = ...,
+        tele_user_id: typing.Text = ...,
+        startDate: typing.Text = ...,
+        endDate: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["roster_id",b"roster_id"]) -> None: ...
-global___HTTPRosterMessage = HTTPRosterMessage
+    def ClearField(self, field_name: typing_extensions.Literal["endDate",b"endDate","startDate",b"startDate","tele_user_id",b"tele_user_id","twan",b"twan"]) -> None: ...
+global___HTTPAssignmentsGetRequest = HTTPAssignmentsGetRequest
 
-class HTTPFormMessage(google.protobuf.message.Message):
+class HTTPReportPostRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
-    VALUE_FIELD_NUMBER: builtins.int
-    value: typing.Text
+    TWAN_FIELD_NUMBER: builtins.int
+    TELE_USER_ID_FIELD_NUMBER: builtins.int
+    REPORT_TYPE_FIELD_NUMBER: builtins.int
+    TITLE_FIELD_NUMBER: builtins.int
+    ADDRESS_FIELD_NUMBER: builtins.int
+    TIME_FIELD_NUMBER: builtins.int
+    DATE_FIELD_NUMBER: builtins.int
+    DETAILS_FIELD_NUMBER: builtins.int
+    ISPOLICENOTIFIED_FIELD_NUMBER: builtins.int
+    ISSCDFNOTIFIED_FIELD_NUMBER: builtins.int
+    ISPROPERTYSTOLEN_FIELD_NUMBER: builtins.int
+    twan: typing.Text
+    tele_user_id: typing.Text
+    report_type: typing.Text
+    title: typing.Text
+    address: typing.Text
+    time: typing.Text
+    date: typing.Text
+    details: typing.Text
+    isPoliceNotified: builtins.bool
+    isSCDFNotified: builtins.bool
+    isPropertyStolen: builtins.bool
     def __init__(self,
         *,
-        value: typing.Text = ...,
+        twan: typing.Text = ...,
+        tele_user_id: typing.Text = ...,
+        report_type: typing.Text = ...,
+        title: typing.Text = ...,
+        address: typing.Text = ...,
+        time: typing.Text = ...,
+        date: typing.Text = ...,
+        details: typing.Text = ...,
+        isPoliceNotified: builtins.bool = ...,
+        isSCDFNotified: builtins.bool = ...,
+        isPropertyStolen: builtins.bool = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["value",b"value"]) -> None: ...
-global___HTTPFormMessage = HTTPFormMessage
+    def ClearField(self, field_name: typing_extensions.Literal["address",b"address","date",b"date","details",b"details","isPoliceNotified",b"isPoliceNotified","isPropertyStolen",b"isPropertyStolen","isSCDFNotified",b"isSCDFNotified","report_type",b"report_type","tele_user_id",b"tele_user_id","time",b"time","title",b"title","twan",b"twan"]) -> None: ...
+global___HTTPReportPostRequest = HTTPReportPostRequest
+
+class HTTPRegistrationFormRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    CODE_FIELD_NUMBER: builtins.int
+    TELE_USER_ID_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    EMAIL_FIELD_NUMBER: builtins.int
+    PHONENUMBER_FIELD_NUMBER: builtins.int
+    LOGINSTRING_FIELD_NUMBER: builtins.int
+    HASEDLOGINSTRING_FIELD_NUMBER: builtins.int
+    ISPARTTIME_FIELD_NUMBER: builtins.int
+    code: typing.Text
+    tele_user_id: typing.Text
+    name: typing.Text
+    email: typing.Text
+    phoneNumber: typing.Text
+    loginString: typing.Text
+    hasedLoginString: typing.Text
+    isPartTime: builtins.bool
+    def __init__(self,
+        *,
+        code: typing.Text = ...,
+        tele_user_id: typing.Text = ...,
+        name: typing.Text = ...,
+        email: typing.Text = ...,
+        phoneNumber: typing.Text = ...,
+        loginString: typing.Text = ...,
+        hasedLoginString: typing.Text = ...,
+        isPartTime: builtins.bool = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code",b"code","email",b"email","hasedLoginString",b"hasedLoginString","isPartTime",b"isPartTime","loginString",b"loginString","name",b"name","phoneNumber",b"phoneNumber","tele_user_id",b"tele_user_id"]) -> None: ...
+global___HTTPRegistrationFormRequest = HTTPRegistrationFormRequest

@@ -42,8 +42,7 @@ func (s *Server) removeUserNonce(user *pb.User) error {
 	return nil
 }
 
-// Checks if the nonce from the header is valid, and if so,
-// removes the nonce from the DB
+// Retrives a nonce from the header and verifies it with verifyNonce
 func (s *Server) verifyNonceFromHeaders(ctx context.Context, user *pb.User) error {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -58,9 +57,11 @@ func (s *Server) verifyNonceFromHeaders(ctx context.Context, user *pb.User) erro
 		fmt.Println("verifyNonceFromHeaders ERROR has metadata:", md, errMsg)
 		return fmt.Errorf(errMsg)
 	}
+	return s.verifyNonce(vals[0], user)
+}
 
-	nonce := vals[0]
-
+// Checks if a nonce is valid, and if so, removes the nonce from the DB
+func (s *Server) verifyNonce(nonce string, user *pb.User) error {
 	// Find the user
 	fullUser, err := db_pck.IdUserByTelegramId(s.db, int(user.TeleUserId), false)
 	if err != nil {

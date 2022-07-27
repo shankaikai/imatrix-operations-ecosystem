@@ -16,13 +16,14 @@ from google.api import annotations_pb2 as google_dot_api_dot_annotations__pb2
 import operations_ecosys_pb2 as operations__ecosys__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11http_webapp.proto\x12\x0bhttp_webapp\x1a\x1cgoogle/api/annotations.proto\x1a\x17operations_ecosys.proto\"\x1c\n\x0bHTTPMessage\x12\r\n\x05value\x18\x01 \x01(\t\"&\n\x11HTTPRosterMessage\x12\x11\n\troster_id\x18\x01 \x01(\x03\" \n\x0fHTTPFormMessage\x12\r\n\x05value\x18\x01 \x01(\t2\x82\x02\n\x0eWebAppServices\x12|\n\x1dGetRosterAssignmentsForWebApp\x12\x1e.http_webapp.HTTPRosterMessage\x1a\x18.http_webapp.HTTPMessage\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/http/rosters/{roster_id}\x12r\n\x15PostWReportFromWebApp\x12!.operations_ecosys.IncidentReport\x1a\x18.http_webapp.HTTPMessage\"\x1c\x82\xd3\xe4\x93\x02\x16\"\x11/http/post_report:\x01*B\x14Z\x12/operations_ecosysb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11http_webapp.proto\x12\x0bhttp_webapp\x1a\x1cgoogle/api/annotations.proto\x1a\x17operations_ecosys.proto\">\n\x0bHTTPMessage\x12\x0e\n\x06status\x18\x01 \x01(\x03\x12\r\n\x05value\x18\x02 \x01(\t\x12\x10\n\x08valueArr\x18\x03 \x03(\t\"c\n\x19HTTPAssignmentsGetRequest\x12\x0c\n\x04twan\x18\x01 \x01(\t\x12\x14\n\x0ctele_user_id\x18\x02 \x01(\t\x12\x11\n\tstartDate\x18\x03 \x01(\t\x12\x0f\n\x07\x65ndDate\x18\x04 \x01(\t\"\xe9\x01\n\x15HTTPReportPostRequest\x12\x0c\n\x04twan\x18\x01 \x01(\t\x12\x14\n\x0ctele_user_id\x18\x02 \x01(\t\x12\x13\n\x0breport_type\x18\x03 \x01(\t\x12\r\n\x05title\x18\x04 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x05 \x01(\t\x12\x0c\n\x04time\x18\x06 \x01(\t\x12\x0c\n\x04\x64\x61te\x18\x07 \x01(\t\x12\x0f\n\x07\x64\x65tails\x18\x08 \x01(\t\x12\x18\n\x10isPoliceNotified\x18\t \x01(\x08\x12\x16\n\x0eisSCDFNotified\x18\n \x01(\x08\x12\x18\n\x10isPropertyStolen\x18\x0b \x01(\x08\"\xb6\x01\n\x1bHTTPRegistrationFormRequest\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x14\n\x0ctele_user_id\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\r\n\x05\x65mail\x18\x04 \x01(\t\x12\x13\n\x0bphoneNumber\x18\x05 \x01(\t\x12\x13\n\x0bloginString\x18\x06 \x01(\t\x12\x18\n\x10hasedLoginString\x18\x07 \x01(\t\x12\x12\n\nisPartTime\x18\x08 \x01(\x08\x32\x9c\x04\n\x0eWebAppServices\x12\xa4\x01\n\x1dGetRosterAssignmentsForWebApp\x12&.http_webapp.HTTPAssignmentsGetRequest\x1a\x18.http_webapp.HTTPMessage\"A\x82\xd3\xe4\x93\x02;\x12\x39/http/rosters/{tele_user_id}/{startDate}/{endDate}/{twan}\x12s\n\x15PostWReportFromWebApp\x12\".http_webapp.HTTPReportPostRequest\x1a\x18.http_webapp.HTTPMessage\"\x1c\x82\xd3\xe4\x93\x02\x16\"\x11/http/post_report:\x01*\x12i\n\x15\x43heckRegistrationCode\x12\x18.http_webapp.HTTPMessage\x1a\x18.http_webapp.HTTPMessage\"\x1c\x82\xd3\xe4\x93\x02\x16\"\x11/http/post_report:\x01*\x12\x82\x01\n\x1ePostRegistrationFormFromWebApp\x12(.http_webapp.HTTPRegistrationFormRequest\x1a\x18.http_webapp.HTTPMessage\"\x1c\x82\xd3\xe4\x93\x02\x16\"\x11/http/post_report:\x01*B\x14Z\x12/operations_ecosysb\x06proto3')
 
 
 
 _HTTPMESSAGE = DESCRIPTOR.message_types_by_name['HTTPMessage']
-_HTTPROSTERMESSAGE = DESCRIPTOR.message_types_by_name['HTTPRosterMessage']
-_HTTPFORMMESSAGE = DESCRIPTOR.message_types_by_name['HTTPFormMessage']
+_HTTPASSIGNMENTSGETREQUEST = DESCRIPTOR.message_types_by_name['HTTPAssignmentsGetRequest']
+_HTTPREPORTPOSTREQUEST = DESCRIPTOR.message_types_by_name['HTTPReportPostRequest']
+_HTTPREGISTRATIONFORMREQUEST = DESCRIPTOR.message_types_by_name['HTTPRegistrationFormRequest']
 HTTPMessage = _reflection.GeneratedProtocolMessageType('HTTPMessage', (_message.Message,), {
   'DESCRIPTOR' : _HTTPMESSAGE,
   '__module__' : 'http_webapp_pb2'
@@ -30,19 +31,26 @@ HTTPMessage = _reflection.GeneratedProtocolMessageType('HTTPMessage', (_message.
   })
 _sym_db.RegisterMessage(HTTPMessage)
 
-HTTPRosterMessage = _reflection.GeneratedProtocolMessageType('HTTPRosterMessage', (_message.Message,), {
-  'DESCRIPTOR' : _HTTPROSTERMESSAGE,
+HTTPAssignmentsGetRequest = _reflection.GeneratedProtocolMessageType('HTTPAssignmentsGetRequest', (_message.Message,), {
+  'DESCRIPTOR' : _HTTPASSIGNMENTSGETREQUEST,
   '__module__' : 'http_webapp_pb2'
-  # @@protoc_insertion_point(class_scope:http_webapp.HTTPRosterMessage)
+  # @@protoc_insertion_point(class_scope:http_webapp.HTTPAssignmentsGetRequest)
   })
-_sym_db.RegisterMessage(HTTPRosterMessage)
+_sym_db.RegisterMessage(HTTPAssignmentsGetRequest)
 
-HTTPFormMessage = _reflection.GeneratedProtocolMessageType('HTTPFormMessage', (_message.Message,), {
-  'DESCRIPTOR' : _HTTPFORMMESSAGE,
+HTTPReportPostRequest = _reflection.GeneratedProtocolMessageType('HTTPReportPostRequest', (_message.Message,), {
+  'DESCRIPTOR' : _HTTPREPORTPOSTREQUEST,
   '__module__' : 'http_webapp_pb2'
-  # @@protoc_insertion_point(class_scope:http_webapp.HTTPFormMessage)
+  # @@protoc_insertion_point(class_scope:http_webapp.HTTPReportPostRequest)
   })
-_sym_db.RegisterMessage(HTTPFormMessage)
+_sym_db.RegisterMessage(HTTPReportPostRequest)
+
+HTTPRegistrationFormRequest = _reflection.GeneratedProtocolMessageType('HTTPRegistrationFormRequest', (_message.Message,), {
+  'DESCRIPTOR' : _HTTPREGISTRATIONFORMREQUEST,
+  '__module__' : 'http_webapp_pb2'
+  # @@protoc_insertion_point(class_scope:http_webapp.HTTPRegistrationFormRequest)
+  })
+_sym_db.RegisterMessage(HTTPRegistrationFormRequest)
 
 _WEBAPPSERVICES = DESCRIPTOR.services_by_name['WebAppServices']
 if _descriptor._USE_C_DESCRIPTORS == False:
@@ -50,15 +58,21 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\022/operations_ecosys'
   _WEBAPPSERVICES.methods_by_name['GetRosterAssignmentsForWebApp']._options = None
-  _WEBAPPSERVICES.methods_by_name['GetRosterAssignmentsForWebApp']._serialized_options = b'\202\323\344\223\002\033\022\031/http/rosters/{roster_id}'
+  _WEBAPPSERVICES.methods_by_name['GetRosterAssignmentsForWebApp']._serialized_options = b'\202\323\344\223\002;\0229/http/rosters/{tele_user_id}/{startDate}/{endDate}/{twan}'
   _WEBAPPSERVICES.methods_by_name['PostWReportFromWebApp']._options = None
   _WEBAPPSERVICES.methods_by_name['PostWReportFromWebApp']._serialized_options = b'\202\323\344\223\002\026\"\021/http/post_report:\001*'
+  _WEBAPPSERVICES.methods_by_name['CheckRegistrationCode']._options = None
+  _WEBAPPSERVICES.methods_by_name['CheckRegistrationCode']._serialized_options = b'\202\323\344\223\002\026\"\021/http/post_report:\001*'
+  _WEBAPPSERVICES.methods_by_name['PostRegistrationFormFromWebApp']._options = None
+  _WEBAPPSERVICES.methods_by_name['PostRegistrationFormFromWebApp']._serialized_options = b'\202\323\344\223\002\026\"\021/http/post_report:\001*'
   _HTTPMESSAGE._serialized_start=89
-  _HTTPMESSAGE._serialized_end=117
-  _HTTPROSTERMESSAGE._serialized_start=119
-  _HTTPROSTERMESSAGE._serialized_end=157
-  _HTTPFORMMESSAGE._serialized_start=159
-  _HTTPFORMMESSAGE._serialized_end=191
-  _WEBAPPSERVICES._serialized_start=194
-  _WEBAPPSERVICES._serialized_end=452
+  _HTTPMESSAGE._serialized_end=151
+  _HTTPASSIGNMENTSGETREQUEST._serialized_start=153
+  _HTTPASSIGNMENTSGETREQUEST._serialized_end=252
+  _HTTPREPORTPOSTREQUEST._serialized_start=255
+  _HTTPREPORTPOSTREQUEST._serialized_end=488
+  _HTTPREGISTRATIONFORMREQUEST._serialized_start=491
+  _HTTPREGISTRATIONFORMREQUEST._serialized_end=673
+  _WEBAPPSERVICES._serialized_start=676
+  _WEBAPPSERVICES._serialized_end=1216
 # @@protoc_insertion_point(module_scope)

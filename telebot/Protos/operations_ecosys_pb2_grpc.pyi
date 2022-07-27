@@ -66,6 +66,11 @@ class AdminServicesStub:
         operations_ecosys_pb2.LoginRequest,
         operations_ecosys_pb2.UserTokenResponse]
 
+    GetRegistrationCode: grpc.UnaryUnaryMultiCallable[
+        operations_ecosys_pb2.User,
+        operations_ecosys_pb2.RegistrationCodeResponse]
+    """Is this user or client?"""
+
 
 class AdminServicesServicer(metaclass=abc.ABCMeta):
     """Note for updates:
@@ -148,6 +153,14 @@ class AdminServicesServicer(metaclass=abc.ABCMeta):
         request: operations_ecosys_pb2.LoginRequest,
         context: grpc.ServicerContext,
     ) -> operations_ecosys_pb2.UserTokenResponse: ...
+
+    @abc.abstractmethod
+    def GetRegistrationCode(self,
+        request: operations_ecosys_pb2.User,
+        context: grpc.ServicerContext,
+    ) -> operations_ecosys_pb2.RegistrationCodeResponse:
+        """Is this user or client?"""
+        pass
 
 
 def add_AdminServicesServicer_to_server(servicer: AdminServicesServicer, server: grpc.Server) -> None: ...

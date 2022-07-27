@@ -5,32 +5,31 @@ isort:skip_file
 import abc
 import grpc
 import http_webapp_pb2
-import operations_ecosys_pb2
 
 class WebAppServicesStub:
     def __init__(self, channel: grpc.Channel) -> None: ...
     GetRosterAssignmentsForWebApp: grpc.UnaryUnaryMultiCallable[
-        http_webapp_pb2.HTTPRosterMessage,
+        http_webapp_pb2.HTTPAssignmentsGetRequest,
         http_webapp_pb2.HTTPMessage]
     """<><> Telegram WebApp - HTTP <><>"""
 
     PostWReportFromWebApp: grpc.UnaryUnaryMultiCallable[
-        operations_ecosys_pb2.IncidentReport,
+        http_webapp_pb2.HTTPReportPostRequest,
         http_webapp_pb2.HTTPMessage]
-    """rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
-        option (google.api.http) = {
-            post: "/http/post_report"
-            body: "*"
-        };
-    }
 
-    """
+    CheckRegistrationCode: grpc.UnaryUnaryMultiCallable[
+        http_webapp_pb2.HTTPMessage,
+        http_webapp_pb2.HTTPMessage]
+
+    PostRegistrationFormFromWebApp: grpc.UnaryUnaryMultiCallable[
+        http_webapp_pb2.HTTPRegistrationFormRequest,
+        http_webapp_pb2.HTTPMessage]
 
 
 class WebAppServicesServicer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def GetRosterAssignmentsForWebApp(self,
-        request: http_webapp_pb2.HTTPRosterMessage,
+        request: http_webapp_pb2.HTTPAssignmentsGetRequest,
         context: grpc.ServicerContext,
     ) -> http_webapp_pb2.HTTPMessage:
         """<><> Telegram WebApp - HTTP <><>"""
@@ -38,18 +37,21 @@ class WebAppServicesServicer(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def PostWReportFromWebApp(self,
-        request: operations_ecosys_pb2.IncidentReport,
+        request: http_webapp_pb2.HTTPReportPostRequest,
         context: grpc.ServicerContext,
-    ) -> http_webapp_pb2.HTTPMessage:
-        """rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
-            option (google.api.http) = {
-                post: "/http/post_report"
-                body: "*"
-            };
-        }
+    ) -> http_webapp_pb2.HTTPMessage: ...
 
-        """
-        pass
+    @abc.abstractmethod
+    def CheckRegistrationCode(self,
+        request: http_webapp_pb2.HTTPMessage,
+        context: grpc.ServicerContext,
+    ) -> http_webapp_pb2.HTTPMessage: ...
+
+    @abc.abstractmethod
+    def PostRegistrationFormFromWebApp(self,
+        request: http_webapp_pb2.HTTPRegistrationFormRequest,
+        context: grpc.ServicerContext,
+    ) -> http_webapp_pb2.HTTPMessage: ...
 
 
 def add_WebAppServicesServicer_to_server(servicer: WebAppServicesServicer, server: grpc.Server) -> None: ...

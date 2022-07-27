@@ -13,12 +13,12 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from . import iot_prototype_pb2 as iot__prototype__pb2
+import iot_prototype_pb2 as iot__prototype__pb2
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17operations_ecosys.proto\x12\x11operations_ecosys\x1a\x13iot_prototype.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xae\x02\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x33\n\tuser_type\x18\x02 \x01(\x0e\x32 .operations_ecosys.User.UserType\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\r\n\x05\x65mail\x18\x04 \x01(\t\x12\x14\n\x0cphone_number\x18\x05 \x01(\t\x12\x17\n\x0ftelegram_handle\x18\x06 \x01(\t\x12\x19\n\x11user_security_img\x18\x07 \x01(\t\x12\x15\n\ris_part_timer\x18\x08 \x01(\x08\x12\x14\n\x0ctele_user_id\x18\t \x01(\x03\"L\n\x08UserType\x12\x0f\n\x0bISPECIALIST\x10\x00\x12\x12\n\x0eSECURITY_GUARD\x10\x01\x12\x0e\n\nCONTROLLER\x10\x02\x12\x0b\n\x07MANAGER\x10\x03\"e\n\rUsersResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12%\n\x04user\x18\x02 \x01(\x0b\x32\x17.operations_ecosys.User\"\xf6\x01\n\nUserFilter\x12\x32\n\x05\x66ield\x18\x01 \x01(\x0e\x32#.operations_ecosys.UserFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x83\x01\n\x05\x46ield\x12\x0b\n\x07USER_ID\x10\x00\x12\x08\n\x04TYPE\x10\x01\x12\x08\n\x04NAME\x10\x02\x12\t\n\x05\x45MAIL\x10\x03\x12\x10\n\x0cPHONE_NUMBER\x10\x04\x12\x13\n\x0fTELEGRAM_HANDLE\x10\x05\x12\x11\n\rIS_PART_TIMER\x10\x06\x12\x14\n\x10TELEGRAM_USER_ID\x10\x07\"\x8a\x01\n\tUserQuery\x12.\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1d.operations_ecosys.UserFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x30\n\x08order_by\x18\x04 \x01(\x0b\x32\x1e.operations_ecosys.OrderByUser\"o\n\x0bOrderByUser\x12\x32\n\x05\x66ield\x18\x01 \x01(\x0e\x32#.operations_ecosys.UserFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"r\n\x08\x46ullUser\x12%\n\x04user\x18\x01 \x01(\x0b\x32\x17.operations_ecosys.User\x12\r\n\x05nonce\x18\x02 \x01(\t\x12\x17\n\x0fsecurity_string\x18\x03 \x01(\t\x12\x17\n\x0fhashed_password\x18\x04 \x01(\t\"\x8a\x01\n\x06\x43lient\x12\x11\n\tclient_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x14\n\x0c\x61\x62\x62reviation\x18\x03 \x01(\t\x12\r\n\x05\x65mail\x18\x04 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x05 \x01(\t\x12\x13\n\x0bpostal_code\x18\x06 \x01(\x03\x12\x14\n\x0cphone_number\x18\x07 \x01(\t\"j\n\x0e\x43lientResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12)\n\x06\x63lient\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Client\"\x8c\x01\n\x0c\x43lientFilter\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.ClientFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x16\n\x05\x46ield\x12\r\n\tCLIENT_ID\x10\x00\"\x90\x01\n\x0b\x43lientQuery\x12\x30\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1f.operations_ecosys.ClientFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x32\n\x08order_by\x18\x04 \x01(\x0b\x32 .operations_ecosys.OrderByClient\"s\n\rOrderByClient\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.ClientFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x8c\x01\n\tUserToken\x12\x15\n\ruser_token_id\x18\x01 \x01(\x03\x12%\n\x04user\x18\x02 \x01(\x0b\x32\x17.operations_ecosys.User\x12\r\n\x05token\x18\x03 \x01(\t\x12\x19\n\x11\x63reation_datetime\x18\x04 \x01(\t\x12\x17\n\x0f\x65xpiry_datetime\x18\x05 \x01(\t\"s\n\x11UserTokenResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12/\n\tuserToken\x18\x02 \x01(\x0b\x32\x1c.operations_ecosys.UserToken\"\x9c\x01\n\x0fUserTokenFilter\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.UserTokenFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\" \n\x05\x46ield\x12\x0b\n\x07USER_ID\x10\x00\x12\n\n\x06\x45XPIRY\x10\x01\"\x99\x01\n\x0eUserTokenQuery\x12\x33\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\".operations_ecosys.UserTokenFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x35\n\x08order_by\x18\x04 \x01(\x0b\x32#.operations_ecosys.OrderByUserToken\"y\n\x10OrderByUserToken\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.UserTokenFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\";\n\x0cLoginRequest\x12\x12\n\nuser_email\x18\x01 \x01(\t\x12\x17\n\x0fhashed_password\x18\x02 \x01(\t\"M\n\rResponseNonce\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\r\n\x05nonce\x18\x02 \x01(\t\"`\n\x16SecurityStringResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\x17\n\x0fsecurity_string\x18\x02 \x01(\t\"\xd2\x03\n\tBroadcast\x12\x14\n\x0c\x62roadcast_id\x18\x01 \x01(\x03\x12\x38\n\x04type\x18\x02 \x01(\x0e\x32*.operations_ecosys.Broadcast.BroadcastType\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\x12\x31\n\rcreation_date\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12,\n\x08\x64\x65\x61\x64line\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x07\x63reator\x18\x06 \x01(\x0b\x32\x17.operations_ecosys.User\x12=\n\nrecipients\x18\x07 \x03(\x0b\x32).operations_ecosys.AIFSBroadcastRecipient\x12\x39\n\x07urgency\x18\x08 \x01(\x0e\x32(.operations_ecosys.Broadcast.UrgencyType\"1\n\rBroadcastType\x12\x10\n\x0c\x41NNOUNCEMENT\x10\x00\x12\x0e\n\nASSIGNMENT\x10\x01\",\n\x0bUrgencyType\x12\x07\n\x03LOW\x10\x00\x12\n\n\x06MEDIUM\x10\x01\x12\x08\n\x04HIGH\x10\x02\"c\n\x16\x41IFSBroadcastRecipient\x12\x38\n\trecipient\x18\x01 \x03(\x0b\x32%.operations_ecosys.BroadcastRecipient\x12\x0f\n\x07\x61ifs_id\x18\x02 \x01(\x03\"\xcc\x01\n\x12\x42roadcastRecipient\x12\x1f\n\x17\x62roadcast_recipients_id\x18\x01 \x01(\x03\x12*\n\trecipient\x18\x02 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x14\n\x0c\x61\x63knowledged\x18\x03 \x01(\x08\x12\x10\n\x08rejected\x18\x04 \x01(\x08\x12\x30\n\x0clast_replied\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07\x61ifs_id\x18\x06 \x01(\x03\"s\n\x11\x42roadcastResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12/\n\tbroadcast\x18\x02 \x01(\x0b\x32\x1c.operations_ecosys.Broadcast\"\xc3\x02\n\x0f\x42roadcastFilter\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.BroadcastFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\xc6\x01\n\x05\x46ield\x12\x10\n\x0c\x42ROADCAST_ID\x10\x00\x12\x08\n\x04TYPE\x10\x01\x12\x0b\n\x07\x43ONTENT\x10\x02\x12\x11\n\rCREATION_DATE\x10\x03\x12\x0c\n\x08\x44\x45\x41\x44LINE\x10\x04\x12\x0e\n\nCREATOR_ID\x10\x05\x12\x12\n\x0eRECEIPEIENT_ID\x10\x06\x12\x13\n\x0fNUM_RECEIPIENTS\x10\x07\x12\x0b\n\x07URGENCY\x10\x08\x12\x0b\n\x07\x41IFS_ID\x10\t\x12 \n\x1c\x42ROADCAST_RECIPIENT_TABLE_ID\x10\n\"\x99\x01\n\x0e\x42roadcastQuery\x12\x33\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\".operations_ecosys.BroadcastFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x35\n\x08order_by\x18\x04 \x01(\x0b\x32#.operations_ecosys.OrderByBroadcast\"y\n\x10OrderByBroadcast\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.BroadcastFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\xbf\x02\n\x06Roster\x12\x14\n\x0crostering_id\x18\x01 \x01(\x03\x12\x0f\n\x07\x61ifs_id\x18\x02 \x01(\x03\x12\x12\n\nstart_time\x18\x03 \x01(\t\x12\x10\n\x08\x65nd_time\x18\x04 \x01(\t\x12\x34\n\x07\x63lients\x18\x05 \x03(\x0b\x32#.operations_ecosys.AIFSClientRoster\x12<\n\x0eguard_assigned\x18\x06 \x03(\x0b\x32$.operations_ecosys.RosterAssignement\x12\x30\n\x06status\x18\x07 \x01(\x0e\x32 .operations_ecosys.Roster.Status\"B\n\x06Status\x12\x0e\n\nIS_DEFAULT\x10\x00\x12\x0b\n\x07PENDING\x10\x01\x12\r\n\tCONFIRMED\x10\x02\x12\x0c\n\x08REJECTED\x10\x03\"r\n\x10\x41IFSClientRoster\x12\x1d\n\x15\x61ifs_client_roster_id\x18\x01 \x01(\x03\x12)\n\x06\x63lient\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Client\x12\x14\n\x0cpatrol_order\x18\x03 \x01(\x03\"\xdd\x02\n\x11RosterAssignement\x12\x1c\n\x14roster_assignment_id\x18\x01 \x01(\x03\x12=\n\x0eguard_assigned\x18\x02 \x01(\x0b\x32%.operations_ecosys.EmployeeEvaluation\x12\x35\n\x11\x63ustom_start_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x33\n\x0f\x63ustom_end_time\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x11\n\tconfirmed\x18\x05 \x01(\x08\x12\x10\n\x08\x61ttended\x18\x06 \x01(\x08\x12\x33\n\x0f\x61ttendance_time\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x13\n\x0bis_assigned\x18\x08 \x01(\x08\x12\x10\n\x08rejected\x18\t \x01(\x08\"9\n\x0b\x42ulkRosters\x12*\n\x07rosters\x18\x01 \x03(\x0b\x32\x19.operations_ecosys.Roster\"j\n\x0eRosterResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12)\n\x06roster\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Roster\"\x8a\x01\n\x18RosterAssignmentResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12?\n\x11roster_assignment\x18\x02 \x01(\x0b\x32$.operations_ecosys.RosterAssignement\"\xa9\x03\n\x0cRosterFilter\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.RosterFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\xb2\x02\n\x05\x46ield\x12\r\n\tROSTER_ID\x10\x00\x12\x18\n\x14ROSTER_ASSIGNMENT_ID\x10\x01\x12\x19\n\x15ROSTER_AIFS_CLIENT_ID\x10\x02\x12\x0b\n\x07\x41IFS_ID\x10\x03\x12\x15\n\x11GUARD_ASSIGNED_ID\x10\x04\x12\r\n\tCLIENT_ID\x10\x05\x12!\n\x1dGUARD_ASSIGNMENT_CONFIRMATION\x10\x06\x12\x1d\n\x19GUARD_ASSIGNMENT_ATTENDED\x10\x07\x12\x0e\n\nSTART_TIME\x10\x08\x12\x0c\n\x08\x45ND_TIME\x10\t\x12\x0f\n\x0bIS_ASSIGNED\x10\n\x12!\n\x1d\x44\x45\x46\x41ULT_ROSTERING_DAY_OF_WEEK\x10\x0b\x12\x1e\n\x1aGUARD_ASSIGNMENT_REJECTION\x10\x0c\"\x90\x01\n\x0bRosterQuery\x12\x30\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1f.operations_ecosys.RosterFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x32\n\x08order_by\x18\x04 \x01(\x0b\x32 .operations_ecosys.OrderByRoster\"s\n\rOrderByRoster\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.RosterFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\xc1\x01\n\x11\x41vailabilityQuery\x12\x12\n\nstart_time\x18\x01 \x01(\t\x12\x10\n\x08\x65nd_time\x18\x02 \x01(\t\x12\r\n\x05limit\x18\x03 \x01(\x03\x12\x0c\n\x04skip\x18\x04 \x01(\x03\x12\x36\n\x07\x66ilters\x18\x05 \x03(\x0b\x32%.operations_ecosys.AvailabilityFilter\x12\x31\n\x08order_by\x18\x06 \x01(\x0b\x32\x1f.operations_ecosys.OrderByQuery\"x\n\x0cOrderByQuery\x12:\n\x05\x66ield\x18\x01 \x01(\x0e\x32+.operations_ecosys.AvailabilityFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x91\x02\n\x12\x41vailabilityFilter\x12:\n\x05\x66ield\x18\x01 \x01(\x0e\x32+.operations_ecosys.AvailabilityFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x8e\x01\n\x05\x46ield\x12\x13\n\x0f\x41VAILABILITY_ID\x10\x00\x12\x08\n\x04WEEK\x10\x01\x12\x08\n\x04YEAR\x10\x02\x12\x0c\n\x08GUARD_ID\x10\x03\x12\x07\n\x03SUN\x10\x04\x12\x07\n\x03MON\x10\x05\x12\x08\n\x04TUES\x10\x06\x12\x07\n\x03WED\x10\x07\x12\t\n\x05THURS\x10\x08\x12\x07\n\x03\x46RI\x10\t\x12\x07\n\x03SAT\x10\n\x12\x0c\n\x08NEXT_SUN\x10\x0b\"\x84\x01\n\x1a\x45mployeeEvaluationResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\x37\n\x08\x65mployee\x18\x02 \x01(\x0b\x32%.operations_ecosys.EmployeeEvaluation\"m\n\x12\x45mployeeEvaluation\x12)\n\x08\x65mployee\x18\x01 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x16\n\x0e\x65mployee_score\x18\x02 \x01(\x02\x12\x14\n\x0cis_available\x18\x03 \x01(\x08\"\xfa\x03\n\x0eIncidentReport\x12\x1a\n\x12incident_report_id\x18\x01 \x01(\x03\x12:\n\x04type\x18\x02 \x01(\x0e\x32,.operations_ecosys.IncidentReport.ReportType\x12(\n\x07\x63reator\x18\x03 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x15\n\rcreation_date\x18\x04 \x01(\t\x12\x1a\n\x12last_modified_date\x18\x05 \x01(\t\x12\x32\n\x11last_modifed_user\x18\x06 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x13\n\x0bis_original\x18\x07 \x01(\x08\x12\x13\n\x0bis_approved\x18\x08 \x01(\x08\x12*\n\tsignature\x18\t \x01(\x0b\x32\x17.operations_ecosys.User\x12\x15\n\rapproval_date\x18\n \x01(\t\x12I\n\x17incident_report_content\x18\x0b \x01(\x0b\x32(.operations_ecosys.IncidentReportContent\x12\x0f\n\x07\x61ifs_id\x18\x0c \x01(\x03\"6\n\nReportType\x12\x0e\n\nFIRE_ALARM\x10\x00\x12\x0c\n\x08INTRUDER\x10\x01\x12\n\n\x06OTHERS\x10\x02\"\x9f\x03\n\x15IncidentReportContent\x12\x19\n\x11report_content_id\x18\x01 \x01(\x03\x12\x1a\n\x12last_modified_date\x18\x02 \x01(\t\x12\x32\n\x11last_modifed_user\x18\x03 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x15\n\rincident_time\x18\x05 \x01(\t\x12\x1a\n\x12is_police_notified\x18\x06 \x01(\x08\x12\r\n\x05title\x18\x07 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x08 \x01(\t\x12\x18\n\x10has_action_taken\x18\t \x01(\x08\x12\x14\n\x0c\x61\x63tion_taken\x18\n \x01(\t\x12\x12\n\nhas_injury\x18\x0b \x01(\x08\x12\x1a\n\x12injury_description\x18\x0c \x01(\t\x12\x17\n\x0fhas_stolen_item\x18\r \x01(\x08\x12\x1f\n\x17stolen_item_description\x18\x0e \x01(\t\x12\x19\n\x11report_image_link\x18\x0f \x01(\t\"\x83\x01\n\x16IncidentReportResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12:\n\x0fincident_report\x18\x02 \x01(\x0b\x32!.operations_ecosys.IncidentReport\"\xb0\x02\n\x14IncidentReportFilter\x12<\n\x05\x66ield\x18\x01 \x01(\x0e\x32-.operations_ecosys.IncidentReportFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\xa9\x01\n\x05\x46ield\x12\r\n\tREPORT_ID\x10\x00\x12\x15\n\x11REPORT_CONTENT_ID\x10\x01\x12\x0f\n\x0bREPORT_TYPE\x10\x02\x12\x0c\n\x08MODIFIER\x10\x03\x12\x16\n\x12LAST_MODIFIED_DATE\x10\x05\x12\x10\n\x0cGET_ORIGINAL\x10\x06\x12\x0f\n\x0bIS_APPROVED\x10\x07\x12\r\n\tSIGNATURE\x10\x08\x12\x11\n\rAPPROVAL_DATE\x10\t\"\xa8\x01\n\x13IncidentReportQuery\x12\x38\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\'.operations_ecosys.IncidentReportFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12:\n\x08order_by\x18\x04 \x01(\x0b\x32(.operations_ecosys.OrderByIncidentReport\"\x83\x01\n\x15OrderByIncidentReport\x12<\n\x05\x66ield\x18\x01 \x01(\x0e\x32-.operations_ecosys.IncidentReportFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x80\x03\n\tCameraIot\x12\x15\n\rcamera_iot_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12)\n\x06\x63\x61mera\x18\x03 \x01(\x0b\x32\x19.operations_ecosys.Camera\x12\'\n\x04gate\x18\x04 \x01(\x0b\x32\x19.gate_prototype.GateState\x12\x32\n\nfire_alarm\x18\x05 \x01(\x0b\x32\x1e.gate_prototype.FireAlarmState\x12\x35\n\x0f\x63pu_temperature\x18\x06 \x01(\x0b\x32\x1c.gate_prototype.CpuTempState\x12\x36\n\x04type\x18\x07 \x01(\x0e\x32(.operations_ecosys.CameraIot.MessageType\"W\n\x0bMessageType\x12\x0b\n\x07INITIAL\x10\x00\x12\x0f\n\x0b\x43HANGE_GATE\x10\x01\x12\x15\n\x11\x43HANGE_FIRE_ALARM\x10\x02\x12\x13\n\x0f\x43HANGE_CPU_TEMP\x10\x03\"\x15\n\x06\x43\x61mera\x12\x0b\n\x03url\x18\x01 \x01(\t\"t\n\x11\x43\x61meraIotResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\x30\n\ncamera_iot\x18\x02 \x01(\x0b\x32\x1c.operations_ecosys.CameraIot\"\x96\x01\n\x0f\x43\x61meraIotFilter\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.CameraIotFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x1a\n\x05\x46ield\x12\x11\n\rCAMERA_IOT_ID\x10\x00\"\x99\x01\n\x0e\x43\x61meraIotQuery\x12\x33\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\".operations_ecosys.CameraIotFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x35\n\x08order_by\x18\x04 \x01(\x0b\x32#.operations_ecosys.OrderByCameraIot\"y\n\x10OrderByCameraIot\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.CameraIotFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x82\x01\n\x08Response\x12.\n\x04type\x18\x01 \x01(\x0e\x32 .operations_ecosys.Response.Type\x12\x15\n\rerror_message\x18\x02 \x01(\t\x12\x13\n\x0bprimary_key\x18\x03 \x01(\x03\"\x1a\n\x04Type\x12\x07\n\x03\x41\x43K\x10\x00\x12\t\n\x05\x45RROR\x10\x01\"\xc6\x01\n\x06\x46ilter\x12\x39\n\ncomparison\x18\x01 \x01(\x0e\x32%.operations_ecosys.Filter.Comparisons\x12\r\n\x05value\x18\x02 \x01(\t\"r\n\x0b\x43omparisons\x12\x0b\n\x07GREATER\x10\x00\x12\x0e\n\nGREATER_EQ\x10\x01\x12\t\n\x05\x45QUAL\x10\x02\x12\r\n\tLESSER_EQ\x10\x03\x12\n\n\x06LESSER\x10\x04\x12\x0c\n\x08\x43ONTAINS\x10\x05\x12\x06\n\x02IN\x10\x06\x12\n\n\x06NOT_IN\x10\x07*\x1c\n\x07OrderBy\x12\x07\n\x03\x41SC\x10\x00\x12\x08\n\x04\x44\x45SC\x10\x01\x32\xe7\x06\n\rAdminServices\x12\x45\n\x07\x41\x64\x64User\x12\x1b.operations_ecosys.FullUser\x1a\x1b.operations_ecosys.Response\"\x00\x12\x44\n\nUpdateUser\x12\x17.operations_ecosys.User\x1a\x1b.operations_ecosys.Response\"\x00\x12\x44\n\nDeleteUser\x12\x17.operations_ecosys.User\x1a\x1b.operations_ecosys.Response\"\x00\x12O\n\tFindUsers\x12\x1c.operations_ecosys.UserQuery\x1a .operations_ecosys.UsersResponse\"\x00\x30\x01\x12\x45\n\tAddClient\x12\x19.operations_ecosys.Client\x1a\x1b.operations_ecosys.Response\"\x00\x12H\n\x0cUpdateClient\x12\x19.operations_ecosys.Client\x1a\x1b.operations_ecosys.Response\"\x00\x12H\n\x0c\x44\x65leteClient\x12\x19.operations_ecosys.Client\x1a\x1b.operations_ecosys.Response\"\x00\x12T\n\x0b\x46indClients\x12\x1e.operations_ecosys.ClientQuery\x1a!.operations_ecosys.ClientResponse\"\x00\x30\x01\x12I\n\nGetWANonce\x12\x17.operations_ecosys.User\x1a .operations_ecosys.ResponseNonce\"\x00\x12Y\n\x11GetSecurityString\x12\x17.operations_ecosys.User\x1a).operations_ecosys.SecurityStringResponse\"\x00\x12[\n\x10\x41uthenticateUser\x12\x1f.operations_ecosys.LoginRequest\x1a$.operations_ecosys.UserTokenResponse\"\x00\x32\xc1\x03\n\x11\x42roadcastServices\x12K\n\x0c\x41\x64\x64\x42roadcast\x12\x1c.operations_ecosys.Broadcast\x1a\x1b.operations_ecosys.Response\"\x00\x12N\n\x0fUpdateBroadcast\x12\x1c.operations_ecosys.Broadcast\x1a\x1b.operations_ecosys.Response\"\x00\x12N\n\x0f\x44\x65leteBroadcast\x12\x1c.operations_ecosys.Broadcast\x1a\x1b.operations_ecosys.Response\"\x00\x12]\n\x0e\x46indBroadcasts\x12!.operations_ecosys.BroadcastQuery\x1a$.operations_ecosys.BroadcastResponse\"\x00\x30\x01\x12`\n\x18UpdateBroadcastRecipient\x12%.operations_ecosys.BroadcastRecipient\x1a\x1b.operations_ecosys.Response\"\x00\x32\x82\x05\n\x0eRosterServices\x12J\n\tAddRoster\x12\x1e.operations_ecosys.BulkRosters\x1a\x1b.operations_ecosys.Response\"\x00\x12M\n\x0cUpdateRoster\x12\x1e.operations_ecosys.BulkRosters\x1a\x1b.operations_ecosys.Response\"\x00\x12H\n\x0c\x44\x65leteRoster\x12\x19.operations_ecosys.Roster\x1a\x1b.operations_ecosys.Response\"\x00\x12T\n\x0b\x46indRosters\x12\x1e.operations_ecosys.RosterQuery\x1a!.operations_ecosys.RosterResponse\"\x00\x30\x01\x12l\n\x11GetAvailableUsers\x12$.operations_ecosys.AvailabilityQuery\x1a-.operations_ecosys.EmployeeEvaluationResponse\"\x00\x30\x01\x12h\n\x15\x46indRosterAssignments\x12\x1e.operations_ecosys.RosterQuery\x1a+.operations_ecosys.RosterAssignmentResponse\"\x00\x30\x01\x12]\n\x16UpdateRosterAssignment\x12$.operations_ecosys.RosterAssignement\x1a\x1b.operations_ecosys.Response\"\x00\x32\x91\x03\n\x16IncidentReportServices\x12U\n\x11\x41\x64\x64IncidentReport\x12!.operations_ecosys.IncidentReport\x1a\x1b.operations_ecosys.Response\"\x00\x12X\n\x14UpdateIncidentReport\x12!.operations_ecosys.IncidentReport\x1a\x1b.operations_ecosys.Response\"\x00\x12X\n\x14\x44\x65leteIncidentReport\x12!.operations_ecosys.IncidentReport\x1a\x1b.operations_ecosys.Response\"\x00\x12l\n\x13\x46indIncidentReports\x12&.operations_ecosys.IncidentReportQuery\x1a).operations_ecosys.IncidentReportResponse\"\x00\x30\x01\x32\xae\x01\n\x11\x43\x61meraIotServices\x12H\n\x0cSetGateState\x12\x19.gate_prototype.GateState\x1a\x1b.operations_ecosys.Response\"\x00\x12O\n\x0bGetIotState\x12\x16.google.protobuf.Empty\x1a$.operations_ecosys.CameraIotResponse\"\x00\x30\x01\x42\x14Z\x12/operations_ecosysb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17operations_ecosys.proto\x12\x11operations_ecosys\x1a\x13iot_prototype.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xae\x02\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x33\n\tuser_type\x18\x02 \x01(\x0e\x32 .operations_ecosys.User.UserType\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\r\n\x05\x65mail\x18\x04 \x01(\t\x12\x14\n\x0cphone_number\x18\x05 \x01(\t\x12\x17\n\x0ftelegram_handle\x18\x06 \x01(\t\x12\x19\n\x11user_security_img\x18\x07 \x01(\t\x12\x15\n\ris_part_timer\x18\x08 \x01(\x08\x12\x14\n\x0ctele_user_id\x18\t \x01(\x03\"L\n\x08UserType\x12\x0f\n\x0bISPECIALIST\x10\x00\x12\x12\n\x0eSECURITY_GUARD\x10\x01\x12\x0e\n\nCONTROLLER\x10\x02\x12\x0b\n\x07MANAGER\x10\x03\"e\n\rUsersResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12%\n\x04user\x18\x02 \x01(\x0b\x32\x17.operations_ecosys.User\"\xf6\x01\n\nUserFilter\x12\x32\n\x05\x66ield\x18\x01 \x01(\x0e\x32#.operations_ecosys.UserFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x83\x01\n\x05\x46ield\x12\x0b\n\x07USER_ID\x10\x00\x12\x08\n\x04TYPE\x10\x01\x12\x08\n\x04NAME\x10\x02\x12\t\n\x05\x45MAIL\x10\x03\x12\x10\n\x0cPHONE_NUMBER\x10\x04\x12\x13\n\x0fTELEGRAM_HANDLE\x10\x05\x12\x11\n\rIS_PART_TIMER\x10\x06\x12\x14\n\x10TELEGRAM_USER_ID\x10\x07\"\x8a\x01\n\tUserQuery\x12.\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1d.operations_ecosys.UserFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x30\n\x08order_by\x18\x04 \x01(\x0b\x32\x1e.operations_ecosys.OrderByUser\"o\n\x0bOrderByUser\x12\x32\n\x05\x66ield\x18\x01 \x01(\x0e\x32#.operations_ecosys.UserFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"r\n\x08\x46ullUser\x12%\n\x04user\x18\x01 \x01(\x0b\x32\x17.operations_ecosys.User\x12\r\n\x05nonce\x18\x02 \x01(\t\x12\x17\n\x0fsecurity_string\x18\x03 \x01(\t\x12\x17\n\x0fhashed_password\x18\x04 \x01(\t\"\x8a\x01\n\x06\x43lient\x12\x11\n\tclient_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x14\n\x0c\x61\x62\x62reviation\x18\x03 \x01(\t\x12\r\n\x05\x65mail\x18\x04 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x05 \x01(\t\x12\x13\n\x0bpostal_code\x18\x06 \x01(\x03\x12\x14\n\x0cphone_number\x18\x07 \x01(\t\"j\n\x0e\x43lientResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12)\n\x06\x63lient\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Client\"\x8c\x01\n\x0c\x43lientFilter\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.ClientFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x16\n\x05\x46ield\x12\r\n\tCLIENT_ID\x10\x00\"\x90\x01\n\x0b\x43lientQuery\x12\x30\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1f.operations_ecosys.ClientFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x32\n\x08order_by\x18\x04 \x01(\x0b\x32 .operations_ecosys.OrderByClient\"s\n\rOrderByClient\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.ClientFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x8c\x01\n\tUserToken\x12\x15\n\ruser_token_id\x18\x01 \x01(\x03\x12%\n\x04user\x18\x02 \x01(\x0b\x32\x17.operations_ecosys.User\x12\r\n\x05token\x18\x03 \x01(\t\x12\x19\n\x11\x63reation_datetime\x18\x04 \x01(\t\x12\x17\n\x0f\x65xpiry_datetime\x18\x05 \x01(\t\"s\n\x11UserTokenResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12/\n\tuserToken\x18\x02 \x01(\x0b\x32\x1c.operations_ecosys.UserToken\"\x9c\x01\n\x0fUserTokenFilter\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.UserTokenFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\" \n\x05\x46ield\x12\x0b\n\x07USER_ID\x10\x00\x12\n\n\x06\x45XPIRY\x10\x01\"\x99\x01\n\x0eUserTokenQuery\x12\x33\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\".operations_ecosys.UserTokenFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x35\n\x08order_by\x18\x04 \x01(\x0b\x32#.operations_ecosys.OrderByUserToken\"y\n\x10OrderByUserToken\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.UserTokenFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\";\n\x0cLoginRequest\x12\x12\n\nuser_email\x18\x01 \x01(\t\x12\x17\n\x0fhashed_password\x18\x02 \x01(\t\"M\n\rResponseNonce\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\r\n\x05nonce\x18\x02 \x01(\t\"`\n\x16SecurityStringResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\x17\n\x0fsecurity_string\x18\x02 \x01(\t\"\xd9\x01\n\x18RegistrationCodeResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\x46\n\x08userType\x18\x02 \x01(\x0e\x32\x34.operations_ecosys.RegistrationCodeResponse.UserType\x12\x0c\n\x04\x63ode\x18\x03 \x01(\t\"8\n\x08UserType\x12\x0f\n\x0bISPECIALIST\x10\x00\x12\x0e\n\nCONTROLLER\x10\x01\x12\x0b\n\x07MANAGER\x10\x02\"\xd2\x03\n\tBroadcast\x12\x14\n\x0c\x62roadcast_id\x18\x01 \x01(\x03\x12\x38\n\x04type\x18\x02 \x01(\x0e\x32*.operations_ecosys.Broadcast.BroadcastType\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\x12\x31\n\rcreation_date\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12,\n\x08\x64\x65\x61\x64line\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x07\x63reator\x18\x06 \x01(\x0b\x32\x17.operations_ecosys.User\x12=\n\nrecipients\x18\x07 \x03(\x0b\x32).operations_ecosys.AIFSBroadcastRecipient\x12\x39\n\x07urgency\x18\x08 \x01(\x0e\x32(.operations_ecosys.Broadcast.UrgencyType\"1\n\rBroadcastType\x12\x10\n\x0c\x41NNOUNCEMENT\x10\x00\x12\x0e\n\nASSIGNMENT\x10\x01\",\n\x0bUrgencyType\x12\x07\n\x03LOW\x10\x00\x12\n\n\x06MEDIUM\x10\x01\x12\x08\n\x04HIGH\x10\x02\"c\n\x16\x41IFSBroadcastRecipient\x12\x38\n\trecipient\x18\x01 \x03(\x0b\x32%.operations_ecosys.BroadcastRecipient\x12\x0f\n\x07\x61ifs_id\x18\x02 \x01(\x03\"\xcc\x01\n\x12\x42roadcastRecipient\x12\x1f\n\x17\x62roadcast_recipients_id\x18\x01 \x01(\x03\x12*\n\trecipient\x18\x02 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x14\n\x0c\x61\x63knowledged\x18\x03 \x01(\x08\x12\x10\n\x08rejected\x18\x04 \x01(\x08\x12\x30\n\x0clast_replied\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07\x61ifs_id\x18\x06 \x01(\x03\"s\n\x11\x42roadcastResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12/\n\tbroadcast\x18\x02 \x01(\x0b\x32\x1c.operations_ecosys.Broadcast\"\xc3\x02\n\x0f\x42roadcastFilter\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.BroadcastFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\xc6\x01\n\x05\x46ield\x12\x10\n\x0c\x42ROADCAST_ID\x10\x00\x12\x08\n\x04TYPE\x10\x01\x12\x0b\n\x07\x43ONTENT\x10\x02\x12\x11\n\rCREATION_DATE\x10\x03\x12\x0c\n\x08\x44\x45\x41\x44LINE\x10\x04\x12\x0e\n\nCREATOR_ID\x10\x05\x12\x12\n\x0eRECEIPEIENT_ID\x10\x06\x12\x13\n\x0fNUM_RECEIPIENTS\x10\x07\x12\x0b\n\x07URGENCY\x10\x08\x12\x0b\n\x07\x41IFS_ID\x10\t\x12 \n\x1c\x42ROADCAST_RECIPIENT_TABLE_ID\x10\n\"\x99\x01\n\x0e\x42roadcastQuery\x12\x33\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\".operations_ecosys.BroadcastFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x35\n\x08order_by\x18\x04 \x01(\x0b\x32#.operations_ecosys.OrderByBroadcast\"y\n\x10OrderByBroadcast\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.BroadcastFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\xbf\x02\n\x06Roster\x12\x14\n\x0crostering_id\x18\x01 \x01(\x03\x12\x0f\n\x07\x61ifs_id\x18\x02 \x01(\x03\x12\x12\n\nstart_time\x18\x03 \x01(\t\x12\x10\n\x08\x65nd_time\x18\x04 \x01(\t\x12\x34\n\x07\x63lients\x18\x05 \x03(\x0b\x32#.operations_ecosys.AIFSClientRoster\x12<\n\x0eguard_assigned\x18\x06 \x03(\x0b\x32$.operations_ecosys.RosterAssignement\x12\x30\n\x06status\x18\x07 \x01(\x0e\x32 .operations_ecosys.Roster.Status\"B\n\x06Status\x12\x0e\n\nIS_DEFAULT\x10\x00\x12\x0b\n\x07PENDING\x10\x01\x12\r\n\tCONFIRMED\x10\x02\x12\x0c\n\x08REJECTED\x10\x03\"r\n\x10\x41IFSClientRoster\x12\x1d\n\x15\x61ifs_client_roster_id\x18\x01 \x01(\x03\x12)\n\x06\x63lient\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Client\x12\x14\n\x0cpatrol_order\x18\x03 \x01(\x03\"\xdd\x02\n\x11RosterAssignement\x12\x1c\n\x14roster_assignment_id\x18\x01 \x01(\x03\x12=\n\x0eguard_assigned\x18\x02 \x01(\x0b\x32%.operations_ecosys.EmployeeEvaluation\x12\x35\n\x11\x63ustom_start_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x33\n\x0f\x63ustom_end_time\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x11\n\tconfirmed\x18\x05 \x01(\x08\x12\x10\n\x08\x61ttended\x18\x06 \x01(\x08\x12\x33\n\x0f\x61ttendance_time\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x13\n\x0bis_assigned\x18\x08 \x01(\x08\x12\x10\n\x08rejected\x18\t \x01(\x08\"9\n\x0b\x42ulkRosters\x12*\n\x07rosters\x18\x01 \x03(\x0b\x32\x19.operations_ecosys.Roster\"j\n\x0eRosterResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12)\n\x06roster\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Roster\"\x8a\x01\n\x18RosterAssignmentResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12?\n\x11roster_assignment\x18\x02 \x01(\x0b\x32$.operations_ecosys.RosterAssignement\"\xa9\x03\n\x0cRosterFilter\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.RosterFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\xb2\x02\n\x05\x46ield\x12\r\n\tROSTER_ID\x10\x00\x12\x18\n\x14ROSTER_ASSIGNMENT_ID\x10\x01\x12\x19\n\x15ROSTER_AIFS_CLIENT_ID\x10\x02\x12\x0b\n\x07\x41IFS_ID\x10\x03\x12\x15\n\x11GUARD_ASSIGNED_ID\x10\x04\x12\r\n\tCLIENT_ID\x10\x05\x12!\n\x1dGUARD_ASSIGNMENT_CONFIRMATION\x10\x06\x12\x1d\n\x19GUARD_ASSIGNMENT_ATTENDED\x10\x07\x12\x0e\n\nSTART_TIME\x10\x08\x12\x0c\n\x08\x45ND_TIME\x10\t\x12\x0f\n\x0bIS_ASSIGNED\x10\n\x12!\n\x1d\x44\x45\x46\x41ULT_ROSTERING_DAY_OF_WEEK\x10\x0b\x12\x1e\n\x1aGUARD_ASSIGNMENT_REJECTION\x10\x0c\"\x90\x01\n\x0bRosterQuery\x12\x30\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1f.operations_ecosys.RosterFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x32\n\x08order_by\x18\x04 \x01(\x0b\x32 .operations_ecosys.OrderByRoster\"s\n\rOrderByRoster\x12\x34\n\x05\x66ield\x18\x01 \x01(\x0e\x32%.operations_ecosys.RosterFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\xc1\x01\n\x11\x41vailabilityQuery\x12\x12\n\nstart_time\x18\x01 \x01(\t\x12\x10\n\x08\x65nd_time\x18\x02 \x01(\t\x12\r\n\x05limit\x18\x03 \x01(\x03\x12\x0c\n\x04skip\x18\x04 \x01(\x03\x12\x36\n\x07\x66ilters\x18\x05 \x03(\x0b\x32%.operations_ecosys.AvailabilityFilter\x12\x31\n\x08order_by\x18\x06 \x01(\x0b\x32\x1f.operations_ecosys.OrderByQuery\"x\n\x0cOrderByQuery\x12:\n\x05\x66ield\x18\x01 \x01(\x0e\x32+.operations_ecosys.AvailabilityFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x91\x02\n\x12\x41vailabilityFilter\x12:\n\x05\x66ield\x18\x01 \x01(\x0e\x32+.operations_ecosys.AvailabilityFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x8e\x01\n\x05\x46ield\x12\x13\n\x0f\x41VAILABILITY_ID\x10\x00\x12\x08\n\x04WEEK\x10\x01\x12\x08\n\x04YEAR\x10\x02\x12\x0c\n\x08GUARD_ID\x10\x03\x12\x07\n\x03SUN\x10\x04\x12\x07\n\x03MON\x10\x05\x12\x08\n\x04TUES\x10\x06\x12\x07\n\x03WED\x10\x07\x12\t\n\x05THURS\x10\x08\x12\x07\n\x03\x46RI\x10\t\x12\x07\n\x03SAT\x10\n\x12\x0c\n\x08NEXT_SUN\x10\x0b\"\x84\x01\n\x1a\x45mployeeEvaluationResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\x37\n\x08\x65mployee\x18\x02 \x01(\x0b\x32%.operations_ecosys.EmployeeEvaluation\"m\n\x12\x45mployeeEvaluation\x12)\n\x08\x65mployee\x18\x01 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x16\n\x0e\x65mployee_score\x18\x02 \x01(\x02\x12\x14\n\x0cis_available\x18\x03 \x01(\x08\"\xfa\x03\n\x0eIncidentReport\x12\x1a\n\x12incident_report_id\x18\x01 \x01(\x03\x12:\n\x04type\x18\x02 \x01(\x0e\x32,.operations_ecosys.IncidentReport.ReportType\x12(\n\x07\x63reator\x18\x03 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x15\n\rcreation_date\x18\x04 \x01(\t\x12\x1a\n\x12last_modified_date\x18\x05 \x01(\t\x12\x32\n\x11last_modifed_user\x18\x06 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x13\n\x0bis_original\x18\x07 \x01(\x08\x12\x13\n\x0bis_approved\x18\x08 \x01(\x08\x12*\n\tsignature\x18\t \x01(\x0b\x32\x17.operations_ecosys.User\x12\x15\n\rapproval_date\x18\n \x01(\t\x12I\n\x17incident_report_content\x18\x0b \x01(\x0b\x32(.operations_ecosys.IncidentReportContent\x12\x0f\n\x07\x61ifs_id\x18\x0c \x01(\x03\"6\n\nReportType\x12\x0e\n\nFIRE_ALARM\x10\x00\x12\x0c\n\x08INTRUDER\x10\x01\x12\n\n\x06OTHERS\x10\x02\"\x9f\x03\n\x15IncidentReportContent\x12\x19\n\x11report_content_id\x18\x01 \x01(\x03\x12\x1a\n\x12last_modified_date\x18\x02 \x01(\t\x12\x32\n\x11last_modifed_user\x18\x03 \x01(\x0b\x32\x17.operations_ecosys.User\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x15\n\rincident_time\x18\x05 \x01(\t\x12\x1a\n\x12is_police_notified\x18\x06 \x01(\x08\x12\r\n\x05title\x18\x07 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x08 \x01(\t\x12\x18\n\x10has_action_taken\x18\t \x01(\x08\x12\x14\n\x0c\x61\x63tion_taken\x18\n \x01(\t\x12\x12\n\nhas_injury\x18\x0b \x01(\x08\x12\x1a\n\x12injury_description\x18\x0c \x01(\t\x12\x17\n\x0fhas_stolen_item\x18\r \x01(\x08\x12\x1f\n\x17stolen_item_description\x18\x0e \x01(\t\x12\x19\n\x11report_image_link\x18\x0f \x01(\t\"\x83\x01\n\x16IncidentReportResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12:\n\x0fincident_report\x18\x02 \x01(\x0b\x32!.operations_ecosys.IncidentReport\"\xb0\x02\n\x14IncidentReportFilter\x12<\n\x05\x66ield\x18\x01 \x01(\x0e\x32-.operations_ecosys.IncidentReportFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\xa9\x01\n\x05\x46ield\x12\r\n\tREPORT_ID\x10\x00\x12\x15\n\x11REPORT_CONTENT_ID\x10\x01\x12\x0f\n\x0bREPORT_TYPE\x10\x02\x12\x0c\n\x08MODIFIER\x10\x03\x12\x16\n\x12LAST_MODIFIED_DATE\x10\x05\x12\x10\n\x0cGET_ORIGINAL\x10\x06\x12\x0f\n\x0bIS_APPROVED\x10\x07\x12\r\n\tSIGNATURE\x10\x08\x12\x11\n\rAPPROVAL_DATE\x10\t\"\xa8\x01\n\x13IncidentReportQuery\x12\x38\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\'.operations_ecosys.IncidentReportFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12:\n\x08order_by\x18\x04 \x01(\x0b\x32(.operations_ecosys.OrderByIncidentReport\"\x83\x01\n\x15OrderByIncidentReport\x12<\n\x05\x66ield\x18\x01 \x01(\x0e\x32-.operations_ecosys.IncidentReportFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x80\x03\n\tCameraIot\x12\x15\n\rcamera_iot_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12)\n\x06\x63\x61mera\x18\x03 \x01(\x0b\x32\x19.operations_ecosys.Camera\x12\'\n\x04gate\x18\x04 \x01(\x0b\x32\x19.gate_prototype.GateState\x12\x32\n\nfire_alarm\x18\x05 \x01(\x0b\x32\x1e.gate_prototype.FireAlarmState\x12\x35\n\x0f\x63pu_temperature\x18\x06 \x01(\x0b\x32\x1c.gate_prototype.CpuTempState\x12\x36\n\x04type\x18\x07 \x01(\x0e\x32(.operations_ecosys.CameraIot.MessageType\"W\n\x0bMessageType\x12\x0b\n\x07INITIAL\x10\x00\x12\x0f\n\x0b\x43HANGE_GATE\x10\x01\x12\x15\n\x11\x43HANGE_FIRE_ALARM\x10\x02\x12\x13\n\x0f\x43HANGE_CPU_TEMP\x10\x03\"\x15\n\x06\x43\x61mera\x12\x0b\n\x03url\x18\x01 \x01(\t\"t\n\x11\x43\x61meraIotResponse\x12-\n\x08response\x18\x01 \x01(\x0b\x32\x1b.operations_ecosys.Response\x12\x30\n\ncamera_iot\x18\x02 \x01(\x0b\x32\x1c.operations_ecosys.CameraIot\"\x96\x01\n\x0f\x43\x61meraIotFilter\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.CameraIotFilter.Field\x12.\n\x0b\x63omparisons\x18\x02 \x01(\x0b\x32\x19.operations_ecosys.Filter\"\x1a\n\x05\x46ield\x12\x11\n\rCAMERA_IOT_ID\x10\x00\"\x99\x01\n\x0e\x43\x61meraIotQuery\x12\x33\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\".operations_ecosys.CameraIotFilter\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x0c\n\x04skip\x18\x03 \x01(\x03\x12\x35\n\x08order_by\x18\x04 \x01(\x0b\x32#.operations_ecosys.OrderByCameraIot\"y\n\x10OrderByCameraIot\x12\x37\n\x05\x66ield\x18\x01 \x01(\x0e\x32(.operations_ecosys.CameraIotFilter.Field\x12,\n\x08order_by\x18\x02 \x01(\x0e\x32\x1a.operations_ecosys.OrderBy\"\x82\x01\n\x08Response\x12.\n\x04type\x18\x01 \x01(\x0e\x32 .operations_ecosys.Response.Type\x12\x15\n\rerror_message\x18\x02 \x01(\t\x12\x13\n\x0bprimary_key\x18\x03 \x01(\x03\"\x1a\n\x04Type\x12\x07\n\x03\x41\x43K\x10\x00\x12\t\n\x05\x45RROR\x10\x01\"\xc6\x01\n\x06\x46ilter\x12\x39\n\ncomparison\x18\x01 \x01(\x0e\x32%.operations_ecosys.Filter.Comparisons\x12\r\n\x05value\x18\x02 \x01(\t\"r\n\x0b\x43omparisons\x12\x0b\n\x07GREATER\x10\x00\x12\x0e\n\nGREATER_EQ\x10\x01\x12\t\n\x05\x45QUAL\x10\x02\x12\r\n\tLESSER_EQ\x10\x03\x12\n\n\x06LESSER\x10\x04\x12\x0c\n\x08\x43ONTAINS\x10\x05\x12\x06\n\x02IN\x10\x06\x12\n\n\x06NOT_IN\x10\x07*\x1c\n\x07OrderBy\x12\x07\n\x03\x41SC\x10\x00\x12\x08\n\x04\x44\x45SC\x10\x01\x32\xc6\x07\n\rAdminServices\x12\x45\n\x07\x41\x64\x64User\x12\x1b.operations_ecosys.FullUser\x1a\x1b.operations_ecosys.Response\"\x00\x12\x44\n\nUpdateUser\x12\x17.operations_ecosys.User\x1a\x1b.operations_ecosys.Response\"\x00\x12\x44\n\nDeleteUser\x12\x17.operations_ecosys.User\x1a\x1b.operations_ecosys.Response\"\x00\x12O\n\tFindUsers\x12\x1c.operations_ecosys.UserQuery\x1a .operations_ecosys.UsersResponse\"\x00\x30\x01\x12\x45\n\tAddClient\x12\x19.operations_ecosys.Client\x1a\x1b.operations_ecosys.Response\"\x00\x12H\n\x0cUpdateClient\x12\x19.operations_ecosys.Client\x1a\x1b.operations_ecosys.Response\"\x00\x12H\n\x0c\x44\x65leteClient\x12\x19.operations_ecosys.Client\x1a\x1b.operations_ecosys.Response\"\x00\x12T\n\x0b\x46indClients\x12\x1e.operations_ecosys.ClientQuery\x1a!.operations_ecosys.ClientResponse\"\x00\x30\x01\x12I\n\nGetWANonce\x12\x17.operations_ecosys.User\x1a .operations_ecosys.ResponseNonce\"\x00\x12Y\n\x11GetSecurityString\x12\x17.operations_ecosys.User\x1a).operations_ecosys.SecurityStringResponse\"\x00\x12[\n\x10\x41uthenticateUser\x12\x1f.operations_ecosys.LoginRequest\x1a$.operations_ecosys.UserTokenResponse\"\x00\x12]\n\x13GetRegistrationCode\x12\x17.operations_ecosys.User\x1a+.operations_ecosys.RegistrationCodeResponse\"\x00\x32\xc1\x03\n\x11\x42roadcastServices\x12K\n\x0c\x41\x64\x64\x42roadcast\x12\x1c.operations_ecosys.Broadcast\x1a\x1b.operations_ecosys.Response\"\x00\x12N\n\x0fUpdateBroadcast\x12\x1c.operations_ecosys.Broadcast\x1a\x1b.operations_ecosys.Response\"\x00\x12N\n\x0f\x44\x65leteBroadcast\x12\x1c.operations_ecosys.Broadcast\x1a\x1b.operations_ecosys.Response\"\x00\x12]\n\x0e\x46indBroadcasts\x12!.operations_ecosys.BroadcastQuery\x1a$.operations_ecosys.BroadcastResponse\"\x00\x30\x01\x12`\n\x18UpdateBroadcastRecipient\x12%.operations_ecosys.BroadcastRecipient\x1a\x1b.operations_ecosys.Response\"\x00\x32\x82\x05\n\x0eRosterServices\x12J\n\tAddRoster\x12\x1e.operations_ecosys.BulkRosters\x1a\x1b.operations_ecosys.Response\"\x00\x12M\n\x0cUpdateRoster\x12\x1e.operations_ecosys.BulkRosters\x1a\x1b.operations_ecosys.Response\"\x00\x12H\n\x0c\x44\x65leteRoster\x12\x19.operations_ecosys.Roster\x1a\x1b.operations_ecosys.Response\"\x00\x12T\n\x0b\x46indRosters\x12\x1e.operations_ecosys.RosterQuery\x1a!.operations_ecosys.RosterResponse\"\x00\x30\x01\x12l\n\x11GetAvailableUsers\x12$.operations_ecosys.AvailabilityQuery\x1a-.operations_ecosys.EmployeeEvaluationResponse\"\x00\x30\x01\x12h\n\x15\x46indRosterAssignments\x12\x1e.operations_ecosys.RosterQuery\x1a+.operations_ecosys.RosterAssignmentResponse\"\x00\x30\x01\x12]\n\x16UpdateRosterAssignment\x12$.operations_ecosys.RosterAssignement\x1a\x1b.operations_ecosys.Response\"\x00\x32\x91\x03\n\x16IncidentReportServices\x12U\n\x11\x41\x64\x64IncidentReport\x12!.operations_ecosys.IncidentReport\x1a\x1b.operations_ecosys.Response\"\x00\x12X\n\x14UpdateIncidentReport\x12!.operations_ecosys.IncidentReport\x1a\x1b.operations_ecosys.Response\"\x00\x12X\n\x14\x44\x65leteIncidentReport\x12!.operations_ecosys.IncidentReport\x1a\x1b.operations_ecosys.Response\"\x00\x12l\n\x13\x46indIncidentReports\x12&.operations_ecosys.IncidentReportQuery\x1a).operations_ecosys.IncidentReportResponse\"\x00\x30\x01\x32\xae\x01\n\x11\x43\x61meraIotServices\x12H\n\x0cSetGateState\x12\x19.gate_prototype.GateState\x1a\x1b.operations_ecosys.Response\"\x00\x12O\n\x0bGetIotState\x12\x16.google.protobuf.Empty\x1a$.operations_ecosys.CameraIotResponse\"\x00\x30\x01\x42\x14Z\x12/operations_ecosysb\x06proto3')
 
 _ORDERBY = DESCRIPTOR.enum_types_by_name['OrderBy']
 OrderBy = enum_type_wrapper.EnumTypeWrapper(_ORDERBY)
@@ -45,6 +45,7 @@ _ORDERBYUSERTOKEN = DESCRIPTOR.message_types_by_name['OrderByUserToken']
 _LOGINREQUEST = DESCRIPTOR.message_types_by_name['LoginRequest']
 _RESPONSENONCE = DESCRIPTOR.message_types_by_name['ResponseNonce']
 _SECURITYSTRINGRESPONSE = DESCRIPTOR.message_types_by_name['SecurityStringResponse']
+_REGISTRATIONCODERESPONSE = DESCRIPTOR.message_types_by_name['RegistrationCodeResponse']
 _BROADCAST = DESCRIPTOR.message_types_by_name['Broadcast']
 _AIFSBROADCASTRECIPIENT = DESCRIPTOR.message_types_by_name['AIFSBroadcastRecipient']
 _BROADCASTRECIPIENT = DESCRIPTOR.message_types_by_name['BroadcastRecipient']
@@ -84,6 +85,7 @@ _USER_USERTYPE = _USER.enum_types_by_name['UserType']
 _USERFILTER_FIELD = _USERFILTER.enum_types_by_name['Field']
 _CLIENTFILTER_FIELD = _CLIENTFILTER.enum_types_by_name['Field']
 _USERTOKENFILTER_FIELD = _USERTOKENFILTER.enum_types_by_name['Field']
+_REGISTRATIONCODERESPONSE_USERTYPE = _REGISTRATIONCODERESPONSE.enum_types_by_name['UserType']
 _BROADCAST_BROADCASTTYPE = _BROADCAST.enum_types_by_name['BroadcastType']
 _BROADCAST_URGENCYTYPE = _BROADCAST.enum_types_by_name['UrgencyType']
 _BROADCASTFILTER_FIELD = _BROADCASTFILTER.enum_types_by_name['Field']
@@ -228,6 +230,13 @@ SecurityStringResponse = _reflection.GeneratedProtocolMessageType('SecurityStrin
   # @@protoc_insertion_point(class_scope:operations_ecosys.SecurityStringResponse)
   })
 _sym_db.RegisterMessage(SecurityStringResponse)
+
+RegistrationCodeResponse = _reflection.GeneratedProtocolMessageType('RegistrationCodeResponse', (_message.Message,), {
+  'DESCRIPTOR' : _REGISTRATIONCODERESPONSE,
+  '__module__' : 'operations_ecosys_pb2'
+  # @@protoc_insertion_point(class_scope:operations_ecosys.RegistrationCodeResponse)
+  })
+_sym_db.RegisterMessage(RegistrationCodeResponse)
 
 Broadcast = _reflection.GeneratedProtocolMessageType('Broadcast', (_message.Message,), {
   'DESCRIPTOR' : _BROADCAST,
@@ -483,8 +492,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\022/operations_ecosys'
-  _ORDERBY._serialized_start=9844
-  _ORDERBY._serialized_end=9872
+  _ORDERBY._serialized_start=10064
+  _ORDERBY._serialized_end=10092
   _USER._serialized_start=130
   _USER._serialized_end=432
   _USER_USERTYPE._serialized_start=356
@@ -531,108 +540,112 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _RESPONSENONCE._serialized_end=2648
   _SECURITYSTRINGRESPONSE._serialized_start=2650
   _SECURITYSTRINGRESPONSE._serialized_end=2746
-  _BROADCAST._serialized_start=2749
-  _BROADCAST._serialized_end=3215
-  _BROADCAST_BROADCASTTYPE._serialized_start=3120
-  _BROADCAST_BROADCASTTYPE._serialized_end=3169
-  _BROADCAST_URGENCYTYPE._serialized_start=3171
-  _BROADCAST_URGENCYTYPE._serialized_end=3215
-  _AIFSBROADCASTRECIPIENT._serialized_start=3217
-  _AIFSBROADCASTRECIPIENT._serialized_end=3316
-  _BROADCASTRECIPIENT._serialized_start=3319
-  _BROADCASTRECIPIENT._serialized_end=3523
-  _BROADCASTRESPONSE._serialized_start=3525
-  _BROADCASTRESPONSE._serialized_end=3640
-  _BROADCASTFILTER._serialized_start=3643
-  _BROADCASTFILTER._serialized_end=3966
-  _BROADCASTFILTER_FIELD._serialized_start=3768
-  _BROADCASTFILTER_FIELD._serialized_end=3966
-  _BROADCASTQUERY._serialized_start=3969
-  _BROADCASTQUERY._serialized_end=4122
-  _ORDERBYBROADCAST._serialized_start=4124
-  _ORDERBYBROADCAST._serialized_end=4245
-  _ROSTER._serialized_start=4248
-  _ROSTER._serialized_end=4567
-  _ROSTER_STATUS._serialized_start=4501
-  _ROSTER_STATUS._serialized_end=4567
-  _AIFSCLIENTROSTER._serialized_start=4569
-  _AIFSCLIENTROSTER._serialized_end=4683
-  _ROSTERASSIGNEMENT._serialized_start=4686
-  _ROSTERASSIGNEMENT._serialized_end=5035
-  _BULKROSTERS._serialized_start=5037
-  _BULKROSTERS._serialized_end=5094
-  _ROSTERRESPONSE._serialized_start=5096
-  _ROSTERRESPONSE._serialized_end=5202
-  _ROSTERASSIGNMENTRESPONSE._serialized_start=5205
-  _ROSTERASSIGNMENTRESPONSE._serialized_end=5343
-  _ROSTERFILTER._serialized_start=5346
-  _ROSTERFILTER._serialized_end=5771
-  _ROSTERFILTER_FIELD._serialized_start=5465
-  _ROSTERFILTER_FIELD._serialized_end=5771
-  _ROSTERQUERY._serialized_start=5774
-  _ROSTERQUERY._serialized_end=5918
-  _ORDERBYROSTER._serialized_start=5920
-  _ORDERBYROSTER._serialized_end=6035
-  _AVAILABILITYQUERY._serialized_start=6038
-  _AVAILABILITYQUERY._serialized_end=6231
-  _ORDERBYQUERY._serialized_start=6233
-  _ORDERBYQUERY._serialized_end=6353
-  _AVAILABILITYFILTER._serialized_start=6356
-  _AVAILABILITYFILTER._serialized_end=6629
-  _AVAILABILITYFILTER_FIELD._serialized_start=6487
-  _AVAILABILITYFILTER_FIELD._serialized_end=6629
-  _EMPLOYEEEVALUATIONRESPONSE._serialized_start=6632
-  _EMPLOYEEEVALUATIONRESPONSE._serialized_end=6764
-  _EMPLOYEEEVALUATION._serialized_start=6766
-  _EMPLOYEEEVALUATION._serialized_end=6875
-  _INCIDENTREPORT._serialized_start=6878
-  _INCIDENTREPORT._serialized_end=7384
-  _INCIDENTREPORT_REPORTTYPE._serialized_start=7330
-  _INCIDENTREPORT_REPORTTYPE._serialized_end=7384
-  _INCIDENTREPORTCONTENT._serialized_start=7387
-  _INCIDENTREPORTCONTENT._serialized_end=7802
-  _INCIDENTREPORTRESPONSE._serialized_start=7805
-  _INCIDENTREPORTRESPONSE._serialized_end=7936
-  _INCIDENTREPORTFILTER._serialized_start=7939
-  _INCIDENTREPORTFILTER._serialized_end=8243
-  _INCIDENTREPORTFILTER_FIELD._serialized_start=8074
-  _INCIDENTREPORTFILTER_FIELD._serialized_end=8243
-  _INCIDENTREPORTQUERY._serialized_start=8246
-  _INCIDENTREPORTQUERY._serialized_end=8414
-  _ORDERBYINCIDENTREPORT._serialized_start=8417
-  _ORDERBYINCIDENTREPORT._serialized_end=8548
-  _CAMERAIOT._serialized_start=8551
-  _CAMERAIOT._serialized_end=8935
-  _CAMERAIOT_MESSAGETYPE._serialized_start=8848
-  _CAMERAIOT_MESSAGETYPE._serialized_end=8935
-  _CAMERA._serialized_start=8937
-  _CAMERA._serialized_end=8958
-  _CAMERAIOTRESPONSE._serialized_start=8960
-  _CAMERAIOTRESPONSE._serialized_end=9076
-  _CAMERAIOTFILTER._serialized_start=9079
-  _CAMERAIOTFILTER._serialized_end=9229
-  _CAMERAIOTFILTER_FIELD._serialized_start=9203
-  _CAMERAIOTFILTER_FIELD._serialized_end=9229
-  _CAMERAIOTQUERY._serialized_start=9232
-  _CAMERAIOTQUERY._serialized_end=9385
-  _ORDERBYCAMERAIOT._serialized_start=9387
-  _ORDERBYCAMERAIOT._serialized_end=9508
-  _RESPONSE._serialized_start=9511
-  _RESPONSE._serialized_end=9641
-  _RESPONSE_TYPE._serialized_start=9615
-  _RESPONSE_TYPE._serialized_end=9641
-  _FILTER._serialized_start=9644
-  _FILTER._serialized_end=9842
-  _FILTER_COMPARISONS._serialized_start=9728
-  _FILTER_COMPARISONS._serialized_end=9842
-  _ADMINSERVICES._serialized_start=9875
-  _ADMINSERVICES._serialized_end=10746
-  _BROADCASTSERVICES._serialized_start=10749
-  _BROADCASTSERVICES._serialized_end=11198
-  _ROSTERSERVICES._serialized_start=11201
-  _ROSTERSERVICES._serialized_end=11843
-  _INCIDENTREPORTSERVICES._serialized_start=11846
-  _INCIDENTREPORTSERVICES._serialized_end=12247
-  _CAMERAIOTSERVICES._serialized_start=12250
-  _CAMERAIOTSERVICES._serialized_end=12424
+  _REGISTRATIONCODERESPONSE._serialized_start=2749
+  _REGISTRATIONCODERESPONSE._serialized_end=2966
+  _REGISTRATIONCODERESPONSE_USERTYPE._serialized_start=2910
+  _REGISTRATIONCODERESPONSE_USERTYPE._serialized_end=2966
+  _BROADCAST._serialized_start=2969
+  _BROADCAST._serialized_end=3435
+  _BROADCAST_BROADCASTTYPE._serialized_start=3340
+  _BROADCAST_BROADCASTTYPE._serialized_end=3389
+  _BROADCAST_URGENCYTYPE._serialized_start=3391
+  _BROADCAST_URGENCYTYPE._serialized_end=3435
+  _AIFSBROADCASTRECIPIENT._serialized_start=3437
+  _AIFSBROADCASTRECIPIENT._serialized_end=3536
+  _BROADCASTRECIPIENT._serialized_start=3539
+  _BROADCASTRECIPIENT._serialized_end=3743
+  _BROADCASTRESPONSE._serialized_start=3745
+  _BROADCASTRESPONSE._serialized_end=3860
+  _BROADCASTFILTER._serialized_start=3863
+  _BROADCASTFILTER._serialized_end=4186
+  _BROADCASTFILTER_FIELD._serialized_start=3988
+  _BROADCASTFILTER_FIELD._serialized_end=4186
+  _BROADCASTQUERY._serialized_start=4189
+  _BROADCASTQUERY._serialized_end=4342
+  _ORDERBYBROADCAST._serialized_start=4344
+  _ORDERBYBROADCAST._serialized_end=4465
+  _ROSTER._serialized_start=4468
+  _ROSTER._serialized_end=4787
+  _ROSTER_STATUS._serialized_start=4721
+  _ROSTER_STATUS._serialized_end=4787
+  _AIFSCLIENTROSTER._serialized_start=4789
+  _AIFSCLIENTROSTER._serialized_end=4903
+  _ROSTERASSIGNEMENT._serialized_start=4906
+  _ROSTERASSIGNEMENT._serialized_end=5255
+  _BULKROSTERS._serialized_start=5257
+  _BULKROSTERS._serialized_end=5314
+  _ROSTERRESPONSE._serialized_start=5316
+  _ROSTERRESPONSE._serialized_end=5422
+  _ROSTERASSIGNMENTRESPONSE._serialized_start=5425
+  _ROSTERASSIGNMENTRESPONSE._serialized_end=5563
+  _ROSTERFILTER._serialized_start=5566
+  _ROSTERFILTER._serialized_end=5991
+  _ROSTERFILTER_FIELD._serialized_start=5685
+  _ROSTERFILTER_FIELD._serialized_end=5991
+  _ROSTERQUERY._serialized_start=5994
+  _ROSTERQUERY._serialized_end=6138
+  _ORDERBYROSTER._serialized_start=6140
+  _ORDERBYROSTER._serialized_end=6255
+  _AVAILABILITYQUERY._serialized_start=6258
+  _AVAILABILITYQUERY._serialized_end=6451
+  _ORDERBYQUERY._serialized_start=6453
+  _ORDERBYQUERY._serialized_end=6573
+  _AVAILABILITYFILTER._serialized_start=6576
+  _AVAILABILITYFILTER._serialized_end=6849
+  _AVAILABILITYFILTER_FIELD._serialized_start=6707
+  _AVAILABILITYFILTER_FIELD._serialized_end=6849
+  _EMPLOYEEEVALUATIONRESPONSE._serialized_start=6852
+  _EMPLOYEEEVALUATIONRESPONSE._serialized_end=6984
+  _EMPLOYEEEVALUATION._serialized_start=6986
+  _EMPLOYEEEVALUATION._serialized_end=7095
+  _INCIDENTREPORT._serialized_start=7098
+  _INCIDENTREPORT._serialized_end=7604
+  _INCIDENTREPORT_REPORTTYPE._serialized_start=7550
+  _INCIDENTREPORT_REPORTTYPE._serialized_end=7604
+  _INCIDENTREPORTCONTENT._serialized_start=7607
+  _INCIDENTREPORTCONTENT._serialized_end=8022
+  _INCIDENTREPORTRESPONSE._serialized_start=8025
+  _INCIDENTREPORTRESPONSE._serialized_end=8156
+  _INCIDENTREPORTFILTER._serialized_start=8159
+  _INCIDENTREPORTFILTER._serialized_end=8463
+  _INCIDENTREPORTFILTER_FIELD._serialized_start=8294
+  _INCIDENTREPORTFILTER_FIELD._serialized_end=8463
+  _INCIDENTREPORTQUERY._serialized_start=8466
+  _INCIDENTREPORTQUERY._serialized_end=8634
+  _ORDERBYINCIDENTREPORT._serialized_start=8637
+  _ORDERBYINCIDENTREPORT._serialized_end=8768
+  _CAMERAIOT._serialized_start=8771
+  _CAMERAIOT._serialized_end=9155
+  _CAMERAIOT_MESSAGETYPE._serialized_start=9068
+  _CAMERAIOT_MESSAGETYPE._serialized_end=9155
+  _CAMERA._serialized_start=9157
+  _CAMERA._serialized_end=9178
+  _CAMERAIOTRESPONSE._serialized_start=9180
+  _CAMERAIOTRESPONSE._serialized_end=9296
+  _CAMERAIOTFILTER._serialized_start=9299
+  _CAMERAIOTFILTER._serialized_end=9449
+  _CAMERAIOTFILTER_FIELD._serialized_start=9423
+  _CAMERAIOTFILTER_FIELD._serialized_end=9449
+  _CAMERAIOTQUERY._serialized_start=9452
+  _CAMERAIOTQUERY._serialized_end=9605
+  _ORDERBYCAMERAIOT._serialized_start=9607
+  _ORDERBYCAMERAIOT._serialized_end=9728
+  _RESPONSE._serialized_start=9731
+  _RESPONSE._serialized_end=9861
+  _RESPONSE_TYPE._serialized_start=9835
+  _RESPONSE_TYPE._serialized_end=9861
+  _FILTER._serialized_start=9864
+  _FILTER._serialized_end=10062
+  _FILTER_COMPARISONS._serialized_start=9948
+  _FILTER_COMPARISONS._serialized_end=10062
+  _ADMINSERVICES._serialized_start=10095
+  _ADMINSERVICES._serialized_end=11061
+  _BROADCASTSERVICES._serialized_start=11064
+  _BROADCASTSERVICES._serialized_end=11513
+  _ROSTERSERVICES._serialized_start=11516
+  _ROSTERSERVICES._serialized_end=12158
+  _INCIDENTREPORTSERVICES._serialized_start=12161
+  _INCIDENTREPORTSERVICES._serialized_end=12562
+  _CAMERAIOTSERVICES._serialized_start=12565
+  _CAMERAIOTSERVICES._serialized_end=12739
 # @@protoc_insertion_point(module_scope)

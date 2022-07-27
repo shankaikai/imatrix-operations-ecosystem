@@ -9,20 +9,27 @@ package http_webapp;
 
 service WebAppServices{
     // <><> Telegram WebApp - HTTP <><>
-    rpc GetRosterAssignmentsForWebApp(HTTPRosterMessage) returns (HTTPMessage) {
+    rpc GetRosterAssignmentsForWebApp(HTTPAssignmentsGetRequest) returns (HTTPMessage) {
         option (google.api.http) = {
-            get: "/http/rosters/{roster_id}"
+            get: "/http/rosters/{tele_user_id}/{startDate}/{endDate}/{twan}"
         };
     }
 
-    // rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
-    //     option (google.api.http) = {
-    //         post: "/http/post_report"
-    //         body: "*"
-    //     };
-    // }
+    rpc PostWReportFromWebApp(HTTPReportPostRequest) returns (HTTPMessage) {
+        option (google.api.http) = {
+            post: "/http/post_report"
+            body: "*"
+        };
+    }
 
-    rpc PostWReportFromWebApp(operations_ecosys.IncidentReport) returns (HTTPMessage) {
+    rpc CheckRegistrationCode(HTTPMessage) returns (HTTPMessage) {
+        option (google.api.http) = {
+            post: "/http/post_report"
+            body: "*"
+        };
+    }
+
+    rpc PostRegistrationFormFromWebApp(HTTPRegistrationFormRequest) returns (HTTPMessage) {
         option (google.api.http) = {
             post: "/http/post_report"
             body: "*"
@@ -31,13 +38,40 @@ service WebAppServices{
 }
 
 message HTTPMessage{
-    string value = 1;
+    //status==0 denotes no issues. status > 0 denotes some issue.
+    int64 status = 1;
+    string value = 2;
+    repeated string valueArr = 3;
 }
 
-message HTTPRosterMessage{
-    int64 roster_id = 1;
+message HTTPAssignmentsGetRequest{
+    string twan = 1;
+    int64 tele_user_id = 2;
+    string startDate = 3;
+    string endDate = 4;
 }
 
-message HTTPFormMessage{
-    string value = 1;
+message HTTPReportPostRequest{
+    string twan = 1;
+    int64 tele_user_id = 2;
+    string report_type = 3;
+    string title = 4;
+    string address = 5;
+    string time = 6;
+    string date = 7;
+    string details = 8;
+    bool isPoliceNotified = 9;
+    bool isSCDFNotified = 10;
+    bool isPropertyStolen = 11;
+}
+
+message HTTPRegistrationFormRequest{
+    string code = 1;
+    int64 tele_user_id = 2;
+    string name = 3;
+    string email = 4;
+    string phoneNumber = 5;
+    string loginString = 6;
+    string hasedLoginString = 7;
+    bool isPartTime = 8;
 }

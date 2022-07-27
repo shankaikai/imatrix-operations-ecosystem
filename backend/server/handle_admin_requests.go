@@ -346,3 +346,7 @@ func (s *Server) AuthenticateUser(cxt context.Context, loginRequest *pb.LoginReq
 	userTokenResponse.UserToken = token
 	return &userTokenResponse, nil
 }
+
+func (s *Server)GetRegistrationCode(req *pb.RegistrationCodeRequest) (*pb.RegistrationCodeResponse, error){
+	return &pb.RegistrationCodeResponse{}, nil
+}

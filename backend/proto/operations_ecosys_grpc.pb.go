@@ -38,6 +38,8 @@ type AdminServicesClient interface {
 	GetWANonce(ctx context.Context, in *User, opts ...grpc.CallOption) (*ResponseNonce, error)
 	GetSecurityString(ctx context.Context, in *User, opts ...grpc.CallOption) (*SecurityStringResponse, error)
 	AuthenticateUser(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserTokenResponse, error)
+	//Is this user or client?
+	GetRegistrationCode(ctx context.Context, in *RegistrationCodeRequest, opts ...grpc.CallOption) (*RegistrationCodeResponse, error)
 }
 
 type adminServicesClient struct {
@@ -193,6 +195,15 @@ func (c *adminServicesClient) AuthenticateUser(ctx context.Context, in *LoginReq
 	return out, nil
 }
 
+func (c *adminServicesClient) GetRegistrationCode(ctx context.Context, in *RegistrationCodeRequest, opts ...grpc.CallOption) (*RegistrationCodeResponse, error) {
+	out := new(RegistrationCodeResponse)
+	err := c.cc.Invoke(ctx, "/operations_ecosys.AdminServices/GetRegistrationCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServicesServer is the server API for AdminServices service.
 // All implementations must embed UnimplementedAdminServicesServer
 // for forward compatibility
@@ -212,6 +223,8 @@ type AdminServicesServer interface {
 	GetWANonce(context.Context, *User) (*ResponseNonce, error)
 	GetSecurityString(context.Context, *User) (*SecurityStringResponse, error)
 	AuthenticateUser(context.Context, *LoginRequest) (*UserTokenResponse, error)
+	//Is this user or client?
+	GetRegistrationCode(context.Context, *RegistrationCodeRequest) (*RegistrationCodeResponse, error)
 	mustEmbedUnimplementedAdminServicesServer()
 }
 
@@ -251,6 +264,9 @@ func (UnimplementedAdminServicesServer) GetSecurityString(context.Context, *User
 }
 func (UnimplementedAdminServicesServer) AuthenticateUser(context.Context, *LoginRequest) (*UserTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateUser not implemented")
+}
+func (UnimplementedAdminServicesServer) GetRegistrationCode(context.Context, *RegistrationCodeRequest) (*RegistrationCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRegistrationCode not implemented")
 }
 func (UnimplementedAdminServicesServer) mustEmbedUnimplementedAdminServicesServer() {}
 
@@ -469,6 +485,24 @@ func _AdminServices_AuthenticateUser_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminServices_GetRegistrationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegistrationCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServicesServer).GetRegistrationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/operations_ecosys.AdminServices/GetRegistrationCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServicesServer).GetRegistrationCode(ctx, req.(*RegistrationCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminServices_ServiceDesc is the grpc.ServiceDesc for AdminServices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -511,6 +545,10 @@ var AdminServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthenticateUser",
 			Handler:    _AdminServices_AuthenticateUser_Handler,
+		},
+		{
+			MethodName: "GetRegistrationCode",
+			Handler:    _AdminServices_GetRegistrationCode_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

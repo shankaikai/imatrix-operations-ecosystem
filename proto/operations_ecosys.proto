@@ -1,7 +1,7 @@
 // Showcasing the capabilities of protobuf with gRPC
 
 syntax = "proto3";
-import "iot_prototype.proto";
+import "proto/iot_prototype.proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
@@ -34,6 +34,9 @@ service AdminServices {
     rpc GetWANonce(User) returns (ResponseNonce) {}
     rpc GetSecurityString(User) returns (SecurityStringResponse) {}
     rpc AuthenticateUser(LoginRequest) returns (UserTokenResponse) {}
+
+    //Is this user or client?
+    rpc GetRegistrationCode(RegistrationCodeRequest) returns (RegistrationCodeResponse) {}
 }
 
 service BroadcastServices{
@@ -168,6 +171,16 @@ message FullUser{
 }
 
 
+message RegistrationCodeRequest{
+    User user = 1;
+    CodeType type = 2;
+    enum CodeType{
+        ISPECIALIST = 0;
+        CONTROLLER = 1;
+        MANAGER = 2;
+    }
+}
+
 /***************************************************************************
 *                              CLIENT MESSAGES                              *
 ****************************************************************************/
@@ -300,6 +313,19 @@ message ResponseNonce {
 message SecurityStringResponse{
     Response response = 1;
     string security_string = 2;
+}
+
+// Returns a registration code that can be used to create a new user
+message RegistrationCodeResponse{
+    Response response = 1;
+    CodeType type = 2;
+    string code = 3;
+
+    enum CodeType{
+        ISPECIALIST = 0;
+        CONTROLLER = 1;
+        MANAGER = 2;
+    }
 }
 
 /***************************************************************************

@@ -550,6 +550,41 @@ class SecurityStringResponse(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["response",b"response","security_string",b"security_string"]) -> None: ...
 global___SecurityStringResponse = SecurityStringResponse
 
+class RegistrationCodeResponse(google.protobuf.message.Message):
+    """Returns a registration code that can be used to create a new user"""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    class _UserType:
+        ValueType = typing.NewType('ValueType', builtins.int)
+        V: typing_extensions.TypeAlias = ValueType
+    class _UserTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[RegistrationCodeResponse._UserType.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+        ISPECIALIST: RegistrationCodeResponse._UserType.ValueType  # 0
+        CONTROLLER: RegistrationCodeResponse._UserType.ValueType  # 1
+        MANAGER: RegistrationCodeResponse._UserType.ValueType  # 2
+    class UserType(_UserType, metaclass=_UserTypeEnumTypeWrapper):
+        pass
+
+    ISPECIALIST: RegistrationCodeResponse.UserType.ValueType  # 0
+    CONTROLLER: RegistrationCodeResponse.UserType.ValueType  # 1
+    MANAGER: RegistrationCodeResponse.UserType.ValueType  # 2
+
+    RESPONSE_FIELD_NUMBER: builtins.int
+    USERTYPE_FIELD_NUMBER: builtins.int
+    CODE_FIELD_NUMBER: builtins.int
+    @property
+    def response(self) -> global___Response: ...
+    userType: global___RegistrationCodeResponse.UserType.ValueType
+    code: typing.Text
+    def __init__(self,
+        *,
+        response: typing.Optional[global___Response] = ...,
+        userType: global___RegistrationCodeResponse.UserType.ValueType = ...,
+        code: typing.Text = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["response",b"response"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code",b"code","response",b"response","userType",b"userType"]) -> None: ...
+global___RegistrationCodeResponse = RegistrationCodeResponse
+
 class Broadcast(google.protobuf.message.Message):
     """**************************************************************************
                              BROADCASTING MESSAGES                           *
