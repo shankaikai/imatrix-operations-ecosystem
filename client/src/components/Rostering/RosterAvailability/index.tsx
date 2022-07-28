@@ -13,7 +13,7 @@ export default function RosterAvailability() {
       <Group>
         {selectedDate &&
           guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")] &&
-          guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")][0].map(
+          guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")][0]?.map(
             (guard, index) => (
               <RosterGuard
                 key={guard.employee?.userId}

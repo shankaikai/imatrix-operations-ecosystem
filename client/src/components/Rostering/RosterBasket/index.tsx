@@ -59,7 +59,7 @@ export default function RosterBasket({ basket, index }: RosterCardProps) {
           guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")] ? (
             guardsAssigned[dayjs(selectedDate).format("YYYY-MM-DD")][
               basket.aifsId
-            ].map((guard, index) => {
+            ]?.map((guard, index) => {
               return (
                 <RosterGuard
                   key={guard.employee?.userId}

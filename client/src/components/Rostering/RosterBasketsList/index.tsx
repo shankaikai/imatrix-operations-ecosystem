@@ -8,10 +8,9 @@ export default function RosterBasketsLists() {
 
   return (
     <Stack>
-      {rosterBaskets &&
-        rosterBaskets.map((basket, index) => (
-          <RosterBasket key={basket.aifsId} basket={basket} index={index} />
-        ))}
+      {rosterBaskets?.map((basket, index) => (
+        <RosterBasket key={basket.aifsId} basket={basket} index={index} />
+      ))}
     </Stack>
   );
 }
