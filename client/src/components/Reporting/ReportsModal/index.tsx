@@ -19,7 +19,6 @@ import {
   useReporting,
 } from "../../../helpers/useReportingClient";
 import { useUserProvider } from "../../../helpers/useUserProvider";
-import { IncidentReport } from "../../../proto/operations_ecosys_pb";
 
 interface ReportsModalProps {}
 
