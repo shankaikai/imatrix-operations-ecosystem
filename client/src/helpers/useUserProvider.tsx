@@ -12,7 +12,7 @@ interface UserInterface {
   image: string;
   userId: number;
   userType: User.UserType;
-  setUser?(user: User): void;
+  setUser?(user: User.AsObject): void;
 }
 
 const UserContext = createContext<UserInterface>({
@@ -35,12 +35,12 @@ export function UserProvider({ children }: UserProviderProps) {
   const [userType, setUserType] = useState<User.UserType>(
     User.UserType.ISPECIALIST
   );
-  const setUser = (user: User) => {
-    setUserId(user.getUserId());
-    setName(user.getName());
-    setEmail(user.getEmail());
-    setImage(user.getUserSecurityImg());
-    setUserType(user.getUserType());
+  const setUser = (user: User.AsObject) => {
+    setUserId(user.userId);
+    setName(user.name);
+    setEmail(user.email);
+    setImage(user.userSecurityImg);
+    setUserType(user.userType);
   };
   return (
     <UserContext.Provider
@@ -77,12 +77,14 @@ export const isLoggedIn = () => {
   if (!jsonString) {
     return false;
   }
-  const { expiry }: { expiry: string } = JSON.parse(jsonString);
+  const { expiry, user }: { expiry: string; user: User.AsObject } =
+    JSON.parse(jsonString);
+
   if (dayjs(expiry).isBefore(dayjs())) {
     return false;
   }
 
-  return true;
+  return user;
 };
 
 export const storeJWT = (jwt: string) => {
@@ -92,7 +94,7 @@ export const storeJWT = (jwt: string) => {
 export const signIn = async (
   username: string,
   password: string
-): Promise<User | false> => {
+): Promise<User.AsObject | false> => {
   //TODO: retrieve random string from BE
   const client = getUserClient();
   const user = new User();
@@ -115,8 +117,14 @@ export const signIn = async (
     const token = userToken.getToken();
     const expiry = userToken.getExpiryDatetime();
     userToken.getUser();
-    storeJWT(JSON.stringify({ jwt: token, expiry: expiry }));
-    return userToken.getUser() as User;
+    storeJWT(
+      JSON.stringify({
+        jwt: token,
+        expiry: expiry,
+        user: userToken.getUser()?.toObject(),
+      })
+    );
+    return userToken.getUser()?.toObject() as User.AsObject;
   } else {
     return false;
   }

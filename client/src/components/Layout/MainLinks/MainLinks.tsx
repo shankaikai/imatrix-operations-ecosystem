@@ -65,12 +65,6 @@ export function MainLinks() {
 
   const [links, setLinks] = useState([
     {
-      icon: <LayoutDashboard size={16} />,
-      color: "teal",
-      label: "Dashboard",
-      link: "/dashboard",
-    },
-    {
       icon: <Message2 size={16} />,
       color: "blue",
       label: "Broadcast",

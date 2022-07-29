@@ -301,7 +301,6 @@ export function submitUpdateRoster(
 
   const bulkRoster = new BulkRosters();
   bulkRoster.setRostersList(rosterList);
-  // debugger
   client
     .updateRoster(bulkRoster, {})
     .then((response) => {

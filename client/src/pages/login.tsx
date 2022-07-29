@@ -10,7 +10,11 @@ import {
 } from "@mantine/core";
 import {} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { isLoggedIn, signIn, useUserProvider } from "../helpers/useUserProvider";
+import {
+  isLoggedIn,
+  signIn,
+  useUserProvider,
+} from "../helpers/useUserProvider";
 import { useRouter } from "next/router";
 
 interface LogInProps {}
@@ -18,7 +22,7 @@ interface LogInProps {}
 const LogIn: FunctionComponent<LogInProps> = () => {
   const router = useRouter();
 
-  const {setUser} = useUserProvider()
+  const { setUser } = useUserProvider();
   const form = useForm({
     initialValues: {
       username: "",
@@ -36,8 +40,8 @@ const LogIn: FunctionComponent<LogInProps> = () => {
   const onSubmit = async (values: { username: string; password: string }) => {
     const user = await signIn(values.username, values.password);
     if (user) {
-      setUser && setUser(user)
-      router.push("/dashboard");
+      setUser && setUser(user);
+      router.push("/dashboard/broadcasting");
     } else {
       setError("Username or password is invalid.");
     }
@@ -46,7 +50,7 @@ const LogIn: FunctionComponent<LogInProps> = () => {
   useEffect(() => {
     // redirect to dashboard if already logged in
     if (isLoggedIn()) {
-      router.push("/dashboard");
+      router.push("/dashboard/broadcasting");
     }
   }, []);
   return (
