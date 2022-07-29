@@ -1272,7 +1272,7 @@ proto.operations_ecosys.User.toObject = function(includeInstance, msg) {
     telegramHandle: jspb.Message.getFieldWithDefault(msg, 6, ""),
     userSecurityImg: jspb.Message.getFieldWithDefault(msg, 7, ""),
     isPartTimer: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-    teleChatId: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    teleUserId: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -1343,7 +1343,7 @@ proto.operations_ecosys.User.deserializeBinaryFromReader = function(msg, reader)
       break;
     case 9:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setTeleChatId(value);
+      msg.setTeleUserId(value);
       break;
     default:
       reader.skipField();
@@ -1430,7 +1430,7 @@ proto.operations_ecosys.User.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getTeleChatId();
+  f = message.getTeleUserId();
   if (f !== 0) {
     writer.writeInt64(
       9,
@@ -1598,7 +1598,7 @@ proto.operations_ecosys.User.prototype.setIsPartTimer = function(value) {
  * optional int64 tele_chat_id = 9;
  * @return {number}
  */
-proto.operations_ecosys.User.prototype.getTeleChatId = function() {
+proto.operations_ecosys.User.prototype.getTeleUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
@@ -1607,7 +1607,7 @@ proto.operations_ecosys.User.prototype.getTeleChatId = function() {
  * @param {number} value
  * @return {!proto.operations_ecosys.User} returns this
  */
-proto.operations_ecosys.User.prototype.setTeleChatId = function(value) {
+proto.operations_ecosys.User.prototype.setTeleUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 9, value);
 };
 

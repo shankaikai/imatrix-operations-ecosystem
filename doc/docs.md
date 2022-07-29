@@ -23,93 +23,53 @@
   
     - [IotControlPrototypeService](#gate_prototype-IotControlPrototypeService)
   
-- [Protocol Documentation](#protocol-documentation)
-  - [Table of Contents](#table-of-contents)
-  - [http_webapp.proto](#http_webappproto)
-    - [HTTPFormMessage](#httpformmessage)
-    - [HTTPMessage](#httpmessage)
-    - [HTTPRosterMessage](#httprostermessage)
-    - [WebAppServices](#webappservices)
-  - [iot_prototype.proto](#iot_prototypeproto)
-    - [CpuTemp](#cputemp)
-    - [CpuTempState](#cputempstate)
-    - [FireAlarm](#firealarm)
-    - [FireAlarmState](#firealarmstate)
-    - [Gate](#gate)
-    - [GateState](#gatestate)
-    - [FireAlarmState.AlarmState](#firealarmstatealarmstate)
-    - [GateState.GatePosition](#gatestategateposition)
-    - [IotControlPrototypeService](#iotcontrolprototypeservice)
-  - [operations_ecosys.proto](#operations_ecosysproto)
-    - [AIFSBroadcastRecipient](#aifsbroadcastrecipient)
-    - [AIFSClientRoster](#aifsclientroster)
-    - [AvailabilityFilter](#availabilityfilter)
-    - [AvailabilityQuery](#availabilityquery)
-    - [Broadcast](#broadcast)
-    - [BroadcastFilter](#broadcastfilter)
-    - [BroadcastQuery](#broadcastquery)
-    - [BroadcastRecipient](#broadcastrecipient)
-    - [BroadcastResponse](#broadcastresponse)
-    - [BulkRosters](#bulkrosters)
-    - [Camera](#camera)
-    - [CameraIot](#cameraiot)
-    - [CameraIotFilter](#cameraiotfilter)
-    - [CameraIotQuery](#cameraiotquery)
-    - [CameraIotResponse](#cameraiotresponse)
-    - [Client](#client)
-    - [ClientFilter](#clientfilter)
-    - [ClientQuery](#clientquery)
-    - [ClientResponse](#clientresponse)
-    - [EmployeeEvaluation](#employeeevaluation)
-    - [EmployeeEvaluationResponse](#employeeevaluationresponse)
-    - [Filter](#filter)
-    - [IncidentReport](#incidentreport)
-    - [IncidentReportContent](#incidentreportcontent)
-    - [IncidentReportFilter](#incidentreportfilter)
-    - [IncidentReportQuery](#incidentreportquery)
-    - [IncidentReportResponse](#incidentreportresponse)
-    - [InternalFullUser](#internalfulluser)
-    - [OrderByBroadcast](#orderbybroadcast)
-    - [OrderByCameraIot](#orderbycameraiot)
-    - [OrderByClient](#orderbyclient)
-    - [OrderByIncidentReport](#orderbyincidentreport)
-    - [OrderByQuery](#orderbyquery)
-    - [OrderByRoster](#orderbyroster)
-    - [OrderByUser](#orderbyuser)
-    - [Response](#response)
-    - [ResponseNonce](#responsenonce)
-    - [Roster](#roster)
-    - [RosterAssignement](#rosterassignement)
-    - [RosterAssignmentResponse](#rosterassignmentresponse)
-    - [RosterFilter](#rosterfilter)
-    - [RosterQuery](#rosterquery)
-    - [RosterResponse](#rosterresponse)
-    - [User](#user)
-    - [UserFilter](#userfilter)
-    - [UserQuery](#userquery)
-    - [UsersResponse](#usersresponse)
-    - [AvailabilityFilter.Field](#availabilityfilterfield)
-    - [Broadcast.BroadcastType](#broadcastbroadcasttype)
-    - [Broadcast.UrgencyType](#broadcasturgencytype)
-    - [BroadcastFilter.Field](#broadcastfilterfield)
-    - [CameraIot.MessageType](#cameraiotmessagetype)
-    - [CameraIotFilter.Field](#cameraiotfilterfield)
-    - [ClientFilter.Field](#clientfilterfield)
-    - [Filter.Comparisons](#filtercomparisons)
-    - [IncidentReport.ReportType](#incidentreportreporttype)
-    - [IncidentReportFilter.Field](#incidentreportfilterfield)
-    - [OrderBy](#orderby)
-    - [Response.Type](#responsetype)
-    - [Roster.Status](#rosterstatus)
-    - [RosterFilter.Field](#rosterfilterfield)
-    - [User.UserType](#userusertype)
-    - [UserFilter.Field](#userfilterfield)
-    - [AdminServices](#adminservices)
-    - [BroadcastServices](#broadcastservices)
-    - [CameraIotServices](#cameraiotservices)
-    - [IncidentReportServices](#incidentreportservices)
-    - [RosterServices](#rosterservices)
-  - [Scalar Value Types](#scalar-value-types)
+- [operations_ecosys.proto](#operations_ecosys-proto)
+    - [AIFSBroadcastRecipient](#operations_ecosys-AIFSBroadcastRecipient)
+    - [AIFSClientRoster](#operations_ecosys-AIFSClientRoster)
+    - [AvailabilityFilter](#operations_ecosys-AvailabilityFilter)
+    - [AvailabilityQuery](#operations_ecosys-AvailabilityQuery)
+    - [Broadcast](#operations_ecosys-Broadcast)
+    - [BroadcastFilter](#operations_ecosys-BroadcastFilter)
+    - [BroadcastQuery](#operations_ecosys-BroadcastQuery)
+    - [BroadcastRecipient](#operations_ecosys-BroadcastRecipient)
+    - [BroadcastResponse](#operations_ecosys-BroadcastResponse)
+    - [BulkRosters](#operations_ecosys-BulkRosters)
+    - [Camera](#operations_ecosys-Camera)
+    - [CameraIot](#operations_ecosys-CameraIot)
+    - [CameraIotFilter](#operations_ecosys-CameraIotFilter)
+    - [CameraIotQuery](#operations_ecosys-CameraIotQuery)
+    - [CameraIotResponse](#operations_ecosys-CameraIotResponse)
+    - [Client](#operations_ecosys-Client)
+    - [ClientFilter](#operations_ecosys-ClientFilter)
+    - [ClientQuery](#operations_ecosys-ClientQuery)
+    - [ClientResponse](#operations_ecosys-ClientResponse)
+    - [EmployeeEvaluation](#operations_ecosys-EmployeeEvaluation)
+    - [EmployeeEvaluationResponse](#operations_ecosys-EmployeeEvaluationResponse)
+    - [Filter](#operations_ecosys-Filter)
+    - [IncidentReport](#operations_ecosys-IncidentReport)
+    - [IncidentReportContent](#operations_ecosys-IncidentReportContent)
+    - [IncidentReportFilter](#operations_ecosys-IncidentReportFilter)
+    - [IncidentReportQuery](#operations_ecosys-IncidentReportQuery)
+    - [IncidentReportResponse](#operations_ecosys-IncidentReportResponse)
+    - [OrderByBroadcast](#operations_ecosys-OrderByBroadcast)
+    - [OrderByCameraIot](#operations_ecosys-OrderByCameraIot)
+    - [OrderByClient](#operations_ecosys-OrderByClient)
+    - [OrderByIncidentReport](#operations_ecosys-OrderByIncidentReport)
+    - [OrderByQuery](#operations_ecosys-OrderByQuery)
+    - [OrderByRoster](#operations_ecosys-OrderByRoster)
+    - [OrderByUser](#operations_ecosys-OrderByUser)
+    - [Response](#operations_ecosys-Response)
+    - [ResponseNonce](#operations_ecosys-ResponseNonce)
+    - [Roster](#operations_ecosys-Roster)
+    - [RosterAssignement](#operations_ecosys-RosterAssignement)
+    - [RosterAssignmentResponse](#operations_ecosys-RosterAssignmentResponse)
+    - [RosterFilter](#operations_ecosys-RosterFilter)
+    - [RosterQuery](#operations_ecosys-RosterQuery)
+    - [RosterResponse](#operations_ecosys-RosterResponse)
+    - [User](#operations_ecosys-User)
+    - [UserFilter](#operations_ecosys-UserFilter)
+    - [UserQuery](#operations_ecosys-UserQuery)
+    - [UsersResponse](#operations_ecosys-UsersResponse)
   
     - [AvailabilityFilter.Field](#operations_ecosys-AvailabilityFilter-Field)
     - [Broadcast.BroadcastType](#operations_ecosys-Broadcast-BroadcastType)
@@ -130,7 +90,6 @@
   
     - [AdminServices](#operations_ecosys-AdminServices)
     - [BroadcastServices](#operations_ecosys-BroadcastServices)
-    - [CameraIotServices](#operations_ecosys-CameraIotServices)
     - [IncidentReportServices](#operations_ecosys-IncidentReportServices)
     - [RosterServices](#operations_ecosys-RosterServices)
   
@@ -872,24 +831,6 @@ Passing around multiple reports in one message.
 
 
 
-<a name="operations_ecosys-InternalFullUser"></a>
-
-### InternalFullUser
-This message is only used by the internal server
-This should never be passed around
-It contains secrets such as nonce
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user | [User](#operations_ecosys-User) |  |  |
-| nonce | [string](#string) |  |  |
-
-
-
-
-
-
 <a name="operations_ecosys-OrderByBroadcast"></a>
 
 ### OrderByBroadcast
@@ -1165,7 +1106,7 @@ TODO: decide if we want to have an inactive field for users
 | telegram_handle | [string](#string) |  |  |
 | user_security_img | [string](#string) |  |  |
 | is_part_timer | [bool](#bool) |  |  |
-| tele_chat_id | [int64](#int64) |  |  |
+| tele_user_id | [int64](#int64) |  |  |
 
 
 
@@ -1507,17 +1448,6 @@ More fields can be added in the future.
 | DeleteBroadcast | [Broadcast](#operations_ecosys-Broadcast) | [Response](#operations_ecosys-Response) |  |
 | FindBroadcasts | [BroadcastQuery](#operations_ecosys-BroadcastQuery) | [BroadcastResponse](#operations_ecosys-BroadcastResponse) stream |  |
 | UpdateBroadcastRecipient | [BroadcastRecipient](#operations_ecosys-BroadcastRecipient) | [Response](#operations_ecosys-Response) | Updating of broadcast recipients |
-
-
-<a name="operations_ecosys-CameraIotServices"></a>
-
-### CameraIotServices
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| SetGateState | [.gate_prototype.GateState](#gate_prototype-GateState) | [Response](#operations_ecosys-Response) |  |
-| GetIotState | [.google.protobuf.Empty](#google-protobuf-Empty) | [CameraIotResponse](#operations_ecosys-CameraIotResponse) stream | Continuously provides the states of the gates, fire alarms and cpu temperature as well as the camera endpoints. Responses are sent only when there is a change in state Upon connection, all states are sent for all locations are sent. |
 
 
 <a name="operations_ecosys-IncidentReportServices"></a>

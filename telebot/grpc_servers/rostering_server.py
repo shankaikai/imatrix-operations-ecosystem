@@ -19,12 +19,12 @@ class RosterServicesServicer(operations_ecosys_pb2_grpc.RosterServicesServicer):
                 guard_user = guard.guard_assigned.employee
                 # print("guard user", guard_user)
 
-                if guard_user.tele_chat_id == -1:
+                if guard_user.tele_user_id == -1:
                     # print("Roster recipient has no telegram chat id. User id:", guard_user.user_id)
                     continue
                 
                 # print("Roster recipient has telegram chat id. User id:", guard_user.user_id)
-                rostering.send_roster_message(self.updater, guard_user.tele_chat_id,
+                rostering.send_roster_message(self.updater, guard_user.tele_user_id,
                     guard, roster,
                 )
         res = operations_ecosys_pb2.Response(type=operations_ecosys_pb2.Response.ACK)

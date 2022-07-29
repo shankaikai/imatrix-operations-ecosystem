@@ -19,13 +19,13 @@ class BroadcastServicesServicer(operations_ecosys_pb2_grpc.BroadcastServicesServ
             for broadcastRecipient in aifsRecipient.recipient:
                 # print(broadcastRecipient.recipient)
                 
-                if broadcastRecipient.recipient.tele_chat_id == -1:
-                    # print("Broadcast recipient has no telegram chat id. User id:", broadcastRecipient.recipient.user_id)
+                if broadcastRecipient.recipient.tele_user_id == -1:
+                    # print("Broadcast recipient has no telegram user id. User id:", broadcastRecipient.recipient.user_id)
                     continue
                 
-                # print("Broadcast recipient has telegram chat id. User id:", broadcastRecipient.recipient.user_id)
+                # print("Broadcast recipient has telegram user id. User id:", broadcastRecipient.recipient.user_id)
                 bc.send_broadcast_message(self.updater, request.content, #right click send_broadcast_message to go to function
-                    broadcastRecipient.recipient.tele_chat_id,
+                    broadcastRecipient.recipient.tele_user_id,
                     broadcastRecipient.broadcast_recipients_id, # update parameters here if needed
                     request.urgency
                 )

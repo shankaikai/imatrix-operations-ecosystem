@@ -181,7 +181,7 @@ func createLeftJoinThreeTablesQuery(firstTableName string, secondTableName strin
 // newFields must be a the exact names of the table columns with their new values,
 // separated be commas. E.g. "name='mark', cost='22', creator='2'"
 // filters must include the filter keyword that is being used
-// such as WHERE. For updates filters must not be an empty string.
+// such as WHERE. For updates, filters must not be an empty string.
 // Returns the number of rows affected
 func Update(db *sql.DB, tableName string, newFields string, filters string) (int64, error) {
 	if len(filters) == 0 {
@@ -202,7 +202,7 @@ func Update(db *sql.DB, tableName string, newFields string, filters string) (int
 
 // Delete a particular row in the database
 // filters must include the filter keyword that is being used
-// such as WHERE. For updates filters must not be an empty string.
+// such as WHERE. For delete, filters must not be an empty string.
 // Returns the number of rows affected
 func Delete(db *sql.DB, tableName string, filters string) (int64, error) {
 	if len(filters) == 0 {
@@ -259,10 +259,16 @@ func GetFilterComparisonSign(compaison pb.Filter_Comparisons) string {
 	}
 }
 
+// Formats the values of a query that follows the word LIKE,
+// so that the brackets surround the value.
+// eg WHERE name LIKE %john%
 func FormatLikeQueryValue(value string) string {
 	return "%" + value + "%"
 }
 
+// Formats the values of a query that follows the word IN,
+// so that the brackets surround the value.
+// eg WHERE id IN (VALUES)
 func FormatInQueryValue(value string) string {
 	return "(" + value + ")"
 }
@@ -283,6 +289,7 @@ func formatFilterCondition(filter *pb.Filter, fieldName string, encloseVal bool)
 	}
 }
 
+// Converts a datetime string from the DB into a protocol buffer timestamp object.
 func DBDatetimeToPB(datetimeString string) (*timestamppb.Timestamp, error) {
 	creationDate, err := time.Parse(common.DATETIME_FORMAT, datetimeString)
 	if err != nil {

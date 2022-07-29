@@ -74,7 +74,7 @@ func getFormattedUserTokenFilters(query *pb.UserTokenQuery, needLimit bool, need
 		}
 
 		switch filter.Field {
-		case pb.UserTokenFilter_USER_ID, pb.UserTokenFilter_EXPIRY:
+		case pb.UserTokenFilter_USER_TOKEN_ID, pb.UserTokenFilter_USER_ID, pb.UserTokenFilter_EXPIRY, pb.UserTokenFilter_TOKEN:
 			if hasQuotes {
 				filters = append(filters, formatFilterCondition(filter.Comparisons, userTokenFilterToDBCol(filter.Field), true))
 			} else {
@@ -115,13 +115,13 @@ func getFormattedUserTokenFilters(query *pb.UserTokenQuery, needLimit bool, need
 // the only condition is a matching user id.
 func getUserTokenIdFormattedFilter(userToken int) string {
 	query := &pb.UserTokenQuery{}
-	AddUserTokenFilter(query, pb.UserTokenFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userToken))
+	AddUserTokenFilter(query, pb.UserTokenFilter_USER_TOKEN_ID, pb.Filter_EQUAL, strconv.Itoa(userToken))
 	return getFormattedUserTokenFilters(query, false, false)
 }
 
 // Helper function to add a new filter to the list of existing
-// filters in a user query struct.
-// Modifies the user query parameter directly.
+// filters in a user token query struct.
+// Modifies the user token query parameter directly.
 func AddUserTokenFilter(query *pb.UserTokenQuery, field pb.UserTokenFilter_Field,
 	comparison pb.Filter_Comparisons,
 	value string) {
@@ -158,10 +158,14 @@ func getFilledUserTokenFields(userToken *pb.UserToken) string {
 func userTokenFilterToDBCol(filterField pb.UserTokenFilter_Field) string {
 	output := ""
 	switch filterField {
+	case pb.UserTokenFilter_USER_TOKEN_ID:
+		output = USER_TOKENS_DB_ID
 	case pb.UserTokenFilter_USER_ID:
 		output = USER_TOKENS_DB_USER
 	case pb.UserTokenFilter_EXPIRY:
 		output = USER_TOKENS_DB_EXPIRY
+	case pb.UserTokenFilter_TOKEN:
+		output = USER_TOKENS_DB_TOKEN
 	}
 
 	return output

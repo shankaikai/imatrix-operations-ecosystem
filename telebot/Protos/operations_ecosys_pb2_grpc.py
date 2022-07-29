@@ -24,7 +24,7 @@ class AdminServicesStub(object):
         """
         self.AddUser = channel.unary_unary(
                 '/operations_ecosys.AdminServices/AddUser',
-                request_serializer=operations__ecosys__pb2.User.SerializeToString,
+                request_serializer=operations__ecosys__pb2.FullUser.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.Response.FromString,
                 )
         self.UpdateUser = channel.unary_unary(
@@ -41,11 +41,6 @@ class AdminServicesStub(object):
                 '/operations_ecosys.AdminServices/FindUsers',
                 request_serializer=operations__ecosys__pb2.UserQuery.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.UsersResponse.FromString,
-                )
-        self.GetWANonce = channel.unary_unary(
-                '/operations_ecosys.AdminServices/GetWANonce',
-                request_serializer=operations__ecosys__pb2.User.SerializeToString,
-                response_deserializer=operations__ecosys__pb2.ResponseNonce.FromString,
                 )
         self.AddClient = channel.unary_unary(
                 '/operations_ecosys.AdminServices/AddClient',
@@ -66,6 +61,21 @@ class AdminServicesStub(object):
                 '/operations_ecosys.AdminServices/FindClients',
                 request_serializer=operations__ecosys__pb2.ClientQuery.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.ClientResponse.FromString,
+                )
+        self.GetWANonce = channel.unary_unary(
+                '/operations_ecosys.AdminServices/GetWANonce',
+                request_serializer=operations__ecosys__pb2.User.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.ResponseNonce.FromString,
+                )
+        self.GetSecurityString = channel.unary_unary(
+                '/operations_ecosys.AdminServices/GetSecurityString',
+                request_serializer=operations__ecosys__pb2.User.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.SecurityStringResponse.FromString,
+                )
+        self.AuthenticateUser = channel.unary_unary(
+                '/operations_ecosys.AdminServices/AuthenticateUser',
+                request_serializer=operations__ecosys__pb2.LoginRequest.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.UserTokenResponse.FromString,
                 )
 
 
@@ -104,12 +114,6 @@ class AdminServicesServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetWANonce(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def AddClient(self, request, context):
         """Client
         """
@@ -135,12 +139,31 @@ class AdminServicesServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetWANonce(self, request, context):
+        """Security Related 
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSecurityString(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AuthenticateUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AdminServicesServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'AddUser': grpc.unary_unary_rpc_method_handler(
                     servicer.AddUser,
-                    request_deserializer=operations__ecosys__pb2.User.FromString,
+                    request_deserializer=operations__ecosys__pb2.FullUser.FromString,
                     response_serializer=operations__ecosys__pb2.Response.SerializeToString,
             ),
             'UpdateUser': grpc.unary_unary_rpc_method_handler(
@@ -157,11 +180,6 @@ def add_AdminServicesServicer_to_server(servicer, server):
                     servicer.FindUsers,
                     request_deserializer=operations__ecosys__pb2.UserQuery.FromString,
                     response_serializer=operations__ecosys__pb2.UsersResponse.SerializeToString,
-            ),
-            'GetWANonce': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetWANonce,
-                    request_deserializer=operations__ecosys__pb2.User.FromString,
-                    response_serializer=operations__ecosys__pb2.ResponseNonce.SerializeToString,
             ),
             'AddClient': grpc.unary_unary_rpc_method_handler(
                     servicer.AddClient,
@@ -182,6 +200,21 @@ def add_AdminServicesServicer_to_server(servicer, server):
                     servicer.FindClients,
                     request_deserializer=operations__ecosys__pb2.ClientQuery.FromString,
                     response_serializer=operations__ecosys__pb2.ClientResponse.SerializeToString,
+            ),
+            'GetWANonce': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetWANonce,
+                    request_deserializer=operations__ecosys__pb2.User.FromString,
+                    response_serializer=operations__ecosys__pb2.ResponseNonce.SerializeToString,
+            ),
+            'GetSecurityString': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSecurityString,
+                    request_deserializer=operations__ecosys__pb2.User.FromString,
+                    response_serializer=operations__ecosys__pb2.SecurityStringResponse.SerializeToString,
+            ),
+            'AuthenticateUser': grpc.unary_unary_rpc_method_handler(
+                    servicer.AuthenticateUser,
+                    request_deserializer=operations__ecosys__pb2.LoginRequest.FromString,
+                    response_serializer=operations__ecosys__pb2.UserTokenResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -211,7 +244,7 @@ class AdminServices(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/AddUser',
-            operations__ecosys__pb2.User.SerializeToString,
+            operations__ecosys__pb2.FullUser.SerializeToString,
             operations__ecosys__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -264,23 +297,6 @@ class AdminServices(object):
         return grpc.experimental.unary_stream(request, target, '/operations_ecosys.AdminServices/FindUsers',
             operations__ecosys__pb2.UserQuery.SerializeToString,
             operations__ecosys__pb2.UsersResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetWANonce(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/GetWANonce',
-            operations__ecosys__pb2.User.SerializeToString,
-            operations__ecosys__pb2.ResponseNonce.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -349,6 +365,57 @@ class AdminServices(object):
         return grpc.experimental.unary_stream(request, target, '/operations_ecosys.AdminServices/FindClients',
             operations__ecosys__pb2.ClientQuery.SerializeToString,
             operations__ecosys__pb2.ClientResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetWANonce(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/GetWANonce',
+            operations__ecosys__pb2.User.SerializeToString,
+            operations__ecosys__pb2.ResponseNonce.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetSecurityString(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/GetSecurityString',
+            operations__ecosys__pb2.User.SerializeToString,
+            operations__ecosys__pb2.SecurityStringResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def AuthenticateUser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/AuthenticateUser',
+            operations__ecosys__pb2.LoginRequest.SerializeToString,
+            operations__ecosys__pb2.UserTokenResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

@@ -100,7 +100,7 @@ message User {
     string telegram_handle = 6;
     string user_security_img = 7;
     bool is_part_timer = 8;
-    int64 tele_chat_id = 9;
+    int64 tele_user_id = 9;
 
     enum UserType {
         ISPECIALIST = 0;
@@ -251,8 +251,10 @@ message UserTokenFilter {
 
     // More fields can be added in the future. 
     enum Field{
-        USER_ID = 0;
-        EXPIRY = 1;
+        USER_TOKEN_ID = 0;
+        USER_ID = 1;
+        EXPIRY = 2;
+        TOKEN = 3;
     }
 }
 

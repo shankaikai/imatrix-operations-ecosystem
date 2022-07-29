@@ -19,7 +19,7 @@ func createFakeUser(id int) *pb.User {
 		TelegramHandle:  "sfds",
 		UserSecurityImg: "dsfds",
 		IsPartTimer:     false,
-		TeleChatId:      -1,
+		TeleUserId:      -1,
 	}
 }
 

@@ -24,7 +24,7 @@ func InsertUserToken(db *sql.DB, userToken *pb.UserToken, dbLock *sync.Mutex) (i
 
 // Get all the user roken rows in a table that meets specifications.
 // Returns an array of user tokens or errors if any.
-func GetUserTokens(db *sql.DB, query *pb.UserTokenQuery, removeSecrets bool) ([]*pb.UserToken, error) {
+func GetUserTokens(db *sql.DB, query *pb.UserTokenQuery) ([]*pb.UserToken, error) {
 	fmt.Println("Getting User Tokens...")
 	userTokens := make([]*pb.UserToken, 0)
 
@@ -104,7 +104,7 @@ func UpdateUserTokens(db *sql.DB, userToken *pb.UserToken, query *pb.UserTokenQu
 // Returns the number of rows that were deleted and any errors.
 func DeleteUserToken(db *sql.DB, userToken *pb.UserToken) (int64, error) {
 	// Get filter to find the corresponding user token in the database
-	filters := getUserIdFormattedFilter(int(userToken.UserTokenId))
+	filters := getUserTokenIdFormattedFilter(int(userToken.UserTokenId))
 
 	rowsAffected, err := Delete(db, USER_TOKENS_DB_TABLE_NAME, filters)
 	return rowsAffected, err

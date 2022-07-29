@@ -212,7 +212,7 @@ func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNon
 
 	// Put nonce in DB
 	userQuery := &pb.UserQuery{}
-	db_pck.AddUserFilter(userQuery, pb.UserFilter_TELEGRAM_USER_ID, pb.Filter_EQUAL, strconv.Itoa(int(user.TeleChatId)))
+	db_pck.AddUserFilter(userQuery, pb.UserFilter_TELEGRAM_USER_ID, pb.Filter_EQUAL, strconv.Itoa(int(user.TeleUserId)))
 	numUpdated, err := db_pck.UpdateUserNonce(s.db, nonce, userQuery)
 
 	// Check if successfully updated

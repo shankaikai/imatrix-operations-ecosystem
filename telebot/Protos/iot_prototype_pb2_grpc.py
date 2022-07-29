@@ -41,7 +41,7 @@ class IotControlPrototypeServiceServicer(object):
 
     def GetGateState(self, request, context):
         """A server-to-client streaming RPC.
-
+        
         Obtains the State of the Stepper.  Results are
         streamed rather than returned at once (e.g. in a response message with a
         repeated field), as the Stepper's state will change after every action

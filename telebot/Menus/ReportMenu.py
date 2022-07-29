@@ -1,3 +1,5 @@
+# Since the Report stuff is now handled in a seperate webapp, this ReportMenu.py is no longer used.
+
 from __future__ import annotations
 from typing import List
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, WebAppInfo

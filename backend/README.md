@@ -1,4 +1,4 @@
-# Capstone S20 Trying Stuff Out Backend
+# Capstone S20 Backend
 
 ## Pre-requisits
 install the go mysql library:

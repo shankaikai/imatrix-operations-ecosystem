@@ -1,3 +1,5 @@
+# Tentatively not used. Might work as a quick reference for scheduling messages.
+
 from __future__ import annotations
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext

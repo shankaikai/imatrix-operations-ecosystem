@@ -247,7 +247,7 @@ func DeleteBroadcastRecipients(db *sql.DB, broadcastRecipient *pb.BroadcastRecip
 	return rowsAffected, err
 }
 
-// Delete all recipients belonging to a particular broadcast
+// Delete all recipients belonging to a particular broadcast.
 // Currently not in use.
 func DeleteAllBCRecipientsOfMainBC(db *sql.DB, mainBroadcastID int) (int64, error) {
 	filters := getBroadcastIdFormattedFilter(mainBroadcastID, BROADCAST_RECIPIENT_TABLE_NAME, true)
