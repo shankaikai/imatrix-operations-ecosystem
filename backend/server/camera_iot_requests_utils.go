@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"sync"
 	"time"
 
 	"capstone.operations_ecosystem/backend/common"
@@ -62,6 +63,15 @@ type CameraIotStruct struct {
 	GateStates      map[int64]pb.GateState_GatePosition
 	FireAlarmStates map[int64]pb.FireAlarmState_AlarmState
 	CpuTempStates   map[int64]float64
+
+	//Locks to write to the maps
+	GateSubscriptionsLock *sync.RWMutex
+	FireAlarmSubscriptionsLock *sync.RWMutex
+	CpuTempSubscriptionsLock *sync.RWMutex
+	GateStatesLock *sync.RWMutex
+	FireAlarmStatesLock *sync.RWMutex
+	CpuTempStatesLock *sync.RWMutex
+
 }
 
 // Initialise the camera and Iot service.
@@ -74,7 +84,7 @@ func (s *Server) initCameraIotService() error {
 	if err != nil {
 		return err
 	}
-
+// Start polling the states of all IoT devices
 	err = s.startAllIoTPolls()
 	if err != nil {
 		return err
@@ -125,10 +135,11 @@ func (s *Server) startAllIoTPolls() error {
 // This function periodically checks the status of a particular gate
 func (s *Server) PollGateStatus(cameraIotId int64, gateId string) {
 	// If there is no previous state, set it to a default closed to prevent key error
+	s.CameraIot.GateStatesLock.Lock()
 	if _, ok := s.CameraIot.GateStates[cameraIotId]; !ok {
 		s.CameraIot.GateStates[cameraIotId] = pb.GateState_CLOSED
 	}
-
+	s.CameraIot.GateStatesLock.Unlock()
 	fmt.Println(gateId)
 	for range time.Tick(GATE_CONSISTENCY_UPDATE_FREQUENCY) {
 
@@ -218,9 +229,12 @@ func (s *Server) setGateStatus(gateId string, status pb.GateState_GatePosition) 
 // This function periodically checks the status of a particular fire alarm
 func (s *Server) PollFireAlarmStatus(cameraIotId int64, fireAlarmId string) {
 	// If there is no previous state, set it to a default off to prevent key error
+	s.CameraIot.FireAlarmStatesLock.Lock()
 	if _, ok := s.CameraIot.FireAlarmStates[cameraIotId]; !ok {
 		s.CameraIot.FireAlarmStates[cameraIotId] = pb.FireAlarmState_OFF
 	}
+	s.CameraIot.FireAlarmStatesLock.Unlock()
+
 	fmt.Println(fireAlarmId)
 
 	for range time.Tick(IOT_POLLING_FREQUENCY) {
@@ -272,9 +286,11 @@ func (s *Server) PollFireAlarmStatus(cameraIotId int64, fireAlarmId string) {
 // This function periodically checks the status of a particular cpu
 func (s *Server) PollCpuTempStatus(cameraIotId int64, cpuId string) {
 	// If there is no previous state, set it to a default -1 to prevent key error
+	s.CameraIot.CpuTempStatesLock.Lock()
 	if _, ok := s.CameraIot.CpuTempStates[cameraIotId]; !ok {
 		s.CameraIot.CpuTempStates[cameraIotId] = -1
 	}
+	s.CameraIot.CpuTempStatesLock.Unlock()
 
 	for range time.Tick(IOT_POLLING_FREQUENCY) {
 		fmt.Println("Polling from cpu", cpuId)
@@ -392,15 +408,23 @@ func (s *Server) notifyGateSubscribers(cameraIotId int64, gateId string, newStat
 	switch newState {
 	case GATE_STATUS_OPEN_KEYWORD:
 		message.Gate.State = pb.GateState_OPEN
+		
+		s.CameraIot.GateStatesLock.Lock()
 		s.CameraIot.GateStates[cameraIotId] = pb.GateState_OPEN
+		s.CameraIot.GateStatesLock.Unlock()
 	case GATE_STATUS_CLOSED_KEYWORD:
 		message.Gate.State = pb.GateState_CLOSED
-		s.CameraIot.GateStates[cameraIotId] = pb.GateState_CLOSED
-	}
 
+		s.CameraIot.GateStatesLock.Lock()
+		s.CameraIot.GateStates[cameraIotId] = pb.GateState_CLOSED
+		s.CameraIot.GateStatesLock.Unlock()
+	}
+	s.CameraIot.GateSubscriptionsLock.RLock()
 	for _, subscriberChannel := range s.CameraIot.GateSubscriptions[cameraIotId] {
 		subscriberChannel <- message
 	}
+	s.CameraIot.GateSubscriptionsLock.RUnlock()
+
 }
 
 // If there is a state change, this function notifies all the subscribers of the gate
@@ -428,15 +452,21 @@ func (s *Server) notifyFireAlarmSubscribers(cameraIotId int64, fireAlarmId strin
 	switch newState {
 	case FIRE_ALARM_OFF_KEYWORD:
 		message.FireAlarm.State = pb.FireAlarmState_OFF
+		s.CameraIot.FireAlarmStatesLock.Lock()
 		s.CameraIot.FireAlarmStates[cameraIotId] = pb.FireAlarmState_OFF
+		s.CameraIot.FireAlarmStatesLock.Unlock()
 	case FIRE_ALARM_ON_KEYWORD:
 		message.FireAlarm.State = pb.FireAlarmState_ON
+		s.CameraIot.FireAlarmStatesLock.Lock()
 		s.CameraIot.FireAlarmStates[cameraIotId] = pb.FireAlarmState_ON
+		s.CameraIot.FireAlarmStatesLock.Unlock()
 	}
-
-	for _, subscriberChannel := range s.CameraIot.GateSubscriptions[cameraIotId] {
+	s.CameraIot.FireAlarmSubscriptionsLock.RLock()
+	for _, subscriberChannel := range s.CameraIot.FireAlarmSubscriptions[cameraIotId] {
 		subscriberChannel <- message
 	}
+	s.CameraIot.FireAlarmSubscriptionsLock.RUnlock()
+
 }
 
 // If there is a state change, this function notifies all the subscribers of the gate
@@ -456,46 +486,68 @@ func (s *Server) notifyCpuTempSubscribers(cameraIotId int64, cpuId string, oldSt
 	}
 
 	message.CpuTemperature.Temp = newState
+	s.CameraIot.CpuTempStatesLock.Lock()
 	s.CameraIot.CpuTempStates[cameraIotId] = newState
+	s.CameraIot.CpuTempStatesLock.Unlock()
 
-	for _, subscriberChannel := range s.CameraIot.GateSubscriptions[cameraIotId] {
+	s.CameraIot.CpuTempSubscriptionsLock.RLock()
+	for _, subscriberChannel := range s.CameraIot.CpuTempSubscriptions[cameraIotId] {
 		subscriberChannel <- message
 	}
+	s.CameraIot.CpuTempSubscriptionsLock.RUnlock()
 }
 
 func (s *Server) subscribeToAllDevices(mainThreadChannel chan *pb.CameraIot, threadId string, cameraIotId int64) {
 	// Subscribe to the gate device
+	s.CameraIot.GateSubscriptionsLock.Lock()
+	fmt.Println("GATE DSFADSHAFIDSHFIUDSAHFDIUFHDISAFUHDASHFID")
 	if _, ok := s.CameraIot.GateSubscriptions[cameraIotId]; !ok {
 		s.CameraIot.GateSubscriptions[cameraIotId] = make(map[string]chan *pb.CameraIot)
 	}
 	s.CameraIot.GateSubscriptions[cameraIotId][threadId] = mainThreadChannel
+	s.CameraIot.GateSubscriptionsLock.Unlock()
 
 	// Subscribe to the fire alarm device
+	s.CameraIot.FireAlarmSubscriptionsLock.Lock()
+	fmt.Println("FIRE DSFADSHAFIDSHFIUDSAHFDIUFHDISAFUHDASHFIDU")
 	if _, ok := s.CameraIot.FireAlarmSubscriptions[cameraIotId]; !ok {
 		s.CameraIot.FireAlarmSubscriptions[cameraIotId] = make(map[string]chan *pb.CameraIot)
 	}
 	s.CameraIot.FireAlarmSubscriptions[cameraIotId][threadId] = mainThreadChannel
+	s.CameraIot.FireAlarmSubscriptionsLock.Unlock()
 
 	// Subscribe to the cpu temperatue
+	s.CameraIot.CpuTempSubscriptionsLock.Lock()
+	fmt.Println("CPU DSFADSHAFIDSHFIUDSAHFDIUFHDISAFUHDASHFIDU")
+
 	if _, ok := s.CameraIot.CpuTempSubscriptions[cameraIotId]; !ok {
 		s.CameraIot.CpuTempSubscriptions[cameraIotId] = make(map[string]chan *pb.CameraIot)
 	}
 	s.CameraIot.CpuTempSubscriptions[cameraIotId][threadId] = mainThreadChannel
+	s.CameraIot.CpuTempSubscriptionsLock.Unlock()
 }
 
 func (s *Server) unsubscribeFromAllDevices(threadId string) {
 	// Unsubscribe from the gate device
+	s.CameraIot.GateSubscriptionsLock.Lock()
 	for _, subs := range s.CameraIot.GateSubscriptions {
 		delete(subs, threadId)
 	}
+	s.CameraIot.GateSubscriptionsLock.Unlock()
+
 	// Unsubscribe from the fire alarm
+	s.CameraIot.FireAlarmSubscriptionsLock.Lock()
 	for _, subs := range s.CameraIot.FireAlarmSubscriptions {
 		delete(subs, threadId)
 	}
+	s.CameraIot.FireAlarmSubscriptionsLock.Unlock()
+
 	// Unsubscribe from the cpu temperatue
+	s.CameraIot.CpuTempSubscriptionsLock.Lock()
 	for _, subs := range s.CameraIot.CpuTempSubscriptions {
 		delete(subs, threadId)
 	}
+	s.CameraIot.CpuTempSubscriptionsLock.Unlock()
 
 	fmt.Println("SUBSCRIPTIONS UPDATE")
 	fmt.Println(s.CameraIot.GateSubscriptions)

@@ -81,6 +81,7 @@ export const isLoggedIn = () => {
   if (dayjs(expiry).isBefore(dayjs())) {
     return false;
   }
+
   return true;
 };
 
