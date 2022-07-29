@@ -20,13 +20,8 @@ const Stream: FunctionComponent<StreamProps> = (props: StreamProps) => {
       hls.attachMedia(video);
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         hls.loadSource(props.src);
-        // hls.on(Hls.Events.ERROR, () => {
-        //   console.log("hls error");
-        //   setError(true);
-        // });
-        //TODO: Add in plazceholder
+
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          // setError(false);
           video.play();
         });
       });
