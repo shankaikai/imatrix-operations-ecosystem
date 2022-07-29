@@ -7,6 +7,9 @@ import os.path
 
 from TelegramController import TelegramController, TelegramMenu, CMD_IDENTIFIER
 
+from Protos import operations_ecosys_pb2
+
+
 class OthersMenu(TelegramMenu):
     def __init__(self, parent=None, name="", triggerWords=[]):
         super().__init__(parent, name, triggerWords)
@@ -17,7 +20,8 @@ class OthersMenu(TelegramMenu):
             [KeyboardButton(text=CMD_IDENTIFIER+"Admin")],
             [KeyboardButton(text=CMD_IDENTIFIER+"Back")]
         ]
-        if self.TController.user.user_type != 3:
+        if not (self.TController.user.user_type == operations_ecosys_pb2.User.UserType.MANAGER \
+        or self.TController.user.user_type == operations_ecosys_pb2.User.UserType.CONTROLLER):
             cKeyboardVals.pop(1)
         cKeyboard = ReplyKeyboardMarkup(keyboard=cKeyboardVals)
         context.bot.send_message(chat_id=update.effective_chat.id, text=self.name, reply_markup=cKeyboard)

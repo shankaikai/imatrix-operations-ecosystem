@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
-import "proto/operations_ecosys.proto";
 
 option go_package = "/operations_ecosys";
 
@@ -9,35 +8,80 @@ package http_webapp;
 
 service WebAppServices{
     // <><> Telegram WebApp - HTTP <><>
-    rpc GetRosterAssignmentsForWebApp(HTTPRosterMessage) returns (HTTPMessage) {
+    rpc GetRosterAssignmentsForWebApp(HTTPAssignmentsGetRequest) returns (HTTPAssignmentResponse) {
         option (google.api.http) = {
-            get: "/http/rosters/{roster_id}"
+            get: "/http/assignments"
         };
     }
 
-    // rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
-    //     option (google.api.http) = {
-    //         post: "/http/post_report"
-    //         body: "*"
-    //     };
-    // }
-
-    rpc PostWReportFromWebApp(operations_ecosys.IncidentReport) returns (HTTPMessage) {
+    rpc PostWReportFromWebApp(HTTPReportPostRequest) returns (HTTPMessage) {
         option (google.api.http) = {
             post: "/http/post_report"
+            body: "*"
+        };
+    }
+
+    rpc PostRegistrationFormFromWebApp(HTTPRegistrationFormRequest) returns (HTTPMessage) {
+        option (google.api.http) = {
+            post: "/http/post_registration"
             body: "*"
         };
     }
 }
 
 message HTTPMessage{
-    string value = 1;
+    //status==0 denotes no issues. status > 0 denotes some issue.
+    int64 status = 1;
+    string value = 2;
+    repeated string valueArr = 3;
 }
 
-message HTTPRosterMessage{
-    int64 roster_id = 1;
+message HTTPAssignmentsGetRequest{
+    string twan = 1;
+    int64 tele_user_id = 2;
+    string startDate = 3;
+    string endDate = 4;
 }
 
-message HTTPFormMessage{
-    string value = 1;
+message HTTPAssignmentResponse{
+    HTTPMessage response = 1;
+    repeated HTTPRosterResponse rosters = 2;
+}
+
+message HTTPRosterResponse{
+    int64 aifs_id = 2;
+    string startDatetime = 3;
+    string endDatetime = 4;
+    repeated string addresses = 5;
+}
+
+message HTTPReportPostRequest{
+    string twan = 1;
+    int64 tele_user_id = 2;
+    string title = 3;
+    string report_type = 4;
+    string address = 5;
+    string date = 6;
+    string time = 7;
+    string details = 8;
+    bool isPeopleInjured = 9;
+    string injuryDetails = 10;
+    bool isPoliceNotified = 11;
+    bool isPropertyStolen = 12;
+    string propertyStolenDetails = 13;
+    bool isActionTaken = 14;
+    string actionDetails = 15;
+
+}
+
+message HTTPRegistrationFormRequest{
+    string code = 1;
+    int64 tele_user_id = 2;
+    string name = 3;
+    string email = 4;
+    string phoneNumber = 5;
+    string loginString = 6;
+    string hasedLoginString = 7;
+    bool isPartTime = 8;
+    string tele_handle = 9;
 }

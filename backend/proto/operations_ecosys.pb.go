@@ -187,6 +187,58 @@ func (UserFilter_Field) EnumDescriptor() ([]byte, []int) {
 	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{2, 0}
 }
 
+type RegistrationCodeRequest_CodeType int32
+
+const (
+	RegistrationCodeRequest_ISPECIALIST   RegistrationCodeRequest_CodeType = 0
+	RegistrationCodeRequest_SECURITYGUARD RegistrationCodeRequest_CodeType = 1
+	RegistrationCodeRequest_CONTROLLER    RegistrationCodeRequest_CodeType = 2
+	RegistrationCodeRequest_MANAGER       RegistrationCodeRequest_CodeType = 3
+)
+
+// Enum value maps for RegistrationCodeRequest_CodeType.
+var (
+	RegistrationCodeRequest_CodeType_name = map[int32]string{
+		0: "ISPECIALIST",
+		1: "SECURITYGUARD",
+		2: "CONTROLLER",
+		3: "MANAGER",
+	}
+	RegistrationCodeRequest_CodeType_value = map[string]int32{
+		"ISPECIALIST":   0,
+		"SECURITYGUARD": 1,
+		"CONTROLLER":    2,
+		"MANAGER":       3,
+	}
+)
+
+func (x RegistrationCodeRequest_CodeType) Enum() *RegistrationCodeRequest_CodeType {
+	p := new(RegistrationCodeRequest_CodeType)
+	*p = x
+	return p
+}
+
+func (x RegistrationCodeRequest_CodeType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RegistrationCodeRequest_CodeType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_operations_ecosys_proto_enumTypes[3].Descriptor()
+}
+
+func (RegistrationCodeRequest_CodeType) Type() protoreflect.EnumType {
+	return &file_proto_operations_ecosys_proto_enumTypes[3]
+}
+
+func (x RegistrationCodeRequest_CodeType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RegistrationCodeRequest_CodeType.Descriptor instead.
+func (RegistrationCodeRequest_CodeType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{6, 0}
+}
+
 // More fields can be added in the future.
 type ClientFilter_Field int32
 
@@ -215,11 +267,11 @@ func (x ClientFilter_Field) String() string {
 }
 
 func (ClientFilter_Field) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[3].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[4].Descriptor()
 }
 
 func (ClientFilter_Field) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[3]
+	return &file_proto_operations_ecosys_proto_enumTypes[4]
 }
 
 func (x ClientFilter_Field) Number() protoreflect.EnumNumber {
@@ -228,7 +280,7 @@ func (x ClientFilter_Field) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ClientFilter_Field.Descriptor instead.
 func (ClientFilter_Field) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{8, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{10, 0}
 }
 
 // More fields can be added in the future.
@@ -268,11 +320,11 @@ func (x UserTokenFilter_Field) String() string {
 }
 
 func (UserTokenFilter_Field) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[4].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[5].Descriptor()
 }
 
 func (UserTokenFilter_Field) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[4]
+	return &file_proto_operations_ecosys_proto_enumTypes[5]
 }
 
 func (x UserTokenFilter_Field) Number() protoreflect.EnumNumber {
@@ -281,7 +333,115 @@ func (x UserTokenFilter_Field) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use UserTokenFilter_Field.Descriptor instead.
 func (UserTokenFilter_Field) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{13, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{15, 0}
+}
+
+// More fields can be added in the future.
+type RegistrationOTPFilter_Field int32
+
+const (
+	RegistrationOTPFilter_REG_OTP_ID    RegistrationOTPFilter_Field = 0
+	RegistrationOTPFilter_TOKEN         RegistrationOTPFilter_Field = 1
+	RegistrationOTPFilter_USER_TYPE     RegistrationOTPFilter_Field = 2
+	RegistrationOTPFilter_CREATION_DATE RegistrationOTPFilter_Field = 3
+	RegistrationOTPFilter_CREATOR_ID    RegistrationOTPFilter_Field = 4
+	RegistrationOTPFilter_IS_USED       RegistrationOTPFilter_Field = 5
+)
+
+// Enum value maps for RegistrationOTPFilter_Field.
+var (
+	RegistrationOTPFilter_Field_name = map[int32]string{
+		0: "REG_OTP_ID",
+		1: "TOKEN",
+		2: "USER_TYPE",
+		3: "CREATION_DATE",
+		4: "CREATOR_ID",
+		5: "IS_USED",
+	}
+	RegistrationOTPFilter_Field_value = map[string]int32{
+		"REG_OTP_ID":    0,
+		"TOKEN":         1,
+		"USER_TYPE":     2,
+		"CREATION_DATE": 3,
+		"CREATOR_ID":    4,
+		"IS_USED":       5,
+	}
+)
+
+func (x RegistrationOTPFilter_Field) Enum() *RegistrationOTPFilter_Field {
+	p := new(RegistrationOTPFilter_Field)
+	*p = x
+	return p
+}
+
+func (x RegistrationOTPFilter_Field) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RegistrationOTPFilter_Field) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_operations_ecosys_proto_enumTypes[6].Descriptor()
+}
+
+func (RegistrationOTPFilter_Field) Type() protoreflect.EnumType {
+	return &file_proto_operations_ecosys_proto_enumTypes[6]
+}
+
+func (x RegistrationOTPFilter_Field) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RegistrationOTPFilter_Field.Descriptor instead.
+func (RegistrationOTPFilter_Field) EnumDescriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{19, 0}
+}
+
+type RegistrationCodeResponse_CodeType int32
+
+const (
+	RegistrationCodeResponse_ISPECIALIST RegistrationCodeResponse_CodeType = 0
+	RegistrationCodeResponse_CONTROLLER  RegistrationCodeResponse_CodeType = 1
+	RegistrationCodeResponse_MANAGER     RegistrationCodeResponse_CodeType = 2
+)
+
+// Enum value maps for RegistrationCodeResponse_CodeType.
+var (
+	RegistrationCodeResponse_CodeType_name = map[int32]string{
+		0: "ISPECIALIST",
+		1: "CONTROLLER",
+		2: "MANAGER",
+	}
+	RegistrationCodeResponse_CodeType_value = map[string]int32{
+		"ISPECIALIST": 0,
+		"CONTROLLER":  1,
+		"MANAGER":     2,
+	}
+)
+
+func (x RegistrationCodeResponse_CodeType) Enum() *RegistrationCodeResponse_CodeType {
+	p := new(RegistrationCodeResponse_CodeType)
+	*p = x
+	return p
+}
+
+func (x RegistrationCodeResponse_CodeType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RegistrationCodeResponse_CodeType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_operations_ecosys_proto_enumTypes[7].Descriptor()
+}
+
+func (RegistrationCodeResponse_CodeType) Type() protoreflect.EnumType {
+	return &file_proto_operations_ecosys_proto_enumTypes[7]
+}
+
+func (x RegistrationCodeResponse_CodeType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RegistrationCodeResponse_CodeType.Descriptor instead.
+func (RegistrationCodeResponse_CodeType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{25, 0}
 }
 
 type Broadcast_BroadcastType int32
@@ -314,11 +474,11 @@ func (x Broadcast_BroadcastType) String() string {
 }
 
 func (Broadcast_BroadcastType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[5].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[8].Descriptor()
 }
 
 func (Broadcast_BroadcastType) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[5]
+	return &file_proto_operations_ecosys_proto_enumTypes[8]
 }
 
 func (x Broadcast_BroadcastType) Number() protoreflect.EnumNumber {
@@ -327,7 +487,7 @@ func (x Broadcast_BroadcastType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Broadcast_BroadcastType.Descriptor instead.
 func (Broadcast_BroadcastType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{19, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{26, 0}
 }
 
 type Broadcast_UrgencyType int32
@@ -363,11 +523,11 @@ func (x Broadcast_UrgencyType) String() string {
 }
 
 func (Broadcast_UrgencyType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[6].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[9].Descriptor()
 }
 
 func (Broadcast_UrgencyType) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[6]
+	return &file_proto_operations_ecosys_proto_enumTypes[9]
 }
 
 func (x Broadcast_UrgencyType) Number() protoreflect.EnumNumber {
@@ -376,7 +536,7 @@ func (x Broadcast_UrgencyType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Broadcast_UrgencyType.Descriptor instead.
 func (Broadcast_UrgencyType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{19, 1}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{26, 1}
 }
 
 // More fields can be added in the future.
@@ -440,11 +600,11 @@ func (x BroadcastFilter_Field) String() string {
 }
 
 func (BroadcastFilter_Field) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[7].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[10].Descriptor()
 }
 
 func (BroadcastFilter_Field) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[7]
+	return &file_proto_operations_ecosys_proto_enumTypes[10]
 }
 
 func (x BroadcastFilter_Field) Number() protoreflect.EnumNumber {
@@ -453,7 +613,7 @@ func (x BroadcastFilter_Field) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use BroadcastFilter_Field.Descriptor instead.
 func (BroadcastFilter_Field) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{23, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{30, 0}
 }
 
 type Roster_Status int32
@@ -492,11 +652,11 @@ func (x Roster_Status) String() string {
 }
 
 func (Roster_Status) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[8].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[11].Descriptor()
 }
 
 func (Roster_Status) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[8]
+	return &file_proto_operations_ecosys_proto_enumTypes[11]
 }
 
 func (x Roster_Status) Number() protoreflect.EnumNumber {
@@ -505,7 +665,7 @@ func (x Roster_Status) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Roster_Status.Descriptor instead.
 func (Roster_Status) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{26, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{33, 0}
 }
 
 // More fields can be added in the future.
@@ -574,11 +734,11 @@ func (x RosterFilter_Field) String() string {
 }
 
 func (RosterFilter_Field) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[9].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[12].Descriptor()
 }
 
 func (RosterFilter_Field) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[9]
+	return &file_proto_operations_ecosys_proto_enumTypes[12]
 }
 
 func (x RosterFilter_Field) Number() protoreflect.EnumNumber {
@@ -587,7 +747,7 @@ func (x RosterFilter_Field) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RosterFilter_Field.Descriptor instead.
 func (RosterFilter_Field) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{32, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{39, 0}
 }
 
 // More fields can be added in the future.
@@ -656,11 +816,11 @@ func (x AvailabilityFilter_Field) String() string {
 }
 
 func (AvailabilityFilter_Field) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[10].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[13].Descriptor()
 }
 
 func (AvailabilityFilter_Field) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[10]
+	return &file_proto_operations_ecosys_proto_enumTypes[13]
 }
 
 func (x AvailabilityFilter_Field) Number() protoreflect.EnumNumber {
@@ -669,7 +829,7 @@ func (x AvailabilityFilter_Field) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AvailabilityFilter_Field.Descriptor instead.
 func (AvailabilityFilter_Field) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{37, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{44, 0}
 }
 
 type IncidentReport_ReportType int32
@@ -705,11 +865,11 @@ func (x IncidentReport_ReportType) String() string {
 }
 
 func (IncidentReport_ReportType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[11].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[14].Descriptor()
 }
 
 func (IncidentReport_ReportType) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[11]
+	return &file_proto_operations_ecosys_proto_enumTypes[14]
 }
 
 func (x IncidentReport_ReportType) Number() protoreflect.EnumNumber {
@@ -718,7 +878,7 @@ func (x IncidentReport_ReportType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use IncidentReport_ReportType.Descriptor instead.
 func (IncidentReport_ReportType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{40, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{47, 0}
 }
 
 // More fields can be added in the future.
@@ -773,11 +933,11 @@ func (x IncidentReportFilter_Field) String() string {
 }
 
 func (IncidentReportFilter_Field) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[12].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[15].Descriptor()
 }
 
 func (IncidentReportFilter_Field) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[12]
+	return &file_proto_operations_ecosys_proto_enumTypes[15]
 }
 
 func (x IncidentReportFilter_Field) Number() protoreflect.EnumNumber {
@@ -786,7 +946,7 @@ func (x IncidentReportFilter_Field) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use IncidentReportFilter_Field.Descriptor instead.
 func (IncidentReportFilter_Field) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{43, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{50, 0}
 }
 
 type CameraIot_MessageType int32
@@ -825,11 +985,11 @@ func (x CameraIot_MessageType) String() string {
 }
 
 func (CameraIot_MessageType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[13].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[16].Descriptor()
 }
 
 func (CameraIot_MessageType) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[13]
+	return &file_proto_operations_ecosys_proto_enumTypes[16]
 }
 
 func (x CameraIot_MessageType) Number() protoreflect.EnumNumber {
@@ -838,7 +998,7 @@ func (x CameraIot_MessageType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CameraIot_MessageType.Descriptor instead.
 func (CameraIot_MessageType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{46, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{53, 0}
 }
 
 // More fields can be added in the future.
@@ -869,11 +1029,11 @@ func (x CameraIotFilter_Field) String() string {
 }
 
 func (CameraIotFilter_Field) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[14].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[17].Descriptor()
 }
 
 func (CameraIotFilter_Field) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[14]
+	return &file_proto_operations_ecosys_proto_enumTypes[17]
 }
 
 func (x CameraIotFilter_Field) Number() protoreflect.EnumNumber {
@@ -882,7 +1042,7 @@ func (x CameraIotFilter_Field) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CameraIotFilter_Field.Descriptor instead.
 func (CameraIotFilter_Field) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{49, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{56, 0}
 }
 
 type Response_Type int32
@@ -915,11 +1075,11 @@ func (x Response_Type) String() string {
 }
 
 func (Response_Type) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[15].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[18].Descriptor()
 }
 
 func (Response_Type) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[15]
+	return &file_proto_operations_ecosys_proto_enumTypes[18]
 }
 
 func (x Response_Type) Number() protoreflect.EnumNumber {
@@ -928,7 +1088,7 @@ func (x Response_Type) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Response_Type.Descriptor instead.
 func (Response_Type) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{52, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{59, 0}
 }
 
 type Filter_Comparisons int32
@@ -979,11 +1139,11 @@ func (x Filter_Comparisons) String() string {
 }
 
 func (Filter_Comparisons) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_operations_ecosys_proto_enumTypes[16].Descriptor()
+	return file_proto_operations_ecosys_proto_enumTypes[19].Descriptor()
 }
 
 func (Filter_Comparisons) Type() protoreflect.EnumType {
-	return &file_proto_operations_ecosys_proto_enumTypes[16]
+	return &file_proto_operations_ecosys_proto_enumTypes[19]
 }
 
 func (x Filter_Comparisons) Number() protoreflect.EnumNumber {
@@ -992,7 +1152,7 @@ func (x Filter_Comparisons) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Filter_Comparisons.Descriptor instead.
 func (Filter_Comparisons) EnumDescriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{53, 0}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{60, 0}
 }
 
 // All users who use the operations ecosystem.
@@ -1429,6 +1589,108 @@ func (x *FullUser) GetHashedPassword() string {
 	return ""
 }
 
+type RegistrationCodeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User *User                            `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Type RegistrationCodeRequest_CodeType `protobuf:"varint,2,opt,name=type,proto3,enum=operations_ecosys.RegistrationCodeRequest_CodeType" json:"type,omitempty"`
+}
+
+func (x *RegistrationCodeRequest) Reset() {
+	*x = RegistrationCodeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_operations_ecosys_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegistrationCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegistrationCodeRequest) ProtoMessage() {}
+
+func (x *RegistrationCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_operations_ecosys_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegistrationCodeRequest.ProtoReflect.Descriptor instead.
+func (*RegistrationCodeRequest) Descriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RegistrationCodeRequest) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *RegistrationCodeRequest) GetType() RegistrationCodeRequest_CodeType {
+	if x != nil {
+		return x.Type
+	}
+	return RegistrationCodeRequest_ISPECIALIST
+}
+
+type RegistrationCode struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+}
+
+func (x *RegistrationCode) Reset() {
+	*x = RegistrationCode{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_operations_ecosys_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegistrationCode) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegistrationCode) ProtoMessage() {}
+
+func (x *RegistrationCode) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_operations_ecosys_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegistrationCode.ProtoReflect.Descriptor instead.
+func (*RegistrationCode) Descriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *RegistrationCode) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
 // All clients who hire the company to protect their compounds.
 // TODO: decide if we want to have an inactive field for clients
 //       so that we don't need to delete cleints completely.
@@ -1449,7 +1711,7 @@ type Client struct {
 func (x *Client) Reset() {
 	*x = Client{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[6]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1462,7 +1724,7 @@ func (x *Client) String() string {
 func (*Client) ProtoMessage() {}
 
 func (x *Client) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[6]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1475,7 +1737,7 @@ func (x *Client) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Client.ProtoReflect.Descriptor instead.
 func (*Client) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{6}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Client) GetClientId() int64 {
@@ -1539,7 +1801,7 @@ type ClientResponse struct {
 func (x *ClientResponse) Reset() {
 	*x = ClientResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[7]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1552,7 +1814,7 @@ func (x *ClientResponse) String() string {
 func (*ClientResponse) ProtoMessage() {}
 
 func (x *ClientResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[7]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1565,7 +1827,7 @@ func (x *ClientResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClientResponse.ProtoReflect.Descriptor instead.
 func (*ClientResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{7}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ClientResponse) GetResponse() *Response {
@@ -1595,7 +1857,7 @@ type ClientFilter struct {
 func (x *ClientFilter) Reset() {
 	*x = ClientFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[8]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1608,7 +1870,7 @@ func (x *ClientFilter) String() string {
 func (*ClientFilter) ProtoMessage() {}
 
 func (x *ClientFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[8]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1621,7 +1883,7 @@ func (x *ClientFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClientFilter.ProtoReflect.Descriptor instead.
 func (*ClientFilter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{8}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ClientFilter) GetField() ClientFilter_Field {
@@ -1659,7 +1921,7 @@ type ClientQuery struct {
 func (x *ClientQuery) Reset() {
 	*x = ClientQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[9]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1672,7 +1934,7 @@ func (x *ClientQuery) String() string {
 func (*ClientQuery) ProtoMessage() {}
 
 func (x *ClientQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[9]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1685,7 +1947,7 @@ func (x *ClientQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClientQuery.ProtoReflect.Descriptor instead.
 func (*ClientQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{9}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ClientQuery) GetFilters() []*ClientFilter {
@@ -1728,7 +1990,7 @@ type OrderByClient struct {
 func (x *OrderByClient) Reset() {
 	*x = OrderByClient{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[10]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1741,7 +2003,7 @@ func (x *OrderByClient) String() string {
 func (*OrderByClient) ProtoMessage() {}
 
 func (x *OrderByClient) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[10]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1754,7 +2016,7 @@ func (x *OrderByClient) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderByClient.ProtoReflect.Descriptor instead.
 func (*OrderByClient) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{10}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *OrderByClient) GetField() ClientFilter_Field {
@@ -1789,7 +2051,7 @@ type UserToken struct {
 func (x *UserToken) Reset() {
 	*x = UserToken{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[11]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1802,7 +2064,7 @@ func (x *UserToken) String() string {
 func (*UserToken) ProtoMessage() {}
 
 func (x *UserToken) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[11]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1815,7 +2077,7 @@ func (x *UserToken) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserToken.ProtoReflect.Descriptor instead.
 func (*UserToken) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{11}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UserToken) GetUserTokenId() int64 {
@@ -1866,7 +2128,7 @@ type UserTokenResponse struct {
 func (x *UserTokenResponse) Reset() {
 	*x = UserTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[12]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1879,7 +2141,7 @@ func (x *UserTokenResponse) String() string {
 func (*UserTokenResponse) ProtoMessage() {}
 
 func (x *UserTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[12]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1892,7 +2154,7 @@ func (x *UserTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserTokenResponse.ProtoReflect.Descriptor instead.
 func (*UserTokenResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{12}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UserTokenResponse) GetResponse() *Response {
@@ -1922,7 +2184,7 @@ type UserTokenFilter struct {
 func (x *UserTokenFilter) Reset() {
 	*x = UserTokenFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[13]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1935,7 +2197,7 @@ func (x *UserTokenFilter) String() string {
 func (*UserTokenFilter) ProtoMessage() {}
 
 func (x *UserTokenFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[13]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1948,7 +2210,7 @@ func (x *UserTokenFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserTokenFilter.ProtoReflect.Descriptor instead.
 func (*UserTokenFilter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{13}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UserTokenFilter) GetField() UserTokenFilter_Field {
@@ -1986,7 +2248,7 @@ type UserTokenQuery struct {
 func (x *UserTokenQuery) Reset() {
 	*x = UserTokenQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[14]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1999,7 +2261,7 @@ func (x *UserTokenQuery) String() string {
 func (*UserTokenQuery) ProtoMessage() {}
 
 func (x *UserTokenQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[14]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2012,7 +2274,7 @@ func (x *UserTokenQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserTokenQuery.ProtoReflect.Descriptor instead.
 func (*UserTokenQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{14}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *UserTokenQuery) GetFilters() []*UserTokenFilter {
@@ -2055,7 +2317,7 @@ type OrderByUserToken struct {
 func (x *OrderByUserToken) Reset() {
 	*x = OrderByUserToken{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[15]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2068,7 +2330,7 @@ func (x *OrderByUserToken) String() string {
 func (*OrderByUserToken) ProtoMessage() {}
 
 func (x *OrderByUserToken) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[15]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2081,7 +2343,7 @@ func (x *OrderByUserToken) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderByUserToken.ProtoReflect.Descriptor instead.
 func (*OrderByUserToken) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{15}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *OrderByUserToken) GetField() UserTokenFilter_Field {
@@ -2092,6 +2354,284 @@ func (x *OrderByUserToken) GetField() UserTokenFilter_Field {
 }
 
 func (x *OrderByUserToken) GetOrderBy() OrderBy {
+	if x != nil {
+		return x.OrderBy
+	}
+	return OrderBy_ASC
+}
+
+// Message used iternally to get the registration OTP from the DB
+type RegistrationOTP struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RegistrationOtpId int64         `protobuf:"varint,1,opt,name=registration_otp_id,json=registrationOtpId,proto3" json:"registration_otp_id,omitempty"`
+	Token             string        `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	UserType          User_UserType `protobuf:"varint,3,opt,name=user_type,json=userType,proto3,enum=operations_ecosys.User_UserType" json:"user_type,omitempty"`
+	// Format must be in: YYYY-MM-DD HH:MM:SS
+	CreationDatetime string `protobuf:"bytes,4,opt,name=creation_datetime,json=creationDatetime,proto3" json:"creation_datetime,omitempty"`
+	Creator          *User  `protobuf:"bytes,5,opt,name=creator,proto3" json:"creator,omitempty"`
+	IsUsed           bool   `protobuf:"varint,6,opt,name=is_used,json=isUsed,proto3" json:"is_used,omitempty"`
+}
+
+func (x *RegistrationOTP) Reset() {
+	*x = RegistrationOTP{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_operations_ecosys_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegistrationOTP) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegistrationOTP) ProtoMessage() {}
+
+func (x *RegistrationOTP) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_operations_ecosys_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegistrationOTP.ProtoReflect.Descriptor instead.
+func (*RegistrationOTP) Descriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *RegistrationOTP) GetRegistrationOtpId() int64 {
+	if x != nil {
+		return x.RegistrationOtpId
+	}
+	return 0
+}
+
+func (x *RegistrationOTP) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *RegistrationOTP) GetUserType() User_UserType {
+	if x != nil {
+		return x.UserType
+	}
+	return User_ISPECIALIST
+}
+
+func (x *RegistrationOTP) GetCreationDatetime() string {
+	if x != nil {
+		return x.CreationDatetime
+	}
+	return ""
+}
+
+func (x *RegistrationOTP) GetCreator() *User {
+	if x != nil {
+		return x.Creator
+	}
+	return nil
+}
+
+func (x *RegistrationOTP) GetIsUsed() bool {
+	if x != nil {
+		return x.IsUsed
+	}
+	return false
+}
+
+// Filter the types of registration otp to be returned.
+type RegistrationOTPFilter struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Field       RegistrationOTPFilter_Field `protobuf:"varint,1,opt,name=field,proto3,enum=operations_ecosys.RegistrationOTPFilter_Field" json:"field,omitempty"`
+	Comparisons *Filter                     `protobuf:"bytes,2,opt,name=comparisons,proto3" json:"comparisons,omitempty"`
+}
+
+func (x *RegistrationOTPFilter) Reset() {
+	*x = RegistrationOTPFilter{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_operations_ecosys_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegistrationOTPFilter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegistrationOTPFilter) ProtoMessage() {}
+
+func (x *RegistrationOTPFilter) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_operations_ecosys_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegistrationOTPFilter.ProtoReflect.Descriptor instead.
+func (*RegistrationOTPFilter) Descriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *RegistrationOTPFilter) GetField() RegistrationOTPFilter_Field {
+	if x != nil {
+		return x.Field
+	}
+	return RegistrationOTPFilter_REG_OTP_ID
+}
+
+func (x *RegistrationOTPFilter) GetComparisons() *Filter {
+	if x != nil {
+		return x.Comparisons
+	}
+	return nil
+}
+
+// Get specific types of Registration OTP as specified in the Filter.
+// If one wants to get all objects, leave filters empty.
+// A default limit of 10 will be used if the field is empty.
+type RegistrationOTPQuery struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Filters []*RegistrationOTPFilter `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
+	// Limit the number of objects being returned.
+	// If only 5 objects should be shown, limit = 5;
+	Limit int64 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Skip n rows from the database
+	Skip int64 `protobuf:"varint,3,opt,name=skip,proto3" json:"skip,omitempty"`
+	// Order the queries, by default the order is desc by id
+	OrderBy *OrderByRegistrationOTP `protobuf:"bytes,4,opt,name=order_by,json=orderBy,proto3" json:"order_by,omitempty"`
+}
+
+func (x *RegistrationOTPQuery) Reset() {
+	*x = RegistrationOTPQuery{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_operations_ecosys_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegistrationOTPQuery) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegistrationOTPQuery) ProtoMessage() {}
+
+func (x *RegistrationOTPQuery) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_operations_ecosys_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegistrationOTPQuery.ProtoReflect.Descriptor instead.
+func (*RegistrationOTPQuery) Descriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *RegistrationOTPQuery) GetFilters() []*RegistrationOTPFilter {
+	if x != nil {
+		return x.Filters
+	}
+	return nil
+}
+
+func (x *RegistrationOTPQuery) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *RegistrationOTPQuery) GetSkip() int64 {
+	if x != nil {
+		return x.Skip
+	}
+	return 0
+}
+
+func (x *RegistrationOTPQuery) GetOrderBy() *OrderByRegistrationOTP {
+	if x != nil {
+		return x.OrderBy
+	}
+	return nil
+}
+
+type OrderByRegistrationOTP struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Field   RegistrationOTPFilter_Field `protobuf:"varint,1,opt,name=field,proto3,enum=operations_ecosys.RegistrationOTPFilter_Field" json:"field,omitempty"`
+	OrderBy OrderBy                     `protobuf:"varint,2,opt,name=order_by,json=orderBy,proto3,enum=operations_ecosys.OrderBy" json:"order_by,omitempty"`
+}
+
+func (x *OrderByRegistrationOTP) Reset() {
+	*x = OrderByRegistrationOTP{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_operations_ecosys_proto_msgTypes[21]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OrderByRegistrationOTP) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderByRegistrationOTP) ProtoMessage() {}
+
+func (x *OrderByRegistrationOTP) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_operations_ecosys_proto_msgTypes[21]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderByRegistrationOTP.ProtoReflect.Descriptor instead.
+func (*OrderByRegistrationOTP) Descriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *OrderByRegistrationOTP) GetField() RegistrationOTPFilter_Field {
+	if x != nil {
+		return x.Field
+	}
+	return RegistrationOTPFilter_REG_OTP_ID
+}
+
+func (x *OrderByRegistrationOTP) GetOrderBy() OrderBy {
 	if x != nil {
 		return x.OrderBy
 	}
@@ -2113,7 +2653,7 @@ type LoginRequest struct {
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[16]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2126,7 +2666,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[16]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2139,7 +2679,7 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{16}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *LoginRequest) GetUserEmail() string {
@@ -2169,7 +2709,7 @@ type ResponseNonce struct {
 func (x *ResponseNonce) Reset() {
 	*x = ResponseNonce{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[17]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2182,7 +2722,7 @@ func (x *ResponseNonce) String() string {
 func (*ResponseNonce) ProtoMessage() {}
 
 func (x *ResponseNonce) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[17]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2195,7 +2735,7 @@ func (x *ResponseNonce) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseNonce.ProtoReflect.Descriptor instead.
 func (*ResponseNonce) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{17}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ResponseNonce) GetResponse() *Response {
@@ -2225,7 +2765,7 @@ type SecurityStringResponse struct {
 func (x *SecurityStringResponse) Reset() {
 	*x = SecurityStringResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[18]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2238,7 +2778,7 @@ func (x *SecurityStringResponse) String() string {
 func (*SecurityStringResponse) ProtoMessage() {}
 
 func (x *SecurityStringResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[18]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2251,7 +2791,7 @@ func (x *SecurityStringResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SecurityStringResponse.ProtoReflect.Descriptor instead.
 func (*SecurityStringResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{18}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *SecurityStringResponse) GetResponse() *Response {
@@ -2264,6 +2804,70 @@ func (x *SecurityStringResponse) GetResponse() *Response {
 func (x *SecurityStringResponse) GetSecurityString() string {
 	if x != nil {
 		return x.SecurityString
+	}
+	return ""
+}
+
+// Returns a registration code that can be used to create a new user
+type RegistrationCodeResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Response *Response                         `protobuf:"bytes,1,opt,name=response,proto3" json:"response,omitempty"`
+	Type     RegistrationCodeResponse_CodeType `protobuf:"varint,2,opt,name=type,proto3,enum=operations_ecosys.RegistrationCodeResponse_CodeType" json:"type,omitempty"`
+	Code     string                            `protobuf:"bytes,3,opt,name=code,proto3" json:"code,omitempty"`
+}
+
+func (x *RegistrationCodeResponse) Reset() {
+	*x = RegistrationCodeResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_operations_ecosys_proto_msgTypes[25]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RegistrationCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegistrationCodeResponse) ProtoMessage() {}
+
+func (x *RegistrationCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_operations_ecosys_proto_msgTypes[25]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegistrationCodeResponse.ProtoReflect.Descriptor instead.
+func (*RegistrationCodeResponse) Descriptor() ([]byte, []int) {
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *RegistrationCodeResponse) GetResponse() *Response {
+	if x != nil {
+		return x.Response
+	}
+	return nil
+}
+
+func (x *RegistrationCodeResponse) GetType() RegistrationCodeResponse_CodeType {
+	if x != nil {
+		return x.Type
+	}
+	return RegistrationCodeResponse_ISPECIALIST
+}
+
+func (x *RegistrationCodeResponse) GetCode() string {
+	if x != nil {
+		return x.Code
 	}
 	return ""
 }
@@ -2290,7 +2894,7 @@ type Broadcast struct {
 func (x *Broadcast) Reset() {
 	*x = Broadcast{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[19]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2303,7 +2907,7 @@ func (x *Broadcast) String() string {
 func (*Broadcast) ProtoMessage() {}
 
 func (x *Broadcast) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[19]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2316,7 +2920,7 @@ func (x *Broadcast) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Broadcast.ProtoReflect.Descriptor instead.
 func (*Broadcast) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{19}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *Broadcast) GetBroadcastId() int64 {
@@ -2387,7 +2991,7 @@ type AIFSBroadcastRecipient struct {
 func (x *AIFSBroadcastRecipient) Reset() {
 	*x = AIFSBroadcastRecipient{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[20]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2400,7 +3004,7 @@ func (x *AIFSBroadcastRecipient) String() string {
 func (*AIFSBroadcastRecipient) ProtoMessage() {}
 
 func (x *AIFSBroadcastRecipient) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[20]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2413,7 +3017,7 @@ func (x *AIFSBroadcastRecipient) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AIFSBroadcastRecipient.ProtoReflect.Descriptor instead.
 func (*AIFSBroadcastRecipient) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{20}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *AIFSBroadcastRecipient) GetRecipient() []*BroadcastRecipient {
@@ -2446,7 +3050,7 @@ type BroadcastRecipient struct {
 func (x *BroadcastRecipient) Reset() {
 	*x = BroadcastRecipient{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[21]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2459,7 +3063,7 @@ func (x *BroadcastRecipient) String() string {
 func (*BroadcastRecipient) ProtoMessage() {}
 
 func (x *BroadcastRecipient) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[21]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2472,7 +3076,7 @@ func (x *BroadcastRecipient) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastRecipient.ProtoReflect.Descriptor instead.
 func (*BroadcastRecipient) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{21}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *BroadcastRecipient) GetBroadcastRecipientsId() int64 {
@@ -2530,7 +3134,7 @@ type BroadcastResponse struct {
 func (x *BroadcastResponse) Reset() {
 	*x = BroadcastResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[22]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2543,7 +3147,7 @@ func (x *BroadcastResponse) String() string {
 func (*BroadcastResponse) ProtoMessage() {}
 
 func (x *BroadcastResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[22]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2556,7 +3160,7 @@ func (x *BroadcastResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastResponse.ProtoReflect.Descriptor instead.
 func (*BroadcastResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{22}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *BroadcastResponse) GetResponse() *Response {
@@ -2586,7 +3190,7 @@ type BroadcastFilter struct {
 func (x *BroadcastFilter) Reset() {
 	*x = BroadcastFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[23]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2599,7 +3203,7 @@ func (x *BroadcastFilter) String() string {
 func (*BroadcastFilter) ProtoMessage() {}
 
 func (x *BroadcastFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[23]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2612,7 +3216,7 @@ func (x *BroadcastFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastFilter.ProtoReflect.Descriptor instead.
 func (*BroadcastFilter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{23}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *BroadcastFilter) GetField() BroadcastFilter_Field {
@@ -2650,7 +3254,7 @@ type BroadcastQuery struct {
 func (x *BroadcastQuery) Reset() {
 	*x = BroadcastQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[24]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2663,7 +3267,7 @@ func (x *BroadcastQuery) String() string {
 func (*BroadcastQuery) ProtoMessage() {}
 
 func (x *BroadcastQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[24]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2676,7 +3280,7 @@ func (x *BroadcastQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastQuery.ProtoReflect.Descriptor instead.
 func (*BroadcastQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{24}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *BroadcastQuery) GetFilters() []*BroadcastFilter {
@@ -2719,7 +3323,7 @@ type OrderByBroadcast struct {
 func (x *OrderByBroadcast) Reset() {
 	*x = OrderByBroadcast{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[25]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[32]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2732,7 +3336,7 @@ func (x *OrderByBroadcast) String() string {
 func (*OrderByBroadcast) ProtoMessage() {}
 
 func (x *OrderByBroadcast) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[25]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[32]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2745,7 +3349,7 @@ func (x *OrderByBroadcast) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderByBroadcast.ProtoReflect.Descriptor instead.
 func (*OrderByBroadcast) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{25}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *OrderByBroadcast) GetField() BroadcastFilter_Field {
@@ -2783,7 +3387,7 @@ type Roster struct {
 func (x *Roster) Reset() {
 	*x = Roster{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[26]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[33]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2796,7 +3400,7 @@ func (x *Roster) String() string {
 func (*Roster) ProtoMessage() {}
 
 func (x *Roster) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[26]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[33]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2809,7 +3413,7 @@ func (x *Roster) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Roster.ProtoReflect.Descriptor instead.
 func (*Roster) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{26}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *Roster) GetRosteringId() int64 {
@@ -2874,7 +3478,7 @@ type AIFSClientRoster struct {
 func (x *AIFSClientRoster) Reset() {
 	*x = AIFSClientRoster{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[27]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[34]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2887,7 +3491,7 @@ func (x *AIFSClientRoster) String() string {
 func (*AIFSClientRoster) ProtoMessage() {}
 
 func (x *AIFSClientRoster) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[27]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[34]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2900,7 +3504,7 @@ func (x *AIFSClientRoster) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AIFSClientRoster.ProtoReflect.Descriptor instead.
 func (*AIFSClientRoster) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{27}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *AIFSClientRoster) GetAifsClientRosterId() int64 {
@@ -2947,7 +3551,7 @@ type RosterAssignement struct {
 func (x *RosterAssignement) Reset() {
 	*x = RosterAssignement{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[28]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[35]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2960,7 +3564,7 @@ func (x *RosterAssignement) String() string {
 func (*RosterAssignement) ProtoMessage() {}
 
 func (x *RosterAssignement) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[28]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[35]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2973,7 +3577,7 @@ func (x *RosterAssignement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RosterAssignement.ProtoReflect.Descriptor instead.
 func (*RosterAssignement) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{28}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *RosterAssignement) GetRosterAssignmentId() int64 {
@@ -3050,7 +3654,7 @@ type BulkRosters struct {
 func (x *BulkRosters) Reset() {
 	*x = BulkRosters{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[29]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[36]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3063,7 +3667,7 @@ func (x *BulkRosters) String() string {
 func (*BulkRosters) ProtoMessage() {}
 
 func (x *BulkRosters) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[29]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[36]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3076,7 +3680,7 @@ func (x *BulkRosters) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BulkRosters.ProtoReflect.Descriptor instead.
 func (*BulkRosters) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{29}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *BulkRosters) GetRosters() []*Roster {
@@ -3099,7 +3703,7 @@ type RosterResponse struct {
 func (x *RosterResponse) Reset() {
 	*x = RosterResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[30]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[37]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3112,7 +3716,7 @@ func (x *RosterResponse) String() string {
 func (*RosterResponse) ProtoMessage() {}
 
 func (x *RosterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[30]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[37]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3125,7 +3729,7 @@ func (x *RosterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RosterResponse.ProtoReflect.Descriptor instead.
 func (*RosterResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{30}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *RosterResponse) GetResponse() *Response {
@@ -3155,7 +3759,7 @@ type RosterAssignmentResponse struct {
 func (x *RosterAssignmentResponse) Reset() {
 	*x = RosterAssignmentResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[31]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3168,7 +3772,7 @@ func (x *RosterAssignmentResponse) String() string {
 func (*RosterAssignmentResponse) ProtoMessage() {}
 
 func (x *RosterAssignmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[31]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3181,7 +3785,7 @@ func (x *RosterAssignmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RosterAssignmentResponse.ProtoReflect.Descriptor instead.
 func (*RosterAssignmentResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{31}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *RosterAssignmentResponse) GetResponse() *Response {
@@ -3211,7 +3815,7 @@ type RosterFilter struct {
 func (x *RosterFilter) Reset() {
 	*x = RosterFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[32]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3224,7 +3828,7 @@ func (x *RosterFilter) String() string {
 func (*RosterFilter) ProtoMessage() {}
 
 func (x *RosterFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[32]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3237,7 +3841,7 @@ func (x *RosterFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RosterFilter.ProtoReflect.Descriptor instead.
 func (*RosterFilter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{32}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *RosterFilter) GetField() RosterFilter_Field {
@@ -3275,7 +3879,7 @@ type RosterQuery struct {
 func (x *RosterQuery) Reset() {
 	*x = RosterQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[33]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3288,7 +3892,7 @@ func (x *RosterQuery) String() string {
 func (*RosterQuery) ProtoMessage() {}
 
 func (x *RosterQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[33]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3301,7 +3905,7 @@ func (x *RosterQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RosterQuery.ProtoReflect.Descriptor instead.
 func (*RosterQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{33}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *RosterQuery) GetFilters() []*RosterFilter {
@@ -3344,7 +3948,7 @@ type OrderByRoster struct {
 func (x *OrderByRoster) Reset() {
 	*x = OrderByRoster{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[34]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[41]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3357,7 +3961,7 @@ func (x *OrderByRoster) String() string {
 func (*OrderByRoster) ProtoMessage() {}
 
 func (x *OrderByRoster) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[34]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[41]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3370,7 +3974,7 @@ func (x *OrderByRoster) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderByRoster.ProtoReflect.Descriptor instead.
 func (*OrderByRoster) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{34}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *OrderByRoster) GetField() RosterFilter_Field {
@@ -3411,7 +4015,7 @@ type AvailabilityQuery struct {
 func (x *AvailabilityQuery) Reset() {
 	*x = AvailabilityQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[35]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[42]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3424,7 +4028,7 @@ func (x *AvailabilityQuery) String() string {
 func (*AvailabilityQuery) ProtoMessage() {}
 
 func (x *AvailabilityQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[35]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[42]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3437,7 +4041,7 @@ func (x *AvailabilityQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AvailabilityQuery.ProtoReflect.Descriptor instead.
 func (*AvailabilityQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{35}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *AvailabilityQuery) GetStartTime() string {
@@ -3495,7 +4099,7 @@ type OrderByQuery struct {
 func (x *OrderByQuery) Reset() {
 	*x = OrderByQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[36]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[43]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3508,7 +4112,7 @@ func (x *OrderByQuery) String() string {
 func (*OrderByQuery) ProtoMessage() {}
 
 func (x *OrderByQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[36]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[43]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3521,7 +4125,7 @@ func (x *OrderByQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderByQuery.ProtoReflect.Descriptor instead.
 func (*OrderByQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{36}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *OrderByQuery) GetField() AvailabilityFilter_Field {
@@ -3551,7 +4155,7 @@ type AvailabilityFilter struct {
 func (x *AvailabilityFilter) Reset() {
 	*x = AvailabilityFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[37]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[44]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3564,7 +4168,7 @@ func (x *AvailabilityFilter) String() string {
 func (*AvailabilityFilter) ProtoMessage() {}
 
 func (x *AvailabilityFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[37]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[44]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3577,7 +4181,7 @@ func (x *AvailabilityFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AvailabilityFilter.ProtoReflect.Descriptor instead.
 func (*AvailabilityFilter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{37}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *AvailabilityFilter) GetField() AvailabilityFilter_Field {
@@ -3609,7 +4213,7 @@ type EmployeeEvaluationResponse struct {
 func (x *EmployeeEvaluationResponse) Reset() {
 	*x = EmployeeEvaluationResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[38]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[45]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3622,7 +4226,7 @@ func (x *EmployeeEvaluationResponse) String() string {
 func (*EmployeeEvaluationResponse) ProtoMessage() {}
 
 func (x *EmployeeEvaluationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[38]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[45]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3635,7 +4239,7 @@ func (x *EmployeeEvaluationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmployeeEvaluationResponse.ProtoReflect.Descriptor instead.
 func (*EmployeeEvaluationResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{38}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *EmployeeEvaluationResponse) GetResponse() *Response {
@@ -3668,7 +4272,7 @@ type EmployeeEvaluation struct {
 func (x *EmployeeEvaluation) Reset() {
 	*x = EmployeeEvaluation{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[39]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[46]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3681,7 +4285,7 @@ func (x *EmployeeEvaluation) String() string {
 func (*EmployeeEvaluation) ProtoMessage() {}
 
 func (x *EmployeeEvaluation) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[39]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[46]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3694,7 +4298,7 @@ func (x *EmployeeEvaluation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmployeeEvaluation.ProtoReflect.Descriptor instead.
 func (*EmployeeEvaluation) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{39}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *EmployeeEvaluation) GetEmployee() *User {
@@ -3744,7 +4348,7 @@ type IncidentReport struct {
 func (x *IncidentReport) Reset() {
 	*x = IncidentReport{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[40]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[47]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3757,7 +4361,7 @@ func (x *IncidentReport) String() string {
 func (*IncidentReport) ProtoMessage() {}
 
 func (x *IncidentReport) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[40]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[47]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3770,7 +4374,7 @@ func (x *IncidentReport) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncidentReport.ProtoReflect.Descriptor instead.
 func (*IncidentReport) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{40}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *IncidentReport) GetIncidentReportId() int64 {
@@ -3884,7 +4488,7 @@ type IncidentReportContent struct {
 func (x *IncidentReportContent) Reset() {
 	*x = IncidentReportContent{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[41]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[48]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3897,7 +4501,7 @@ func (x *IncidentReportContent) String() string {
 func (*IncidentReportContent) ProtoMessage() {}
 
 func (x *IncidentReportContent) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[41]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[48]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3910,7 +4514,7 @@ func (x *IncidentReportContent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncidentReportContent.ProtoReflect.Descriptor instead.
 func (*IncidentReportContent) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{41}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *IncidentReportContent) GetReportContentId() int64 {
@@ -4031,7 +4635,7 @@ type IncidentReportResponse struct {
 func (x *IncidentReportResponse) Reset() {
 	*x = IncidentReportResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[42]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[49]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4044,7 +4648,7 @@ func (x *IncidentReportResponse) String() string {
 func (*IncidentReportResponse) ProtoMessage() {}
 
 func (x *IncidentReportResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[42]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[49]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4057,7 +4661,7 @@ func (x *IncidentReportResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncidentReportResponse.ProtoReflect.Descriptor instead.
 func (*IncidentReportResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{42}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *IncidentReportResponse) GetResponse() *Response {
@@ -4087,7 +4691,7 @@ type IncidentReportFilter struct {
 func (x *IncidentReportFilter) Reset() {
 	*x = IncidentReportFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[43]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[50]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4100,7 +4704,7 @@ func (x *IncidentReportFilter) String() string {
 func (*IncidentReportFilter) ProtoMessage() {}
 
 func (x *IncidentReportFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[43]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[50]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4113,7 +4717,7 @@ func (x *IncidentReportFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncidentReportFilter.ProtoReflect.Descriptor instead.
 func (*IncidentReportFilter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{43}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *IncidentReportFilter) GetField() IncidentReportFilter_Field {
@@ -4151,7 +4755,7 @@ type IncidentReportQuery struct {
 func (x *IncidentReportQuery) Reset() {
 	*x = IncidentReportQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[44]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[51]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4164,7 +4768,7 @@ func (x *IncidentReportQuery) String() string {
 func (*IncidentReportQuery) ProtoMessage() {}
 
 func (x *IncidentReportQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[44]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[51]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4177,7 +4781,7 @@ func (x *IncidentReportQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncidentReportQuery.ProtoReflect.Descriptor instead.
 func (*IncidentReportQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{44}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *IncidentReportQuery) GetFilters() []*IncidentReportFilter {
@@ -4220,7 +4824,7 @@ type OrderByIncidentReport struct {
 func (x *OrderByIncidentReport) Reset() {
 	*x = OrderByIncidentReport{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[45]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[52]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4233,7 +4837,7 @@ func (x *OrderByIncidentReport) String() string {
 func (*OrderByIncidentReport) ProtoMessage() {}
 
 func (x *OrderByIncidentReport) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[45]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[52]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4246,7 +4850,7 @@ func (x *OrderByIncidentReport) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderByIncidentReport.ProtoReflect.Descriptor instead.
 func (*OrderByIncidentReport) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{45}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *OrderByIncidentReport) GetField() IncidentReportFilter_Field {
@@ -4283,7 +4887,7 @@ type CameraIot struct {
 func (x *CameraIot) Reset() {
 	*x = CameraIot{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[46]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[53]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4296,7 +4900,7 @@ func (x *CameraIot) String() string {
 func (*CameraIot) ProtoMessage() {}
 
 func (x *CameraIot) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[46]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[53]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4309,7 +4913,7 @@ func (x *CameraIot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CameraIot.ProtoReflect.Descriptor instead.
 func (*CameraIot) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{46}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *CameraIot) GetCameraIotId() int64 {
@@ -4373,7 +4977,7 @@ type Camera struct {
 func (x *Camera) Reset() {
 	*x = Camera{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[47]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[54]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4386,7 +4990,7 @@ func (x *Camera) String() string {
 func (*Camera) ProtoMessage() {}
 
 func (x *Camera) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[47]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[54]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4399,7 +5003,7 @@ func (x *Camera) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Camera.ProtoReflect.Descriptor instead.
 func (*Camera) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{47}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *Camera) GetUrl() string {
@@ -4421,7 +5025,7 @@ type CameraIotResponse struct {
 func (x *CameraIotResponse) Reset() {
 	*x = CameraIotResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[48]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[55]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4434,7 +5038,7 @@ func (x *CameraIotResponse) String() string {
 func (*CameraIotResponse) ProtoMessage() {}
 
 func (x *CameraIotResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[48]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[55]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4447,7 +5051,7 @@ func (x *CameraIotResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CameraIotResponse.ProtoReflect.Descriptor instead.
 func (*CameraIotResponse) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{48}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *CameraIotResponse) GetResponse() *Response {
@@ -4477,7 +5081,7 @@ type CameraIotFilter struct {
 func (x *CameraIotFilter) Reset() {
 	*x = CameraIotFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[49]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[56]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4490,7 +5094,7 @@ func (x *CameraIotFilter) String() string {
 func (*CameraIotFilter) ProtoMessage() {}
 
 func (x *CameraIotFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[49]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[56]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4503,7 +5107,7 @@ func (x *CameraIotFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CameraIotFilter.ProtoReflect.Descriptor instead.
 func (*CameraIotFilter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{49}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *CameraIotFilter) GetField() CameraIotFilter_Field {
@@ -4541,7 +5145,7 @@ type CameraIotQuery struct {
 func (x *CameraIotQuery) Reset() {
 	*x = CameraIotQuery{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[50]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[57]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4554,7 +5158,7 @@ func (x *CameraIotQuery) String() string {
 func (*CameraIotQuery) ProtoMessage() {}
 
 func (x *CameraIotQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[50]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[57]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4567,7 +5171,7 @@ func (x *CameraIotQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CameraIotQuery.ProtoReflect.Descriptor instead.
 func (*CameraIotQuery) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{50}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *CameraIotQuery) GetFilters() []*CameraIotFilter {
@@ -4610,7 +5214,7 @@ type OrderByCameraIot struct {
 func (x *OrderByCameraIot) Reset() {
 	*x = OrderByCameraIot{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[51]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[58]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4623,7 +5227,7 @@ func (x *OrderByCameraIot) String() string {
 func (*OrderByCameraIot) ProtoMessage() {}
 
 func (x *OrderByCameraIot) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[51]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[58]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4636,7 +5240,7 @@ func (x *OrderByCameraIot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderByCameraIot.ProtoReflect.Descriptor instead.
 func (*OrderByCameraIot) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{51}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *OrderByCameraIot) GetField() CameraIotFilter_Field {
@@ -4668,7 +5272,7 @@ type Response struct {
 func (x *Response) Reset() {
 	*x = Response{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[52]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[59]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4681,7 +5285,7 @@ func (x *Response) String() string {
 func (*Response) ProtoMessage() {}
 
 func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[52]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[59]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4694,7 +5298,7 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Response.ProtoReflect.Descriptor instead.
 func (*Response) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{52}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *Response) GetType() Response_Type {
@@ -4735,7 +5339,7 @@ type Filter struct {
 func (x *Filter) Reset() {
 	*x = Filter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_operations_ecosys_proto_msgTypes[53]
+		mi := &file_proto_operations_ecosys_proto_msgTypes[60]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4748,7 +5352,7 @@ func (x *Filter) String() string {
 func (*Filter) ProtoMessage() {}
 
 func (x *Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_operations_ecosys_proto_msgTypes[53]
+	mi := &file_proto_operations_ecosys_proto_msgTypes[60]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4761,7 +5365,7 @@ func (x *Filter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Filter.ProtoReflect.Descriptor instead.
 func (*Filter) Descriptor() ([]byte, []int) {
-	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{53}
+	return file_proto_operations_ecosys_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *Filter) GetComparison() Filter_Comparisons {
@@ -4944,7 +5548,11 @@ var file_proto_operations_ecosys_proto_rawDesc = []byte{
 	0x72, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x12, 0x3e, 0x0a, 0x05,
 	0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x28, 0x2e, 0x6f, 0x70,
 	0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73, 0x79, 0x73, 0x2e,
-	0x55, 0x73, 0x65, 0x72, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x2e,
+	0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x52, 0x06, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x22, 0xa0,
+	0x01, 0x0a, 0x0c, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x12,
+	0x3b, 0x0a, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x25,
+	0x2e, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65, 0x63, 0x6f, 0x73,
+	0x79, 0x73, 0x2e, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x2e,
 	0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x12, 0x3b, 0x0a, 0x0b,
 	0x63, 0x6f, 0x6d, 0x70, 0x61, 0x72, 0x69, 0x73, 0x6f, 0x6e, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x19, 0x2e, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x65,
@@ -5707,8 +6315,8 @@ func file_proto_operations_ecosys_proto_rawDescGZIP() []byte {
 	return file_proto_operations_ecosys_proto_rawDescData
 }
 
-var file_proto_operations_ecosys_proto_enumTypes = make([]protoimpl.EnumInfo, 17)
-var file_proto_operations_ecosys_proto_msgTypes = make([]protoimpl.MessageInfo, 54)
+var file_proto_operations_ecosys_proto_enumTypes = make([]protoimpl.EnumInfo, 20)
+var file_proto_operations_ecosys_proto_msgTypes = make([]protoimpl.MessageInfo, 61)
 var file_proto_operations_ecosys_proto_goTypes = []interface{}{
 	(OrderBy)(0),                       // 0: operations_ecosys.OrderBy
 	(User_UserType)(0),                 // 1: operations_ecosys.User.UserType
@@ -5789,171 +6397,187 @@ var file_proto_operations_ecosys_proto_goTypes = []interface{}{
 }
 var file_proto_operations_ecosys_proto_depIdxs = []int32{
 	1,   // 0: operations_ecosys.User.user_type:type_name -> operations_ecosys.User.UserType
-	69,  // 1: operations_ecosys.UsersResponse.response:type_name -> operations_ecosys.Response
-	17,  // 2: operations_ecosys.UsersResponse.user:type_name -> operations_ecosys.User
+	79,  // 1: operations_ecosys.UsersResponse.response:type_name -> operations_ecosys.Response
+	20,  // 2: operations_ecosys.UsersResponse.user:type_name -> operations_ecosys.User
 	2,   // 3: operations_ecosys.UserFilter.field:type_name -> operations_ecosys.UserFilter.Field
-	70,  // 4: operations_ecosys.UserFilter.comparisons:type_name -> operations_ecosys.Filter
-	19,  // 5: operations_ecosys.UserQuery.filters:type_name -> operations_ecosys.UserFilter
-	21,  // 6: operations_ecosys.UserQuery.order_by:type_name -> operations_ecosys.OrderByUser
+	80,  // 4: operations_ecosys.UserFilter.comparisons:type_name -> operations_ecosys.Filter
+	22,  // 5: operations_ecosys.UserQuery.filters:type_name -> operations_ecosys.UserFilter
+	24,  // 6: operations_ecosys.UserQuery.order_by:type_name -> operations_ecosys.OrderByUser
 	2,   // 7: operations_ecosys.OrderByUser.field:type_name -> operations_ecosys.UserFilter.Field
 	0,   // 8: operations_ecosys.OrderByUser.order_by:type_name -> operations_ecosys.OrderBy
-	17,  // 9: operations_ecosys.FullUser.user:type_name -> operations_ecosys.User
-	69,  // 10: operations_ecosys.ClientResponse.response:type_name -> operations_ecosys.Response
-	23,  // 11: operations_ecosys.ClientResponse.client:type_name -> operations_ecosys.Client
-	3,   // 12: operations_ecosys.ClientFilter.field:type_name -> operations_ecosys.ClientFilter.Field
-	70,  // 13: operations_ecosys.ClientFilter.comparisons:type_name -> operations_ecosys.Filter
-	25,  // 14: operations_ecosys.ClientQuery.filters:type_name -> operations_ecosys.ClientFilter
-	27,  // 15: operations_ecosys.ClientQuery.order_by:type_name -> operations_ecosys.OrderByClient
-	3,   // 16: operations_ecosys.OrderByClient.field:type_name -> operations_ecosys.ClientFilter.Field
-	0,   // 17: operations_ecosys.OrderByClient.order_by:type_name -> operations_ecosys.OrderBy
-	17,  // 18: operations_ecosys.UserToken.user:type_name -> operations_ecosys.User
-	69,  // 19: operations_ecosys.UserTokenResponse.response:type_name -> operations_ecosys.Response
-	28,  // 20: operations_ecosys.UserTokenResponse.userToken:type_name -> operations_ecosys.UserToken
-	4,   // 21: operations_ecosys.UserTokenFilter.field:type_name -> operations_ecosys.UserTokenFilter.Field
-	70,  // 22: operations_ecosys.UserTokenFilter.comparisons:type_name -> operations_ecosys.Filter
-	30,  // 23: operations_ecosys.UserTokenQuery.filters:type_name -> operations_ecosys.UserTokenFilter
-	32,  // 24: operations_ecosys.UserTokenQuery.order_by:type_name -> operations_ecosys.OrderByUserToken
-	4,   // 25: operations_ecosys.OrderByUserToken.field:type_name -> operations_ecosys.UserTokenFilter.Field
-	0,   // 26: operations_ecosys.OrderByUserToken.order_by:type_name -> operations_ecosys.OrderBy
-	69,  // 27: operations_ecosys.ResponseNonce.response:type_name -> operations_ecosys.Response
-	69,  // 28: operations_ecosys.SecurityStringResponse.response:type_name -> operations_ecosys.Response
-	5,   // 29: operations_ecosys.Broadcast.type:type_name -> operations_ecosys.Broadcast.BroadcastType
-	71,  // 30: operations_ecosys.Broadcast.creation_date:type_name -> google.protobuf.Timestamp
-	71,  // 31: operations_ecosys.Broadcast.deadline:type_name -> google.protobuf.Timestamp
-	17,  // 32: operations_ecosys.Broadcast.creator:type_name -> operations_ecosys.User
-	37,  // 33: operations_ecosys.Broadcast.recipients:type_name -> operations_ecosys.AIFSBroadcastRecipient
-	6,   // 34: operations_ecosys.Broadcast.urgency:type_name -> operations_ecosys.Broadcast.UrgencyType
-	38,  // 35: operations_ecosys.AIFSBroadcastRecipient.recipient:type_name -> operations_ecosys.BroadcastRecipient
-	17,  // 36: operations_ecosys.BroadcastRecipient.recipient:type_name -> operations_ecosys.User
-	71,  // 37: operations_ecosys.BroadcastRecipient.last_replied:type_name -> google.protobuf.Timestamp
-	69,  // 38: operations_ecosys.BroadcastResponse.response:type_name -> operations_ecosys.Response
-	36,  // 39: operations_ecosys.BroadcastResponse.broadcast:type_name -> operations_ecosys.Broadcast
-	7,   // 40: operations_ecosys.BroadcastFilter.field:type_name -> operations_ecosys.BroadcastFilter.Field
-	70,  // 41: operations_ecosys.BroadcastFilter.comparisons:type_name -> operations_ecosys.Filter
-	40,  // 42: operations_ecosys.BroadcastQuery.filters:type_name -> operations_ecosys.BroadcastFilter
-	42,  // 43: operations_ecosys.BroadcastQuery.order_by:type_name -> operations_ecosys.OrderByBroadcast
-	7,   // 44: operations_ecosys.OrderByBroadcast.field:type_name -> operations_ecosys.BroadcastFilter.Field
-	0,   // 45: operations_ecosys.OrderByBroadcast.order_by:type_name -> operations_ecosys.OrderBy
-	44,  // 46: operations_ecosys.Roster.clients:type_name -> operations_ecosys.AIFSClientRoster
-	45,  // 47: operations_ecosys.Roster.guard_assigned:type_name -> operations_ecosys.RosterAssignement
-	8,   // 48: operations_ecosys.Roster.status:type_name -> operations_ecosys.Roster.Status
-	23,  // 49: operations_ecosys.AIFSClientRoster.client:type_name -> operations_ecosys.Client
-	56,  // 50: operations_ecosys.RosterAssignement.guard_assigned:type_name -> operations_ecosys.EmployeeEvaluation
-	71,  // 51: operations_ecosys.RosterAssignement.custom_start_time:type_name -> google.protobuf.Timestamp
-	71,  // 52: operations_ecosys.RosterAssignement.custom_end_time:type_name -> google.protobuf.Timestamp
-	71,  // 53: operations_ecosys.RosterAssignement.attendance_time:type_name -> google.protobuf.Timestamp
-	43,  // 54: operations_ecosys.BulkRosters.rosters:type_name -> operations_ecosys.Roster
-	69,  // 55: operations_ecosys.RosterResponse.response:type_name -> operations_ecosys.Response
-	43,  // 56: operations_ecosys.RosterResponse.roster:type_name -> operations_ecosys.Roster
-	69,  // 57: operations_ecosys.RosterAssignmentResponse.response:type_name -> operations_ecosys.Response
-	45,  // 58: operations_ecosys.RosterAssignmentResponse.roster_assignment:type_name -> operations_ecosys.RosterAssignement
-	9,   // 59: operations_ecosys.RosterFilter.field:type_name -> operations_ecosys.RosterFilter.Field
-	70,  // 60: operations_ecosys.RosterFilter.comparisons:type_name -> operations_ecosys.Filter
-	49,  // 61: operations_ecosys.RosterQuery.filters:type_name -> operations_ecosys.RosterFilter
-	51,  // 62: operations_ecosys.RosterQuery.order_by:type_name -> operations_ecosys.OrderByRoster
-	9,   // 63: operations_ecosys.OrderByRoster.field:type_name -> operations_ecosys.RosterFilter.Field
-	0,   // 64: operations_ecosys.OrderByRoster.order_by:type_name -> operations_ecosys.OrderBy
-	54,  // 65: operations_ecosys.AvailabilityQuery.filters:type_name -> operations_ecosys.AvailabilityFilter
-	53,  // 66: operations_ecosys.AvailabilityQuery.order_by:type_name -> operations_ecosys.OrderByQuery
-	10,  // 67: operations_ecosys.OrderByQuery.field:type_name -> operations_ecosys.AvailabilityFilter.Field
-	0,   // 68: operations_ecosys.OrderByQuery.order_by:type_name -> operations_ecosys.OrderBy
-	10,  // 69: operations_ecosys.AvailabilityFilter.field:type_name -> operations_ecosys.AvailabilityFilter.Field
-	70,  // 70: operations_ecosys.AvailabilityFilter.comparisons:type_name -> operations_ecosys.Filter
-	69,  // 71: operations_ecosys.EmployeeEvaluationResponse.response:type_name -> operations_ecosys.Response
-	56,  // 72: operations_ecosys.EmployeeEvaluationResponse.employee:type_name -> operations_ecosys.EmployeeEvaluation
-	17,  // 73: operations_ecosys.EmployeeEvaluation.employee:type_name -> operations_ecosys.User
-	11,  // 74: operations_ecosys.IncidentReport.type:type_name -> operations_ecosys.IncidentReport.ReportType
-	17,  // 75: operations_ecosys.IncidentReport.creator:type_name -> operations_ecosys.User
-	17,  // 76: operations_ecosys.IncidentReport.last_modifed_user:type_name -> operations_ecosys.User
-	17,  // 77: operations_ecosys.IncidentReport.signature:type_name -> operations_ecosys.User
-	58,  // 78: operations_ecosys.IncidentReport.incident_report_content:type_name -> operations_ecosys.IncidentReportContent
-	17,  // 79: operations_ecosys.IncidentReportContent.last_modifed_user:type_name -> operations_ecosys.User
-	69,  // 80: operations_ecosys.IncidentReportResponse.response:type_name -> operations_ecosys.Response
-	57,  // 81: operations_ecosys.IncidentReportResponse.incident_report:type_name -> operations_ecosys.IncidentReport
-	12,  // 82: operations_ecosys.IncidentReportFilter.field:type_name -> operations_ecosys.IncidentReportFilter.Field
-	70,  // 83: operations_ecosys.IncidentReportFilter.comparisons:type_name -> operations_ecosys.Filter
-	60,  // 84: operations_ecosys.IncidentReportQuery.filters:type_name -> operations_ecosys.IncidentReportFilter
-	62,  // 85: operations_ecosys.IncidentReportQuery.order_by:type_name -> operations_ecosys.OrderByIncidentReport
-	12,  // 86: operations_ecosys.OrderByIncidentReport.field:type_name -> operations_ecosys.IncidentReportFilter.Field
-	0,   // 87: operations_ecosys.OrderByIncidentReport.order_by:type_name -> operations_ecosys.OrderBy
-	64,  // 88: operations_ecosys.CameraIot.camera:type_name -> operations_ecosys.Camera
-	72,  // 89: operations_ecosys.CameraIot.gate:type_name -> gate_prototype.GateState
-	73,  // 90: operations_ecosys.CameraIot.fire_alarm:type_name -> gate_prototype.FireAlarmState
-	74,  // 91: operations_ecosys.CameraIot.cpu_temperature:type_name -> gate_prototype.CpuTempState
-	13,  // 92: operations_ecosys.CameraIot.type:type_name -> operations_ecosys.CameraIot.MessageType
-	69,  // 93: operations_ecosys.CameraIotResponse.response:type_name -> operations_ecosys.Response
-	63,  // 94: operations_ecosys.CameraIotResponse.camera_iot:type_name -> operations_ecosys.CameraIot
-	14,  // 95: operations_ecosys.CameraIotFilter.field:type_name -> operations_ecosys.CameraIotFilter.Field
-	70,  // 96: operations_ecosys.CameraIotFilter.comparisons:type_name -> operations_ecosys.Filter
-	66,  // 97: operations_ecosys.CameraIotQuery.filters:type_name -> operations_ecosys.CameraIotFilter
-	68,  // 98: operations_ecosys.CameraIotQuery.order_by:type_name -> operations_ecosys.OrderByCameraIot
-	14,  // 99: operations_ecosys.OrderByCameraIot.field:type_name -> operations_ecosys.CameraIotFilter.Field
-	0,   // 100: operations_ecosys.OrderByCameraIot.order_by:type_name -> operations_ecosys.OrderBy
-	15,  // 101: operations_ecosys.Response.type:type_name -> operations_ecosys.Response.Type
-	16,  // 102: operations_ecosys.Filter.comparison:type_name -> operations_ecosys.Filter.Comparisons
-	22,  // 103: operations_ecosys.AdminServices.AddUser:input_type -> operations_ecosys.FullUser
-	17,  // 104: operations_ecosys.AdminServices.UpdateUser:input_type -> operations_ecosys.User
-	17,  // 105: operations_ecosys.AdminServices.DeleteUser:input_type -> operations_ecosys.User
-	20,  // 106: operations_ecosys.AdminServices.FindUsers:input_type -> operations_ecosys.UserQuery
-	23,  // 107: operations_ecosys.AdminServices.AddClient:input_type -> operations_ecosys.Client
-	23,  // 108: operations_ecosys.AdminServices.UpdateClient:input_type -> operations_ecosys.Client
-	23,  // 109: operations_ecosys.AdminServices.DeleteClient:input_type -> operations_ecosys.Client
-	26,  // 110: operations_ecosys.AdminServices.FindClients:input_type -> operations_ecosys.ClientQuery
-	17,  // 111: operations_ecosys.AdminServices.GetWANonce:input_type -> operations_ecosys.User
-	17,  // 112: operations_ecosys.AdminServices.GetSecurityString:input_type -> operations_ecosys.User
-	33,  // 113: operations_ecosys.AdminServices.AuthenticateUser:input_type -> operations_ecosys.LoginRequest
-	36,  // 114: operations_ecosys.BroadcastServices.AddBroadcast:input_type -> operations_ecosys.Broadcast
-	36,  // 115: operations_ecosys.BroadcastServices.UpdateBroadcast:input_type -> operations_ecosys.Broadcast
-	36,  // 116: operations_ecosys.BroadcastServices.DeleteBroadcast:input_type -> operations_ecosys.Broadcast
-	41,  // 117: operations_ecosys.BroadcastServices.FindBroadcasts:input_type -> operations_ecosys.BroadcastQuery
-	38,  // 118: operations_ecosys.BroadcastServices.UpdateBroadcastRecipient:input_type -> operations_ecosys.BroadcastRecipient
-	46,  // 119: operations_ecosys.RosterServices.AddRoster:input_type -> operations_ecosys.BulkRosters
-	46,  // 120: operations_ecosys.RosterServices.UpdateRoster:input_type -> operations_ecosys.BulkRosters
-	43,  // 121: operations_ecosys.RosterServices.DeleteRoster:input_type -> operations_ecosys.Roster
-	50,  // 122: operations_ecosys.RosterServices.FindRosters:input_type -> operations_ecosys.RosterQuery
-	52,  // 123: operations_ecosys.RosterServices.GetAvailableUsers:input_type -> operations_ecosys.AvailabilityQuery
-	50,  // 124: operations_ecosys.RosterServices.FindRosterAssignments:input_type -> operations_ecosys.RosterQuery
-	45,  // 125: operations_ecosys.RosterServices.UpdateRosterAssignment:input_type -> operations_ecosys.RosterAssignement
-	57,  // 126: operations_ecosys.IncidentReportServices.AddIncidentReport:input_type -> operations_ecosys.IncidentReport
-	57,  // 127: operations_ecosys.IncidentReportServices.UpdateIncidentReport:input_type -> operations_ecosys.IncidentReport
-	57,  // 128: operations_ecosys.IncidentReportServices.DeleteIncidentReport:input_type -> operations_ecosys.IncidentReport
-	61,  // 129: operations_ecosys.IncidentReportServices.FindIncidentReports:input_type -> operations_ecosys.IncidentReportQuery
-	72,  // 130: operations_ecosys.CameraIotServices.SetGateState:input_type -> gate_prototype.GateState
-	75,  // 131: operations_ecosys.CameraIotServices.GetIotState:input_type -> google.protobuf.Empty
-	69,  // 132: operations_ecosys.AdminServices.AddUser:output_type -> operations_ecosys.Response
-	69,  // 133: operations_ecosys.AdminServices.UpdateUser:output_type -> operations_ecosys.Response
-	69,  // 134: operations_ecosys.AdminServices.DeleteUser:output_type -> operations_ecosys.Response
-	18,  // 135: operations_ecosys.AdminServices.FindUsers:output_type -> operations_ecosys.UsersResponse
-	69,  // 136: operations_ecosys.AdminServices.AddClient:output_type -> operations_ecosys.Response
-	69,  // 137: operations_ecosys.AdminServices.UpdateClient:output_type -> operations_ecosys.Response
-	69,  // 138: operations_ecosys.AdminServices.DeleteClient:output_type -> operations_ecosys.Response
-	24,  // 139: operations_ecosys.AdminServices.FindClients:output_type -> operations_ecosys.ClientResponse
-	34,  // 140: operations_ecosys.AdminServices.GetWANonce:output_type -> operations_ecosys.ResponseNonce
-	35,  // 141: operations_ecosys.AdminServices.GetSecurityString:output_type -> operations_ecosys.SecurityStringResponse
-	29,  // 142: operations_ecosys.AdminServices.AuthenticateUser:output_type -> operations_ecosys.UserTokenResponse
-	69,  // 143: operations_ecosys.BroadcastServices.AddBroadcast:output_type -> operations_ecosys.Response
-	69,  // 144: operations_ecosys.BroadcastServices.UpdateBroadcast:output_type -> operations_ecosys.Response
-	69,  // 145: operations_ecosys.BroadcastServices.DeleteBroadcast:output_type -> operations_ecosys.Response
-	39,  // 146: operations_ecosys.BroadcastServices.FindBroadcasts:output_type -> operations_ecosys.BroadcastResponse
-	69,  // 147: operations_ecosys.BroadcastServices.UpdateBroadcastRecipient:output_type -> operations_ecosys.Response
-	69,  // 148: operations_ecosys.RosterServices.AddRoster:output_type -> operations_ecosys.Response
-	69,  // 149: operations_ecosys.RosterServices.UpdateRoster:output_type -> operations_ecosys.Response
-	69,  // 150: operations_ecosys.RosterServices.DeleteRoster:output_type -> operations_ecosys.Response
-	47,  // 151: operations_ecosys.RosterServices.FindRosters:output_type -> operations_ecosys.RosterResponse
-	55,  // 152: operations_ecosys.RosterServices.GetAvailableUsers:output_type -> operations_ecosys.EmployeeEvaluationResponse
-	48,  // 153: operations_ecosys.RosterServices.FindRosterAssignments:output_type -> operations_ecosys.RosterAssignmentResponse
-	69,  // 154: operations_ecosys.RosterServices.UpdateRosterAssignment:output_type -> operations_ecosys.Response
-	69,  // 155: operations_ecosys.IncidentReportServices.AddIncidentReport:output_type -> operations_ecosys.Response
-	69,  // 156: operations_ecosys.IncidentReportServices.UpdateIncidentReport:output_type -> operations_ecosys.Response
-	69,  // 157: operations_ecosys.IncidentReportServices.DeleteIncidentReport:output_type -> operations_ecosys.Response
-	59,  // 158: operations_ecosys.IncidentReportServices.FindIncidentReports:output_type -> operations_ecosys.IncidentReportResponse
-	69,  // 159: operations_ecosys.CameraIotServices.SetGateState:output_type -> operations_ecosys.Response
-	65,  // 160: operations_ecosys.CameraIotServices.GetIotState:output_type -> operations_ecosys.CameraIotResponse
-	132, // [132:161] is the sub-list for method output_type
-	103, // [103:132] is the sub-list for method input_type
-	103, // [103:103] is the sub-list for extension type_name
-	103, // [103:103] is the sub-list for extension extendee
-	0,   // [0:103] is the sub-list for field type_name
+	20,  // 9: operations_ecosys.FullUser.user:type_name -> operations_ecosys.User
+	20,  // 10: operations_ecosys.RegistrationCodeRequest.user:type_name -> operations_ecosys.User
+	3,   // 11: operations_ecosys.RegistrationCodeRequest.type:type_name -> operations_ecosys.RegistrationCodeRequest.CodeType
+	79,  // 12: operations_ecosys.ClientResponse.response:type_name -> operations_ecosys.Response
+	28,  // 13: operations_ecosys.ClientResponse.client:type_name -> operations_ecosys.Client
+	4,   // 14: operations_ecosys.ClientFilter.field:type_name -> operations_ecosys.ClientFilter.Field
+	80,  // 15: operations_ecosys.ClientFilter.comparisons:type_name -> operations_ecosys.Filter
+	30,  // 16: operations_ecosys.ClientQuery.filters:type_name -> operations_ecosys.ClientFilter
+	32,  // 17: operations_ecosys.ClientQuery.order_by:type_name -> operations_ecosys.OrderByClient
+	4,   // 18: operations_ecosys.OrderByClient.field:type_name -> operations_ecosys.ClientFilter.Field
+	0,   // 19: operations_ecosys.OrderByClient.order_by:type_name -> operations_ecosys.OrderBy
+	20,  // 20: operations_ecosys.UserToken.user:type_name -> operations_ecosys.User
+	79,  // 21: operations_ecosys.UserTokenResponse.response:type_name -> operations_ecosys.Response
+	33,  // 22: operations_ecosys.UserTokenResponse.userToken:type_name -> operations_ecosys.UserToken
+	5,   // 23: operations_ecosys.UserTokenFilter.field:type_name -> operations_ecosys.UserTokenFilter.Field
+	80,  // 24: operations_ecosys.UserTokenFilter.comparisons:type_name -> operations_ecosys.Filter
+	35,  // 25: operations_ecosys.UserTokenQuery.filters:type_name -> operations_ecosys.UserTokenFilter
+	37,  // 26: operations_ecosys.UserTokenQuery.order_by:type_name -> operations_ecosys.OrderByUserToken
+	5,   // 27: operations_ecosys.OrderByUserToken.field:type_name -> operations_ecosys.UserTokenFilter.Field
+	0,   // 28: operations_ecosys.OrderByUserToken.order_by:type_name -> operations_ecosys.OrderBy
+	1,   // 29: operations_ecosys.RegistrationOTP.user_type:type_name -> operations_ecosys.User.UserType
+	20,  // 30: operations_ecosys.RegistrationOTP.creator:type_name -> operations_ecosys.User
+	6,   // 31: operations_ecosys.RegistrationOTPFilter.field:type_name -> operations_ecosys.RegistrationOTPFilter.Field
+	80,  // 32: operations_ecosys.RegistrationOTPFilter.comparisons:type_name -> operations_ecosys.Filter
+	39,  // 33: operations_ecosys.RegistrationOTPQuery.filters:type_name -> operations_ecosys.RegistrationOTPFilter
+	41,  // 34: operations_ecosys.RegistrationOTPQuery.order_by:type_name -> operations_ecosys.OrderByRegistrationOTP
+	6,   // 35: operations_ecosys.OrderByRegistrationOTP.field:type_name -> operations_ecosys.RegistrationOTPFilter.Field
+	0,   // 36: operations_ecosys.OrderByRegistrationOTP.order_by:type_name -> operations_ecosys.OrderBy
+	79,  // 37: operations_ecosys.ResponseNonce.response:type_name -> operations_ecosys.Response
+	79,  // 38: operations_ecosys.SecurityStringResponse.response:type_name -> operations_ecosys.Response
+	79,  // 39: operations_ecosys.RegistrationCodeResponse.response:type_name -> operations_ecosys.Response
+	7,   // 40: operations_ecosys.RegistrationCodeResponse.type:type_name -> operations_ecosys.RegistrationCodeResponse.CodeType
+	8,   // 41: operations_ecosys.Broadcast.type:type_name -> operations_ecosys.Broadcast.BroadcastType
+	81,  // 42: operations_ecosys.Broadcast.creation_date:type_name -> google.protobuf.Timestamp
+	81,  // 43: operations_ecosys.Broadcast.deadline:type_name -> google.protobuf.Timestamp
+	20,  // 44: operations_ecosys.Broadcast.creator:type_name -> operations_ecosys.User
+	47,  // 45: operations_ecosys.Broadcast.recipients:type_name -> operations_ecosys.AIFSBroadcastRecipient
+	9,   // 46: operations_ecosys.Broadcast.urgency:type_name -> operations_ecosys.Broadcast.UrgencyType
+	48,  // 47: operations_ecosys.AIFSBroadcastRecipient.recipient:type_name -> operations_ecosys.BroadcastRecipient
+	20,  // 48: operations_ecosys.BroadcastRecipient.recipient:type_name -> operations_ecosys.User
+	81,  // 49: operations_ecosys.BroadcastRecipient.last_replied:type_name -> google.protobuf.Timestamp
+	79,  // 50: operations_ecosys.BroadcastResponse.response:type_name -> operations_ecosys.Response
+	46,  // 51: operations_ecosys.BroadcastResponse.broadcast:type_name -> operations_ecosys.Broadcast
+	10,  // 52: operations_ecosys.BroadcastFilter.field:type_name -> operations_ecosys.BroadcastFilter.Field
+	80,  // 53: operations_ecosys.BroadcastFilter.comparisons:type_name -> operations_ecosys.Filter
+	50,  // 54: operations_ecosys.BroadcastQuery.filters:type_name -> operations_ecosys.BroadcastFilter
+	52,  // 55: operations_ecosys.BroadcastQuery.order_by:type_name -> operations_ecosys.OrderByBroadcast
+	10,  // 56: operations_ecosys.OrderByBroadcast.field:type_name -> operations_ecosys.BroadcastFilter.Field
+	0,   // 57: operations_ecosys.OrderByBroadcast.order_by:type_name -> operations_ecosys.OrderBy
+	54,  // 58: operations_ecosys.Roster.clients:type_name -> operations_ecosys.AIFSClientRoster
+	55,  // 59: operations_ecosys.Roster.guard_assigned:type_name -> operations_ecosys.RosterAssignement
+	11,  // 60: operations_ecosys.Roster.status:type_name -> operations_ecosys.Roster.Status
+	28,  // 61: operations_ecosys.AIFSClientRoster.client:type_name -> operations_ecosys.Client
+	66,  // 62: operations_ecosys.RosterAssignement.guard_assigned:type_name -> operations_ecosys.EmployeeEvaluation
+	81,  // 63: operations_ecosys.RosterAssignement.custom_start_time:type_name -> google.protobuf.Timestamp
+	81,  // 64: operations_ecosys.RosterAssignement.custom_end_time:type_name -> google.protobuf.Timestamp
+	81,  // 65: operations_ecosys.RosterAssignement.attendance_time:type_name -> google.protobuf.Timestamp
+	53,  // 66: operations_ecosys.BulkRosters.rosters:type_name -> operations_ecosys.Roster
+	79,  // 67: operations_ecosys.RosterResponse.response:type_name -> operations_ecosys.Response
+	53,  // 68: operations_ecosys.RosterResponse.roster:type_name -> operations_ecosys.Roster
+	79,  // 69: operations_ecosys.RosterAssignmentResponse.response:type_name -> operations_ecosys.Response
+	55,  // 70: operations_ecosys.RosterAssignmentResponse.roster_assignment:type_name -> operations_ecosys.RosterAssignement
+	12,  // 71: operations_ecosys.RosterFilter.field:type_name -> operations_ecosys.RosterFilter.Field
+	80,  // 72: operations_ecosys.RosterFilter.comparisons:type_name -> operations_ecosys.Filter
+	59,  // 73: operations_ecosys.RosterQuery.filters:type_name -> operations_ecosys.RosterFilter
+	61,  // 74: operations_ecosys.RosterQuery.order_by:type_name -> operations_ecosys.OrderByRoster
+	12,  // 75: operations_ecosys.OrderByRoster.field:type_name -> operations_ecosys.RosterFilter.Field
+	0,   // 76: operations_ecosys.OrderByRoster.order_by:type_name -> operations_ecosys.OrderBy
+	64,  // 77: operations_ecosys.AvailabilityQuery.filters:type_name -> operations_ecosys.AvailabilityFilter
+	63,  // 78: operations_ecosys.AvailabilityQuery.order_by:type_name -> operations_ecosys.OrderByQuery
+	13,  // 79: operations_ecosys.OrderByQuery.field:type_name -> operations_ecosys.AvailabilityFilter.Field
+	0,   // 80: operations_ecosys.OrderByQuery.order_by:type_name -> operations_ecosys.OrderBy
+	13,  // 81: operations_ecosys.AvailabilityFilter.field:type_name -> operations_ecosys.AvailabilityFilter.Field
+	80,  // 82: operations_ecosys.AvailabilityFilter.comparisons:type_name -> operations_ecosys.Filter
+	79,  // 83: operations_ecosys.EmployeeEvaluationResponse.response:type_name -> operations_ecosys.Response
+	66,  // 84: operations_ecosys.EmployeeEvaluationResponse.employee:type_name -> operations_ecosys.EmployeeEvaluation
+	20,  // 85: operations_ecosys.EmployeeEvaluation.employee:type_name -> operations_ecosys.User
+	14,  // 86: operations_ecosys.IncidentReport.type:type_name -> operations_ecosys.IncidentReport.ReportType
+	20,  // 87: operations_ecosys.IncidentReport.creator:type_name -> operations_ecosys.User
+	20,  // 88: operations_ecosys.IncidentReport.last_modifed_user:type_name -> operations_ecosys.User
+	20,  // 89: operations_ecosys.IncidentReport.signature:type_name -> operations_ecosys.User
+	68,  // 90: operations_ecosys.IncidentReport.incident_report_content:type_name -> operations_ecosys.IncidentReportContent
+	20,  // 91: operations_ecosys.IncidentReportContent.last_modifed_user:type_name -> operations_ecosys.User
+	79,  // 92: operations_ecosys.IncidentReportResponse.response:type_name -> operations_ecosys.Response
+	67,  // 93: operations_ecosys.IncidentReportResponse.incident_report:type_name -> operations_ecosys.IncidentReport
+	15,  // 94: operations_ecosys.IncidentReportFilter.field:type_name -> operations_ecosys.IncidentReportFilter.Field
+	80,  // 95: operations_ecosys.IncidentReportFilter.comparisons:type_name -> operations_ecosys.Filter
+	70,  // 96: operations_ecosys.IncidentReportQuery.filters:type_name -> operations_ecosys.IncidentReportFilter
+	72,  // 97: operations_ecosys.IncidentReportQuery.order_by:type_name -> operations_ecosys.OrderByIncidentReport
+	15,  // 98: operations_ecosys.OrderByIncidentReport.field:type_name -> operations_ecosys.IncidentReportFilter.Field
+	0,   // 99: operations_ecosys.OrderByIncidentReport.order_by:type_name -> operations_ecosys.OrderBy
+	74,  // 100: operations_ecosys.CameraIot.camera:type_name -> operations_ecosys.Camera
+	82,  // 101: operations_ecosys.CameraIot.gate:type_name -> gate_prototype.GateState
+	83,  // 102: operations_ecosys.CameraIot.fire_alarm:type_name -> gate_prototype.FireAlarmState
+	84,  // 103: operations_ecosys.CameraIot.cpu_temperature:type_name -> gate_prototype.CpuTempState
+	16,  // 104: operations_ecosys.CameraIot.type:type_name -> operations_ecosys.CameraIot.MessageType
+	79,  // 105: operations_ecosys.CameraIotResponse.response:type_name -> operations_ecosys.Response
+	73,  // 106: operations_ecosys.CameraIotResponse.camera_iot:type_name -> operations_ecosys.CameraIot
+	17,  // 107: operations_ecosys.CameraIotFilter.field:type_name -> operations_ecosys.CameraIotFilter.Field
+	80,  // 108: operations_ecosys.CameraIotFilter.comparisons:type_name -> operations_ecosys.Filter
+	76,  // 109: operations_ecosys.CameraIotQuery.filters:type_name -> operations_ecosys.CameraIotFilter
+	78,  // 110: operations_ecosys.CameraIotQuery.order_by:type_name -> operations_ecosys.OrderByCameraIot
+	17,  // 111: operations_ecosys.OrderByCameraIot.field:type_name -> operations_ecosys.CameraIotFilter.Field
+	0,   // 112: operations_ecosys.OrderByCameraIot.order_by:type_name -> operations_ecosys.OrderBy
+	18,  // 113: operations_ecosys.Response.type:type_name -> operations_ecosys.Response.Type
+	19,  // 114: operations_ecosys.Filter.comparison:type_name -> operations_ecosys.Filter.Comparisons
+	25,  // 115: operations_ecosys.AdminServices.AddUser:input_type -> operations_ecosys.FullUser
+	20,  // 116: operations_ecosys.AdminServices.UpdateUser:input_type -> operations_ecosys.User
+	20,  // 117: operations_ecosys.AdminServices.DeleteUser:input_type -> operations_ecosys.User
+	23,  // 118: operations_ecosys.AdminServices.FindUsers:input_type -> operations_ecosys.UserQuery
+	28,  // 119: operations_ecosys.AdminServices.AddClient:input_type -> operations_ecosys.Client
+	28,  // 120: operations_ecosys.AdminServices.UpdateClient:input_type -> operations_ecosys.Client
+	28,  // 121: operations_ecosys.AdminServices.DeleteClient:input_type -> operations_ecosys.Client
+	31,  // 122: operations_ecosys.AdminServices.FindClients:input_type -> operations_ecosys.ClientQuery
+	20,  // 123: operations_ecosys.AdminServices.GetWANonce:input_type -> operations_ecosys.User
+	20,  // 124: operations_ecosys.AdminServices.GetSecurityString:input_type -> operations_ecosys.User
+	42,  // 125: operations_ecosys.AdminServices.AuthenticateUser:input_type -> operations_ecosys.LoginRequest
+	26,  // 126: operations_ecosys.AdminServices.GetRegistrationCode:input_type -> operations_ecosys.RegistrationCodeRequest
+	27,  // 127: operations_ecosys.AdminServices.CheckRegistrationCode:input_type -> operations_ecosys.RegistrationCode
+	46,  // 128: operations_ecosys.BroadcastServices.AddBroadcast:input_type -> operations_ecosys.Broadcast
+	46,  // 129: operations_ecosys.BroadcastServices.UpdateBroadcast:input_type -> operations_ecosys.Broadcast
+	46,  // 130: operations_ecosys.BroadcastServices.DeleteBroadcast:input_type -> operations_ecosys.Broadcast
+	51,  // 131: operations_ecosys.BroadcastServices.FindBroadcasts:input_type -> operations_ecosys.BroadcastQuery
+	48,  // 132: operations_ecosys.BroadcastServices.UpdateBroadcastRecipient:input_type -> operations_ecosys.BroadcastRecipient
+	56,  // 133: operations_ecosys.RosterServices.AddRoster:input_type -> operations_ecosys.BulkRosters
+	56,  // 134: operations_ecosys.RosterServices.UpdateRoster:input_type -> operations_ecosys.BulkRosters
+	53,  // 135: operations_ecosys.RosterServices.DeleteRoster:input_type -> operations_ecosys.Roster
+	60,  // 136: operations_ecosys.RosterServices.FindRosters:input_type -> operations_ecosys.RosterQuery
+	62,  // 137: operations_ecosys.RosterServices.GetAvailableUsers:input_type -> operations_ecosys.AvailabilityQuery
+	60,  // 138: operations_ecosys.RosterServices.FindRosterAssignments:input_type -> operations_ecosys.RosterQuery
+	55,  // 139: operations_ecosys.RosterServices.UpdateRosterAssignment:input_type -> operations_ecosys.RosterAssignement
+	67,  // 140: operations_ecosys.IncidentReportServices.AddIncidentReport:input_type -> operations_ecosys.IncidentReport
+	67,  // 141: operations_ecosys.IncidentReportServices.UpdateIncidentReport:input_type -> operations_ecosys.IncidentReport
+	67,  // 142: operations_ecosys.IncidentReportServices.DeleteIncidentReport:input_type -> operations_ecosys.IncidentReport
+	71,  // 143: operations_ecosys.IncidentReportServices.FindIncidentReports:input_type -> operations_ecosys.IncidentReportQuery
+	82,  // 144: operations_ecosys.CameraIotServices.SetGateState:input_type -> gate_prototype.GateState
+	85,  // 145: operations_ecosys.CameraIotServices.GetIotState:input_type -> google.protobuf.Empty
+	79,  // 146: operations_ecosys.AdminServices.AddUser:output_type -> operations_ecosys.Response
+	79,  // 147: operations_ecosys.AdminServices.UpdateUser:output_type -> operations_ecosys.Response
+	79,  // 148: operations_ecosys.AdminServices.DeleteUser:output_type -> operations_ecosys.Response
+	21,  // 149: operations_ecosys.AdminServices.FindUsers:output_type -> operations_ecosys.UsersResponse
+	79,  // 150: operations_ecosys.AdminServices.AddClient:output_type -> operations_ecosys.Response
+	79,  // 151: operations_ecosys.AdminServices.UpdateClient:output_type -> operations_ecosys.Response
+	79,  // 152: operations_ecosys.AdminServices.DeleteClient:output_type -> operations_ecosys.Response
+	29,  // 153: operations_ecosys.AdminServices.FindClients:output_type -> operations_ecosys.ClientResponse
+	43,  // 154: operations_ecosys.AdminServices.GetWANonce:output_type -> operations_ecosys.ResponseNonce
+	44,  // 155: operations_ecosys.AdminServices.GetSecurityString:output_type -> operations_ecosys.SecurityStringResponse
+	34,  // 156: operations_ecosys.AdminServices.AuthenticateUser:output_type -> operations_ecosys.UserTokenResponse
+	45,  // 157: operations_ecosys.AdminServices.GetRegistrationCode:output_type -> operations_ecosys.RegistrationCodeResponse
+	44,  // 158: operations_ecosys.AdminServices.CheckRegistrationCode:output_type -> operations_ecosys.SecurityStringResponse
+	79,  // 159: operations_ecosys.BroadcastServices.AddBroadcast:output_type -> operations_ecosys.Response
+	79,  // 160: operations_ecosys.BroadcastServices.UpdateBroadcast:output_type -> operations_ecosys.Response
+	79,  // 161: operations_ecosys.BroadcastServices.DeleteBroadcast:output_type -> operations_ecosys.Response
+	49,  // 162: operations_ecosys.BroadcastServices.FindBroadcasts:output_type -> operations_ecosys.BroadcastResponse
+	79,  // 163: operations_ecosys.BroadcastServices.UpdateBroadcastRecipient:output_type -> operations_ecosys.Response
+	79,  // 164: operations_ecosys.RosterServices.AddRoster:output_type -> operations_ecosys.Response
+	79,  // 165: operations_ecosys.RosterServices.UpdateRoster:output_type -> operations_ecosys.Response
+	79,  // 166: operations_ecosys.RosterServices.DeleteRoster:output_type -> operations_ecosys.Response
+	57,  // 167: operations_ecosys.RosterServices.FindRosters:output_type -> operations_ecosys.RosterResponse
+	65,  // 168: operations_ecosys.RosterServices.GetAvailableUsers:output_type -> operations_ecosys.EmployeeEvaluationResponse
+	58,  // 169: operations_ecosys.RosterServices.FindRosterAssignments:output_type -> operations_ecosys.RosterAssignmentResponse
+	79,  // 170: operations_ecosys.RosterServices.UpdateRosterAssignment:output_type -> operations_ecosys.Response
+	79,  // 171: operations_ecosys.IncidentReportServices.AddIncidentReport:output_type -> operations_ecosys.Response
+	79,  // 172: operations_ecosys.IncidentReportServices.UpdateIncidentReport:output_type -> operations_ecosys.Response
+	79,  // 173: operations_ecosys.IncidentReportServices.DeleteIncidentReport:output_type -> operations_ecosys.Response
+	69,  // 174: operations_ecosys.IncidentReportServices.FindIncidentReports:output_type -> operations_ecosys.IncidentReportResponse
+	79,  // 175: operations_ecosys.CameraIotServices.SetGateState:output_type -> operations_ecosys.Response
+	75,  // 176: operations_ecosys.CameraIotServices.GetIotState:output_type -> operations_ecosys.CameraIotResponse
+	146, // [146:177] is the sub-list for method output_type
+	115, // [115:146] is the sub-list for method input_type
+	115, // [115:115] is the sub-list for extension type_name
+	115, // [115:115] is the sub-list for extension extendee
+	0,   // [0:115] is the sub-list for field type_name
 }
 
 func init() { file_proto_operations_ecosys_proto_init() }
@@ -6036,7 +6660,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Client); i {
+			switch v := v.(*RegistrationCodeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6048,7 +6672,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ClientResponse); i {
+			switch v := v.(*RegistrationCode); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6060,7 +6684,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ClientFilter); i {
+			switch v := v.(*Client); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6072,7 +6696,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ClientQuery); i {
+			switch v := v.(*ClientResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6084,7 +6708,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderByClient); i {
+			switch v := v.(*ClientFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6096,7 +6720,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserToken); i {
+			switch v := v.(*ClientQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6108,7 +6732,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserTokenResponse); i {
+			switch v := v.(*OrderByClient); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6120,7 +6744,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserTokenFilter); i {
+			switch v := v.(*UserToken); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6132,7 +6756,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserTokenQuery); i {
+			switch v := v.(*UserTokenResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6144,7 +6768,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderByUserToken); i {
+			switch v := v.(*UserTokenFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6156,7 +6780,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoginRequest); i {
+			switch v := v.(*UserTokenQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6168,7 +6792,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ResponseNonce); i {
+			switch v := v.(*OrderByUserToken); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6180,7 +6804,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SecurityStringResponse); i {
+			switch v := v.(*RegistrationOTP); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6192,7 +6816,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Broadcast); i {
+			switch v := v.(*RegistrationOTPFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6204,7 +6828,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AIFSBroadcastRecipient); i {
+			switch v := v.(*RegistrationOTPQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6216,7 +6840,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BroadcastRecipient); i {
+			switch v := v.(*OrderByRegistrationOTP); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6228,7 +6852,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BroadcastResponse); i {
+			switch v := v.(*LoginRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6240,7 +6864,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BroadcastFilter); i {
+			switch v := v.(*ResponseNonce); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6252,7 +6876,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BroadcastQuery); i {
+			switch v := v.(*SecurityStringResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6264,7 +6888,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderByBroadcast); i {
+			switch v := v.(*RegistrationCodeResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6276,7 +6900,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Roster); i {
+			switch v := v.(*Broadcast); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6288,7 +6912,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AIFSClientRoster); i {
+			switch v := v.(*AIFSBroadcastRecipient); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6300,7 +6924,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RosterAssignement); i {
+			switch v := v.(*BroadcastRecipient); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6312,7 +6936,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BulkRosters); i {
+			switch v := v.(*BroadcastResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6324,7 +6948,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RosterResponse); i {
+			switch v := v.(*BroadcastFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6336,7 +6960,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RosterAssignmentResponse); i {
+			switch v := v.(*BroadcastQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6348,7 +6972,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RosterFilter); i {
+			switch v := v.(*OrderByBroadcast); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6360,7 +6984,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RosterQuery); i {
+			switch v := v.(*Roster); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6372,7 +6996,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderByRoster); i {
+			switch v := v.(*AIFSClientRoster); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6384,7 +7008,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AvailabilityQuery); i {
+			switch v := v.(*RosterAssignement); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6396,7 +7020,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderByQuery); i {
+			switch v := v.(*BulkRosters); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6408,7 +7032,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AvailabilityFilter); i {
+			switch v := v.(*RosterResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6420,7 +7044,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EmployeeEvaluationResponse); i {
+			switch v := v.(*RosterAssignmentResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6432,7 +7056,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EmployeeEvaluation); i {
+			switch v := v.(*RosterFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6444,7 +7068,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IncidentReport); i {
+			switch v := v.(*RosterQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6456,7 +7080,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IncidentReportContent); i {
+			switch v := v.(*OrderByRoster); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6468,7 +7092,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IncidentReportResponse); i {
+			switch v := v.(*AvailabilityQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6480,7 +7104,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IncidentReportFilter); i {
+			switch v := v.(*OrderByQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6492,7 +7116,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IncidentReportQuery); i {
+			switch v := v.(*AvailabilityFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6504,7 +7128,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderByIncidentReport); i {
+			switch v := v.(*EmployeeEvaluationResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6516,7 +7140,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CameraIot); i {
+			switch v := v.(*EmployeeEvaluation); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6528,7 +7152,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Camera); i {
+			switch v := v.(*IncidentReport); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6540,7 +7164,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CameraIotResponse); i {
+			switch v := v.(*IncidentReportContent); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6552,7 +7176,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CameraIotFilter); i {
+			switch v := v.(*IncidentReportResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6564,7 +7188,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CameraIotQuery); i {
+			switch v := v.(*IncidentReportFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6576,7 +7200,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderByCameraIot); i {
+			switch v := v.(*IncidentReportQuery); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6588,7 +7212,7 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Response); i {
+			switch v := v.(*OrderByIncidentReport); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -6600,6 +7224,90 @@ func file_proto_operations_ecosys_proto_init() {
 			}
 		}
 		file_proto_operations_ecosys_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CameraIot); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_operations_ecosys_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Camera); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_operations_ecosys_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CameraIotResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_operations_ecosys_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CameraIotFilter); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_operations_ecosys_proto_msgTypes[57].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CameraIotQuery); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_operations_ecosys_proto_msgTypes[58].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OrderByCameraIot); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_operations_ecosys_proto_msgTypes[59].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_operations_ecosys_proto_msgTypes[60].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Filter); i {
 			case 0:
 				return &v.state
@@ -6617,8 +7325,8 @@ func file_proto_operations_ecosys_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_operations_ecosys_proto_rawDesc,
-			NumEnums:      17,
-			NumMessages:   54,
+			NumEnums:      20,
+			NumMessages:   61,
 			NumExtensions: 0,
 			NumServices:   5,
 		},

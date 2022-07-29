@@ -42,8 +42,7 @@ func (s *Server) removeUserNonce(user *pb.User) error {
 	return nil
 }
 
-// Checks if the nonce from the header is valid, and if so,
-// removes the nonce from the DB
+// Retrives a nonce from the header and verifies it with verifyNonce
 func (s *Server) verifyNonceFromHeaders(ctx context.Context, user *pb.User) error {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -58,9 +57,11 @@ func (s *Server) verifyNonceFromHeaders(ctx context.Context, user *pb.User) erro
 		fmt.Println("verifyNonceFromHeaders ERROR has metadata:", md, errMsg)
 		return fmt.Errorf(errMsg)
 	}
+	return s.verifyNonce(vals[0], user)
+}
 
-	nonce := vals[0]
-
+// Checks if a nonce is valid, and if so, removes the nonce from the DB
+func (s *Server) verifyNonce(nonce string, user *pb.User) error {
 	// Find the user
 	fullUser, err := db_pck.IdUserByTelegramId(s.db, int(user.TeleUserId), false)
 	if err != nil {
@@ -134,4 +135,32 @@ func getCryptographicallySecureString(length int) (string, error) {
 	}
 
 	return string(bytes), nil
+}
+
+// Randomly returns ispecialist user type if there is an error
+//Todo: memory violation here - ask Hannah
+func (s *Server) validateRegistrationToken(token string) (*pb.RegistrationOTP, error) {
+	regQuery := &pb.RegistrationOTPQuery{}
+	db_pck.AddRegOtpFilter(regQuery, pb.RegistrationOTPFilter_TOKEN, pb.Filter_EQUAL, token)
+	regOtp, err := db_pck.GetRegOtp(s.db, regQuery)
+
+	if err != nil {
+		return &pb.RegistrationOTP{}, err
+	}
+
+	if len(regOtp) < 1 {
+		return &pb.RegistrationOTP{}, fmt.Errorf("invalid registration code")
+	}
+	creationTime, err := time.Parse(common.DATETIME_FORMAT, regOtp[0].CreationDatetime)
+
+	if err != nil {
+		fmt.Println("validateRegistrationToken ERROR:", err)
+		return &pb.RegistrationOTP{}, err
+	}
+	if regOtp[0].IsUsed || time.Now().After(creationTime.Add(time.Hour*24)) {
+		fmt.Println("validateRegistrationToken ERROR: reg otp already used or expired")
+		return &pb.RegistrationOTP{}, fmt.Errorf("invalid registration code")
+	}
+
+	return regOtp[0], nil
 }

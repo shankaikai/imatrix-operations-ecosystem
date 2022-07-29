@@ -46,7 +46,7 @@ func appendCors(muxHandler http.Handler) http.Handler {
 	newHandler := http.HandlerFunc(func(respWriter http.ResponseWriter, req *http.Request) {
 		if allowedOrigin(req.Header.Get("Origin")) {
 			respWriter.Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
-			respWriter.Header().Set("Access-Control-Allow-Methods", "POST")
+			respWriter.Header().Set("Access-Control-Allow-Methods", "GET, POST")
 			respWriter.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType")
 		}
 		if req.Method == "OPTIONS" {

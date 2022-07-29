@@ -77,6 +77,16 @@ class AdminServicesStub(object):
                 request_serializer=operations__ecosys__pb2.LoginRequest.SerializeToString,
                 response_deserializer=operations__ecosys__pb2.UserTokenResponse.FromString,
                 )
+        self.GetRegistrationCode = channel.unary_unary(
+                '/operations_ecosys.AdminServices/GetRegistrationCode',
+                request_serializer=operations__ecosys__pb2.RegistrationCodeRequest.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.RegistrationCodeResponse.FromString,
+                )
+        self.CheckRegistrationCode = channel.unary_unary(
+                '/operations_ecosys.AdminServices/CheckRegistrationCode',
+                request_serializer=operations__ecosys__pb2.RegistrationCode.SerializeToString,
+                response_deserializer=operations__ecosys__pb2.SecurityStringResponse.FromString,
+                )
 
 
 class AdminServicesServicer(object):
@@ -158,6 +168,19 @@ class AdminServicesServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetRegistrationCode(self, request, context):
+        """Is this user or client?
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CheckRegistrationCode(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AdminServicesServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -215,6 +238,16 @@ def add_AdminServicesServicer_to_server(servicer, server):
                     servicer.AuthenticateUser,
                     request_deserializer=operations__ecosys__pb2.LoginRequest.FromString,
                     response_serializer=operations__ecosys__pb2.UserTokenResponse.SerializeToString,
+            ),
+            'GetRegistrationCode': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRegistrationCode,
+                    request_deserializer=operations__ecosys__pb2.RegistrationCodeRequest.FromString,
+                    response_serializer=operations__ecosys__pb2.RegistrationCodeResponse.SerializeToString,
+            ),
+            'CheckRegistrationCode': grpc.unary_unary_rpc_method_handler(
+                    servicer.CheckRegistrationCode,
+                    request_deserializer=operations__ecosys__pb2.RegistrationCode.FromString,
+                    response_serializer=operations__ecosys__pb2.SecurityStringResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -416,6 +449,40 @@ class AdminServices(object):
         return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/AuthenticateUser',
             operations__ecosys__pb2.LoginRequest.SerializeToString,
             operations__ecosys__pb2.UserTokenResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetRegistrationCode(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/GetRegistrationCode',
+            operations__ecosys__pb2.RegistrationCodeRequest.SerializeToString,
+            operations__ecosys__pb2.RegistrationCodeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CheckRegistrationCode(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/operations_ecosys.AdminServices/CheckRegistrationCode',
+            operations__ecosys__pb2.RegistrationCode.SerializeToString,
+            operations__ecosys__pb2.SecurityStringResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

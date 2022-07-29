@@ -3,7 +3,6 @@
 import grpc
 
 import http_webapp_pb2 as http__webapp__pb2
-import operations_ecosys_pb2 as operations__ecosys__pb2
 
 
 class WebAppServicesStub(object):
@@ -17,12 +16,17 @@ class WebAppServicesStub(object):
         """
         self.GetRosterAssignmentsForWebApp = channel.unary_unary(
                 '/http_webapp.WebAppServices/GetRosterAssignmentsForWebApp',
-                request_serializer=http__webapp__pb2.HTTPRosterMessage.SerializeToString,
-                response_deserializer=http__webapp__pb2.HTTPMessage.FromString,
+                request_serializer=http__webapp__pb2.HTTPAssignmentsGetRequest.SerializeToString,
+                response_deserializer=http__webapp__pb2.HTTPAssignmentResponse.FromString,
                 )
         self.PostWReportFromWebApp = channel.unary_unary(
                 '/http_webapp.WebAppServices/PostWReportFromWebApp',
-                request_serializer=operations__ecosys__pb2.IncidentReport.SerializeToString,
+                request_serializer=http__webapp__pb2.HTTPReportPostRequest.SerializeToString,
+                response_deserializer=http__webapp__pb2.HTTPMessage.FromString,
+                )
+        self.PostRegistrationFormFromWebApp = channel.unary_unary(
+                '/http_webapp.WebAppServices/PostRegistrationFormFromWebApp',
+                request_serializer=http__webapp__pb2.HTTPRegistrationFormRequest.SerializeToString,
                 response_deserializer=http__webapp__pb2.HTTPMessage.FromString,
                 )
 
@@ -38,14 +42,13 @@ class WebAppServicesServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def PostWReportFromWebApp(self, request, context):
-        """rpc PostWReportFromWebApp(HTTPMessage) returns (HTTPMessage) {
-        option (google.api.http) = {
-        post: "/http/post_report"
-        body: "*"
-        };
-        }
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
-        """
+    def PostRegistrationFormFromWebApp(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -55,12 +58,17 @@ def add_WebAppServicesServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetRosterAssignmentsForWebApp': grpc.unary_unary_rpc_method_handler(
                     servicer.GetRosterAssignmentsForWebApp,
-                    request_deserializer=http__webapp__pb2.HTTPRosterMessage.FromString,
-                    response_serializer=http__webapp__pb2.HTTPMessage.SerializeToString,
+                    request_deserializer=http__webapp__pb2.HTTPAssignmentsGetRequest.FromString,
+                    response_serializer=http__webapp__pb2.HTTPAssignmentResponse.SerializeToString,
             ),
             'PostWReportFromWebApp': grpc.unary_unary_rpc_method_handler(
                     servicer.PostWReportFromWebApp,
-                    request_deserializer=operations__ecosys__pb2.IncidentReport.FromString,
+                    request_deserializer=http__webapp__pb2.HTTPReportPostRequest.FromString,
+                    response_serializer=http__webapp__pb2.HTTPMessage.SerializeToString,
+            ),
+            'PostRegistrationFormFromWebApp': grpc.unary_unary_rpc_method_handler(
+                    servicer.PostRegistrationFormFromWebApp,
+                    request_deserializer=http__webapp__pb2.HTTPRegistrationFormRequest.FromString,
                     response_serializer=http__webapp__pb2.HTTPMessage.SerializeToString,
             ),
     }
@@ -85,8 +93,8 @@ class WebAppServices(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/http_webapp.WebAppServices/GetRosterAssignmentsForWebApp',
-            http__webapp__pb2.HTTPRosterMessage.SerializeToString,
-            http__webapp__pb2.HTTPMessage.FromString,
+            http__webapp__pb2.HTTPAssignmentsGetRequest.SerializeToString,
+            http__webapp__pb2.HTTPAssignmentResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -102,7 +110,24 @@ class WebAppServices(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/http_webapp.WebAppServices/PostWReportFromWebApp',
-            operations__ecosys__pb2.IncidentReport.SerializeToString,
+            http__webapp__pb2.HTTPReportPostRequest.SerializeToString,
+            http__webapp__pb2.HTTPMessage.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def PostRegistrationFormFromWebApp(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/http_webapp.WebAppServices/PostRegistrationFormFromWebApp',
+            http__webapp__pb2.HTTPRegistrationFormRequest.SerializeToString,
             http__webapp__pb2.HTTPMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -20,14 +20,15 @@ func TestRosteringClient(serverAddr *string, serverPort *int) {
 		rosters = append(rosters, CreateFakeRoster(i))
 	}
 
-	pk := InsertRoster(serverAddr, serverPort, rosters)
-	rosters[2].RosteringId = pk
+	InsertRoster(serverAddr, serverPort, rosters)
+	// pk := InsertRoster(serverAddr, serverPort, rosters)
+	// rosters[2].RosteringId = pk
 
-	ConsolidatedFindRosterTest(serverAddr, serverPort)
-	ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
+	// ConsolidatedFindRosterTest(serverAddr, serverPort)
+	// ConsolidatedUpdateRosterTest(serverAddr, serverPort, rosters[2])
 
-	DeleteRosterTest(serverAddr, serverPort, &pb.Roster{RosteringId: 9})
-	ConsolidatedGetAvailableUsersTest(serverAddr, serverPort)
+	// DeleteRosterTest(serverAddr, serverPort, &pb.Roster{RosteringId: 9})
+	// ConsolidatedGetAvailableUsersTest(serverAddr, serverPort)
 }
 
 func InsertRoster(serverAddr *string, serverPort *int, rosters []*pb.Roster) int64 {

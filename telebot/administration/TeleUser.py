@@ -12,9 +12,9 @@ from Protos import operations_ecosys_pb2_grpc, operations_ecosys_pb2
 
 class TUser:
     def __init__(self, tele_user_id:int, oes_user:operations_ecosys_pb2.User):
-        self.tele_user_id = tele_user_id
-        self.oes_user = oes_user
-        self.user_type = oes_user.user_type
+        self.tele_user_id:int = tele_user_id
+        self.oes_user:operations_ecosys_pb2.User = oes_user
+        self.user_type:operations_ecosys_pb2.User.UserType = oes_user.user_type
         pass
 
     @classmethod
@@ -23,6 +23,10 @@ class TUser:
         if oes_user == None:
             print("WARNING: Could not retrieve OES user for TUser with user_id:", tele_user_id)
         return TUser(tele_user_id, oes_user)
+
+    @classmethod
+    def create_Tele_User_from_oes_user(cls, oes_user:operations_ecosys_pb2.User):
+        return TUser(oes_user.tele_user_id, oes_user)
 
     @classmethod
     def getOESUserFromUserID(cls, tele_user_id:int):
@@ -59,6 +63,20 @@ class TUser:
             print("Error updating and logging in user")
             return False
         return True
+
+    def getRegistrationCode(self, type:operations_ecosys_pb2.RegistrationCodeRequest.CodeType) -> str:
+        req = operations_ecosys_pb2.RegistrationCodeRequest(user=self.oes_user, type=type)
+        return user_client.get_regcode(req)
+
+    def __str__(self) -> str:
+        text = "Name: " + self.oes_user.name
+        text += "\nUser Type: " + str(self.user_type)
+        text += "\nTelegram username: " + self.oes_user.telegram_handle
+        text += "\nTelegram user ID: " + str(self.tele_user_id)
+        text += "\nPhone Number: " + str(self.oes_user.phone_number)
+        text += "\nEmail: " + self.oes_user.email
+        return text
+        pass
 
     # # JW does not recommend this because tele handles can change.
     # @classmethod
