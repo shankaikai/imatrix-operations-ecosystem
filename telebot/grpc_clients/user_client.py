@@ -38,12 +38,25 @@ def get_users(user_query) -> List[operations_ecosys_pb2.User]:
 
     return users
 
-def delete_user(telegram_user_id:int) -> bool:
+def delete_user(user_id:int) -> bool:
     # return true if deletion was successful and false if otherwise
+    user_id = str(user_id)
+    print(user_id)
+    filter_comparison = operations_ecosys_pb2.Filter(
+        comparison=operations_ecosys_pb2.Filter.EQUAL, 
+        value=user_id
+    )
+    query_filters = [operations_ecosys_pb2.UserFilter(
+        field=operations_ecosys_pb2.UserFilter.USER_ID,
+        comparisons=filter_comparison,
+    )]
+    user_query = operations_ecosys_pb2.UserQuery(filters=query_filters,limit=1)
+    users = get_users(user_query)
+
     stub = get_admin_stub()
-    delRes = stub.DeleteUser(user_query)
+    res = stub.DeleteUser(users[0])
     
-    if delRes.response.type == operations_ecosys_pb2.Response.ACK:
+    if res.type == operations_ecosys_pb2.Response.ACK:
         return True
     else:
         print("delete_user ERROR:", delRes)

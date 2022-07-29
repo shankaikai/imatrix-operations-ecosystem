@@ -52,8 +52,10 @@ class MainMenu_Report_WA(TelegramMenu):
         wa_url = os.getenv('WEBAPP_REPORT_URL')
         params = "?twan=" + user_client.get_webapp_nonce(self.TController.user.oes_user)
         params += "&user_id=" + str(update.effective_user.id)
+        text = "Press 'Go' to make a report. \n(Each link is one-use and meant for immediate use."
+        text += "Performing other actions may cause an error when submitting a report via this link.)"
         reportWAInfo = WebAppInfo(wa_url + params)
         inlineKBs = InlineKeyboardMarkup([[InlineKeyboardButton(text="Go", web_app=reportWAInfo)]])
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Press 'Go' to make a report.", reply_markup=inlineKBs)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=text, reply_markup=inlineKBs)
         self.TController.CurrentMenu = self.parent
         pass

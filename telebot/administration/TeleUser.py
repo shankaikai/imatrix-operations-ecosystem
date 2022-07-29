@@ -14,7 +14,8 @@ class TUser:
     def __init__(self, tele_user_id:int, oes_user:operations_ecosys_pb2.User):
         self.tele_user_id:int = tele_user_id
         self.oes_user:operations_ecosys_pb2.User = oes_user
-        self.user_type:operations_ecosys_pb2.User.UserType = oes_user.user_type
+        if oes_user != None:
+            self.user_type:operations_ecosys_pb2.User.UserType = oes_user.user_type
         pass
 
     @classmethod

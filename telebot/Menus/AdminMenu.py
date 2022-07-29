@@ -204,7 +204,7 @@ def _adminMenu_search_util_callbackqueryHandler(tMenu:TelegramMenu, update:Updat
             pass
         elif action == "Confirm Delete User" and tMenu.TController.user.user_type == operations_ecosys_pb2.User.UserType.MANAGER:
             selectedUser = tMenu.scratchData["found_users"][userIdx]
-            if user_client.delete_user(selectedUser.tele_user_id):
+            if user_client.delete_user(selectedUser.oes_user.user_id):
                 numUsers = numUsers - 1
                 if numUsers < 1:
                     update.callback_query.edit_message_text("User deleted. No results left.")

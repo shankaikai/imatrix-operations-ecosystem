@@ -81,7 +81,7 @@ class TelegramController:
         else:
             logging_in_user.login(update)
             self.user = logging_in_user
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome!")
+            context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome, " + self.user.oes_user.name + "!")
             self.PreviousMenu = None
             self.CurrentMenu = self.RootMenu
             self.RootMenu.handler(update, context)
