@@ -6,7 +6,7 @@ from telegram.ext import Updater, Dispatcher
 from telegram.files.photosize import PhotoSize
 from telegram import File as tFile
 
-from typing import List
+from typing import List, Dict
 from abc import ABC, abstractclassmethod, abstractmethod
 
 from subscriptions import subscription_message
@@ -28,6 +28,7 @@ class TelegramController:
         self.CurrentMenu:TelegramMenu = None
         self.PreviousMenu:TelegramMenu = None
         self.user:TeleUser = None
+        self.scratchData:Dict = {}
     def buildMenuTree(self, rootMenu:TelegramMenu):
         if self.Menus == None or len(self.Menus) == 0:
             print("Unable to build tree as no menus are given.")
@@ -95,9 +96,19 @@ class TelegramController:
         if not self.ifPrivateChat(update, context):
             return
         strData = update.callback_query.data
+        # special case
         callback_type = strData.split(":")[0]
-        if callback_type == subscription_message.IDENTIFIER:
+        if callback_type == subscription_message.SubscriptionMessage.IDENTIFIER:
             subscription_message.callbackqueryHandler(update, context)
+            return
+        # normal case
+        if update.callback_query.data == "Back" \
+            or update.callback_query.data == "Cancel" \
+            or update.callback_query.data == "Exit":
+            self.CurrentMenu.backHandler(update, context)
+            return
+        else:
+            self.CurrentMenu.callbackqueryHandler(update, context)
         pass
     # Other handlers
     def backHandler(self, update:Update, context:CallbackContext):
@@ -120,6 +131,7 @@ class TelegramMenu(ABC):
         self.name:str = name
         self.triggerWords:List[str] = triggerWords
         self.TController:TelegramController = None
+        self.scratchData = {}
     @abstractmethod
     def handler(self, update:Update, context:CallbackContext):
         pass

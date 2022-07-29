@@ -10,15 +10,11 @@ class WebAppServicesStub:
     def __init__(self, channel: grpc.Channel) -> None: ...
     GetRosterAssignmentsForWebApp: grpc.UnaryUnaryMultiCallable[
         http_webapp_pb2.HTTPAssignmentsGetRequest,
-        http_webapp_pb2.HTTPMessage]
+        http_webapp_pb2.HTTPAssignmentResponse]
     """<><> Telegram WebApp - HTTP <><>"""
 
     PostWReportFromWebApp: grpc.UnaryUnaryMultiCallable[
         http_webapp_pb2.HTTPReportPostRequest,
-        http_webapp_pb2.HTTPMessage]
-
-    CheckRegistrationCode: grpc.UnaryUnaryMultiCallable[
-        http_webapp_pb2.HTTPMessage,
         http_webapp_pb2.HTTPMessage]
 
     PostRegistrationFormFromWebApp: grpc.UnaryUnaryMultiCallable[
@@ -31,19 +27,13 @@ class WebAppServicesServicer(metaclass=abc.ABCMeta):
     def GetRosterAssignmentsForWebApp(self,
         request: http_webapp_pb2.HTTPAssignmentsGetRequest,
         context: grpc.ServicerContext,
-    ) -> http_webapp_pb2.HTTPMessage:
+    ) -> http_webapp_pb2.HTTPAssignmentResponse:
         """<><> Telegram WebApp - HTTP <><>"""
         pass
 
     @abc.abstractmethod
     def PostWReportFromWebApp(self,
         request: http_webapp_pb2.HTTPReportPostRequest,
-        context: grpc.ServicerContext,
-    ) -> http_webapp_pb2.HTTPMessage: ...
-
-    @abc.abstractmethod
-    def CheckRegistrationCode(self,
-        request: http_webapp_pb2.HTTPMessage,
         context: grpc.ServicerContext,
     ) -> http_webapp_pb2.HTTPMessage: ...
 

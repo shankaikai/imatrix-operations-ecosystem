@@ -3,7 +3,9 @@ package server
 import (
 	"fmt"
 	"strconv"
+	"time"
 
+	"capstone.operations_ecosystem/backend/common"
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
 	"github.com/getsentry/sentry-go"
@@ -347,6 +349,72 @@ func (s *Server) AuthenticateUser(cxt context.Context, loginRequest *pb.LoginReq
 	return &userTokenResponse, nil
 }
 
-func (s *Server)GetRegistrationCode(req *pb.RegistrationCodeRequest) (*pb.RegistrationCodeResponse, error){
-	return &pb.RegistrationCodeResponse{}, nil
+func (s *Server) GetRegistrationCode(ctx context.Context, req *pb.RegistrationCodeRequest) (*pb.RegistrationCodeResponse, error) {
+	fmt.Println("GetRegistrationCode")
+	fmt.Println(req)
+	if req.User.UserType != pb.User_MANAGER {
+		return &pb.RegistrationCodeResponse{}, fmt.Errorf("Unauthorised")
+	}
+	newToken, err := getCryptographicallySecureString(64)
+	if err != nil {
+		return &pb.RegistrationCodeResponse{
+			Response: &pb.Response{
+				Type:         pb.Response_ERROR,
+				ErrorMessage: err.Error(),
+			},
+		}, nil
+	}
+	regOtp := &pb.RegistrationOTP{
+		Token:            newToken,
+		CreationDatetime: time.Now().Format(common.DATETIME_FORMAT),
+		Creator:          req.User,
+		UserType:         pb.User_UserType(req.Type),
+	}
+	_, err = db_pck.InsertRegOTP(s.db, regOtp, s.dbLock)
+	if err != nil {
+		return &pb.RegistrationCodeResponse{
+			Response: &pb.Response{
+
+				Type: pb.Response_ERROR,
+
+				ErrorMessage: err.Error(),
+			},
+		}, nil
+
+	}
+
+	return &pb.RegistrationCodeResponse{
+		Response: &pb.Response{Type: pb.Response_ACK},
+		Code:     newToken,
+	}, nil
+}
+
+func (s *Server) CheckRegistrationCode(ctx context.Context, regCode *pb.RegistrationCode) (*pb.SecurityStringResponse, error) {
+	fmt.Println("CheckRegistrationCode")
+	fmt.Println(regCode)
+
+	res := &pb.SecurityStringResponse{
+		Response: &pb.Response{Type: pb.Response_ERROR},
+	}
+
+	//Todo: Check registration code and return a loginstring (security string)
+	_, err := s.validateRegistrationToken(regCode.Code)
+	if err != nil {
+		fmt.Println("CheckRegistrationCode ERROR:", err)
+		res.Response.ErrorMessage = "Registration code is invalid."
+		return res, nil
+	}
+
+	randString, err := getCryptographicallySecureString(SECURITY_STRING_LENGTH)
+
+	if err != nil {
+		fmt.Println("CheckRegistrationCode ERROR:", err)
+		res.Response.ErrorMessage = "The server is unable to generate a security string."
+		return res, nil
+	}
+
+	res.SecurityString = randString
+	res.Response.Type = pb.Response_ACK
+
+	return res, nil
 }

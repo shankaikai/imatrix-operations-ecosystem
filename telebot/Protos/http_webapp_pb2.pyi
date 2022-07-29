@@ -38,58 +38,108 @@ class HTTPAssignmentsGetRequest(google.protobuf.message.Message):
     STARTDATE_FIELD_NUMBER: builtins.int
     ENDDATE_FIELD_NUMBER: builtins.int
     twan: typing.Text
-    tele_user_id: typing.Text
+    tele_user_id: builtins.int
     startDate: typing.Text
     endDate: typing.Text
     def __init__(self,
         *,
         twan: typing.Text = ...,
-        tele_user_id: typing.Text = ...,
+        tele_user_id: builtins.int = ...,
         startDate: typing.Text = ...,
         endDate: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["endDate",b"endDate","startDate",b"startDate","tele_user_id",b"tele_user_id","twan",b"twan"]) -> None: ...
 global___HTTPAssignmentsGetRequest = HTTPAssignmentsGetRequest
 
+class HTTPAssignmentResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    RESPONSE_FIELD_NUMBER: builtins.int
+    ROSTERS_FIELD_NUMBER: builtins.int
+    @property
+    def response(self) -> global___HTTPMessage: ...
+    @property
+    def rosters(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___HTTPRosterResponse]: ...
+    def __init__(self,
+        *,
+        response: typing.Optional[global___HTTPMessage] = ...,
+        rosters: typing.Optional[typing.Iterable[global___HTTPRosterResponse]] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["response",b"response"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["response",b"response","rosters",b"rosters"]) -> None: ...
+global___HTTPAssignmentResponse = HTTPAssignmentResponse
+
+class HTTPRosterResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    AIFS_ID_FIELD_NUMBER: builtins.int
+    STARTDATETIME_FIELD_NUMBER: builtins.int
+    ENDDATETIME_FIELD_NUMBER: builtins.int
+    ADDRESSES_FIELD_NUMBER: builtins.int
+    aifs_id: builtins.int
+    startDatetime: typing.Text
+    endDatetime: typing.Text
+    @property
+    def addresses(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
+    def __init__(self,
+        *,
+        aifs_id: builtins.int = ...,
+        startDatetime: typing.Text = ...,
+        endDatetime: typing.Text = ...,
+        addresses: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["addresses",b"addresses","aifs_id",b"aifs_id","endDatetime",b"endDatetime","startDatetime",b"startDatetime"]) -> None: ...
+global___HTTPRosterResponse = HTTPRosterResponse
+
 class HTTPReportPostRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     TWAN_FIELD_NUMBER: builtins.int
     TELE_USER_ID_FIELD_NUMBER: builtins.int
-    REPORT_TYPE_FIELD_NUMBER: builtins.int
     TITLE_FIELD_NUMBER: builtins.int
+    REPORT_TYPE_FIELD_NUMBER: builtins.int
     ADDRESS_FIELD_NUMBER: builtins.int
-    TIME_FIELD_NUMBER: builtins.int
     DATE_FIELD_NUMBER: builtins.int
+    TIME_FIELD_NUMBER: builtins.int
     DETAILS_FIELD_NUMBER: builtins.int
+    ISPEOPLEINJURED_FIELD_NUMBER: builtins.int
+    INJURYDETAILS_FIELD_NUMBER: builtins.int
     ISPOLICENOTIFIED_FIELD_NUMBER: builtins.int
-    ISSCDFNOTIFIED_FIELD_NUMBER: builtins.int
     ISPROPERTYSTOLEN_FIELD_NUMBER: builtins.int
+    PROPERTYSTOLENDETAILS_FIELD_NUMBER: builtins.int
+    ISACTIONTAKEN_FIELD_NUMBER: builtins.int
+    ACTIONDETAILS_FIELD_NUMBER: builtins.int
     twan: typing.Text
-    tele_user_id: typing.Text
-    report_type: typing.Text
+    tele_user_id: builtins.int
     title: typing.Text
+    report_type: typing.Text
     address: typing.Text
-    time: typing.Text
     date: typing.Text
+    time: typing.Text
     details: typing.Text
+    isPeopleInjured: builtins.bool
+    injuryDetails: typing.Text
     isPoliceNotified: builtins.bool
-    isSCDFNotified: builtins.bool
     isPropertyStolen: builtins.bool
+    propertyStolenDetails: typing.Text
+    isActionTaken: builtins.bool
+    actionDetails: typing.Text
     def __init__(self,
         *,
         twan: typing.Text = ...,
-        tele_user_id: typing.Text = ...,
-        report_type: typing.Text = ...,
+        tele_user_id: builtins.int = ...,
         title: typing.Text = ...,
+        report_type: typing.Text = ...,
         address: typing.Text = ...,
-        time: typing.Text = ...,
         date: typing.Text = ...,
+        time: typing.Text = ...,
         details: typing.Text = ...,
+        isPeopleInjured: builtins.bool = ...,
+        injuryDetails: typing.Text = ...,
         isPoliceNotified: builtins.bool = ...,
-        isSCDFNotified: builtins.bool = ...,
         isPropertyStolen: builtins.bool = ...,
+        propertyStolenDetails: typing.Text = ...,
+        isActionTaken: builtins.bool = ...,
+        actionDetails: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["address",b"address","date",b"date","details",b"details","isPoliceNotified",b"isPoliceNotified","isPropertyStolen",b"isPropertyStolen","isSCDFNotified",b"isSCDFNotified","report_type",b"report_type","tele_user_id",b"tele_user_id","time",b"time","title",b"title","twan",b"twan"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["actionDetails",b"actionDetails","address",b"address","date",b"date","details",b"details","injuryDetails",b"injuryDetails","isActionTaken",b"isActionTaken","isPeopleInjured",b"isPeopleInjured","isPoliceNotified",b"isPoliceNotified","isPropertyStolen",b"isPropertyStolen","propertyStolenDetails",b"propertyStolenDetails","report_type",b"report_type","tele_user_id",b"tele_user_id","time",b"time","title",b"title","twan",b"twan"]) -> None: ...
 global___HTTPReportPostRequest = HTTPReportPostRequest
 
 class HTTPRegistrationFormRequest(google.protobuf.message.Message):
@@ -103,7 +153,7 @@ class HTTPRegistrationFormRequest(google.protobuf.message.Message):
     HASEDLOGINSTRING_FIELD_NUMBER: builtins.int
     ISPARTTIME_FIELD_NUMBER: builtins.int
     code: typing.Text
-    tele_user_id: typing.Text
+    tele_user_id: builtins.int
     name: typing.Text
     email: typing.Text
     phoneNumber: typing.Text
@@ -113,7 +163,7 @@ class HTTPRegistrationFormRequest(google.protobuf.message.Message):
     def __init__(self,
         *,
         code: typing.Text = ...,
-        tele_user_id: typing.Text = ...,
+        tele_user_id: builtins.int = ...,
         name: typing.Text = ...,
         email: typing.Text = ...,
         phoneNumber: typing.Text = ...,

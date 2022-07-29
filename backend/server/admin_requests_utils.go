@@ -136,3 +136,31 @@ func getCryptographicallySecureString(length int) (string, error) {
 
 	return string(bytes), nil
 }
+
+// Randomly returns ispecialist user type if there is an error
+//Todo: memory violation here - ask Hannah
+func (s *Server) validateRegistrationToken(token string) (*pb.RegistrationOTP, error) {
+	regQuery := &pb.RegistrationOTPQuery{}
+	db_pck.AddRegOtpFilter(regQuery, pb.RegistrationOTPFilter_TOKEN, pb.Filter_EQUAL, token)
+	regOtp, err := db_pck.GetRegOtp(s.db, regQuery)
+
+	if err != nil {
+		return &pb.RegistrationOTP{}, err
+	}
+
+	if len(regOtp) < 1 {
+		return &pb.RegistrationOTP{}, fmt.Errorf("invalid registration code")
+	}
+	creationTime, err := time.Parse(common.DATETIME_FORMAT, regOtp[0].CreationDatetime)
+
+	if err != nil {
+		fmt.Println("validateRegistrationToken ERROR:", err)
+		return &pb.RegistrationOTP{}, err
+	}
+	if regOtp[0].IsUsed || time.Now().After(creationTime.Add(time.Hour*24)) {
+		fmt.Println("validateRegistrationToken ERROR: reg otp already used or expired")
+		return &pb.RegistrationOTP{}, fmt.Errorf("invalid registration code")
+	}
+
+	return regOtp[0], nil
+}

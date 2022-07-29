@@ -218,3 +218,16 @@ CREATE TABLE IF NOT EXISTS `camera_iot` (
     cpu_id VARCHAR(500) NOT NULL,
     cpu_access_key VARCHAR(100) NOT NULL
 );
+
+
+CREATE TABLE IF NOT EXISTS `registration_otp` (
+    registration_otp_id INT PRIMARY KEY AUTO_INCREMENT,
+    token VARCHAR(1000) NOT NULL,
+    user_type ENUM('I-Specialist','Security Guard', 'Controller', 'Manager') NOT NULL,
+    creation_date DATETIME NOT NULL, 
+    creator INT NOT NULL,
+    is_used VARCHAR(100) NOT NULL,
+    FOREIGN KEY (creator) 
+		REFERENCES `user` (user_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);

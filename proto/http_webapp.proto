@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
-import "proto/operations_ecosys.proto";
 
 option go_package = "/operations_ecosys";
 
@@ -9,9 +8,9 @@ package http_webapp;
 
 service WebAppServices{
     // <><> Telegram WebApp - HTTP <><>
-    rpc GetRosterAssignmentsForWebApp(HTTPAssignmentsGetRequest) returns (HTTPMessage) {
+    rpc GetRosterAssignmentsForWebApp(HTTPAssignmentsGetRequest) returns (HTTPAssignmentResponse) {
         option (google.api.http) = {
-            get: "/http/rosters/{tele_user_id}/{startDate}/{endDate}/{twan}"
+            get: "/http/assignments"
         };
     }
 
@@ -22,16 +21,9 @@ service WebAppServices{
         };
     }
 
-    rpc CheckRegistrationCode(HTTPMessage) returns (HTTPMessage) {
-        option (google.api.http) = {
-            post: "/http/post_report"
-            body: "*"
-        };
-    }
-
     rpc PostRegistrationFormFromWebApp(HTTPRegistrationFormRequest) returns (HTTPMessage) {
         option (google.api.http) = {
-            post: "/http/post_report"
+            post: "/http/post_registration"
             body: "*"
         };
     }
@@ -51,18 +43,35 @@ message HTTPAssignmentsGetRequest{
     string endDate = 4;
 }
 
+message HTTPAssignmentResponse{
+    HTTPMessage response = 1;
+    repeated HTTPRosterResponse rosters = 2;
+}
+
+message HTTPRosterResponse{
+    int64 aifs_id = 2;
+    string startDatetime = 3;
+    string endDatetime = 4;
+    repeated string addresses = 5;
+}
+
 message HTTPReportPostRequest{
     string twan = 1;
     int64 tele_user_id = 2;
-    string report_type = 3;
-    string title = 4;
+    string title = 3;
+    string report_type = 4;
     string address = 5;
-    string time = 6;
-    string date = 7;
+    string date = 6;
+    string time = 7;
     string details = 8;
-    bool isPoliceNotified = 9;
-    bool isSCDFNotified = 10;
-    bool isPropertyStolen = 11;
+    bool isPeopleInjured = 9;
+    string injuryDetails = 10;
+    bool isPoliceNotified = 11;
+    bool isPropertyStolen = 12;
+    string propertyStolenDetails = 13;
+    bool isActionTaken = 14;
+    string actionDetails = 15;
+
 }
 
 message HTTPRegistrationFormRequest{
@@ -74,4 +83,5 @@ message HTTPRegistrationFormRequest{
     string loginString = 6;
     string hasedLoginString = 7;
     bool isPartTime = 8;
+    string tele_handle = 9;
 }

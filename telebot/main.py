@@ -43,8 +43,15 @@ othersMenuQI = OthersMenu.OthersMenu_QuickIntro_Text(parent=othersMenu, triggerW
 adminMenu = AdminMenu.AdminMenu(parent=othersMenu, triggerWords=["Admin"])
 adminMenuRCM = AdminMenu.AdminMenu_RegistrationCodeMenu(parent=adminMenu, triggerWords=["Create Registration Code"])
 adminMenuRCM_IS = AdminMenu.AdminMenu_RegistrationCodeMenu_ISpec(parent=adminMenuRCM, triggerWords=["Create I-Specialist Code"])
+adminMenuRCM_SG = AdminMenu.AdminMenu_RegistrationCodeMenu_SGuard(parent=adminMenuRCM, triggerWords=["Create Security Guard Code"])
 adminMenuRCM_C = AdminMenu.AdminMenu_RegistrationCodeMenu_Controller(parent=adminMenuRCM, triggerWords=["Create Controller Code"])
 adminMenuRCM_M = AdminMenu.AdminMenu_RegistrationCodeMenu_Manager(parent=adminMenuRCM, triggerWords=["Create Manager Code"])
+adminMenuSU = AdminMenu.AdminMenu_SearchUserMenu(parent=adminMenu, triggerWords=["Search User"])
+adminMenuSU_TUNAME = AdminMenu.AdminMenu_SearchUserMenu_byTeleUsername(parent=adminMenuSU, triggerWords=["Search by Telegram username"])
+adminMenuSU_NAME = AdminMenu.AdminMenu_SearchUserMenu_byName(parent=adminMenuSU, triggerWords=["Search by name"])
+adminMenuSU_PN = AdminMenu.AdminMenu_SearchUserMenu_byPhoneNumber(parent=adminMenuSU, triggerWords=["Search by phone number"])
+adminMenuSU_EMAIL = AdminMenu.AdminMenu_SearchUserMenu_byEmail(parent=adminMenuSU, triggerWords=["Search by email"])
+adminMenuSU_TUID = AdminMenu.AdminMenu_SearchUserMenu_byTelegramUserID(parent=adminMenuSU, triggerWords=["Search by Telegram user ID"])
 
 
 
@@ -52,7 +59,8 @@ adminMenuRCM_M = AdminMenu.AdminMenu_RegistrationCodeMenu_Manager(parent=adminMe
 menus = [
     mainMenu, mainMenuAWA, mainMenuRWA, 
     othersMenu, othersMenuQI, 
-    adminMenu, adminMenuRCM, adminMenuRCM_IS, adminMenuRCM_C, adminMenuRCM_M
+    adminMenu, adminMenuRCM, adminMenuRCM_IS, adminMenuRCM_SG, adminMenuRCM_C, adminMenuRCM_M,
+    adminMenuSU, adminMenuSU_TUNAME, adminMenuSU_NAME, adminMenuSU_PN, adminMenuSU_EMAIL, adminMenuSU_TUID
     ]
 TController.Menus = menus
 TController.buildMenuTree(mainMenu)

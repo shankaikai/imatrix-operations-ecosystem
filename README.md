@@ -40,7 +40,7 @@ mockgen capstone.operations_ecosystem/backend/proto RosterServicesClient > ../mo
     google.golang.org/grpc/cmd/protoc-gen-go-grpc
 5) Generate the gateway protoc files and the go_grpc files
 ```
-protoc -I ./proto --grpc-gateway_out=backend --grpc-gateway_opt=logtostderr=true --grpc-gateway_opt=paths=source_relative proto/http_webapp.proto
+protoc -I ./proto --grpc-gateway_out=backend/proto --grpc-gateway_opt=logtostderr=true --grpc-gateway_opt=paths=source_relative proto/http_webapp.proto
 ```
 
 ## Telegram Bot

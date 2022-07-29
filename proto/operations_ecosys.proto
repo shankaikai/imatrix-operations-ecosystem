@@ -37,6 +37,7 @@ service AdminServices {
 
     //Is this user or client?
     rpc GetRegistrationCode(RegistrationCodeRequest) returns (RegistrationCodeResponse) {}
+    rpc CheckRegistrationCode(RegistrationCode) returns (SecurityStringResponse) {}
 }
 
 service BroadcastServices{
@@ -176,9 +177,14 @@ message RegistrationCodeRequest{
     CodeType type = 2;
     enum CodeType{
         ISPECIALIST = 0;
-        CONTROLLER = 1;
-        MANAGER = 2;
+        SECURITYGUARD = 1;
+        CONTROLLER = 2;
+        MANAGER = 3;
     }
+}
+
+message RegistrationCode{
+    string code = 1;
 }
 
 /***************************************************************************
@@ -290,6 +296,60 @@ message OrderByUserToken{
     UserTokenFilter.Field field = 1;
     OrderBy order_by = 2;
 }
+
+
+/***************************************************************************
+*                         REGISTRATION OTP MESSAGES                        *
+****************************************************************************/
+// Message used iternally to get the registration OTP from the DB
+message RegistrationOTP {
+    int64 registration_otp_id = 1;
+    string token = 2;
+    User.UserType user_type = 3;
+    // Format must be in: YYYY-MM-DD HH:MM:SS
+    string creation_datetime = 4;
+    User creator = 5;
+    bool is_used = 6;
+}
+
+// Filter the types of registration otp to be returned. 
+message RegistrationOTPFilter {
+    Field field = 1;
+    Filter comparisons = 2;
+
+    // More fields can be added in the future. 
+    enum Field{
+        REG_OTP_ID = 0;
+        TOKEN = 1;
+        USER_TYPE = 2;
+        CREATION_DATE = 3;
+        CREATOR_ID = 4;
+        IS_USED = 5;
+    }
+}
+
+// Get specific types of Registration OTP as specified in the Filter. 
+// If one wants to get all objects, leave filters empty. 
+// A default limit of 10 will be used if the field is empty. 
+message RegistrationOTPQuery {
+    repeated RegistrationOTPFilter filters = 1;
+    // Limit the number of objects being returned. 
+    // If only 5 objects should be shown, limit = 5;
+    int64 limit = 2;
+
+    // Skip n rows from the database
+    int64 skip = 3;
+    
+    // Order the queries, by default the order is desc by id
+    OrderByRegistrationOTP order_by = 4;
+}
+
+
+message OrderByRegistrationOTP{
+    RegistrationOTPFilter.Field field = 1;
+    OrderBy order_by = 2;
+}
+
 
 /***************************************************************************
 *                             SECURITY MESSAGES                            *

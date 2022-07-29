@@ -17,16 +17,11 @@ class WebAppServicesStub(object):
         self.GetRosterAssignmentsForWebApp = channel.unary_unary(
                 '/http_webapp.WebAppServices/GetRosterAssignmentsForWebApp',
                 request_serializer=http__webapp__pb2.HTTPAssignmentsGetRequest.SerializeToString,
-                response_deserializer=http__webapp__pb2.HTTPMessage.FromString,
+                response_deserializer=http__webapp__pb2.HTTPAssignmentResponse.FromString,
                 )
         self.PostWReportFromWebApp = channel.unary_unary(
                 '/http_webapp.WebAppServices/PostWReportFromWebApp',
                 request_serializer=http__webapp__pb2.HTTPReportPostRequest.SerializeToString,
-                response_deserializer=http__webapp__pb2.HTTPMessage.FromString,
-                )
-        self.CheckRegistrationCode = channel.unary_unary(
-                '/http_webapp.WebAppServices/CheckRegistrationCode',
-                request_serializer=http__webapp__pb2.HTTPMessage.SerializeToString,
                 response_deserializer=http__webapp__pb2.HTTPMessage.FromString,
                 )
         self.PostRegistrationFormFromWebApp = channel.unary_unary(
@@ -52,12 +47,6 @@ class WebAppServicesServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CheckRegistrationCode(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def PostRegistrationFormFromWebApp(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -70,16 +59,11 @@ def add_WebAppServicesServicer_to_server(servicer, server):
             'GetRosterAssignmentsForWebApp': grpc.unary_unary_rpc_method_handler(
                     servicer.GetRosterAssignmentsForWebApp,
                     request_deserializer=http__webapp__pb2.HTTPAssignmentsGetRequest.FromString,
-                    response_serializer=http__webapp__pb2.HTTPMessage.SerializeToString,
+                    response_serializer=http__webapp__pb2.HTTPAssignmentResponse.SerializeToString,
             ),
             'PostWReportFromWebApp': grpc.unary_unary_rpc_method_handler(
                     servicer.PostWReportFromWebApp,
                     request_deserializer=http__webapp__pb2.HTTPReportPostRequest.FromString,
-                    response_serializer=http__webapp__pb2.HTTPMessage.SerializeToString,
-            ),
-            'CheckRegistrationCode': grpc.unary_unary_rpc_method_handler(
-                    servicer.CheckRegistrationCode,
-                    request_deserializer=http__webapp__pb2.HTTPMessage.FromString,
                     response_serializer=http__webapp__pb2.HTTPMessage.SerializeToString,
             ),
             'PostRegistrationFormFromWebApp': grpc.unary_unary_rpc_method_handler(
@@ -110,7 +94,7 @@ class WebAppServices(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/http_webapp.WebAppServices/GetRosterAssignmentsForWebApp',
             http__webapp__pb2.HTTPAssignmentsGetRequest.SerializeToString,
-            http__webapp__pb2.HTTPMessage.FromString,
+            http__webapp__pb2.HTTPAssignmentResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -127,23 +111,6 @@ class WebAppServices(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/http_webapp.WebAppServices/PostWReportFromWebApp',
             http__webapp__pb2.HTTPReportPostRequest.SerializeToString,
-            http__webapp__pb2.HTTPMessage.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def CheckRegistrationCode(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/http_webapp.WebAppServices/CheckRegistrationCode',
-            http__webapp__pb2.HTTPMessage.SerializeToString,
             http__webapp__pb2.HTTPMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

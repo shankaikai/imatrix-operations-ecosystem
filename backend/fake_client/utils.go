@@ -103,7 +103,7 @@ func CreateFakeRoster(id int) *pb.Roster {
 func createFakeRosterAssignment(id int) *pb.RosterAssignement {
 	return &pb.RosterAssignement{
 		RosterAssignmentId: int64(id),
-		GuardAssigned:      createFakeEmployeeEval(id),
+		GuardAssigned:      createFakeEmployeeEval(6),
 		CustomStartTime:    timestamppb.Now(),
 		CustomEndTime:      &timestamppb.Timestamp{Seconds: timestamppb.Now().AsTime().Add(time.Hour * 12).Unix()},
 		Confirmed:          false,

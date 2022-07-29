@@ -8,13 +8,13 @@ import (
 	"context"
 )
 
-func (s *Server) GetRosterAssignmentsForWebApp(cxt context.Context, HTTPRosterMessage *pb.HTTPRosterMessage) (*pb.HTTPMessage, error) {
+func (s *Server) GetRosterAssignmentsForWebApp(cxt context.Context, getRequest *pb.HTTPAssignmentsGetRequest) (*pb.HTTPAssignmentResponse, error) {
 	fmt.Println("GetRosterAssignmentsFromWebApp")
-	fmt.Println(HTTPRosterMessage)
-	return &pb.HTTPMessage{}, nil
+	fmt.Println(getRequest)
+	return &pb.HTTPAssignmentResponse{}, nil
 }
 
-func (s *Server) PostWReportFromWebApp(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.HTTPMessage, error) {
+func (s *Server) PostWReportFromWebApp(cxt context.Context, incidentReport *pb.HTTPReportPostRequest) (*pb.HTTPMessage, error) {
 	fmt.Println("PostWReportFromWebApp")
 	fmt.Println(incidentReport)
 	return &pb.HTTPMessage{Value: "OK"}, nil

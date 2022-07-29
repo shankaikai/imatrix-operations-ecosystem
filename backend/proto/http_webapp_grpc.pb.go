@@ -23,9 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WebAppServicesClient interface {
 	// <><> Telegram WebApp - HTTP <><>
-	GetRosterAssignmentsForWebApp(ctx context.Context, in *HTTPAssignmentsGetRequest, opts ...grpc.CallOption) (*HTTPMessage, error)
+	GetRosterAssignmentsForWebApp(ctx context.Context, in *HTTPAssignmentsGetRequest, opts ...grpc.CallOption) (*HTTPAssignmentResponse, error)
 	PostWReportFromWebApp(ctx context.Context, in *HTTPReportPostRequest, opts ...grpc.CallOption) (*HTTPMessage, error)
-	CheckRegistrationCode(ctx context.Context, in *HTTPMessage, opts ...grpc.CallOption) (*HTTPMessage, error)
 	PostRegistrationFormFromWebApp(ctx context.Context, in *HTTPRegistrationFormRequest, opts ...grpc.CallOption) (*HTTPMessage, error)
 }
 
@@ -37,8 +36,8 @@ func NewWebAppServicesClient(cc grpc.ClientConnInterface) WebAppServicesClient {
 	return &webAppServicesClient{cc}
 }
 
-func (c *webAppServicesClient) GetRosterAssignmentsForWebApp(ctx context.Context, in *HTTPAssignmentsGetRequest, opts ...grpc.CallOption) (*HTTPMessage, error) {
-	out := new(HTTPMessage)
+func (c *webAppServicesClient) GetRosterAssignmentsForWebApp(ctx context.Context, in *HTTPAssignmentsGetRequest, opts ...grpc.CallOption) (*HTTPAssignmentResponse, error) {
+	out := new(HTTPAssignmentResponse)
 	err := c.cc.Invoke(ctx, "/http_webapp.WebAppServices/GetRosterAssignmentsForWebApp", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -49,15 +48,6 @@ func (c *webAppServicesClient) GetRosterAssignmentsForWebApp(ctx context.Context
 func (c *webAppServicesClient) PostWReportFromWebApp(ctx context.Context, in *HTTPReportPostRequest, opts ...grpc.CallOption) (*HTTPMessage, error) {
 	out := new(HTTPMessage)
 	err := c.cc.Invoke(ctx, "/http_webapp.WebAppServices/PostWReportFromWebApp", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *webAppServicesClient) CheckRegistrationCode(ctx context.Context, in *HTTPMessage, opts ...grpc.CallOption) (*HTTPMessage, error) {
-	out := new(HTTPMessage)
-	err := c.cc.Invoke(ctx, "/http_webapp.WebAppServices/CheckRegistrationCode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -78,9 +68,8 @@ func (c *webAppServicesClient) PostRegistrationFormFromWebApp(ctx context.Contex
 // for forward compatibility
 type WebAppServicesServer interface {
 	// <><> Telegram WebApp - HTTP <><>
-	GetRosterAssignmentsForWebApp(context.Context, *HTTPAssignmentsGetRequest) (*HTTPMessage, error)
+	GetRosterAssignmentsForWebApp(context.Context, *HTTPAssignmentsGetRequest) (*HTTPAssignmentResponse, error)
 	PostWReportFromWebApp(context.Context, *HTTPReportPostRequest) (*HTTPMessage, error)
-	CheckRegistrationCode(context.Context, *HTTPMessage) (*HTTPMessage, error)
 	PostRegistrationFormFromWebApp(context.Context, *HTTPRegistrationFormRequest) (*HTTPMessage, error)
 	mustEmbedUnimplementedWebAppServicesServer()
 }
@@ -89,14 +78,11 @@ type WebAppServicesServer interface {
 type UnimplementedWebAppServicesServer struct {
 }
 
-func (UnimplementedWebAppServicesServer) GetRosterAssignmentsForWebApp(context.Context, *HTTPAssignmentsGetRequest) (*HTTPMessage, error) {
+func (UnimplementedWebAppServicesServer) GetRosterAssignmentsForWebApp(context.Context, *HTTPAssignmentsGetRequest) (*HTTPAssignmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRosterAssignmentsForWebApp not implemented")
 }
 func (UnimplementedWebAppServicesServer) PostWReportFromWebApp(context.Context, *HTTPReportPostRequest) (*HTTPMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PostWReportFromWebApp not implemented")
-}
-func (UnimplementedWebAppServicesServer) CheckRegistrationCode(context.Context, *HTTPMessage) (*HTTPMessage, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckRegistrationCode not implemented")
 }
 func (UnimplementedWebAppServicesServer) PostRegistrationFormFromWebApp(context.Context, *HTTPRegistrationFormRequest) (*HTTPMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PostRegistrationFormFromWebApp not implemented")
@@ -150,24 +136,6 @@ func _WebAppServices_PostWReportFromWebApp_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WebAppServices_CheckRegistrationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HTTPMessage)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WebAppServicesServer).CheckRegistrationCode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/http_webapp.WebAppServices/CheckRegistrationCode",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WebAppServicesServer).CheckRegistrationCode(ctx, req.(*HTTPMessage))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _WebAppServices_PostRegistrationFormFromWebApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HTTPRegistrationFormRequest)
 	if err := dec(in); err != nil {
@@ -200,10 +168,6 @@ var WebAppServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PostWReportFromWebApp",
 			Handler:    _WebAppServices_PostWReportFromWebApp_Handler,
-		},
-		{
-			MethodName: "CheckRegistrationCode",
-			Handler:    _WebAppServices_CheckRegistrationCode_Handler,
 		},
 		{
 			MethodName: "PostRegistrationFormFromWebApp",
