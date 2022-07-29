@@ -153,6 +153,7 @@ func (s *Server) PollGateStatus(cameraIotId int64, gateId string) {
 
 		if err != nil {
 			fmt.Println("pollGateStatus ERROR", err)
+			continue
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)
@@ -249,6 +250,7 @@ func (s *Server) PollFireAlarmStatus(cameraIotId int64, fireAlarmId string) {
 
 		if err != nil {
 			fmt.Println("PollFireAlarmStatus ERROR", err)
+			continue
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)
@@ -303,6 +305,7 @@ func (s *Server) PollCpuTempStatus(cameraIotId int64, cpuId string) {
 
 		if err != nil {
 			fmt.Println("PollCpuTempStatus ERROR", err)
+			continue
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)

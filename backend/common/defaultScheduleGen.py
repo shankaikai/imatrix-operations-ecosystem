@@ -9,8 +9,8 @@ schedule_detail_query = "INSERT INTO " + \
 "VALUES({}, '{}','{}','{}', 1, 0);"
 
 aifs_client_schedule_query = "INSERT INTO " + \
-"operations_ecosystem_testing.aifs_client_schedule(schedule, related_client, patrol_order) " + \
-"VALUES({}, '{}', {});"
+"operations_ecosystem.aifs_client_schedule(schedule, related_client, patrol_order) " + \
+"VALUES({}, {}, {});"
 
 default_rostering_query = "INSERT INTO " + \
 "operations_ecosystem.default_rostering(day_of_week, aifs1_schedule, aifs2_schedule, aifs3_schedule) " + \
@@ -23,8 +23,8 @@ with open("default_schedule.txt", "w") as f:
             count +=1
             # f.write(schedule_query.format(aifs, start_timing.format(3+day), end_timing.format(4+day)))
             # f.write("\n")
-            # # guard ids start from 3
-            # f.write(schedule_detail_query.format(count, aifs+2, start_timing.format(3+day), end_timing.format(4+day)))
+            # # # guard ids start from 3
+            # f.write(schedule_detail_query.format(count, aifs+4, start_timing.format(3+day), end_timing.format(4+day)))
             # f.write("\n")
             # Client and AIFS have the same id
             # have different patrol order for different aifs

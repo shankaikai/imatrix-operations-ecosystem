@@ -139,7 +139,7 @@ func (s *Server) UpdateBroadcastRecipient(cxt context.Context, broadcastRecipien
 
 	// Notify aifs led lights to turn back to default
 	if numAffected > 0 && (broadcastRecipient.Acknowledged || broadcastRecipient.Rejected) {
-		s.notifyAIFSofBroadcastAck(broadcastRecipient)
+		go s.notifyAIFSofBroadcastAck(broadcastRecipient)
 	}
 
 	return &res, nil

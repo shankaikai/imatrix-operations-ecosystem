@@ -98,6 +98,7 @@ class TelegramController:
         strData = update.callback_query.data
         # special case
         callback_type = strData.split(":")[0]
+        print("HERE 101",callback_type,subscription_message.SubscriptionMessage.IDENTIFIER)
         if callback_type == subscription_message.SubscriptionMessage.IDENTIFIER:
             subscription_message.callbackqueryHandler(update, context)
             return

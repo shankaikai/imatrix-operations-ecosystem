@@ -19,7 +19,6 @@ export default function Layout({ children }: LayoutProps) {
       router.push("/login");
     } else {
       setUser && setUser(user);
-      router.push("/dashboard/broadcasting");
     }
   }, []);
 

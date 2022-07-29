@@ -16,13 +16,16 @@ REJECT_FEATURE = "_reject"
 
 # Boolean reflects if the handle supports the msg; str returns some comment/text
 def handle_sub_message(sub_msg:SubscriptionMessage) -> Tuple[bool, str]:
+    print(sub_msg.feature, IDENTIFIER + ACCEPT_FEATURE, IDENTIFIER + REJECT_FEATURE)
     if IDENTIFIER not in sub_msg.feature:
         return False, None
-    if sub_msg.feature == IDENTIFIER + ACCEPT_FEATURE:
+    if  IDENTIFIER + ACCEPT_FEATURE in sub_msg.feature:
+        print("accept handler")
         if acknowledge_roster(sub_msg.pb_msg_id):
             return True, "Acknowledged"
         return False, "Error when updating roster accept."
-    if sub_msg.feature == IDENTIFIER + REJECT_FEATURE:
+    if IDENTIFIER + REJECT_FEATURE in sub_msg.feature:
+        print("reject handler")
         if reject_roster(sub_msg.pb_msg_id):
             return True, "Rejected"
         return False, "Error when updating roster reject. "
@@ -38,7 +41,7 @@ def send_roster_message(updater : Updater, chat_id: int,
                 InlineKeyboardButton(
                     text="Acknowledge",
                     callback_data=str(SubscriptionMessage(
-                        SubscriptionMessage.ROSTERING_ACCEPT_FEATURE, 
+                        IDENTIFIER + ACCEPT_FEATURE, 
                         roster_assignment.roster_assignment_id, 
                         chat_id
                     ))
@@ -47,7 +50,7 @@ def send_roster_message(updater : Updater, chat_id: int,
                 InlineKeyboardButton(
                     text="Reject",
                     callback_data=str(SubscriptionMessage(
-                        SubscriptionMessage.ROSTERING_REJECT_FEATURE, 
+                        IDENTIFIER + REJECT_FEATURE, 
                         roster_assignment.roster_assignment_id, 
                         chat_id
                     ))                

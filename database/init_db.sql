@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `aifs_client_schedule` (
         REFERENCES `schedule` (schedule_id)
         ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (related_client) 
-		REFERENCES `user` (user_id)
+		REFERENCES `client` (client_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 

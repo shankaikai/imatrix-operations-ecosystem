@@ -14,12 +14,12 @@ IDENTIFIER = "broadcast"
 
 # Boolean reflects if the handle supports the msg; str returns some comment/text
 def handle_sub_message(sub_msg:SubscriptionMessage) -> Tuple[bool, str]:
+    print('handle_sub_message, 17', sub_msg)
     if IDENTIFIER not in sub_msg.feature:
         return False, None
-    if sub_msg.feature == SubscriptionMessage.BROADCAST_FEATURE:
-        if acknowledge_broadcast(sub_msg.pb_msg_id):
-            return True, "Acknowledged"
-        return False, "Error when updating broadcast."
+    if acknowledge_broadcast(sub_msg.pb_msg_id):
+        return True, "Acknowledged"
+    return False, "Error when updating broadcast."
 
 def send_broadcast_message(updater : Updater, message: str, chat_id: int, broadcast_recipient_id: int, urgency):
     print("sendBroadcastMessage", message, chat_id)
@@ -27,7 +27,7 @@ def send_broadcast_message(updater : Updater, message: str, chat_id: int, broadc
             [[
                 InlineKeyboardButton(
                     text="Acknowledge",
-                    callback_data=str(SubscriptionMessage(SubscriptionMessage.BROADCAST_FEATURE, broadcast_recipient_id, chat_id))
+                    callback_data=str(SubscriptionMessage(IDENTIFIER, broadcast_recipient_id, chat_id))
                 )
             ]]
     )
