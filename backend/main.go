@@ -3,10 +3,14 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"strings"
+	"syscall"
 	"time"
 
 	"github.com/getsentry/sentry-go"
@@ -24,10 +28,14 @@ func main() {
 	serverPortFlag := flag.Int("port", 9090, "TCP port for the server to run on.")
 	teleServerAddrFlag := flag.String("tele_addr", "telebot", "TCP address for the server to run on.")
 	teleServerPortFlag := flag.Int("tele_port", 9091, "TCP port for the server to run on.")
-	testLEDAddrFlag := flag.String("led_addr", "http://192.168.166.238", "IP address of the LED lights on the AIFS for testing")
+	webProxyServerAddrFlag := flag.String("wproxy_addr", "0.0.0.0", "TCP address for the web proxy server to run on.")
+	webProxyServerPortFlag := flag.Int("wproxy_port", 9089, "TCP port for the web proxy server to run on.")
+	testLEDAddrFlag := flag.String("led_addr", "http://192.168.158.238", "IP address of the LED lights on the AIFS for testing")
 	serverFlag := flag.Bool("is_server", true, "Is this terminal for the server or the test client?")
-	fakeServerFlag := flag.Bool("is_fserver", false, "Is this terminal for the server or the test client?")
-	teleClientFlag := flag.Bool("is_tclient", false, "Is this terminal for the server or the test client?")
+	fakeServerFlag := flag.Bool("is_fserver", false, "Start the server or the fake server?")
+	teleClientFlag := flag.Bool("is_tclient", false, "Should we test the server as a telebot client?")
+	cliFlag := flag.Bool("use_cli", false, "Should we start a CLI?")
+
 	flag.Parse()
 
 	// Set up sentry
@@ -37,18 +45,58 @@ func main() {
 	defer sentry.Recover()
 
 	if *fakeServerFlag {
-		fake_server.InitServer(serverAddrFlag, serverPortFlag)
+		if *cliFlag {
+			go fake_server.InitServer(serverAddrFlag, serverPortFlag)
+		} else {
+			fake_server.InitServer(serverAddrFlag, serverPortFlag)
+		}
 	} else if *teleClientFlag {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
 	} else if *serverFlag {
-		server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag)
+		if *cliFlag {
+			go server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		} else {
+			server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		}
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
 		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
-		// client.TestRosteringClient(serverAddrFlag, serverPortFlag)
-		client.TestIncidentReportClient(serverAddrFlag, serverPortFlag)
+		client.TestRosteringClient(serverAddrFlag, serverPortFlag)
+		// client.TestIncidentReportClient(serverAddrFlag, serverPortFlag)
+		client.TestCameraIotClientUser(serverAddrFlag, serverPortFlag)
+	}
+
+	//The only reason these are here is to help ensure a clean exit (no zombie processes)
+	c := make(chan os.Signal, 2)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Println("Terminating...")
+		os.Exit(0)
+	}()
+
+	reader := bufio.NewReader(os.Stdin)
+mainLoop:
+	for {
+		fmt.Print("> ")
+		text, _ := reader.ReadString('\n')
+
+		// convert CRLF to LF
+		text = strings.Replace(text, "\n", "", -1)
+		if len(text) == 0 {
+			continue
+		}
+		tokenised := strings.Split(text, " ")
+		cmd := tokenised[0]
+		switch cmd {
+		case "exit":
+			fmt.Println("Terminating...")
+			break mainLoop
+		default:
+			fmt.Println("Unrecognised command.")
+		}
 	}
 }
 

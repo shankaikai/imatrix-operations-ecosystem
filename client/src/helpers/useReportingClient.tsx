@@ -14,6 +14,7 @@ import {
   IncidentReportResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import { ENVOY_ADDRESS } from "../utils/constant";
 import {
   showApproveReportSuccessNotification,
   showUpdateReportSuccessNotification,
@@ -37,7 +38,8 @@ interface RosteringContextInterface {
   ) => void;
   createNewReport?: (
     values: UpdateReport,
-    setReports: Dispatch<IncidentReport.AsObject[]>
+    setReports: Dispatch<IncidentReport.AsObject[]>,
+    userId: number
   ) => Promise<void>;
 }
 
@@ -86,7 +88,7 @@ export function ReportingProvider({ children }: ReportingProviderProps) {
 }
 
 export function getReportingClient(): IncidentReportServicesClient {
-  return new IncidentReportServicesClient("http://localhost:8080", null);
+  return new IncidentReportServicesClient(ENVOY_ADDRESS, null);
 }
 
 export function useReporting() {
@@ -133,7 +135,8 @@ export interface UpdateReport {
 export async function submitUpdateReport(
   values: UpdateReport,
   id: number,
-  setReports: Dispatch<IncidentReport.AsObject[]>
+  setReports: Dispatch<IncidentReport.AsObject[]>,
+  userId: number
 ) {
   const client = getReportingClient();
 
@@ -141,7 +144,7 @@ export async function submitUpdateReport(
   const incidentReportContent = new IncidentReportContent();
   const user = new User();
 
-  user.setUserId(1); //TODO: swap with actual user's id when logged in
+  user.setUserId(userId); //TODO: swap with actual user's id when logged in
   incidentReportContent.setTitle(values.title);
   incidentReportContent.setAddress(values.address);
   incidentReportContent.setIncidentTime(
@@ -188,7 +191,8 @@ export async function approveReport(
 
 export async function createNewReport(
   values: UpdateReport,
-  setReports: Dispatch<IncidentReport.AsObject[]>
+  setReports: Dispatch<IncidentReport.AsObject[]>,
+  userId: number
 ) {
   const client = getReportingClient();
 
@@ -196,7 +200,7 @@ export async function createNewReport(
   const incidentReportContent = new IncidentReportContent();
   const user = new User();
 
-  user.setUserId(1); //TODO: swap with actual user's id when logged in
+  user.setUserId(userId); //TODO: swap with actual user's id when logged in
 
   incidentReportContent.setTitle(values.title);
   incidentReportContent.setAddress(values.address);

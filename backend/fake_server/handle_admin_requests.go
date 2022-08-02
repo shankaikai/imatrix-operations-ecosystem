@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-func (s *Server) AddUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
+func (s *Server) AddUser(cxt context.Context, user *pb.FullUser) (*pb.Response, error) {
 	fmt.Println("AddUser")
 	res := pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
 	return &res, nil
@@ -52,6 +52,16 @@ func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUser
 	}
 
 	return nil
+}
+
+func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNonce, error) {
+	fmt.Println("GetWANonce")
+	res := pb.Response{Type: pb.Response_ACK, ErrorMessage: "No error"}
+	resNonce := pb.ResponseNonce{
+		Response: &res,
+		Nonce:    "this_is_a_nonce",
+	}
+	return &resNonce, nil
 }
 
 // Client

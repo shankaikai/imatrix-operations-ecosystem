@@ -13,6 +13,7 @@ import {
   BroadcastResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import { ENVOY_ADDRESS } from "../utils/constant";
 import {
   showErrorNotification,
   showBroadcastSuccessNotification,
@@ -27,7 +28,11 @@ interface BroadcastContextInterface {
   setSelectValue?: Dispatch<string>;
   filterValue: string;
   setFilterValue?: Dispatch<string>;
-  updateBroadcasts?: (skip: number, setBroadcasts: Dispatch<Broadcast[]>, clear?:boolean) => void;
+  updateBroadcasts?: (
+    skip: number,
+    setBroadcasts: Dispatch<Broadcast[]>,
+    clear?: boolean
+  ) => void;
 }
 
 const BroadcastContext = createContext<BroadcastContextInterface>({
@@ -41,7 +46,11 @@ interface BroadcastProviderProps {
   children: JSX.Element | JSX.Element[];
 }
 
-const updateBroadcasts = (skip: number, setBroadcasts: Dispatch<Broadcast[]>, clear?: boolean) => {
+const updateBroadcasts = (
+  skip: number,
+  setBroadcasts: Dispatch<Broadcast[]>,
+  clear?: boolean
+) => {
   console.log("updateBroadcasts called");
 
   //@ts-ignore
@@ -66,8 +75,6 @@ export function BroadcastProvider({ children }: BroadcastProviderProps) {
   const [search, setSearch] = useState("");
   const [selectValue, setSelectValue] = useState("latest");
   const [filterValue, setFilterValue] = useState("all");
-
-  
 
   // Call once when first render
   useEffect(() => {
@@ -95,7 +102,7 @@ export function BroadcastProvider({ children }: BroadcastProviderProps) {
 
 export function getBroadcastClient(): BroadcastServicesClient {
   // TODO: add the envoy address into .env
-  return new BroadcastServicesClient("http://localhost:8080", null, {});
+  return new BroadcastServicesClient(ENVOY_ADDRESS, null, {});
 }
 
 export function useBroadcast() {
@@ -106,12 +113,14 @@ export async function submitNewBroadcast({
   recipient,
   urgency,
   message,
-  setBroadcasts
+  setBroadcasts,
+  userId
 }: {
   recipient: string[];
   urgency: string;
   message: string;
-  setBroadcasts: Dispatch<Broadcast[]>
+  setBroadcasts: Dispatch<Broadcast[]>;
+  userId: number
 }) {
   const client = getBroadcastClient();
 
@@ -151,9 +160,8 @@ export async function submitNewBroadcast({
   broadcast.setUrgency(urgencyMap[urgency]);
   broadcast.setContent(message);
   broadcast.setType(Broadcast.BroadcastType.ANNOUNCEMENT);
-  // TODO: Change to user context
   const creator = new User();
-  creator.setUserId(2);
+  creator.setUserId(userId);
   broadcast.setCreator(creator);
 
   console.log(broadcast);
@@ -162,7 +170,7 @@ export async function submitNewBroadcast({
     .addBroadcast(broadcast, {})
     .then((response) => {
       showBroadcastSuccessNotification();
-      updateBroadcasts(0, setBroadcasts, true)
+      updateBroadcasts(0, setBroadcasts, true);
     })
     .catch((error) => {
       // TODO: Error toast

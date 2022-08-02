@@ -29,11 +29,6 @@ export default function MainHeader() {
           iMatrix Operations Dashboard
         </Text>
         <Group>
-          <ActionIcon onClick={handleBellClick}>
-            <Indicator color="red" size={10} offset={2} withBorder>
-              <Bell size={16} />
-            </Indicator>
-          </ActionIcon>
           <ActionIcon
             variant="default"
             onClick={() => toggleColorScheme()}

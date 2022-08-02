@@ -13,6 +13,8 @@
 
 import * as grpcWeb from 'grpc-web';
 
+import * as iot_prototype_pb from './iot_prototype_pb';
+import * as google_protobuf_empty_pb from 'google-protobuf/google/protobuf/empty_pb';
 import * as operations_ecosys_pb from './operations_ecosys_pb';
 
 
@@ -27,7 +29,7 @@ export class AdminServicesClient {
                options?: null | { [index: string]: any; }) {
     if (!options) options = {};
     if (!credentials) credentials = {};
-    options['format'] = 'binary';
+    options['format'] = 'text';
 
     this.client_ = new grpcWeb.GrpcWebClientBase(options);
     this.hostname_ = hostname;
@@ -38,26 +40,26 @@ export class AdminServicesClient {
   methodDescriptorAddUser = new grpcWeb.MethodDescriptor(
     '/operations_ecosys.AdminServices/AddUser',
     grpcWeb.MethodType.UNARY,
-    operations_ecosys_pb.User,
+    operations_ecosys_pb.FullUser,
     operations_ecosys_pb.Response,
-    (request: operations_ecosys_pb.User) => {
+    (request: operations_ecosys_pb.FullUser) => {
       return request.serializeBinary();
     },
     operations_ecosys_pb.Response.deserializeBinary
   );
 
   addUser(
-    request: operations_ecosys_pb.User,
+    request: operations_ecosys_pb.FullUser,
     metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
 
   addUser(
-    request: operations_ecosys_pb.User,
+    request: operations_ecosys_pb.FullUser,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
 
   addUser(
-    request: operations_ecosys_pb.User,
+    request: operations_ecosys_pb.FullUser,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: operations_ecosys_pb.Response) => void) {
@@ -337,6 +339,135 @@ export class AdminServicesClient {
       this.methodDescriptorFindClients);
   }
 
+  methodDescriptorGetWANonce = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.AdminServices/GetWANonce',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.User,
+    operations_ecosys_pb.ResponseNonce,
+    (request: operations_ecosys_pb.User) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.ResponseNonce.deserializeBinary
+  );
+
+  getWANonce(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.ResponseNonce>;
+
+  getWANonce(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.ResponseNonce) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.ResponseNonce>;
+
+  getWANonce(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.ResponseNonce) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.AdminServices/GetWANonce',
+        request,
+        metadata || {},
+        this.methodDescriptorGetWANonce,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.AdminServices/GetWANonce',
+    request,
+    metadata || {},
+    this.methodDescriptorGetWANonce);
+  }
+
+  methodDescriptorGetSecurityString = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.AdminServices/GetSecurityString',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.User,
+    operations_ecosys_pb.SecurityStringResponse,
+    (request: operations_ecosys_pb.User) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.SecurityStringResponse.deserializeBinary
+  );
+
+  getSecurityString(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.SecurityStringResponse>;
+
+  getSecurityString(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.SecurityStringResponse) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.SecurityStringResponse>;
+
+  getSecurityString(
+    request: operations_ecosys_pb.User,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.SecurityStringResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.AdminServices/GetSecurityString',
+        request,
+        metadata || {},
+        this.methodDescriptorGetSecurityString,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.AdminServices/GetSecurityString',
+    request,
+    metadata || {},
+    this.methodDescriptorGetSecurityString);
+  }
+
+  methodDescriptorAuthenticateUser = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.AdminServices/AuthenticateUser',
+    grpcWeb.MethodType.UNARY,
+    operations_ecosys_pb.LoginRequest,
+    operations_ecosys_pb.UserTokenResponse,
+    (request: operations_ecosys_pb.LoginRequest) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.UserTokenResponse.deserializeBinary
+  );
+
+  authenticateUser(
+    request: operations_ecosys_pb.LoginRequest,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.UserTokenResponse>;
+
+  authenticateUser(
+    request: operations_ecosys_pb.LoginRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.UserTokenResponse) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.UserTokenResponse>;
+
+  authenticateUser(
+    request: operations_ecosys_pb.LoginRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.UserTokenResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.AdminServices/AuthenticateUser',
+        request,
+        metadata || {},
+        this.methodDescriptorAuthenticateUser,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.AdminServices/AuthenticateUser',
+    request,
+    metadata || {},
+    this.methodDescriptorAuthenticateUser);
+  }
+
 }
 
 export class BroadcastServicesClient {
@@ -350,7 +481,7 @@ export class BroadcastServicesClient {
                options?: null | { [index: string]: any; }) {
     if (!options) options = {};
     if (!credentials) credentials = {};
-    options['format'] = 'binary';
+    options['format'] = 'text';
 
     this.client_ = new grpcWeb.GrpcWebClientBase(options);
     this.hostname_ = hostname;
@@ -565,7 +696,7 @@ export class RosterServicesClient {
                options?: null | { [index: string]: any; }) {
     if (!options) options = {};
     if (!credentials) credentials = {};
-    options['format'] = 'binary';
+    options['format'] = 'text';
 
     this.client_ = new grpcWeb.GrpcWebClientBase(options);
     this.hostname_ = hostname;
@@ -824,7 +955,7 @@ export class IncidentReportServicesClient {
                options?: null | { [index: string]: any; }) {
     if (!options) options = {};
     if (!credentials) credentials = {};
-    options['format'] = 'binary';
+    options['format'] = 'text';
 
     this.client_ = new grpcWeb.GrpcWebClientBase(options);
     this.hostname_ = hostname;
@@ -981,6 +1112,92 @@ export class IncidentReportServicesClient {
       request,
       metadata || {},
       this.methodDescriptorFindIncidentReports);
+  }
+
+}
+
+export class CameraIotServicesClient {
+  client_: grpcWeb.AbstractClientBase;
+  hostname_: string;
+  credentials_: null | { [index: string]: string; };
+  options_: null | { [index: string]: any; };
+
+  constructor (hostname: string,
+               credentials?: null | { [index: string]: string; },
+               options?: null | { [index: string]: any; }) {
+    if (!options) options = {};
+    if (!credentials) credentials = {};
+    options['format'] = 'text';
+
+    this.client_ = new grpcWeb.GrpcWebClientBase(options);
+    this.hostname_ = hostname;
+    this.credentials_ = credentials;
+    this.options_ = options;
+  }
+
+  methodDescriptorSetGateState = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.CameraIotServices/SetGateState',
+    grpcWeb.MethodType.UNARY,
+    iot_prototype_pb.GateState,
+    operations_ecosys_pb.Response,
+    (request: iot_prototype_pb.GateState) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.Response.deserializeBinary
+  );
+
+  setGateState(
+    request: iot_prototype_pb.GateState,
+    metadata: grpcWeb.Metadata | null): Promise<operations_ecosys_pb.Response>;
+
+  setGateState(
+    request: iot_prototype_pb.GateState,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void): grpcWeb.ClientReadableStream<operations_ecosys_pb.Response>;
+
+  setGateState(
+    request: iot_prototype_pb.GateState,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: operations_ecosys_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/operations_ecosys.CameraIotServices/SetGateState',
+        request,
+        metadata || {},
+        this.methodDescriptorSetGateState,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/operations_ecosys.CameraIotServices/SetGateState',
+    request,
+    metadata || {},
+    this.methodDescriptorSetGateState);
+  }
+
+  methodDescriptorGetIotState = new grpcWeb.MethodDescriptor(
+    '/operations_ecosys.CameraIotServices/GetIotState',
+    grpcWeb.MethodType.SERVER_STREAMING,
+    google_protobuf_empty_pb.Empty,
+    operations_ecosys_pb.CameraIotResponse,
+    (request: google_protobuf_empty_pb.Empty) => {
+      return request.serializeBinary();
+    },
+    operations_ecosys_pb.CameraIotResponse.deserializeBinary
+  );
+
+  getIotState(
+    request: google_protobuf_empty_pb.Empty,
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<operations_ecosys_pb.CameraIotResponse> {
+    return this.client_.serverStreaming(
+      this.hostname_ +
+        '/operations_ecosys.CameraIotServices/GetIotState',
+      request,
+      metadata || {},
+      this.methodDescriptorGetIotState);
   }
 
 }

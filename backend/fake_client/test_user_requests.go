@@ -19,14 +19,23 @@ func TestAdminClientUser(serverAddr *string, serverPort *int) {
 	ConsolidatedFindUserTest(serverAddr, serverPort)
 	UpdateUserTest(serverAddr, serverPort, user)
 	DeleteUserTest(serverAddr, serverPort, &pb.User{UserId: -1})
+	GetNonceTest(serverAddr, serverPort, user)
+	GetUserRandomStringTest(serverAddr, serverPort)
+	AuthenticateUserTest(serverAddr, serverPort)
 }
 
 func InsertUser(serverAddr *string, serverPort *int, user *pb.User) int64 {
 	fmt.Println("Inserting user:", user.Name)
+	fullUser := &pb.FullUser{
+		User:           user,
+		SecurityString: "fdsfdsfdsfdsfdsfdfafdc",
+		HashedPassword: "thisisahashedpassword",
+	}
+
 	client, conn := createAdminClient(serverAddr, serverPort)
 	defer conn.Close()
 
-	res, err := client.AddUser(context.Background(), user)
+	res, err := client.AddUser(context.Background(), fullUser)
 	if err != nil {
 		fmt.Println("InsertUser ERROR:", err)
 		return -1
@@ -226,6 +235,76 @@ func DeleteUserTest(serverAddr *string, serverPort *int, user *pb.User) {
 
 	if res.Type == pb.Response_ERROR {
 		fmt.Println("Client received error response:", res.ErrorMessage)
+	}
+}
+
+func GetNonceTest(serverAddr *string, serverPort *int, user *pb.User) {
+	fmt.Println("GetNonceTest user:", user.UserId)
+	client, conn := createAdminClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.GetWANonce(context.Background(), user)
+	if err != nil {
+		fmt.Println("GetNonceTest ERROR:", err)
+		return
+	}
+
+	fmt.Println("Client received response:", res.Response.Type)
+
+	if res.Response.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.Response.ErrorMessage)
+	} else {
+		fmt.Println("Nonce:", string(res.Nonce), "")
+	}
+}
+
+func GetUserRandomStringTest(serverAddr *string, serverPort *int) {
+	fmt.Println("GetUserRandomStringTest")
+	user := &pb.User{
+		Email: "testemail@gmail.com",
+	}
+
+	client, conn := createAdminClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.GetSecurityString(context.Background(), user)
+	if err != nil {
+		fmt.Println("GetUserRandomStringTest ERROR:", err)
+		return
+	}
+
+	fmt.Println("Client received response:", res.Response.Type)
+
+	if res.Response.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.Response.ErrorMessage)
+	} else {
+		fmt.Println("Ran string:", string(res.SecurityString))
+	}
+}
+
+func AuthenticateUserTest(serverAddr *string, serverPort *int) {
+	fmt.Println("GetUserRandomStringTest")
+
+	loginRequest := &pb.LoginRequest{
+		UserEmail:      "testemail@gmail.com",
+		HashedPassword: "fsdkvvhcxnddsofdhc",
+	}
+
+	client, conn := createAdminClient(serverAddr, serverPort)
+	defer conn.Close()
+
+	res, err := client.AuthenticateUser(context.Background(), loginRequest)
+	if err != nil {
+		fmt.Println("GetUserRandomStringTest ERROR:", err)
+		return
+	}
+
+	fmt.Println("Client received response:", res.Response.Type)
+
+	if res.Response.Type == pb.Response_ERROR {
+		fmt.Println("Client received error response:", res.Response.ErrorMessage)
+	} else {
+		fmt.Println("Token:", res.UserToken)
 	}
 }
 

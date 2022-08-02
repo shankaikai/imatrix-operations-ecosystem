@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   UnstyledButton,
   UnstyledButtonProps,
@@ -7,8 +7,12 @@ import {
   Text,
   createStyles,
   Divider,
+  Modal,
+  Button,
 } from "@mantine/core";
 import { ChevronRight } from "tabler-icons-react";
+import { signOut } from "../../../helpers/useUserProvider";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   user: {
@@ -43,10 +47,36 @@ export function UserButton({
 }: UserButtonProps) {
   const { classes } = useStyles();
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
+
+  const logOut = () => {
+    signOut();
+    router.push("/login");
+  };
   return (
     <div>
+      <Modal
+        opened={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Sign out"
+      >
+        <Text size="md" weight={500}>
+          Are you sure you want to sign out?
+        </Text>
+        <Group sx={{ width: "100%", justifyContent: "end", marginTop: "32px" }}>
+          <Button onClick={logOut}>Sign out</Button>
+          <Button onClick={() => setModalOpen(false)} variant="outline">
+            Cancel
+          </Button>
+        </Group>
+      </Modal>
       <Divider />
-      <UnstyledButton className={classes.user} {...others}>
+      <UnstyledButton
+        className={classes.user}
+        onClick={() => setModalOpen(true)}
+        {...others}
+      >
         <Group>
           <Avatar src={image} radius="xl" />
 

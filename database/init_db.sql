@@ -26,7 +26,10 @@ CREATE TABLE IF NOT EXISTS `user` (
 	telegram_handle VARCHAR(500) NOT NULL,
 	user_security_img VARCHAR(1000) NOT NULL,
 	is_part_timer BOOLEAN DEFAULT false NOT NULL,
-	tele_chat_id VARCHAR(250) NOT NULL
+	tele_user_id VARCHAR(250) NOT NULL
+    nonce VARCHAR(250) DEFAULT "" NOT NULL,
+    security_string VARCHAR(128) DEFAULT "" NOT NULL,
+    hashed_password VARCHAR(128) DEFAULT "" NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `client` (
@@ -38,6 +41,18 @@ CREATE TABLE IF NOT EXISTS `client` (
     postal_code INT NOT NULL, 
 	phone_number VARCHAR(500) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS `user_tokens`(
+    user_tokens_id	INT PRIMARY KEY AUTO_INCREMENT,
+    user INT NOT NULL,
+    token VARCHAR(256) NOT NULL,
+    creation DATETIME NOT NULL, 
+    expiry DATETIME NOT NULL, 
+
+    FOREIGN KEY (user)
+            REFERENCES `user` (user_id)
+            ON UPDATE RESTRICT ON DELETE CASCADE
+)
 
 -- Broadcasting
 CREATE TABLE IF NOT EXISTS `broadcast` (
@@ -109,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `aifs_client_schedule` (
         REFERENCES `schedule` (schedule_id)
         ON UPDATE RESTRICT ON DELETE CASCADE,
 	FOREIGN KEY (related_client) 
-		REFERENCES `user` (user_id)
+		REFERENCES `client` (client_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
@@ -187,6 +202,32 @@ CREATE TABLE IF NOT EXISTS `incident_report` (
 		REFERENCES `incident_report_content` (report_content_id)
         ON UPDATE RESTRICT,
     FOREIGN KEY (signature) 
+		REFERENCES `user` (user_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS `camera_iot` (
+    camera_iot_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(1000) NOT NULL,
+    camera_url VARCHAR(500) NOT NULL,
+    gate_id VARCHAR(500) NOT NULL,
+    gate_access_key VARCHAR(100) NOT NULL,
+    fire_id VARCHAR(500) NOT NULL,
+    fire_access_key	VARCHAR(100) NOT NULL,
+    cpu_id VARCHAR(500) NOT NULL,
+    cpu_access_key VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS `registration_otp` (
+    registration_otp_id INT PRIMARY KEY AUTO_INCREMENT,
+    token VARCHAR(1000) NOT NULL,
+    user_type ENUM('I-Specialist','Security Guard', 'Controller', 'Manager') NOT NULL,
+    creation_date DATETIME NOT NULL, 
+    creator INT NOT NULL,
+    is_used VARCHAR(100) NOT NULL,
+    FOREIGN KEY (creator) 
 		REFERENCES `user` (user_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );

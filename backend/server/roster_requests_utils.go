@@ -1,4 +1,3 @@
-// TODO: Add validation
 package server
 
 import (
@@ -34,7 +33,6 @@ func (s *Server) GetAvailableIspecialistsWithScore(query *pb.AvailabilityQuery) 
 	// First get all users who are not yet assigned
 	unassignedUsers, err := s.getUnassignedIspecialists(query)
 
-	// TODO
 	fmt.Println("available", unassignedUsers)
 	if err != nil {
 		fmt.Println("getUnassignedIspecialists err here", err)
@@ -71,7 +69,6 @@ func (s *Server) getUnassignedIspecialists(query *pb.AvailabilityQuery) ([]*pb.U
 	db_pck.AddRosterFilter(rosterAssignmentQuery, pb.RosterFilter_END_TIME, pb.Filter_LESSER_EQ, query.EndTime)
 	rosterAssignements, err := db_pck.GetRosterAssingments(s.db, rosterAssignmentQuery, -1)
 
-	//TODO
 	fmt.Println("already assigned", rosterAssignements)
 
 	if err != nil {
@@ -105,7 +102,15 @@ func (s *Server) getUnassignedIspecialists(query *pb.AvailabilityQuery) ([]*pb.U
 		db_pck.AddUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_NOT_IN, assignedUsersString)
 	}
 	db_pck.AddUserFilter(userQuery, pb.UserFilter_TYPE, pb.Filter_EQUAL, "I-Specialist")
-	return db_pck.GetUsers(s.db, userQuery)
+	fullUsers, err := db_pck.GetUsers(s.db, userQuery, true)
+	if err != nil {
+		return unassignedUsers, err
+	}
+
+	for _, fullUser := range fullUsers {
+		unassignedUsers = append(unassignedUsers, fullUser.User)
+	}
+	return unassignedUsers, nil
 }
 
 func getParallelEmployeeScores(unassignedUsers []*pb.User, employeeEvals *[]*pb.EmployeeEvaluation) error {

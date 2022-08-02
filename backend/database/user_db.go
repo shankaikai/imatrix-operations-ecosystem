@@ -12,11 +12,13 @@ import (
 
 // Insert a new user into the database table.
 // Returns the primary key of the user from the database or any errors.
-func InsertUser(db *sql.DB, user *pb.User, dbLock *sync.Mutex) (int64, error) {
-	fmt.Println("Inserting User", user.Name)
-
+func InsertUser(db *sql.DB, user *pb.FullUser, dbLock *sync.Mutex) (int64, error) {
+	fmt.Println("Inserting User", user.User.Name)
+	fmt.Println("this is user", user)
 	fields := getUserTableFields()
+	fmt.Println("this is fields",fields )
 	values := orderUserFields(user)
+	fmt.Println("this is values", values)
 	pk, err := Insert(db, USER_DB_TABLE_NAME, fields, values, dbLock)
 
 	return pk, err
@@ -24,9 +26,11 @@ func InsertUser(db *sql.DB, user *pb.User, dbLock *sync.Mutex) (int64, error) {
 
 // Get all the user rows in a table that meets specifications.
 // Returns an array of users or errors if any.
-func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
+// Note: removeSecret removes the nonce from the Users returned
+// 			This should always be false unless there is a good reason.
+func GetUsers(db *sql.DB, query *pb.UserQuery, removeSecrets bool) ([]*pb.FullUser, error) {
 	fmt.Println("Getting Users...")
-	users := make([]*pb.User, 0)
+	users := make([]*pb.FullUser, 0)
 
 	fields := ALL_COLS
 
@@ -43,6 +47,7 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 		// convert query rows into users
 		for userRows.Next() {
 			var user pb.User
+			var internalFullUser pb.FullUser
 			// Get the string user type and convert it to an enum later.
 			userType := ""
 
@@ -56,7 +61,10 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 				&user.TelegramHandle,
 				&user.UserSecurityImg,
 				&user.IsPartTimer,
-				&user.TeleChatId,
+				&user.TeleUserId,
+				&internalFullUser.Nonce,
+				&internalFullUser.SecurityString,
+				&internalFullUser.HashedPassword,
 			)
 
 			if err != nil {
@@ -65,8 +73,15 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 			}
 
 			user.UserType = getUserProtoTypeStringFromDB(userType)
+			internalFullUser.User = &user
+			// Remove any confidential information
+			if removeSecrets {
+				internalFullUser.Nonce = ""
+				internalFullUser.SecurityString = ""
+				internalFullUser.HashedPassword = ""
+			}
 
-			users = append(users, &user)
+			users = append(users, &internalFullUser)
 		}
 	} else {
 		fmt.Println("WARNING GetUsers: user results is null")
@@ -76,14 +91,47 @@ func GetUsers(db *sql.DB, query *pb.UserQuery) ([]*pb.User, error) {
 }
 
 // Update a specific user in the table
-// The user id must be filled correctly.
+// The user id must be filled correctly if there are no other query options
 // Only user fields that are not nil will be updated.
 // Returns the number of users that were updated and any errors.
 // In this case, number of users updated is either 0 or 1.
-func UpdateUser(db *sql.DB, user *pb.User) (int64, error) {
+func UpdateUser(db *sql.DB, user *pb.User, query *pb.UserQuery) (int64, error) {
 	newFields := getFilledUserFields(user)
-	// Get filter to find the corresponding user in the database
-	filters := getUserIdFormattedFilter(int(user.UserId))
+	var filters string
+
+	// Use filters defined by the caller
+	if query.Filters != nil && len(query.Filters) > 0 {
+		filters = getFormattedUserFilters(query, false, false)
+	} else {
+		// Get filter to find the corresponding user in the database
+		filters = getUserIdFormattedFilter(int(user.UserId))
+	}
+
+	rowsAffected, err := Update(db, USER_DB_TABLE_NAME, newFields, filters)
+
+	if err != nil {
+		fmt.Println("UpdateUser ERROR::", err)
+		return rowsAffected, err
+	}
+
+	return rowsAffected, err
+}
+
+// Update a specific user's nonce in the table
+// User Query options cannot be empty
+// Returns the number of users that were updated and any errors.
+// In this case, number of users updated is either 0 or 1.
+func UpdateUserNonce(db *sql.DB, nonce string, query *pb.UserQuery) (int64, error) {
+	newFields := formatFieldEqVal(USER_DB_NONCE, nonce, true)
+
+	var filters string
+
+	// Use filters defined by the caller
+	if query.Filters != nil && len(query.Filters) > 0 {
+		filters = getFormattedUserFilters(query, false, false)
+	} else {
+		return -1, fmt.Errorf("UserQuery cannot have empty filters for UpdateUserNonce")
+	}
 
 	rowsAffected, err := Update(db, USER_DB_TABLE_NAME, newFields, filters)
 

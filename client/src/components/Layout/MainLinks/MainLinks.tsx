@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Camera,
   Message2,
   LayoutDashboard,
   Report,
   Forms,
+  User as UserIcon,
 } from "tabler-icons-react";
 import { ThemeIcon, UnstyledButton, Group, Text } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useUserProvider } from "../../../helpers/useUserProvider";
+import { User } from "../../../proto/operations_ecosys_pb";
+import _ from "lodash";
 
 interface MainLinkProps {
   icon: React.ReactNode;
@@ -55,42 +59,52 @@ function MainLink({ icon, color, label, link, selected }: MainLinkProps) {
   );
 }
 
-const links = [
-  {
-    icon: <LayoutDashboard size={16} />,
-    color: "teal",
-    label: "Dashboard",
-    link: "/",
-  },
-  {
-    icon: <Message2 size={16} />,
-    color: "blue",
-    label: "Broadcast",
-    link: "/broadcasting",
-  },
-  {
-    icon: <Forms size={16} />,
-    color: "green",
-    label: "Rostering",
-    link: "/rostering",
-  },
-  {
-    icon: <Report size={16} />,
-    color: "violet",
-    label: "Reports",
-    link: "/reporting",
-  },
-  {
-    icon: <Camera size={16} />,
-    color: "grape",
-    label: "Camera",
-    link: "/camera",
-  },
-];
-
 export function MainLinks() {
   const router = useRouter();
+  const { userType } = useUserProvider();
 
+  const [links, setLinks] = useState([
+    {
+      icon: <Message2 size={16} />,
+      color: "blue",
+      label: "Broadcast",
+      link: "/dashboard/broadcasting",
+    },
+    {
+      icon: <Forms size={16} />,
+      color: "green",
+      label: "Rostering",
+      link: "/dashboard/rostering",
+    },
+    {
+      icon: <Report size={16} />,
+      color: "violet",
+      label: "Reports",
+      link: "/dashboard/reporting",
+    },
+    {
+      icon: <Camera size={16} />,
+      color: "grape",
+      label: "Camera",
+      link: "/dashboard/camera",
+    },
+  ]);
+
+  useEffect(() => {
+    if (
+      userType === User.UserType.MANAGER &&
+      links[links.length - 1].label !== "Onboarding"
+    ) {
+      const cloneLinks = _.cloneDeep(links);
+      cloneLinks.push({
+        icon: <UserIcon size={16} />,
+        color: "magenta",
+        label: "Onboarding",
+        link: "/dashboard/onboarding",
+      });
+      setLinks(cloneLinks);
+    }
+  }, [userType]);
   return (
     <div>
       {links.map((link) => (

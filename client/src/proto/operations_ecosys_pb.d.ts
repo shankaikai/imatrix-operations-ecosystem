@@ -1,6 +1,8 @@
 import * as jspb from 'google-protobuf'
 
+import * as iot_prototype_pb from './iot_prototype_pb';
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
+import * as google_protobuf_empty_pb from 'google-protobuf/google/protobuf/empty_pb';
 
 
 export class User extends jspb.Message {
@@ -28,8 +30,8 @@ export class User extends jspb.Message {
   getIsPartTimer(): boolean;
   setIsPartTimer(value: boolean): User;
 
-  getTeleChatId(): number;
-  setTeleChatId(value: number): User;
+  getTeleUserId(): number;
+  setTeleYserId(value: number): User;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): User.AsObject;
@@ -49,7 +51,7 @@ export namespace User {
     telegramHandle: string,
     userSecurityImg: string,
     isPartTimer: boolean,
-    teleChatId: number,
+    teleUserId: number,
   }
 
   export enum UserType { 
@@ -117,6 +119,7 @@ export namespace UserFilter {
     PHONE_NUMBER = 4,
     TELEGRAM_HANDLE = 5,
     IS_PART_TIMER = 6,
+    TELEGRAM_USER_ID = 7,
   }
 }
 
@@ -173,6 +176,38 @@ export namespace OrderByUser {
   export type AsObject = {
     field: UserFilter.Field,
     orderBy: OrderBy,
+  }
+}
+
+export class FullUser extends jspb.Message {
+  getUser(): User | undefined;
+  setUser(value?: User): FullUser;
+  hasUser(): boolean;
+  clearUser(): FullUser;
+
+  getNonce(): string;
+  setNonce(value: string): FullUser;
+
+  getSecurityString(): string;
+  setSecurityString(value: string): FullUser;
+
+  getHashedPassword(): string;
+  setHashedPassword(value: string): FullUser;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): FullUser.AsObject;
+  static toObject(includeInstance: boolean, msg: FullUser): FullUser.AsObject;
+  static serializeBinaryToWriter(message: FullUser, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): FullUser;
+  static deserializeBinaryFromReader(message: FullUser, reader: jspb.BinaryReader): FullUser;
+}
+
+export namespace FullUser {
+  export type AsObject = {
+    user?: User.AsObject,
+    nonce: string,
+    securityString: string,
+    hashedPassword: string,
   }
 }
 
@@ -325,6 +360,223 @@ export namespace OrderByClient {
   export type AsObject = {
     field: ClientFilter.Field,
     orderBy: OrderBy,
+  }
+}
+
+export class UserToken extends jspb.Message {
+  getUserTokenId(): number;
+  setUserTokenId(value: number): UserToken;
+
+  getUser(): User | undefined;
+  setUser(value?: User): UserToken;
+  hasUser(): boolean;
+  clearUser(): UserToken;
+
+  getToken(): string;
+  setToken(value: string): UserToken;
+
+  getCreationDatetime(): string;
+  setCreationDatetime(value: string): UserToken;
+
+  getExpiryDatetime(): string;
+  setExpiryDatetime(value: string): UserToken;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserToken.AsObject;
+  static toObject(includeInstance: boolean, msg: UserToken): UserToken.AsObject;
+  static serializeBinaryToWriter(message: UserToken, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserToken;
+  static deserializeBinaryFromReader(message: UserToken, reader: jspb.BinaryReader): UserToken;
+}
+
+export namespace UserToken {
+  export type AsObject = {
+    userTokenId: number,
+    user?: User.AsObject,
+    token: string,
+    creationDatetime: string,
+    expiryDatetime: string,
+  }
+}
+
+export class UserTokenResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): UserTokenResponse;
+  hasResponse(): boolean;
+  clearResponse(): UserTokenResponse;
+
+  getUsertoken(): UserToken | undefined;
+  setUsertoken(value?: UserToken): UserTokenResponse;
+  hasUsertoken(): boolean;
+  clearUsertoken(): UserTokenResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserTokenResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UserTokenResponse): UserTokenResponse.AsObject;
+  static serializeBinaryToWriter(message: UserTokenResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserTokenResponse;
+  static deserializeBinaryFromReader(message: UserTokenResponse, reader: jspb.BinaryReader): UserTokenResponse;
+}
+
+export namespace UserTokenResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    usertoken?: UserToken.AsObject,
+  }
+}
+
+export class UserTokenFilter extends jspb.Message {
+  getField(): UserTokenFilter.Field;
+  setField(value: UserTokenFilter.Field): UserTokenFilter;
+
+  getComparisons(): Filter | undefined;
+  setComparisons(value?: Filter): UserTokenFilter;
+  hasComparisons(): boolean;
+  clearComparisons(): UserTokenFilter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserTokenFilter.AsObject;
+  static toObject(includeInstance: boolean, msg: UserTokenFilter): UserTokenFilter.AsObject;
+  static serializeBinaryToWriter(message: UserTokenFilter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserTokenFilter;
+  static deserializeBinaryFromReader(message: UserTokenFilter, reader: jspb.BinaryReader): UserTokenFilter;
+}
+
+export namespace UserTokenFilter {
+  export type AsObject = {
+    field: UserTokenFilter.Field,
+    comparisons?: Filter.AsObject,
+  }
+
+  export enum Field { 
+    USER_ID = 0,
+    EXPIRY = 1,
+  }
+}
+
+export class UserTokenQuery extends jspb.Message {
+  getFiltersList(): Array<UserTokenFilter>;
+  setFiltersList(value: Array<UserTokenFilter>): UserTokenQuery;
+  clearFiltersList(): UserTokenQuery;
+  addFilters(value?: UserTokenFilter, index?: number): UserTokenFilter;
+
+  getLimit(): number;
+  setLimit(value: number): UserTokenQuery;
+
+  getSkip(): number;
+  setSkip(value: number): UserTokenQuery;
+
+  getOrderBy(): OrderByUserToken | undefined;
+  setOrderBy(value?: OrderByUserToken): UserTokenQuery;
+  hasOrderBy(): boolean;
+  clearOrderBy(): UserTokenQuery;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserTokenQuery.AsObject;
+  static toObject(includeInstance: boolean, msg: UserTokenQuery): UserTokenQuery.AsObject;
+  static serializeBinaryToWriter(message: UserTokenQuery, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserTokenQuery;
+  static deserializeBinaryFromReader(message: UserTokenQuery, reader: jspb.BinaryReader): UserTokenQuery;
+}
+
+export namespace UserTokenQuery {
+  export type AsObject = {
+    filtersList: Array<UserTokenFilter.AsObject>,
+    limit: number,
+    skip: number,
+    orderBy?: OrderByUserToken.AsObject,
+  }
+}
+
+export class OrderByUserToken extends jspb.Message {
+  getField(): UserTokenFilter.Field;
+  setField(value: UserTokenFilter.Field): OrderByUserToken;
+
+  getOrderBy(): OrderBy;
+  setOrderBy(value: OrderBy): OrderByUserToken;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OrderByUserToken.AsObject;
+  static toObject(includeInstance: boolean, msg: OrderByUserToken): OrderByUserToken.AsObject;
+  static serializeBinaryToWriter(message: OrderByUserToken, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OrderByUserToken;
+  static deserializeBinaryFromReader(message: OrderByUserToken, reader: jspb.BinaryReader): OrderByUserToken;
+}
+
+export namespace OrderByUserToken {
+  export type AsObject = {
+    field: UserTokenFilter.Field,
+    orderBy: OrderBy,
+  }
+}
+
+export class LoginRequest extends jspb.Message {
+  getUserEmail(): string;
+  setUserEmail(value: string): LoginRequest;
+
+  getHashedPassword(): string;
+  setHashedPassword(value: string): LoginRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LoginRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: LoginRequest): LoginRequest.AsObject;
+  static serializeBinaryToWriter(message: LoginRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LoginRequest;
+  static deserializeBinaryFromReader(message: LoginRequest, reader: jspb.BinaryReader): LoginRequest;
+}
+
+export namespace LoginRequest {
+  export type AsObject = {
+    userEmail: string,
+    hashedPassword: string,
+  }
+}
+
+export class ResponseNonce extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): ResponseNonce;
+  hasResponse(): boolean;
+  clearResponse(): ResponseNonce;
+
+  getNonce(): string;
+  setNonce(value: string): ResponseNonce;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ResponseNonce.AsObject;
+  static toObject(includeInstance: boolean, msg: ResponseNonce): ResponseNonce.AsObject;
+  static serializeBinaryToWriter(message: ResponseNonce, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ResponseNonce;
+  static deserializeBinaryFromReader(message: ResponseNonce, reader: jspb.BinaryReader): ResponseNonce;
+}
+
+export namespace ResponseNonce {
+  export type AsObject = {
+    response?: Response.AsObject,
+    nonce: string,
+  }
+}
+
+export class SecurityStringResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): SecurityStringResponse;
+  hasResponse(): boolean;
+  clearResponse(): SecurityStringResponse;
+
+  getSecurityString(): string;
+  setSecurityString(value: string): SecurityStringResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SecurityStringResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SecurityStringResponse): SecurityStringResponse.AsObject;
+  static serializeBinaryToWriter(message: SecurityStringResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SecurityStringResponse;
+  static deserializeBinaryFromReader(message: SecurityStringResponse, reader: jspb.BinaryReader): SecurityStringResponse;
+}
+
+export namespace SecurityStringResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    securityString: string,
   }
 }
 
@@ -1085,6 +1337,9 @@ export class IncidentReport extends jspb.Message {
   hasIncidentReportContent(): boolean;
   clearIncidentReportContent(): IncidentReport;
 
+  getAifsId(): number;
+  setAifsId(value: number): IncidentReport;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): IncidentReport.AsObject;
   static toObject(includeInstance: boolean, msg: IncidentReport): IncidentReport.AsObject;
@@ -1106,6 +1361,7 @@ export namespace IncidentReport {
     signature?: User.AsObject,
     approvalDate: string,
     incidentReportContent?: IncidentReportContent.AsObject,
+    aifsId: number,
   }
 
   export enum ReportType { 
@@ -1305,6 +1561,191 @@ export class OrderByIncidentReport extends jspb.Message {
 export namespace OrderByIncidentReport {
   export type AsObject = {
     field: IncidentReportFilter.Field,
+    orderBy: OrderBy,
+  }
+}
+
+export class CameraIot extends jspb.Message {
+  getCameraIotId(): number;
+  setCameraIotId(value: number): CameraIot;
+
+  getName(): string;
+  setName(value: string): CameraIot;
+
+  getCamera(): Camera | undefined;
+  setCamera(value?: Camera): CameraIot;
+  hasCamera(): boolean;
+  clearCamera(): CameraIot;
+
+  getGate(): iot_prototype_pb.GateState | undefined;
+  setGate(value?: iot_prototype_pb.GateState): CameraIot;
+  hasGate(): boolean;
+  clearGate(): CameraIot;
+
+  getFireAlarm(): iot_prototype_pb.FireAlarmState | undefined;
+  setFireAlarm(value?: iot_prototype_pb.FireAlarmState): CameraIot;
+  hasFireAlarm(): boolean;
+  clearFireAlarm(): CameraIot;
+
+  getCpuTemperature(): iot_prototype_pb.CpuTempState | undefined;
+  setCpuTemperature(value?: iot_prototype_pb.CpuTempState): CameraIot;
+  hasCpuTemperature(): boolean;
+  clearCpuTemperature(): CameraIot;
+
+  getType(): CameraIot.MessageType;
+  setType(value: CameraIot.MessageType): CameraIot;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CameraIot.AsObject;
+  static toObject(includeInstance: boolean, msg: CameraIot): CameraIot.AsObject;
+  static serializeBinaryToWriter(message: CameraIot, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CameraIot;
+  static deserializeBinaryFromReader(message: CameraIot, reader: jspb.BinaryReader): CameraIot;
+}
+
+export namespace CameraIot {
+  export type AsObject = {
+    cameraIotId: number,
+    name: string,
+    camera?: Camera.AsObject,
+    gate?: iot_prototype_pb.GateState.AsObject,
+    fireAlarm?: iot_prototype_pb.FireAlarmState.AsObject,
+    cpuTemperature?: iot_prototype_pb.CpuTempState.AsObject,
+    type: CameraIot.MessageType,
+  }
+
+  export enum MessageType { 
+    INITIAL = 0,
+    CHANGE_GATE = 1,
+    CHANGE_FIRE_ALARM = 2,
+    CHANGE_CPU_TEMP = 3,
+  }
+}
+
+export class Camera extends jspb.Message {
+  getUrl(): string;
+  setUrl(value: string): Camera;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Camera.AsObject;
+  static toObject(includeInstance: boolean, msg: Camera): Camera.AsObject;
+  static serializeBinaryToWriter(message: Camera, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Camera;
+  static deserializeBinaryFromReader(message: Camera, reader: jspb.BinaryReader): Camera;
+}
+
+export namespace Camera {
+  export type AsObject = {
+    url: string,
+  }
+}
+
+export class CameraIotResponse extends jspb.Message {
+  getResponse(): Response | undefined;
+  setResponse(value?: Response): CameraIotResponse;
+  hasResponse(): boolean;
+  clearResponse(): CameraIotResponse;
+
+  getCameraIot(): CameraIot | undefined;
+  setCameraIot(value?: CameraIot): CameraIotResponse;
+  hasCameraIot(): boolean;
+  clearCameraIot(): CameraIotResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CameraIotResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CameraIotResponse): CameraIotResponse.AsObject;
+  static serializeBinaryToWriter(message: CameraIotResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CameraIotResponse;
+  static deserializeBinaryFromReader(message: CameraIotResponse, reader: jspb.BinaryReader): CameraIotResponse;
+}
+
+export namespace CameraIotResponse {
+  export type AsObject = {
+    response?: Response.AsObject,
+    cameraIot?: CameraIot.AsObject,
+  }
+}
+
+export class CameraIotFilter extends jspb.Message {
+  getField(): CameraIotFilter.Field;
+  setField(value: CameraIotFilter.Field): CameraIotFilter;
+
+  getComparisons(): Filter | undefined;
+  setComparisons(value?: Filter): CameraIotFilter;
+  hasComparisons(): boolean;
+  clearComparisons(): CameraIotFilter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CameraIotFilter.AsObject;
+  static toObject(includeInstance: boolean, msg: CameraIotFilter): CameraIotFilter.AsObject;
+  static serializeBinaryToWriter(message: CameraIotFilter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CameraIotFilter;
+  static deserializeBinaryFromReader(message: CameraIotFilter, reader: jspb.BinaryReader): CameraIotFilter;
+}
+
+export namespace CameraIotFilter {
+  export type AsObject = {
+    field: CameraIotFilter.Field,
+    comparisons?: Filter.AsObject,
+  }
+
+  export enum Field { 
+    CAMERA_IOT_ID = 0,
+  }
+}
+
+export class CameraIotQuery extends jspb.Message {
+  getFiltersList(): Array<CameraIotFilter>;
+  setFiltersList(value: Array<CameraIotFilter>): CameraIotQuery;
+  clearFiltersList(): CameraIotQuery;
+  addFilters(value?: CameraIotFilter, index?: number): CameraIotFilter;
+
+  getLimit(): number;
+  setLimit(value: number): CameraIotQuery;
+
+  getSkip(): number;
+  setSkip(value: number): CameraIotQuery;
+
+  getOrderBy(): OrderByCameraIot | undefined;
+  setOrderBy(value?: OrderByCameraIot): CameraIotQuery;
+  hasOrderBy(): boolean;
+  clearOrderBy(): CameraIotQuery;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CameraIotQuery.AsObject;
+  static toObject(includeInstance: boolean, msg: CameraIotQuery): CameraIotQuery.AsObject;
+  static serializeBinaryToWriter(message: CameraIotQuery, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CameraIotQuery;
+  static deserializeBinaryFromReader(message: CameraIotQuery, reader: jspb.BinaryReader): CameraIotQuery;
+}
+
+export namespace CameraIotQuery {
+  export type AsObject = {
+    filtersList: Array<CameraIotFilter.AsObject>,
+    limit: number,
+    skip: number,
+    orderBy?: OrderByCameraIot.AsObject,
+  }
+}
+
+export class OrderByCameraIot extends jspb.Message {
+  getField(): CameraIotFilter.Field;
+  setField(value: CameraIotFilter.Field): OrderByCameraIot;
+
+  getOrderBy(): OrderBy;
+  setOrderBy(value: OrderBy): OrderByCameraIot;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OrderByCameraIot.AsObject;
+  static toObject(includeInstance: boolean, msg: OrderByCameraIot): OrderByCameraIot.AsObject;
+  static serializeBinaryToWriter(message: OrderByCameraIot, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OrderByCameraIot;
+  static deserializeBinaryFromReader(message: OrderByCameraIot, reader: jspb.BinaryReader): OrderByCameraIot;
+}
+
+export namespace OrderByCameraIot {
+  export type AsObject = {
+    field: CameraIotFilter.Field,
     orderBy: OrderBy,
   }
 }

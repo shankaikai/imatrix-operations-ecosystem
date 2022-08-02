@@ -21,6 +21,7 @@ import {
   RosterResponse,
   User,
 } from "../proto/operations_ecosys_pb";
+import { ENVOY_ADDRESS } from "../utils/constant";
 import getOverallRosterStatus from "./getOverallRosterStatus";
 import getRosterDates from "./getRosterDates";
 import {
@@ -31,7 +32,7 @@ import {
 
 interface RosteringContextInterface {
   rosterBaskets: Roster.AsObject[];
-  refreshState?():void;
+  refreshState?(): void;
   rosterDates: Date[];
   setRosterDates?: Dispatch<Date[]>;
   offset: number;
@@ -61,7 +62,7 @@ export interface RosteringGuardsList {
 }
 
 const formatSelectedDateForBackend = (date: Date, isStart: boolean) => {
-  if(isStart){
+  if (isStart) {
     return dayjs(date).format("YYYY-MM-DD 18:00:00");
   } else {
     return dayjs(date).format("YYYY-MM-DD 06:00:00");
@@ -102,7 +103,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const filter = new RosterFilter();
     filter.setField(RosterFilter.Field.START_TIME);
     const filterDate = new Filter();
-    filterDate.setValue(formatSelectedDateForBackend(selectedDate,true));
+    filterDate.setValue(formatSelectedDateForBackend(selectedDate, true));
     filterDate.setComparison(Filter.Comparisons.EQUAL);
     filter.setComparisons(filterDate);
     const query = new RosterQuery();
@@ -144,7 +145,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     const client = getRosterClient();
 
     const query = new AvailabilityQuery();
-    query.setStartTime(formatSelectedDateForBackend(selectedDate,true));
+    query.setStartTime(formatSelectedDateForBackend(selectedDate, true));
 
     const stream = client.getAvailableUsers(query);
 
@@ -170,9 +171,9 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
     resetStates(formatSelectedDateForState(selectedDate));
     updateRosterBaskets();
     getAvailableGuards();
-  }
+  };
   useEffect(() => {
-    refreshState()
+    refreshState();
   }, [selectedDate]);
 
   // useEffect(() => {
@@ -203,7 +204,7 @@ export function RosteringProvider({ children }: RosteringProviderProps) {
 
 export function getRosterClient(): RosterServicesClient {
   // TODO: add the envoy address into .env
-  return new RosterServicesClient("http://localhost:8080", null, {});
+  return new RosterServicesClient(ENVOY_ADDRESS, null, {});
 }
 
 export function useRostering() {
@@ -238,8 +239,8 @@ export function submitNewRoster(
     const endDate = new Date();
     endDate.setDate(date.getDate() + 1);
 
-    roster.setStartTime(formatSelectedDateForBackend(date,true));
-    roster.setEndTime(formatSelectedDateForBackend(endDate,false));
+    roster.setStartTime(formatSelectedDateForBackend(date, true));
+    roster.setEndTime(formatSelectedDateForBackend(endDate, false));
 
     rosterList.push(roster);
   }
@@ -286,21 +287,20 @@ export function submitUpdateRoster(
     const roster = new Roster();
     roster.addGuardAssigned(rosterAssignment);
     roster.setAifsId(i);
-    console.log(rosterBaskets[i - 1].rosteringId)
-    roster.setRosteringId(rosterBaskets[i - 1].rosteringId)
+    console.log(rosterBaskets[i - 1].rosteringId);
+    roster.setRosteringId(rosterBaskets[i - 1].rosteringId);
 
     const endDate = new Date();
     endDate.setDate(date.getDate() + 1);
 
-    roster.setStartTime(formatSelectedDateForBackend(date,true));
-    roster.setEndTime(formatSelectedDateForBackend(endDate,false));
+    roster.setStartTime(formatSelectedDateForBackend(date, true));
+    roster.setEndTime(formatSelectedDateForBackend(endDate, false));
 
     rosterList.push(roster);
   }
 
   const bulkRoster = new BulkRosters();
   bulkRoster.setRostersList(rosterList);
-  // debugger
   client
     .updateRoster(bulkRoster, {})
     .then((response) => {

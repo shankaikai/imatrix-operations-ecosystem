@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
 import { Dispatch } from "react";
 import { RosteringGuardsList } from "./useRosteringClient";
+import _ from "lodash";
 
-// When an available guard is dragged onto a 
+// When an available guard is dragged onto a
 export default function addGuardToGuardsAssigned(
   id: number,
   index: number,
@@ -12,6 +13,7 @@ export default function addGuardToGuardsAssigned(
 ) {
   selectedDate &&
     setGuardsAssigned &&
+    //@ts-ignore
     setGuardsAssigned((prevState) => {
       let newState = _.cloneDeep(prevState);
       const date = dayjs(selectedDate).format("YYYY-MM-DD");

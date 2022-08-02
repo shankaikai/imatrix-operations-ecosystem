@@ -15,4 +15,4 @@ services:
       - "9090:9090"
     network_mode: host
     environment:
-      - TZ=Asia/Singapore
+       TZ=Asia/Singapore

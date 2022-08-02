@@ -1,4 +1,7 @@
 import { AppShell, ScrollArea, useMantineColorScheme } from "@mantine/core";
+import { useRouter } from "next/router";
+import { useContext, useEffect } from "react";
+import { isLoggedIn, useUserProvider } from "../../helpers/useUserProvider";
 import MainHeader from "./MainHeader";
 import Sidebar from "./Sidebar/Sidebar";
 
@@ -7,6 +10,18 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
+  const router = useRouter();
+  const { setUser } = useUserProvider();
+
+  useEffect(() => {
+    const user = isLoggedIn();
+    if (!user) {
+      router.push("/login");
+    } else {
+      setUser && setUser(user);
+    }
+  }, []);
+
   return (
     <AppShell
       padding="md"

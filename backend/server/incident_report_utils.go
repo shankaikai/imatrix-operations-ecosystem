@@ -58,6 +58,7 @@ func (s *Server) insertDefaultIncidentReportValues(report *pb.IncidentReport) er
 		report.AifsId = -1
 	}
 
+	report.CreationDate = time.Now().Format(common.DATETIME_FORMAT)
 	report.IncidentReportContent.LastModifedUser = report.Creator
 	report.IncidentReportContent.LastModifiedDate = report.CreationDate
 	return nil

@@ -21,8 +21,12 @@ var global = (function() {
   return Function('return this')();
 }.call(null));
 
+var iot_prototype_pb = require('./iot_prototype_pb.js');
+goog.object.extend(proto, iot_prototype_pb);
 var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 goog.object.extend(proto, google_protobuf_timestamp_pb);
+var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
+goog.object.extend(proto, google_protobuf_empty_pb);
 goog.exportSymbol('proto.operations_ecosys.AIFSBroadcastRecipient', null, global);
 goog.exportSymbol('proto.operations_ecosys.AIFSClientRoster', null, global);
 goog.exportSymbol('proto.operations_ecosys.AvailabilityFilter', null, global);
@@ -37,6 +41,13 @@ goog.exportSymbol('proto.operations_ecosys.BroadcastQuery', null, global);
 goog.exportSymbol('proto.operations_ecosys.BroadcastRecipient', null, global);
 goog.exportSymbol('proto.operations_ecosys.BroadcastResponse', null, global);
 goog.exportSymbol('proto.operations_ecosys.BulkRosters', null, global);
+goog.exportSymbol('proto.operations_ecosys.Camera', null, global);
+goog.exportSymbol('proto.operations_ecosys.CameraIot', null, global);
+goog.exportSymbol('proto.operations_ecosys.CameraIot.MessageType', null, global);
+goog.exportSymbol('proto.operations_ecosys.CameraIotFilter', null, global);
+goog.exportSymbol('proto.operations_ecosys.CameraIotFilter.Field', null, global);
+goog.exportSymbol('proto.operations_ecosys.CameraIotQuery', null, global);
+goog.exportSymbol('proto.operations_ecosys.CameraIotResponse', null, global);
 goog.exportSymbol('proto.operations_ecosys.Client', null, global);
 goog.exportSymbol('proto.operations_ecosys.ClientFilter', null, global);
 goog.exportSymbol('proto.operations_ecosys.ClientFilter.Field', null, global);
@@ -46,6 +57,7 @@ goog.exportSymbol('proto.operations_ecosys.EmployeeEvaluation', null, global);
 goog.exportSymbol('proto.operations_ecosys.EmployeeEvaluationResponse', null, global);
 goog.exportSymbol('proto.operations_ecosys.Filter', null, global);
 goog.exportSymbol('proto.operations_ecosys.Filter.Comparisons', null, global);
+goog.exportSymbol('proto.operations_ecosys.FullUser', null, global);
 goog.exportSymbol('proto.operations_ecosys.IncidentReport', null, global);
 goog.exportSymbol('proto.operations_ecosys.IncidentReport.ReportType', null, global);
 goog.exportSymbol('proto.operations_ecosys.IncidentReportContent', null, global);
@@ -53,15 +65,19 @@ goog.exportSymbol('proto.operations_ecosys.IncidentReportFilter', null, global);
 goog.exportSymbol('proto.operations_ecosys.IncidentReportFilter.Field', null, global);
 goog.exportSymbol('proto.operations_ecosys.IncidentReportQuery', null, global);
 goog.exportSymbol('proto.operations_ecosys.IncidentReportResponse', null, global);
+goog.exportSymbol('proto.operations_ecosys.LoginRequest', null, global);
 goog.exportSymbol('proto.operations_ecosys.OrderBy', null, global);
 goog.exportSymbol('proto.operations_ecosys.OrderByBroadcast', null, global);
+goog.exportSymbol('proto.operations_ecosys.OrderByCameraIot', null, global);
 goog.exportSymbol('proto.operations_ecosys.OrderByClient', null, global);
 goog.exportSymbol('proto.operations_ecosys.OrderByIncidentReport', null, global);
 goog.exportSymbol('proto.operations_ecosys.OrderByQuery', null, global);
 goog.exportSymbol('proto.operations_ecosys.OrderByRoster', null, global);
 goog.exportSymbol('proto.operations_ecosys.OrderByUser', null, global);
+goog.exportSymbol('proto.operations_ecosys.OrderByUserToken', null, global);
 goog.exportSymbol('proto.operations_ecosys.Response', null, global);
 goog.exportSymbol('proto.operations_ecosys.Response.Type', null, global);
+goog.exportSymbol('proto.operations_ecosys.ResponseNonce', null, global);
 goog.exportSymbol('proto.operations_ecosys.Roster', null, global);
 goog.exportSymbol('proto.operations_ecosys.Roster.Status', null, global);
 goog.exportSymbol('proto.operations_ecosys.RosterAssignement', null, global);
@@ -70,11 +86,17 @@ goog.exportSymbol('proto.operations_ecosys.RosterFilter', null, global);
 goog.exportSymbol('proto.operations_ecosys.RosterFilter.Field', null, global);
 goog.exportSymbol('proto.operations_ecosys.RosterQuery', null, global);
 goog.exportSymbol('proto.operations_ecosys.RosterResponse', null, global);
+goog.exportSymbol('proto.operations_ecosys.SecurityStringResponse', null, global);
 goog.exportSymbol('proto.operations_ecosys.User', null, global);
 goog.exportSymbol('proto.operations_ecosys.User.UserType', null, global);
 goog.exportSymbol('proto.operations_ecosys.UserFilter', null, global);
 goog.exportSymbol('proto.operations_ecosys.UserFilter.Field', null, global);
 goog.exportSymbol('proto.operations_ecosys.UserQuery', null, global);
+goog.exportSymbol('proto.operations_ecosys.UserToken', null, global);
+goog.exportSymbol('proto.operations_ecosys.UserTokenFilter', null, global);
+goog.exportSymbol('proto.operations_ecosys.UserTokenFilter.Field', null, global);
+goog.exportSymbol('proto.operations_ecosys.UserTokenQuery', null, global);
+goog.exportSymbol('proto.operations_ecosys.UserTokenResponse', null, global);
 goog.exportSymbol('proto.operations_ecosys.UsersResponse', null, global);
 /**
  * Generated by JsPbCodeGenerator.
@@ -191,6 +213,27 @@ if (goog.DEBUG && !COMPILED) {
  * @extends {jspb.Message}
  * @constructor
  */
+proto.operations_ecosys.FullUser = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.FullUser, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.FullUser.displayName = 'proto.operations_ecosys.FullUser';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
 proto.operations_ecosys.Client = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
@@ -285,6 +328,174 @@ if (goog.DEBUG && !COMPILED) {
    * @override
    */
   proto.operations_ecosys.OrderByClient.displayName = 'proto.operations_ecosys.OrderByClient';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.UserToken = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.UserToken, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.UserToken.displayName = 'proto.operations_ecosys.UserToken';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.UserTokenResponse = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.UserTokenResponse, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.UserTokenResponse.displayName = 'proto.operations_ecosys.UserTokenResponse';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.UserTokenFilter = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.UserTokenFilter, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.UserTokenFilter.displayName = 'proto.operations_ecosys.UserTokenFilter';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.UserTokenQuery = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.operations_ecosys.UserTokenQuery.repeatedFields_, null);
+};
+goog.inherits(proto.operations_ecosys.UserTokenQuery, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.UserTokenQuery.displayName = 'proto.operations_ecosys.UserTokenQuery';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.OrderByUserToken = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.OrderByUserToken, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.OrderByUserToken.displayName = 'proto.operations_ecosys.OrderByUserToken';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.LoginRequest = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.LoginRequest, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.LoginRequest.displayName = 'proto.operations_ecosys.LoginRequest';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.ResponseNonce = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.ResponseNonce, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.ResponseNonce.displayName = 'proto.operations_ecosys.ResponseNonce';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.SecurityStringResponse = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.SecurityStringResponse, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.SecurityStringResponse.displayName = 'proto.operations_ecosys.SecurityStringResponse';
 }
 /**
  * Generated by JsPbCodeGenerator.
@@ -863,6 +1074,132 @@ if (goog.DEBUG && !COMPILED) {
  * @extends {jspb.Message}
  * @constructor
  */
+proto.operations_ecosys.CameraIot = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.CameraIot, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.CameraIot.displayName = 'proto.operations_ecosys.CameraIot';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.Camera = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.Camera, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.Camera.displayName = 'proto.operations_ecosys.Camera';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.CameraIotResponse = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.CameraIotResponse, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.CameraIotResponse.displayName = 'proto.operations_ecosys.CameraIotResponse';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.CameraIotFilter = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.CameraIotFilter, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.CameraIotFilter.displayName = 'proto.operations_ecosys.CameraIotFilter';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.CameraIotQuery = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.operations_ecosys.CameraIotQuery.repeatedFields_, null);
+};
+goog.inherits(proto.operations_ecosys.CameraIotQuery, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.CameraIotQuery.displayName = 'proto.operations_ecosys.CameraIotQuery';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.operations_ecosys.OrderByCameraIot = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.operations_ecosys.OrderByCameraIot, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  /**
+   * @public
+   * @override
+   */
+  proto.operations_ecosys.OrderByCameraIot.displayName = 'proto.operations_ecosys.OrderByCameraIot';
+}
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
 proto.operations_ecosys.Response = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
@@ -935,7 +1272,7 @@ proto.operations_ecosys.User.toObject = function(includeInstance, msg) {
     telegramHandle: jspb.Message.getFieldWithDefault(msg, 6, ""),
     userSecurityImg: jspb.Message.getFieldWithDefault(msg, 7, ""),
     isPartTimer: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-    teleChatId: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    teleUserId: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -1006,7 +1343,7 @@ proto.operations_ecosys.User.deserializeBinaryFromReader = function(msg, reader)
       break;
     case 9:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setTeleChatId(value);
+      msg.setTeleUserId(value);
       break;
     default:
       reader.skipField();
@@ -1093,7 +1430,7 @@ proto.operations_ecosys.User.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getTeleChatId();
+  f = message.getTeleUserId();
   if (f !== 0) {
     writer.writeInt64(
       9,
@@ -1261,7 +1598,7 @@ proto.operations_ecosys.User.prototype.setIsPartTimer = function(value) {
  * optional int64 tele_chat_id = 9;
  * @return {number}
  */
-proto.operations_ecosys.User.prototype.getTeleChatId = function() {
+proto.operations_ecosys.User.prototype.getTeleUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
@@ -1270,7 +1607,7 @@ proto.operations_ecosys.User.prototype.getTeleChatId = function() {
  * @param {number} value
  * @return {!proto.operations_ecosys.User} returns this
  */
-proto.operations_ecosys.User.prototype.setTeleChatId = function(value) {
+proto.operations_ecosys.User.prototype.setTeleUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 9, value);
 };
 
@@ -1613,7 +1950,8 @@ proto.operations_ecosys.UserFilter.Field = {
   EMAIL: 3,
   PHONE_NUMBER: 4,
   TELEGRAM_HANDLE: 5,
-  IS_PART_TIMER: 6
+  IS_PART_TIMER: 6,
+  TELEGRAM_USER_ID: 7
 };
 
 /**
@@ -2099,6 +2437,247 @@ proto.operations_ecosys.OrderByUser.prototype.getOrderBy = function() {
  */
 proto.operations_ecosys.OrderByUser.prototype.setOrderBy = function(value) {
   return jspb.Message.setProto3EnumField(this, 2, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.FullUser.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.FullUser.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.FullUser} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.FullUser.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    user: (f = msg.getUser()) && proto.operations_ecosys.User.toObject(includeInstance, f),
+    nonce: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    securityString: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    hashedPassword: jspb.Message.getFieldWithDefault(msg, 4, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.FullUser}
+ */
+proto.operations_ecosys.FullUser.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.FullUser;
+  return proto.operations_ecosys.FullUser.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.FullUser} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.FullUser}
+ */
+proto.operations_ecosys.FullUser.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.operations_ecosys.User;
+      reader.readMessage(value,proto.operations_ecosys.User.deserializeBinaryFromReader);
+      msg.setUser(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNonce(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSecurityString(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setHashedPassword(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.FullUser.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.FullUser.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.FullUser} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.FullUser.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getUser();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.operations_ecosys.User.serializeBinaryToWriter
+    );
+  }
+  f = message.getNonce();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getSecurityString();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getHashedPassword();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional User user = 1;
+ * @return {?proto.operations_ecosys.User}
+ */
+proto.operations_ecosys.FullUser.prototype.getUser = function() {
+  return /** @type{?proto.operations_ecosys.User} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.User, 1));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.User|undefined} value
+ * @return {!proto.operations_ecosys.FullUser} returns this
+*/
+proto.operations_ecosys.FullUser.prototype.setUser = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.FullUser} returns this
+ */
+proto.operations_ecosys.FullUser.prototype.clearUser = function() {
+  return this.setUser(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.FullUser.prototype.hasUser = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional string nonce = 2;
+ * @return {string}
+ */
+proto.operations_ecosys.FullUser.prototype.getNonce = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.FullUser} returns this
+ */
+proto.operations_ecosys.FullUser.prototype.setNonce = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string security_string = 3;
+ * @return {string}
+ */
+proto.operations_ecosys.FullUser.prototype.getSecurityString = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.FullUser} returns this
+ */
+proto.operations_ecosys.FullUser.prototype.setSecurityString = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string hashed_password = 4;
+ * @return {string}
+ */
+proto.operations_ecosys.FullUser.prototype.getHashedPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.FullUser} returns this
+ */
+proto.operations_ecosys.FullUser.prototype.setHashedPassword = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -3230,6 +3809,1621 @@ proto.operations_ecosys.OrderByClient.prototype.getOrderBy = function() {
  */
 proto.operations_ecosys.OrderByClient.prototype.setOrderBy = function(value) {
   return jspb.Message.setProto3EnumField(this, 2, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.UserToken.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.UserToken.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.UserToken} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserToken.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    userTokenId: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    user: (f = msg.getUser()) && proto.operations_ecosys.User.toObject(includeInstance, f),
+    token: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    creationDatetime: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    expiryDatetime: jspb.Message.getFieldWithDefault(msg, 5, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.UserToken}
+ */
+proto.operations_ecosys.UserToken.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.UserToken;
+  return proto.operations_ecosys.UserToken.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.UserToken} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.UserToken}
+ */
+proto.operations_ecosys.UserToken.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setUserTokenId(value);
+      break;
+    case 2:
+      var value = new proto.operations_ecosys.User;
+      reader.readMessage(value,proto.operations_ecosys.User.deserializeBinaryFromReader);
+      msg.setUser(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setToken(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setCreationDatetime(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setExpiryDatetime(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.UserToken.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.UserToken.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.UserToken} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserToken.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getUserTokenId();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getUser();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.operations_ecosys.User.serializeBinaryToWriter
+    );
+  }
+  f = message.getToken();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getCreationDatetime();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+  f = message.getExpiryDatetime();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional int64 user_token_id = 1;
+ * @return {number}
+ */
+proto.operations_ecosys.UserToken.prototype.getUserTokenId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.operations_ecosys.UserToken} returns this
+ */
+proto.operations_ecosys.UserToken.prototype.setUserTokenId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional User user = 2;
+ * @return {?proto.operations_ecosys.User}
+ */
+proto.operations_ecosys.UserToken.prototype.getUser = function() {
+  return /** @type{?proto.operations_ecosys.User} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.User, 2));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.User|undefined} value
+ * @return {!proto.operations_ecosys.UserToken} returns this
+*/
+proto.operations_ecosys.UserToken.prototype.setUser = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.UserToken} returns this
+ */
+proto.operations_ecosys.UserToken.prototype.clearUser = function() {
+  return this.setUser(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.UserToken.prototype.hasUser = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional string token = 3;
+ * @return {string}
+ */
+proto.operations_ecosys.UserToken.prototype.getToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.UserToken} returns this
+ */
+proto.operations_ecosys.UserToken.prototype.setToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string creation_datetime = 4;
+ * @return {string}
+ */
+proto.operations_ecosys.UserToken.prototype.getCreationDatetime = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.UserToken} returns this
+ */
+proto.operations_ecosys.UserToken.prototype.setCreationDatetime = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional string expiry_datetime = 5;
+ * @return {string}
+ */
+proto.operations_ecosys.UserToken.prototype.getExpiryDatetime = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.UserToken} returns this
+ */
+proto.operations_ecosys.UserToken.prototype.setExpiryDatetime = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.UserTokenResponse.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.UserTokenResponse} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserTokenResponse.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    response: (f = msg.getResponse()) && proto.operations_ecosys.Response.toObject(includeInstance, f),
+    usertoken: (f = msg.getUsertoken()) && proto.operations_ecosys.UserToken.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.UserTokenResponse}
+ */
+proto.operations_ecosys.UserTokenResponse.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.UserTokenResponse;
+  return proto.operations_ecosys.UserTokenResponse.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.UserTokenResponse} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.UserTokenResponse}
+ */
+proto.operations_ecosys.UserTokenResponse.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.operations_ecosys.Response;
+      reader.readMessage(value,proto.operations_ecosys.Response.deserializeBinaryFromReader);
+      msg.setResponse(value);
+      break;
+    case 2:
+      var value = new proto.operations_ecosys.UserToken;
+      reader.readMessage(value,proto.operations_ecosys.UserToken.deserializeBinaryFromReader);
+      msg.setUsertoken(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.UserTokenResponse.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.UserTokenResponse} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserTokenResponse.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getResponse();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.operations_ecosys.Response.serializeBinaryToWriter
+    );
+  }
+  f = message.getUsertoken();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.operations_ecosys.UserToken.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional Response response = 1;
+ * @return {?proto.operations_ecosys.Response}
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.getResponse = function() {
+  return /** @type{?proto.operations_ecosys.Response} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.Response, 1));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.Response|undefined} value
+ * @return {!proto.operations_ecosys.UserTokenResponse} returns this
+*/
+proto.operations_ecosys.UserTokenResponse.prototype.setResponse = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.UserTokenResponse} returns this
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.clearResponse = function() {
+  return this.setResponse(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.hasResponse = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional UserToken userToken = 2;
+ * @return {?proto.operations_ecosys.UserToken}
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.getUsertoken = function() {
+  return /** @type{?proto.operations_ecosys.UserToken} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.UserToken, 2));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.UserToken|undefined} value
+ * @return {!proto.operations_ecosys.UserTokenResponse} returns this
+*/
+proto.operations_ecosys.UserTokenResponse.prototype.setUsertoken = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.UserTokenResponse} returns this
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.clearUsertoken = function() {
+  return this.setUsertoken(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.UserTokenResponse.prototype.hasUsertoken = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.UserTokenFilter.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.UserTokenFilter.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.UserTokenFilter} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserTokenFilter.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    field: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    comparisons: (f = msg.getComparisons()) && proto.operations_ecosys.Filter.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.UserTokenFilter}
+ */
+proto.operations_ecosys.UserTokenFilter.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.UserTokenFilter;
+  return proto.operations_ecosys.UserTokenFilter.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.UserTokenFilter} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.UserTokenFilter}
+ */
+proto.operations_ecosys.UserTokenFilter.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {!proto.operations_ecosys.UserTokenFilter.Field} */ (reader.readEnum());
+      msg.setField(value);
+      break;
+    case 2:
+      var value = new proto.operations_ecosys.Filter;
+      reader.readMessage(value,proto.operations_ecosys.Filter.deserializeBinaryFromReader);
+      msg.setComparisons(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.UserTokenFilter.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.UserTokenFilter.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.UserTokenFilter} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserTokenFilter.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getField();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1,
+      f
+    );
+  }
+  f = message.getComparisons();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.operations_ecosys.Filter.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * @enum {number}
+ */
+proto.operations_ecosys.UserTokenFilter.Field = {
+  USER_ID: 0,
+  EXPIRY: 1
+};
+
+/**
+ * optional Field field = 1;
+ * @return {!proto.operations_ecosys.UserTokenFilter.Field}
+ */
+proto.operations_ecosys.UserTokenFilter.prototype.getField = function() {
+  return /** @type {!proto.operations_ecosys.UserTokenFilter.Field} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.UserTokenFilter.Field} value
+ * @return {!proto.operations_ecosys.UserTokenFilter} returns this
+ */
+proto.operations_ecosys.UserTokenFilter.prototype.setField = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1, value);
+};
+
+
+/**
+ * optional Filter comparisons = 2;
+ * @return {?proto.operations_ecosys.Filter}
+ */
+proto.operations_ecosys.UserTokenFilter.prototype.getComparisons = function() {
+  return /** @type{?proto.operations_ecosys.Filter} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.Filter, 2));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.Filter|undefined} value
+ * @return {!proto.operations_ecosys.UserTokenFilter} returns this
+*/
+proto.operations_ecosys.UserTokenFilter.prototype.setComparisons = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.UserTokenFilter} returns this
+ */
+proto.operations_ecosys.UserTokenFilter.prototype.clearComparisons = function() {
+  return this.setComparisons(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.UserTokenFilter.prototype.hasComparisons = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.operations_ecosys.UserTokenQuery.repeatedFields_ = [1];
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.UserTokenQuery.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.UserTokenQuery} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserTokenQuery.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    filtersList: jspb.Message.toObjectList(msg.getFiltersList(),
+    proto.operations_ecosys.UserTokenFilter.toObject, includeInstance),
+    limit: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    skip: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    orderBy: (f = msg.getOrderBy()) && proto.operations_ecosys.OrderByUserToken.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.UserTokenQuery}
+ */
+proto.operations_ecosys.UserTokenQuery.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.UserTokenQuery;
+  return proto.operations_ecosys.UserTokenQuery.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.UserTokenQuery} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.UserTokenQuery}
+ */
+proto.operations_ecosys.UserTokenQuery.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.operations_ecosys.UserTokenFilter;
+      reader.readMessage(value,proto.operations_ecosys.UserTokenFilter.deserializeBinaryFromReader);
+      msg.addFilters(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLimit(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setSkip(value);
+      break;
+    case 4:
+      var value = new proto.operations_ecosys.OrderByUserToken;
+      reader.readMessage(value,proto.operations_ecosys.OrderByUserToken.deserializeBinaryFromReader);
+      msg.setOrderBy(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.UserTokenQuery.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.UserTokenQuery} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.UserTokenQuery.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getFiltersList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      1,
+      f,
+      proto.operations_ecosys.UserTokenFilter.serializeBinaryToWriter
+    );
+  }
+  f = message.getLimit();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = message.getSkip();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
+  f = message.getOrderBy();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      proto.operations_ecosys.OrderByUserToken.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * repeated UserTokenFilter filters = 1;
+ * @return {!Array<!proto.operations_ecosys.UserTokenFilter>}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.getFiltersList = function() {
+  return /** @type{!Array<!proto.operations_ecosys.UserTokenFilter>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.operations_ecosys.UserTokenFilter, 1));
+};
+
+
+/**
+ * @param {!Array<!proto.operations_ecosys.UserTokenFilter>} value
+ * @return {!proto.operations_ecosys.UserTokenQuery} returns this
+*/
+proto.operations_ecosys.UserTokenQuery.prototype.setFiltersList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.UserTokenFilter=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.operations_ecosys.UserTokenFilter}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.addFilters = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.operations_ecosys.UserTokenFilter, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.operations_ecosys.UserTokenQuery} returns this
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.clearFiltersList = function() {
+  return this.setFiltersList([]);
+};
+
+
+/**
+ * optional int64 limit = 2;
+ * @return {number}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.getLimit = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.operations_ecosys.UserTokenQuery} returns this
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.setLimit = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 skip = 3;
+ * @return {number}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.getSkip = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.operations_ecosys.UserTokenQuery} returns this
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.setSkip = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional OrderByUserToken order_by = 4;
+ * @return {?proto.operations_ecosys.OrderByUserToken}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.getOrderBy = function() {
+  return /** @type{?proto.operations_ecosys.OrderByUserToken} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.OrderByUserToken, 4));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.OrderByUserToken|undefined} value
+ * @return {!proto.operations_ecosys.UserTokenQuery} returns this
+*/
+proto.operations_ecosys.UserTokenQuery.prototype.setOrderBy = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.UserTokenQuery} returns this
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.clearOrderBy = function() {
+  return this.setOrderBy(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.UserTokenQuery.prototype.hasOrderBy = function() {
+  return jspb.Message.getField(this, 4) != null;
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.OrderByUserToken.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.OrderByUserToken.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.OrderByUserToken} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.OrderByUserToken.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    field: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    orderBy: jspb.Message.getFieldWithDefault(msg, 2, 0)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.OrderByUserToken}
+ */
+proto.operations_ecosys.OrderByUserToken.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.OrderByUserToken;
+  return proto.operations_ecosys.OrderByUserToken.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.OrderByUserToken} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.OrderByUserToken}
+ */
+proto.operations_ecosys.OrderByUserToken.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {!proto.operations_ecosys.UserTokenFilter.Field} */ (reader.readEnum());
+      msg.setField(value);
+      break;
+    case 2:
+      var value = /** @type {!proto.operations_ecosys.OrderBy} */ (reader.readEnum());
+      msg.setOrderBy(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.OrderByUserToken.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.OrderByUserToken.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.OrderByUserToken} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.OrderByUserToken.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getField();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1,
+      f
+    );
+  }
+  f = message.getOrderBy();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional UserTokenFilter.Field field = 1;
+ * @return {!proto.operations_ecosys.UserTokenFilter.Field}
+ */
+proto.operations_ecosys.OrderByUserToken.prototype.getField = function() {
+  return /** @type {!proto.operations_ecosys.UserTokenFilter.Field} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.UserTokenFilter.Field} value
+ * @return {!proto.operations_ecosys.OrderByUserToken} returns this
+ */
+proto.operations_ecosys.OrderByUserToken.prototype.setField = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1, value);
+};
+
+
+/**
+ * optional OrderBy order_by = 2;
+ * @return {!proto.operations_ecosys.OrderBy}
+ */
+proto.operations_ecosys.OrderByUserToken.prototype.getOrderBy = function() {
+  return /** @type {!proto.operations_ecosys.OrderBy} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.OrderBy} value
+ * @return {!proto.operations_ecosys.OrderByUserToken} returns this
+ */
+proto.operations_ecosys.OrderByUserToken.prototype.setOrderBy = function(value) {
+  return jspb.Message.setProto3EnumField(this, 2, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.LoginRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.LoginRequest.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.LoginRequest} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.LoginRequest.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    userEmail: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    hashedPassword: jspb.Message.getFieldWithDefault(msg, 2, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.LoginRequest}
+ */
+proto.operations_ecosys.LoginRequest.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.LoginRequest;
+  return proto.operations_ecosys.LoginRequest.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.LoginRequest} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.LoginRequest}
+ */
+proto.operations_ecosys.LoginRequest.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUserEmail(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setHashedPassword(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.LoginRequest.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.LoginRequest.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.LoginRequest} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.LoginRequest.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getUserEmail();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+  f = message.getHashedPassword();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string user_email = 1;
+ * @return {string}
+ */
+proto.operations_ecosys.LoginRequest.prototype.getUserEmail = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.LoginRequest} returns this
+ */
+proto.operations_ecosys.LoginRequest.prototype.setUserEmail = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string hashed_password = 2;
+ * @return {string}
+ */
+proto.operations_ecosys.LoginRequest.prototype.getHashedPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.LoginRequest} returns this
+ */
+proto.operations_ecosys.LoginRequest.prototype.setHashedPassword = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.ResponseNonce.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.ResponseNonce.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.ResponseNonce} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.ResponseNonce.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    response: (f = msg.getResponse()) && proto.operations_ecosys.Response.toObject(includeInstance, f),
+    nonce: jspb.Message.getFieldWithDefault(msg, 2, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.ResponseNonce}
+ */
+proto.operations_ecosys.ResponseNonce.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.ResponseNonce;
+  return proto.operations_ecosys.ResponseNonce.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.ResponseNonce} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.ResponseNonce}
+ */
+proto.operations_ecosys.ResponseNonce.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.operations_ecosys.Response;
+      reader.readMessage(value,proto.operations_ecosys.Response.deserializeBinaryFromReader);
+      msg.setResponse(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNonce(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.ResponseNonce.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.ResponseNonce.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.ResponseNonce} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.ResponseNonce.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getResponse();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.operations_ecosys.Response.serializeBinaryToWriter
+    );
+  }
+  f = message.getNonce();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional Response response = 1;
+ * @return {?proto.operations_ecosys.Response}
+ */
+proto.operations_ecosys.ResponseNonce.prototype.getResponse = function() {
+  return /** @type{?proto.operations_ecosys.Response} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.Response, 1));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.Response|undefined} value
+ * @return {!proto.operations_ecosys.ResponseNonce} returns this
+*/
+proto.operations_ecosys.ResponseNonce.prototype.setResponse = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.ResponseNonce} returns this
+ */
+proto.operations_ecosys.ResponseNonce.prototype.clearResponse = function() {
+  return this.setResponse(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.ResponseNonce.prototype.hasResponse = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional string nonce = 2;
+ * @return {string}
+ */
+proto.operations_ecosys.ResponseNonce.prototype.getNonce = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.ResponseNonce} returns this
+ */
+proto.operations_ecosys.ResponseNonce.prototype.setNonce = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.SecurityStringResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.SecurityStringResponse.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.SecurityStringResponse} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.SecurityStringResponse.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    response: (f = msg.getResponse()) && proto.operations_ecosys.Response.toObject(includeInstance, f),
+    securityString: jspb.Message.getFieldWithDefault(msg, 2, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.SecurityStringResponse}
+ */
+proto.operations_ecosys.SecurityStringResponse.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.SecurityStringResponse;
+  return proto.operations_ecosys.SecurityStringResponse.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.SecurityStringResponse} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.SecurityStringResponse}
+ */
+proto.operations_ecosys.SecurityStringResponse.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.operations_ecosys.Response;
+      reader.readMessage(value,proto.operations_ecosys.Response.deserializeBinaryFromReader);
+      msg.setResponse(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSecurityString(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.SecurityStringResponse.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.SecurityStringResponse.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.SecurityStringResponse} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.SecurityStringResponse.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getResponse();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.operations_ecosys.Response.serializeBinaryToWriter
+    );
+  }
+  f = message.getSecurityString();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional Response response = 1;
+ * @return {?proto.operations_ecosys.Response}
+ */
+proto.operations_ecosys.SecurityStringResponse.prototype.getResponse = function() {
+  return /** @type{?proto.operations_ecosys.Response} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.Response, 1));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.Response|undefined} value
+ * @return {!proto.operations_ecosys.SecurityStringResponse} returns this
+*/
+proto.operations_ecosys.SecurityStringResponse.prototype.setResponse = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.SecurityStringResponse} returns this
+ */
+proto.operations_ecosys.SecurityStringResponse.prototype.clearResponse = function() {
+  return this.setResponse(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.SecurityStringResponse.prototype.hasResponse = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional string security_string = 2;
+ * @return {string}
+ */
+proto.operations_ecosys.SecurityStringResponse.prototype.getSecurityString = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.SecurityStringResponse} returns this
+ */
+proto.operations_ecosys.SecurityStringResponse.prototype.setSecurityString = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -8404,7 +10598,8 @@ proto.operations_ecosys.IncidentReport.toObject = function(includeInstance, msg)
     isApproved: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
     signature: (f = msg.getSignature()) && proto.operations_ecosys.User.toObject(includeInstance, f),
     approvalDate: jspb.Message.getFieldWithDefault(msg, 10, ""),
-    incidentReportContent: (f = msg.getIncidentReportContent()) && proto.operations_ecosys.IncidentReportContent.toObject(includeInstance, f)
+    incidentReportContent: (f = msg.getIncidentReportContent()) && proto.operations_ecosys.IncidentReportContent.toObject(includeInstance, f),
+    aifsId: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
   if (includeInstance) {
@@ -8488,6 +10683,10 @@ proto.operations_ecosys.IncidentReport.deserializeBinaryFromReader = function(ms
       var value = new proto.operations_ecosys.IncidentReportContent;
       reader.readMessage(value,proto.operations_ecosys.IncidentReportContent.deserializeBinaryFromReader);
       msg.setIncidentReportContent(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setAifsId(value);
       break;
     default:
       reader.skipField();
@@ -8597,6 +10796,13 @@ proto.operations_ecosys.IncidentReport.serializeBinaryToWriter = function(messag
       11,
       f,
       proto.operations_ecosys.IncidentReportContent.serializeBinaryToWriter
+    );
+  }
+  f = message.getAifsId();
+  if (f !== 0) {
+    writer.writeInt64(
+      12,
+      f
     );
   }
 };
@@ -8882,6 +11088,24 @@ proto.operations_ecosys.IncidentReport.prototype.clearIncidentReportContent = fu
  */
 proto.operations_ecosys.IncidentReport.prototype.hasIncidentReportContent = function() {
   return jspb.Message.getField(this, 11) != null;
+};
+
+
+/**
+ * optional int64 aifs_id = 12;
+ * @return {number}
+ */
+proto.operations_ecosys.IncidentReport.prototype.getAifsId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.operations_ecosys.IncidentReport} returns this
+ */
+proto.operations_ecosys.IncidentReport.prototype.setAifsId = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
 };
 
 
@@ -10281,6 +12505,1361 @@ proto.operations_ecosys.OrderByIncidentReport.prototype.getOrderBy = function() 
  * @return {!proto.operations_ecosys.OrderByIncidentReport} returns this
  */
 proto.operations_ecosys.OrderByIncidentReport.prototype.setOrderBy = function(value) {
+  return jspb.Message.setProto3EnumField(this, 2, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.CameraIot.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.CameraIot.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.CameraIot} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIot.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    cameraIotId: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    name: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    camera: (f = msg.getCamera()) && proto.operations_ecosys.Camera.toObject(includeInstance, f),
+    gate: (f = msg.getGate()) && iot_prototype_pb.GateState.toObject(includeInstance, f),
+    fireAlarm: (f = msg.getFireAlarm()) && iot_prototype_pb.FireAlarmState.toObject(includeInstance, f),
+    cpuTemperature: (f = msg.getCpuTemperature()) && iot_prototype_pb.CpuTempState.toObject(includeInstance, f),
+    type: jspb.Message.getFieldWithDefault(msg, 7, 0)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.CameraIot}
+ */
+proto.operations_ecosys.CameraIot.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.CameraIot;
+  return proto.operations_ecosys.CameraIot.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.CameraIot} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.CameraIot}
+ */
+proto.operations_ecosys.CameraIot.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setCameraIotId(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setName(value);
+      break;
+    case 3:
+      var value = new proto.operations_ecosys.Camera;
+      reader.readMessage(value,proto.operations_ecosys.Camera.deserializeBinaryFromReader);
+      msg.setCamera(value);
+      break;
+    case 4:
+      var value = new iot_prototype_pb.GateState;
+      reader.readMessage(value,iot_prototype_pb.GateState.deserializeBinaryFromReader);
+      msg.setGate(value);
+      break;
+    case 5:
+      var value = new iot_prototype_pb.FireAlarmState;
+      reader.readMessage(value,iot_prototype_pb.FireAlarmState.deserializeBinaryFromReader);
+      msg.setFireAlarm(value);
+      break;
+    case 6:
+      var value = new iot_prototype_pb.CpuTempState;
+      reader.readMessage(value,iot_prototype_pb.CpuTempState.deserializeBinaryFromReader);
+      msg.setCpuTemperature(value);
+      break;
+    case 7:
+      var value = /** @type {!proto.operations_ecosys.CameraIot.MessageType} */ (reader.readEnum());
+      msg.setType(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.CameraIot.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.CameraIot.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.CameraIot} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIot.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getCameraIotId();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getName();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getCamera();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      proto.operations_ecosys.Camera.serializeBinaryToWriter
+    );
+  }
+  f = message.getGate();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      iot_prototype_pb.GateState.serializeBinaryToWriter
+    );
+  }
+  f = message.getFireAlarm();
+  if (f != null) {
+    writer.writeMessage(
+      5,
+      f,
+      iot_prototype_pb.FireAlarmState.serializeBinaryToWriter
+    );
+  }
+  f = message.getCpuTemperature();
+  if (f != null) {
+    writer.writeMessage(
+      6,
+      f,
+      iot_prototype_pb.CpuTempState.serializeBinaryToWriter
+    );
+  }
+  f = message.getType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      7,
+      f
+    );
+  }
+};
+
+
+/**
+ * @enum {number}
+ */
+proto.operations_ecosys.CameraIot.MessageType = {
+  INITIAL: 0,
+  CHANGE_GATE: 1,
+  CHANGE_FIRE_ALARM: 2,
+  CHANGE_CPU_TEMP: 3
+};
+
+/**
+ * optional int64 camera_iot_id = 1;
+ * @return {number}
+ */
+proto.operations_ecosys.CameraIot.prototype.getCameraIotId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+ */
+proto.operations_ecosys.CameraIot.prototype.setCameraIotId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional string name = 2;
+ * @return {string}
+ */
+proto.operations_ecosys.CameraIot.prototype.getName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+ */
+proto.operations_ecosys.CameraIot.prototype.setName = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional Camera camera = 3;
+ * @return {?proto.operations_ecosys.Camera}
+ */
+proto.operations_ecosys.CameraIot.prototype.getCamera = function() {
+  return /** @type{?proto.operations_ecosys.Camera} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.Camera, 3));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.Camera|undefined} value
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+*/
+proto.operations_ecosys.CameraIot.prototype.setCamera = function(value) {
+  return jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+ */
+proto.operations_ecosys.CameraIot.prototype.clearCamera = function() {
+  return this.setCamera(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIot.prototype.hasCamera = function() {
+  return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional gate_prototype.GateState gate = 4;
+ * @return {?proto.gate_prototype.GateState}
+ */
+proto.operations_ecosys.CameraIot.prototype.getGate = function() {
+  return /** @type{?proto.gate_prototype.GateState} */ (
+    jspb.Message.getWrapperField(this, iot_prototype_pb.GateState, 4));
+};
+
+
+/**
+ * @param {?proto.gate_prototype.GateState|undefined} value
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+*/
+proto.operations_ecosys.CameraIot.prototype.setGate = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+ */
+proto.operations_ecosys.CameraIot.prototype.clearGate = function() {
+  return this.setGate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIot.prototype.hasGate = function() {
+  return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional gate_prototype.FireAlarmState fire_alarm = 5;
+ * @return {?proto.gate_prototype.FireAlarmState}
+ */
+proto.operations_ecosys.CameraIot.prototype.getFireAlarm = function() {
+  return /** @type{?proto.gate_prototype.FireAlarmState} */ (
+    jspb.Message.getWrapperField(this, iot_prototype_pb.FireAlarmState, 5));
+};
+
+
+/**
+ * @param {?proto.gate_prototype.FireAlarmState|undefined} value
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+*/
+proto.operations_ecosys.CameraIot.prototype.setFireAlarm = function(value) {
+  return jspb.Message.setWrapperField(this, 5, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+ */
+proto.operations_ecosys.CameraIot.prototype.clearFireAlarm = function() {
+  return this.setFireAlarm(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIot.prototype.hasFireAlarm = function() {
+  return jspb.Message.getField(this, 5) != null;
+};
+
+
+/**
+ * optional gate_prototype.CpuTempState cpu_temperature = 6;
+ * @return {?proto.gate_prototype.CpuTempState}
+ */
+proto.operations_ecosys.CameraIot.prototype.getCpuTemperature = function() {
+  return /** @type{?proto.gate_prototype.CpuTempState} */ (
+    jspb.Message.getWrapperField(this, iot_prototype_pb.CpuTempState, 6));
+};
+
+
+/**
+ * @param {?proto.gate_prototype.CpuTempState|undefined} value
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+*/
+proto.operations_ecosys.CameraIot.prototype.setCpuTemperature = function(value) {
+  return jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+ */
+proto.operations_ecosys.CameraIot.prototype.clearCpuTemperature = function() {
+  return this.setCpuTemperature(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIot.prototype.hasCpuTemperature = function() {
+  return jspb.Message.getField(this, 6) != null;
+};
+
+
+/**
+ * optional MessageType type = 7;
+ * @return {!proto.operations_ecosys.CameraIot.MessageType}
+ */
+proto.operations_ecosys.CameraIot.prototype.getType = function() {
+  return /** @type {!proto.operations_ecosys.CameraIot.MessageType} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.CameraIot.MessageType} value
+ * @return {!proto.operations_ecosys.CameraIot} returns this
+ */
+proto.operations_ecosys.CameraIot.prototype.setType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 7, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.Camera.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.Camera.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.Camera} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.Camera.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    url: jspb.Message.getFieldWithDefault(msg, 1, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.Camera}
+ */
+proto.operations_ecosys.Camera.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.Camera;
+  return proto.operations_ecosys.Camera.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.Camera} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.Camera}
+ */
+proto.operations_ecosys.Camera.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUrl(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.Camera.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.Camera.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.Camera} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.Camera.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getUrl();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string url = 1;
+ * @return {string}
+ */
+proto.operations_ecosys.Camera.prototype.getUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.operations_ecosys.Camera} returns this
+ */
+proto.operations_ecosys.Camera.prototype.setUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.CameraIotResponse.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.CameraIotResponse} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIotResponse.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    response: (f = msg.getResponse()) && proto.operations_ecosys.Response.toObject(includeInstance, f),
+    cameraIot: (f = msg.getCameraIot()) && proto.operations_ecosys.CameraIot.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.CameraIotResponse}
+ */
+proto.operations_ecosys.CameraIotResponse.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.CameraIotResponse;
+  return proto.operations_ecosys.CameraIotResponse.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.CameraIotResponse} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.CameraIotResponse}
+ */
+proto.operations_ecosys.CameraIotResponse.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.operations_ecosys.Response;
+      reader.readMessage(value,proto.operations_ecosys.Response.deserializeBinaryFromReader);
+      msg.setResponse(value);
+      break;
+    case 2:
+      var value = new proto.operations_ecosys.CameraIot;
+      reader.readMessage(value,proto.operations_ecosys.CameraIot.deserializeBinaryFromReader);
+      msg.setCameraIot(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.CameraIotResponse.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.CameraIotResponse} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIotResponse.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getResponse();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.operations_ecosys.Response.serializeBinaryToWriter
+    );
+  }
+  f = message.getCameraIot();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.operations_ecosys.CameraIot.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional Response response = 1;
+ * @return {?proto.operations_ecosys.Response}
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.getResponse = function() {
+  return /** @type{?proto.operations_ecosys.Response} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.Response, 1));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.Response|undefined} value
+ * @return {!proto.operations_ecosys.CameraIotResponse} returns this
+*/
+proto.operations_ecosys.CameraIotResponse.prototype.setResponse = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIotResponse} returns this
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.clearResponse = function() {
+  return this.setResponse(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.hasResponse = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional CameraIot camera_iot = 2;
+ * @return {?proto.operations_ecosys.CameraIot}
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.getCameraIot = function() {
+  return /** @type{?proto.operations_ecosys.CameraIot} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.CameraIot, 2));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.CameraIot|undefined} value
+ * @return {!proto.operations_ecosys.CameraIotResponse} returns this
+*/
+proto.operations_ecosys.CameraIotResponse.prototype.setCameraIot = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIotResponse} returns this
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.clearCameraIot = function() {
+  return this.setCameraIot(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIotResponse.prototype.hasCameraIot = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.CameraIotFilter.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.CameraIotFilter.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.CameraIotFilter} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIotFilter.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    field: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    comparisons: (f = msg.getComparisons()) && proto.operations_ecosys.Filter.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.CameraIotFilter}
+ */
+proto.operations_ecosys.CameraIotFilter.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.CameraIotFilter;
+  return proto.operations_ecosys.CameraIotFilter.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.CameraIotFilter} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.CameraIotFilter}
+ */
+proto.operations_ecosys.CameraIotFilter.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {!proto.operations_ecosys.CameraIotFilter.Field} */ (reader.readEnum());
+      msg.setField(value);
+      break;
+    case 2:
+      var value = new proto.operations_ecosys.Filter;
+      reader.readMessage(value,proto.operations_ecosys.Filter.deserializeBinaryFromReader);
+      msg.setComparisons(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.CameraIotFilter.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.CameraIotFilter.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.CameraIotFilter} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIotFilter.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getField();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1,
+      f
+    );
+  }
+  f = message.getComparisons();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.operations_ecosys.Filter.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * @enum {number}
+ */
+proto.operations_ecosys.CameraIotFilter.Field = {
+  CAMERA_IOT_ID: 0
+};
+
+/**
+ * optional Field field = 1;
+ * @return {!proto.operations_ecosys.CameraIotFilter.Field}
+ */
+proto.operations_ecosys.CameraIotFilter.prototype.getField = function() {
+  return /** @type {!proto.operations_ecosys.CameraIotFilter.Field} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.CameraIotFilter.Field} value
+ * @return {!proto.operations_ecosys.CameraIotFilter} returns this
+ */
+proto.operations_ecosys.CameraIotFilter.prototype.setField = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1, value);
+};
+
+
+/**
+ * optional Filter comparisons = 2;
+ * @return {?proto.operations_ecosys.Filter}
+ */
+proto.operations_ecosys.CameraIotFilter.prototype.getComparisons = function() {
+  return /** @type{?proto.operations_ecosys.Filter} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.Filter, 2));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.Filter|undefined} value
+ * @return {!proto.operations_ecosys.CameraIotFilter} returns this
+*/
+proto.operations_ecosys.CameraIotFilter.prototype.setComparisons = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIotFilter} returns this
+ */
+proto.operations_ecosys.CameraIotFilter.prototype.clearComparisons = function() {
+  return this.setComparisons(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIotFilter.prototype.hasComparisons = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.operations_ecosys.CameraIotQuery.repeatedFields_ = [1];
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.CameraIotQuery.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.CameraIotQuery} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIotQuery.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    filtersList: jspb.Message.toObjectList(msg.getFiltersList(),
+    proto.operations_ecosys.CameraIotFilter.toObject, includeInstance),
+    limit: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    skip: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    orderBy: (f = msg.getOrderBy()) && proto.operations_ecosys.OrderByCameraIot.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.CameraIotQuery}
+ */
+proto.operations_ecosys.CameraIotQuery.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.CameraIotQuery;
+  return proto.operations_ecosys.CameraIotQuery.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.CameraIotQuery} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.CameraIotQuery}
+ */
+proto.operations_ecosys.CameraIotQuery.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.operations_ecosys.CameraIotFilter;
+      reader.readMessage(value,proto.operations_ecosys.CameraIotFilter.deserializeBinaryFromReader);
+      msg.addFilters(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLimit(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setSkip(value);
+      break;
+    case 4:
+      var value = new proto.operations_ecosys.OrderByCameraIot;
+      reader.readMessage(value,proto.operations_ecosys.OrderByCameraIot.deserializeBinaryFromReader);
+      msg.setOrderBy(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.CameraIotQuery.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.CameraIotQuery} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.CameraIotQuery.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getFiltersList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      1,
+      f,
+      proto.operations_ecosys.CameraIotFilter.serializeBinaryToWriter
+    );
+  }
+  f = message.getLimit();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = message.getSkip();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
+  f = message.getOrderBy();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      proto.operations_ecosys.OrderByCameraIot.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * repeated CameraIotFilter filters = 1;
+ * @return {!Array<!proto.operations_ecosys.CameraIotFilter>}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.getFiltersList = function() {
+  return /** @type{!Array<!proto.operations_ecosys.CameraIotFilter>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.operations_ecosys.CameraIotFilter, 1));
+};
+
+
+/**
+ * @param {!Array<!proto.operations_ecosys.CameraIotFilter>} value
+ * @return {!proto.operations_ecosys.CameraIotQuery} returns this
+*/
+proto.operations_ecosys.CameraIotQuery.prototype.setFiltersList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.CameraIotFilter=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.operations_ecosys.CameraIotFilter}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.addFilters = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.operations_ecosys.CameraIotFilter, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.operations_ecosys.CameraIotQuery} returns this
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.clearFiltersList = function() {
+  return this.setFiltersList([]);
+};
+
+
+/**
+ * optional int64 limit = 2;
+ * @return {number}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.getLimit = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.operations_ecosys.CameraIotQuery} returns this
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.setLimit = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 skip = 3;
+ * @return {number}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.getSkip = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.operations_ecosys.CameraIotQuery} returns this
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.setSkip = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional OrderByCameraIot order_by = 4;
+ * @return {?proto.operations_ecosys.OrderByCameraIot}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.getOrderBy = function() {
+  return /** @type{?proto.operations_ecosys.OrderByCameraIot} */ (
+    jspb.Message.getWrapperField(this, proto.operations_ecosys.OrderByCameraIot, 4));
+};
+
+
+/**
+ * @param {?proto.operations_ecosys.OrderByCameraIot|undefined} value
+ * @return {!proto.operations_ecosys.CameraIotQuery} returns this
+*/
+proto.operations_ecosys.CameraIotQuery.prototype.setOrderBy = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.operations_ecosys.CameraIotQuery} returns this
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.clearOrderBy = function() {
+  return this.setOrderBy(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.operations_ecosys.CameraIotQuery.prototype.hasOrderBy = function() {
+  return jspb.Message.getField(this, 4) != null;
+};
+
+
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.operations_ecosys.OrderByCameraIot.prototype.toObject = function(opt_includeInstance) {
+  return proto.operations_ecosys.OrderByCameraIot.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.operations_ecosys.OrderByCameraIot} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.OrderByCameraIot.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    field: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    orderBy: jspb.Message.getFieldWithDefault(msg, 2, 0)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.operations_ecosys.OrderByCameraIot}
+ */
+proto.operations_ecosys.OrderByCameraIot.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.operations_ecosys.OrderByCameraIot;
+  return proto.operations_ecosys.OrderByCameraIot.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.operations_ecosys.OrderByCameraIot} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.operations_ecosys.OrderByCameraIot}
+ */
+proto.operations_ecosys.OrderByCameraIot.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {!proto.operations_ecosys.CameraIotFilter.Field} */ (reader.readEnum());
+      msg.setField(value);
+      break;
+    case 2:
+      var value = /** @type {!proto.operations_ecosys.OrderBy} */ (reader.readEnum());
+      msg.setOrderBy(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.operations_ecosys.OrderByCameraIot.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.operations_ecosys.OrderByCameraIot.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.operations_ecosys.OrderByCameraIot} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.operations_ecosys.OrderByCameraIot.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getField();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1,
+      f
+    );
+  }
+  f = message.getOrderBy();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional CameraIotFilter.Field field = 1;
+ * @return {!proto.operations_ecosys.CameraIotFilter.Field}
+ */
+proto.operations_ecosys.OrderByCameraIot.prototype.getField = function() {
+  return /** @type {!proto.operations_ecosys.CameraIotFilter.Field} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.CameraIotFilter.Field} value
+ * @return {!proto.operations_ecosys.OrderByCameraIot} returns this
+ */
+proto.operations_ecosys.OrderByCameraIot.prototype.setField = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1, value);
+};
+
+
+/**
+ * optional OrderBy order_by = 2;
+ * @return {!proto.operations_ecosys.OrderBy}
+ */
+proto.operations_ecosys.OrderByCameraIot.prototype.getOrderBy = function() {
+  return /** @type {!proto.operations_ecosys.OrderBy} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {!proto.operations_ecosys.OrderBy} value
+ * @return {!proto.operations_ecosys.OrderByCameraIot} returns this
+ */
+proto.operations_ecosys.OrderByCameraIot.prototype.setOrderBy = function(value) {
   return jspb.Message.setProto3EnumField(this, 2, value);
 };
 

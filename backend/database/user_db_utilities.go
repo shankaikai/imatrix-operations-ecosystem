@@ -15,21 +15,25 @@ const (
 	USER_DB_TABLE_NAME = "user"
 
 	// User table fields
-	USER_DB_ID           = "user_id"
-	USER_DB_TYPE         = "user_type"
-	USER_DB_NAME         = "name"
-	USER_DB_EMAIL        = "email"
-	USER_DB_PHONE_NUM    = "phone_number"
-	USER_DB_TELE_HANDLE  = "telegram_handle"
-	USER_DB_IMG          = "user_security_img"
-	USER_DB_PART_TIMER   = "is_part_timer"
-	USER_DB_TELE_CHAT_ID = "tele_chat_id"
+	USER_DB_ID              = "user_id"
+	USER_DB_TYPE            = "user_type"
+	USER_DB_NAME            = "name"
+	USER_DB_EMAIL           = "email"
+	USER_DB_PHONE_NUM       = "phone_number"
+	USER_DB_TELE_HANDLE     = "telegram_handle"
+	USER_DB_IMG             = "user_security_img"
+	USER_DB_PART_TIMER      = "is_part_timer"
+	USER_DB_TELE_USER_ID    = "tele_user_id"
+	USER_DB_NONCE           = "nonce"
+	USER_DB_SECURITY_STRING = "security_string"
+	USER_DB_HASHED_PASSWORD = "hashed_password"
 )
 
 // Returns the fields of the user table
 // in a specific order.
 // Note that IDs are auto incremented and should
 // not be modified manually. Ommits ID in resulting string.
+// Nonce are also omitted because they should not be inserted directly
 func getUserTableFields() string {
 	userTableFields := []string{
 		USER_DB_TYPE,
@@ -39,7 +43,9 @@ func getUserTableFields() string {
 		USER_DB_TELE_HANDLE,
 		USER_DB_IMG,
 		USER_DB_PART_TIMER,
-		USER_DB_TELE_CHAT_ID,
+		USER_DB_TELE_USER_ID,
+		USER_DB_SECURITY_STRING,
+		USER_DB_HASHED_PASSWORD,
 	}
 
 	return strings.Join(userTableFields, ",")
@@ -49,18 +55,19 @@ func getUserTableFields() string {
 // order given in getUserTableFields.
 // Returns the values of the user fields in the
 // order that is specified in getUserTableFields
-func orderUserFields(user *pb.User) string {
+func orderUserFields(fullUser *pb.FullUser) string {
 	output := ""
 
-	output += "'" + getUserDBTypeStringFromProto(user.UserType) + "'" + ", "
-	output += "'" + user.Name + "'" + ", "
-	output += "'" + user.Email + "'" + ", "
-	output += "'" + user.PhoneNumber + "'" + ", "
-	output += "'" + user.TelegramHandle + "'" + ", "
-	output += "'" + user.UserSecurityImg + "'" + ", "
-	output += strconv.FormatBool(user.IsPartTimer) + ", "
-	output += "'" + strconv.Itoa(int(user.TeleChatId)) + "'"
-
+	output += "'" + getUserDBTypeStringFromProto(fullUser.User.UserType) + "'" + ", "
+	output += "'" + fullUser.User.Name + "'" + ", "
+	output += "'" + fullUser.User.Email + "'" + ", "
+	output += "'" + fullUser.User.PhoneNumber + "'" + ", "
+	output += "'" + fullUser.User.TelegramHandle + "'" + ", "
+	output += "'" + fullUser.User.UserSecurityImg + "'" + ", "
+	output += strconv.FormatBool(fullUser.User.IsPartTimer) + ", "
+	output += "'" + strconv.Itoa(int(fullUser.User.TeleUserId)) + "'" + ", "
+	output += "'" + fullUser.SecurityString + "'" + ", "
+	output += "'" + fullUser.HashedPassword + "'"
 	return output
 }
 
@@ -116,7 +123,8 @@ func getFormattedUserFilters(query *pb.UserQuery, needLimit bool, needOrder bool
 
 		switch filter.Field {
 		case pb.UserFilter_USER_ID, pb.UserFilter_TYPE, pb.UserFilter_NAME,
-			pb.UserFilter_EMAIL, pb.UserFilter_PHONE_NUMBER, pb.UserFilter_TELEGRAM_HANDLE:
+			pb.UserFilter_EMAIL, pb.UserFilter_PHONE_NUMBER, pb.UserFilter_TELEGRAM_HANDLE,
+			pb.UserFilter_TELEGRAM_USER_ID:
 			if hasQuotes {
 				filters = append(filters, formatFilterCondition(filter.Comparisons, userFilterToDBCol(filter.Field), true))
 			} else {
@@ -203,8 +211,8 @@ func getFilledUserFields(user *pb.User) string {
 
 	userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_PART_TIMER, strconv.FormatBool(user.IsPartTimer), false))
 
-	if user.TeleChatId > 0 {
-		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_TELE_CHAT_ID, strconv.Itoa(int(user.TeleChatId)), true))
+	if user.TeleUserId > 0 {
+		userTableFields = append(userTableFields, formatFieldEqVal(USER_DB_TELE_USER_ID, strconv.Itoa(int(user.TeleUserId)), true))
 	}
 
 	return strings.Join(userTableFields, ",")
@@ -227,22 +235,47 @@ func userFilterToDBCol(filterField pb.UserFilter_Field) string {
 		output = USER_DB_TELE_HANDLE
 	case pb.UserFilter_IS_PART_TIMER:
 		output = USER_DB_PART_TIMER
+	case pb.UserFilter_TELEGRAM_USER_ID:
+		output = USER_DB_TELE_USER_ID
 	}
 
 	return output
 }
 
 // Get the user corresponding to a particular user id in the db
+// Does not contain any of the user secrets
 func idUserByUserId(db *sql.DB, userId int) (*pb.User, error) {
 	userQuery := &pb.UserQuery{Limit: 1}
 	AddUserFilter(userQuery, pb.UserFilter_USER_ID, pb.Filter_EQUAL, strconv.Itoa(userId))
 
-	users, err := GetUsers(db, userQuery)
+	users, err := GetUsers(db, userQuery, true)
 
 	user := &pb.User{}
 
 	if err == nil && len(users) > 0 {
+		internalFullUser := users[0]
+		user = internalFullUser.User
+	}
+
+	return user, err
+}
+
+// Get the full user corresponding to a particular user telegram id in the db
+// TODO: userFilterToDBCol CHANGE THIS WHEN FIGURE OUT TELE USER ID
+func IdUserByTelegramId(db *sql.DB, teleUserId int, removeSecret bool) (*pb.FullUser, error) {
+	userQuery := &pb.UserQuery{Limit: 1}
+	AddUserFilter(userQuery, pb.UserFilter_TELEGRAM_USER_ID, pb.Filter_EQUAL, strconv.Itoa(teleUserId))
+
+	users, err := GetUsers(db, userQuery, removeSecret)
+
+	user := &pb.FullUser{}
+
+	if err == nil && len(users) > 0 {
 		user = users[0]
+	}
+	if len(users) == 0 {
+		errMsg := "No users found for telegram user id " + strconv.Itoa(teleUserId)
+		return user, fmt.Errorf(errMsg)
 	}
 
 	return user, err

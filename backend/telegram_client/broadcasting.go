@@ -11,6 +11,7 @@ import (
 	pb "capstone.operations_ecosystem/backend/proto"
 )
 
+// Send a gRPC client request to the telegram bot gRPC server, letting them know that a new broadcast had been created.
 func (t *TelegramClient) InsertBroadcast(serverAddr *string, serverPort *int, broadcast *pb.Broadcast) (int64, error) {
 	fmt.Println("Sending Broadcast to Telegram Server:", broadcast.BroadcastId)
 	client, conn := t.CreateBroadcastClient(serverAddr, serverPort)
@@ -31,6 +32,8 @@ func (t *TelegramClient) InsertBroadcast(serverAddr *string, serverPort *int, br
 	return res.PrimaryKey, err
 }
 
+// Creates and returns a gRPC client for broadcasting services.
+// Note, it is the caller's responsibility to close the connection afterwards.
 func (t *TelegramClient) CreateBroadcastClient(serverAddr *string, serverPort *int) (pb.BroadcastServicesClient, *grpc.ClientConn) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))

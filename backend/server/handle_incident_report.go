@@ -9,13 +9,14 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
+// gRPC defined endpoint. Add an incident report to the DB.
 func (s *Server) AddIncidentReport(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.Response, error) {
 	defer sentry.Recover()
 
 	fmt.Println("AddIncidentReport")
 	res := &pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
-	
-	fmt.Println("reportsss",incidentReport)
+
+	fmt.Println("reportsss", incidentReport)
 	// Fill up the blank values of the pb message
 	err := s.insertDefaultIncidentReportValues(incidentReport)
 	if err != nil {
@@ -38,6 +39,9 @@ func (s *Server) AddIncidentReport(cxt context.Context, incidentReport *pb.Incid
 	return res, nil
 }
 
+// gRPC defined endpoint. Update an incident report in the DB.
+// Two copies of the incident report are stored in the DB, the original report
+// and the most updated copy of the report.
 func (s *Server) UpdateIncidentReport(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -61,6 +65,7 @@ func (s *Server) UpdateIncidentReport(cxt context.Context, incidentReport *pb.In
 	return &res, nil
 }
 
+// gRPC defined endpoint. Delete an incident report in the DB.
 func (s *Server) DeleteIncidentReport(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.Response, error) {
 	defer sentry.Recover()
 
@@ -80,6 +85,7 @@ func (s *Server) DeleteIncidentReport(cxt context.Context, incidentReport *pb.In
 	return &res, nil
 }
 
+// gRPC defined endpoint. Find incident reports in the DB. The reports are filtered out based the query.
 func (s *Server) FindIncidentReports(query *pb.IncidentReportQuery, stream pb.IncidentReportServices_FindIncidentReportsServer) error {
 	defer sentry.Recover()
 
