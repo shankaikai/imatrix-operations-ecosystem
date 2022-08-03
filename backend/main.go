@@ -30,6 +30,7 @@ func main() {
 	fakeServerFlag := flag.Bool("is_fserver", false, "Start the server or the fake server?")
 	teleClientFlag := flag.Bool("is_tclient", false, "Should we test the server as a telebot client?")
 	cliFlag := flag.Bool("use_cli", false, "Should we start a CLI?")
+	startProxyFlag := flag.Bool("is_proxy", false, "Should we start the proxy or the main backend server?")
 
 	flag.Parse()
 
@@ -48,6 +49,12 @@ func main() {
 	} else if *teleClientFlag {
 		tclient.TestTelegramBroadcasts(teleServerAddrFlag, teleServerPortFlag)
 		// tclient.TestTelegramRosters(teleServerAddrFlag, teleServerPortFlag)
+	} else if *startProxyFlag{
+		if *cliFlag {
+			go server.Proxy_main(serverAddrFlag, serverPortFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		} else {
+			server.Proxy_main(serverAddrFlag, serverPortFlag, webProxyServerAddrFlag, webProxyServerPortFlag)
+		}
 	} else if *serverFlag {
 		if *cliFlag {
 			go server.InitServer(serverAddrFlag, serverPortFlag, teleServerAddrFlag, teleServerPortFlag, testLEDAddrFlag, webProxyServerAddrFlag, webProxyServerPortFlag)

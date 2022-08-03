@@ -62,18 +62,18 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 		teleServerPort: teleServerPort,
 		testLEDAddr:    testLEDAddr,
 		CameraIot: &CameraIotStruct{
-			GateSubscriptions:      make(map[int64]map[string]chan *pb.CameraIot),
-			FireAlarmSubscriptions: make(map[int64]map[string]chan *pb.CameraIot),
-			CpuTempSubscriptions:   make(map[int64]map[string]chan *pb.CameraIot),
-			GateStates:             make(map[int64]pb.GateState_GatePosition),
-			FireAlarmStates:        make(map[int64]pb.FireAlarmState_AlarmState),
-			CpuTempStates:          make(map[int64]float64),
-			GateSubscriptionsLock: &sync.RWMutex{},
-			FireAlarmSubscriptionsLock : &sync.RWMutex{},
-			CpuTempSubscriptionsLock : &sync.RWMutex{},
-			GateStatesLock : &sync.RWMutex{},
-			FireAlarmStatesLock : &sync.RWMutex{},
-			CpuTempStatesLock : &sync.RWMutex{},
+			GateSubscriptions:          make(map[int64]map[string]chan *pb.CameraIot),
+			FireAlarmSubscriptions:     make(map[int64]map[string]chan *pb.CameraIot),
+			CpuTempSubscriptions:       make(map[int64]map[string]chan *pb.CameraIot),
+			GateStates:                 make(map[int64]pb.GateState_GatePosition),
+			FireAlarmStates:            make(map[int64]pb.FireAlarmState_AlarmState),
+			CpuTempStates:              make(map[int64]float64),
+			GateSubscriptionsLock:      &sync.RWMutex{},
+			FireAlarmSubscriptionsLock: &sync.RWMutex{},
+			CpuTempSubscriptionsLock:   &sync.RWMutex{},
+			GateStatesLock:             &sync.RWMutex{},
+			FireAlarmStatesLock:        &sync.RWMutex{},
+			CpuTempStatesLock:          &sync.RWMutex{},
 		},
 	}
 
@@ -108,7 +108,6 @@ func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, tel
 
 	server.initCameraIotService()
 
-	go Proxy_main(serverAddr, serverPort, webProxyAddr, webProxyPort)
 	grpcServer.Serve(lis)
 }
 
