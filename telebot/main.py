@@ -15,7 +15,7 @@ import time
 from TelegramController import TelegramController, TelegramMenu
 from Menus import MainMenu, OthersMenu, AdminMenu
 from grpc_servers.grpc_server import serve
-from Standalones import Registration
+from Standalones import Registration, Link
 
 from dotenv import load_dotenv
 
@@ -69,11 +69,13 @@ TController.CurrentMenu = mainMenu
 # Link TController with TeleBot 
 start_handler = CommandHandler('start', TController.startHandler)
 registration_handler = CommandHandler('register', Registration.try_open_registration_webapp)
+link_handler = CommandHandler('link', Link.try_link_via_telehandle)
 echo_handler = MessageHandler(Filters.text & (~Filters.command), TController.mainHandler)
 attachment_handler = MessageHandler(Filters.attachment & (~Filters.command), TController.attachmentHandler)
 callbackquery_handler = CallbackQueryHandler(TController.callbackqueryHandler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(registration_handler)
+dispatcher.add_handler(link_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(attachment_handler)
 dispatcher.add_handler(callbackquery_handler)

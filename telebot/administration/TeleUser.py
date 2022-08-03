@@ -48,8 +48,8 @@ class TUser:
     def ifUserExists(cls, tele_user_id: str) -> bool:
         return getOESUserFromUserID(tele_user_id) != None
 
-    # This method is important because it updates the database that the user "logged in".
-    # Or at least, it should.
+    # This method is important because it updates the user in the db
+    # For eg: if telehandle changed
     def login(self, update:Update) -> bool:
         if self.oes_user == None:
             raise Exception("Unable to login TeleUser to DB because oes_user is None.")
@@ -78,24 +78,6 @@ class TUser:
         text += "\nEmail: " + self.oes_user.email
         return text
         pass
-
-    # # JW does not recommend this because tele handles can change.
-    # @classmethod
-    # def get_from_handle(user_tele_handle: str) -> operations_ecosys_pb2.User:
-    #     filter_comparison = operations_ecosys_pb2.Filter(
-    #         comparison=operations_ecosys_pb2.Filter.EQUAL, 
-    #         value=user_tele_handle,
-    #     )
-
-    #     query_filters = [operations_ecosys_pb2.UserFilter(
-    #         field=operations_ecosys_pb2.UserFilter.TELEGRAM_HANDLE,
-    #         comparisons=filter_comparison,
-    #     )]
-
-    #     user_query = operations_ecosys_pb2.UserQuery(filters=query_filters,limit=1)
-    #     users = user_client.get_users(user_query)
-        
-    #     return users[0] if len(users) >0 else None
 
     
 

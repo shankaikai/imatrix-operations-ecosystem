@@ -126,6 +126,46 @@ def check_reg_code(registration_code:str) -> str:
         print("Error obtaining registration code:", security_string_res)
         return None
 
+# For linking
+def link_via_telehandle(tele_handle:str, tele_user_id:int) -> bool:
+    filter_comparison = operations_ecosys_pb2.Filter(
+             comparison=operations_ecosys_pb2.Filter.EQUAL, 
+             value=tele_handle,
+        )
+
+    query_filters = [operations_ecosys_pb2.UserFilter(
+             field=operations_ecosys_pb2.UserFilter.TELEGRAM_HANDLE,
+             comparisons=filter_comparison,
+        )]
+
+    user_query = operations_ecosys_pb2.UserQuery(filters=query_filters,limit=1)
+    users = get_users(user_query)
+
+    if len(users) != 1:
+        return False
+
+    users[0].tele_user_id = tele_user_id
+
+    return update_user(users[0])
+    
+
+# def get_from_handle(user_tele_handle: str) -> operations_ecosys_pb2.User:
+#     filter_comparison = operations_ecosys_pb2.Filter(
+#         comparison=operations_ecosys_pb2.Filter.EQUAL, 
+#         value=user_tele_handle,
+#     )
+
+#     query_filters = [operations_ecosys_pb2.UserFilter(
+#         field=operations_ecosys_pb2.UserFilter.TELEGRAM_HANDLE,
+#         comparisons=filter_comparison,
+#     )]
+
+#     user_query = operations_ecosys_pb2.UserQuery(filters=query_filters,limit=1)
+#     users = user_client.get_users(user_query)
+    
+#     return users[0] if len(users) >0 else None
+
+
 def get_admin_stub() -> operations_ecosys_pb2_grpc.AdminServicesStub:
     channel = grpc.insecure_channel('{}:{}'.format(utils.WEB_SERVER_ADDR, utils.WEB_SERVER_PORT))
     stub = operations_ecosys_pb2_grpc.AdminServicesStub(channel)
