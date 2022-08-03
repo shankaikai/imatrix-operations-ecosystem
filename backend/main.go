@@ -6,15 +6,10 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
-	"time"
-
-	"github.com/getsentry/sentry-go"
-	"github.com/joho/godotenv"
 
 	client "capstone.operations_ecosystem/backend/fake_client"
 	"capstone.operations_ecosystem/backend/fake_server"
@@ -38,11 +33,11 @@ func main() {
 
 	flag.Parse()
 
-	// Set up sentry
-	initSentry()
-	// Flush buffered events before the program terminates.
-	defer sentry.Flush(2 * time.Second)
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	if *fakeServerFlag {
 		if *cliFlag {
@@ -62,8 +57,8 @@ func main() {
 	} else {
 		// client.TestAdminClientUser(serverAddrFlag, serverPortFlag)
 		// client.TestAdminClientClient(serverAddrFlag, serverPortFlag)
-		// client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
-		client.TestRosteringClient(serverAddrFlag, serverPortFlag)
+		client.TestBroadcastClient(serverAddrFlag, serverPortFlag)
+		// client.TestRosteringClient(serverAddrFlag, serverPortFlag)
 		// client.TestIncidentReportClient(serverAddrFlag, serverPortFlag)
 		client.TestCameraIotClientUser(serverAddrFlag, serverPortFlag)
 	}
@@ -97,23 +92,5 @@ mainLoop:
 		default:
 			fmt.Println("Unrecognised command.")
 		}
-	}
-}
-
-func initSentry() {
-	envFilePath := ".env"
-	err := godotenv.Load(envFilePath)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = sentry.Init(sentry.ClientOptions{
-		Dsn:              os.Getenv("SENTRY_DNS"),
-		TracesSampleRate: 1.0,
-		AttachStacktrace: true,
-	})
-	if err != nil {
-		log.Fatalf("sentry.Init: %s", err)
 	}
 }

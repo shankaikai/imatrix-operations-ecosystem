@@ -8,14 +8,17 @@ import (
 	"capstone.operations_ecosystem/backend/common"
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
-	"github.com/getsentry/sentry-go"
 
 	"context"
 )
 
 // gRPC defined endpoint. Add a user in the DB.
 func (s *Server) AddUser(cxt context.Context, user *pb.FullUser) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	pk, err := db_pck.InsertUser(
@@ -36,7 +39,11 @@ func (s *Server) AddUser(cxt context.Context, user *pb.FullUser) (*pb.Response, 
 
 // gRPC defined endpoint. Update a user in the DB.
 func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	num_affected, err := db_pck.UpdateUser(
@@ -58,14 +65,17 @@ func (s *Server) UpdateUser(cxt context.Context, user *pb.User) (*pb.Response, e
 
 // gRPC defined endpoint. Delete a user in the DB.
 func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteUser(
 		s.db,
 		user,
 	)
-
 	if err != nil {
 		res.Type = pb.Response_ERROR
 		res.ErrorMessage = err.Error()
@@ -78,7 +88,11 @@ func (s *Server) DeleteUser(cxt context.Context, user *pb.User) (*pb.Response, e
 
 // gRPC defined endpoint. Find users in the DB. The users are filtered out based the query.
 func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUsersServer) error {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	fmt.Println("FindUsers", query)
 	res := pb.Response{Type: pb.Response_ACK}
@@ -109,7 +123,11 @@ func (s *Server) FindUsers(query *pb.UserQuery, stream pb.AdminServices_FindUser
 
 // gRPC defined endpoint. Add a client in the DB.
 func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	pk, err := db_pck.InsertClient(
@@ -130,7 +148,11 @@ func (s *Server) AddClient(cxt context.Context, client *pb.Client) (*pb.Response
 
 // gRPC defined endpoint. Update a client in the DB.
 func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	num_affected, err := db_pck.UpdateClients(
@@ -150,7 +172,11 @@ func (s *Server) UpdateClient(cxt context.Context, client *pb.Client) (*pb.Respo
 
 // gRPC defined endpoint. Delete a client in the DB.
 func (s *Server) DeleteClient(cxt context.Context, client *pb.Client) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteClient(
@@ -170,7 +196,11 @@ func (s *Server) DeleteClient(cxt context.Context, client *pb.Client) (*pb.Respo
 
 // gRPC defined endpoint. Find clients in the DB. The clients are filtered out based the query.
 func (s *Server) FindClients(query *pb.ClientQuery, stream pb.AdminServices_FindClientsServer) error {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	foundClients, err := db_pck.GetClients(
@@ -246,7 +276,11 @@ func (s *Server) GetWANonce(cxt context.Context, user *pb.User) (*pb.ResponseNon
 // If there are no users to be identified, a random string not attached to any
 // user will be returned.
 func (s *Server) GetSecurityString(cxt context.Context, user *pb.User) (*pb.SecurityStringResponse, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	query := &pb.UserQuery{}
@@ -300,7 +334,11 @@ func (s *Server) GetSecurityString(cxt context.Context, user *pb.User) (*pb.Secu
 // User should send a hashed password. The server will check if the password matches the user
 // and if so, sends back a token.
 func (s *Server) AuthenticateUser(cxt context.Context, loginRequest *pb.LoginRequest) (*pb.UserTokenResponse, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	query := &pb.UserQuery{}

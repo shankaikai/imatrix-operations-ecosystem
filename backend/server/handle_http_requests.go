@@ -7,13 +7,18 @@ import (
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
-	"github.com/getsentry/sentry-go"
 
 	"context"
 )
 
 // gRPC HTTP defined endpoint.
 func (s *Server) GetRosterAssignmentsForWebApp(cxt context.Context, getRequest *pb.HTTPAssignmentsGetRequest) (*pb.HTTPAssignmentResponse, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
+
 	fmt.Println("GetRosterAssignmentsFromWebApp")
 	fmt.Println(getRequest)
 
@@ -73,7 +78,11 @@ func (s *Server) GetRosterAssignmentsForWebApp(cxt context.Context, getRequest *
 // Insert a new incident report incoming from the telegram bot web
 // Assumes the creator of the incident report is the owner of the nonce in the header
 func (s *Server) PostWReportFromWebApp(ctx context.Context, postReq *pb.HTTPReportPostRequest) (*pb.HTTPMessage, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	fmt.Println("PostWReportFromWebApp recieved", postReq)
 	res := &pb.HTTPMessage{Status: 1}
@@ -90,7 +99,7 @@ func (s *Server) PostWReportFromWebApp(ctx context.Context, postReq *pb.HTTPRepo
 
 	//Convert into incidentReport
 	incidentReport := &pb.IncidentReport{
-		Creator: &pb.User{UserId: int64(postReq.TeleUserId)},
+		Creator: &pb.User{TeleUserId: int64(postReq.TeleUserId)},
 		IncidentReportContent: &pb.IncidentReportContent{
 			Title:                 postReq.Title,
 			Address:               postReq.Address,
@@ -153,6 +162,12 @@ func (s *Server) PostWReportFromWebApp(ctx context.Context, postReq *pb.HTTPRepo
 
 // gRPC HTTP defined endpoint.
 func (s *Server) PostRegistrationFormFromWebApp(cxt context.Context, req *pb.HTTPRegistrationFormRequest) (*pb.HTTPMessage, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
+
 	//Validate token
 	//Todo: Memory fault, ask Hannah
 	regOtp, err := s.validateRegistrationToken(req.Code)

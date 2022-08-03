@@ -6,12 +6,15 @@ import (
 
 	db_pck "capstone.operations_ecosystem/backend/database"
 	pb "capstone.operations_ecosystem/backend/proto"
-	"github.com/getsentry/sentry-go"
 )
 
 // gRPC defined endpoint. Add an incident report to the DB.
 func (s *Server) AddIncidentReport(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	fmt.Println("AddIncidentReport")
 	res := &pb.Response{Type: pb.Response_ACK, PrimaryKey: 1}
@@ -43,7 +46,11 @@ func (s *Server) AddIncidentReport(cxt context.Context, incidentReport *pb.Incid
 // Two copies of the incident report are stored in the DB, the original report
 // and the most updated copy of the report.
 func (s *Server) UpdateIncidentReport(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	fmt.Println("UPDATE INCIDENT REPORT ", incidentReport.IncidentReportId)
 	fmt.Println("hdsfdsfds", incidentReport)
@@ -67,7 +74,11 @@ func (s *Server) UpdateIncidentReport(cxt context.Context, incidentReport *pb.In
 
 // gRPC defined endpoint. Delete an incident report in the DB.
 func (s *Server) DeleteIncidentReport(cxt context.Context, incidentReport *pb.IncidentReport) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteIncidentReport(
@@ -87,7 +98,11 @@ func (s *Server) DeleteIncidentReport(cxt context.Context, incidentReport *pb.In
 
 // gRPC defined endpoint. Find incident reports in the DB. The reports are filtered out based the query.
 func (s *Server) FindIncidentReports(query *pb.IncidentReportQuery, stream pb.IncidentReportServices_FindIncidentReportsServer) error {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 

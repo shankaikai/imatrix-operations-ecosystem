@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	db_pck "capstone.operations_ecosystem/backend/database"
-	"github.com/getsentry/sentry-go"
 
 	pb "capstone.operations_ecosystem/backend/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,7 +13,11 @@ import (
 
 // gRPC defined endpoint. Insert a broadcast into the DB.
 func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 
@@ -45,7 +48,11 @@ func (s *Server) AddBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb
 
 // gRPC defined endpoint. Update a broadcast in the DB.
 func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	numAffected, err := db_pck.UpdateBroadcast(
@@ -66,7 +73,11 @@ func (s *Server) UpdateBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 
 // gRPC defined endpoint. Delete a broadcast in the DB.
 func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	res := pb.Response{Type: pb.Response_ACK}
 	numDel, err := db_pck.DeleteBroadcast(
@@ -86,7 +97,11 @@ func (s *Server) DeleteBroadcast(cxt context.Context, broadcast *pb.Broadcast) (
 
 // gRPC defined endpoint. Find broadcasts in the DB. The broadcasts are filtered out based the query.
 func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastServices_FindBroadcastsServer) error {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	fmt.Println("FindBroadcasts Start")
 	res := pb.Response{Type: pb.Response_ACK}
@@ -121,7 +136,11 @@ func (s *Server) FindBroadcasts(query *pb.BroadcastQuery, stream pb.BroadcastSer
 
 // gRPC defined endpoint. Update a broadcast recipient in the DB.
 func (s *Server) UpdateBroadcastRecipient(cxt context.Context, broadcastRecipient *pb.BroadcastRecipient) (*pb.Response, error) {
-	defer sentry.Recover()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered", r)
+		}
+	}()
 
 	fmt.Println("UpdateBroadcastRecipient", broadcastRecipient)
 	res := pb.Response{Type: pb.Response_ACK}
