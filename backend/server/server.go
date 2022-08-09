@@ -39,6 +39,8 @@ type ServerConfig struct {
 	Aifs3Id int `json:"AIFS3_USER_ID"`
 }
 
+// Initialises the Server with all the necessary configurations.
+// Server starts and listens at the given address and port.
 func InitServer(serverAddr *string, serverPort *int, teleServerAddr *string, teleServerPort *int, testLEDAddr *string) {
 	fmt.Println("Starting gRPC server...")
 	server := Server{

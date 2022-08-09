@@ -604,7 +604,7 @@ func updateAssignmentsOfRoster(db *sql.DB, roster *pb.Roster, dbLock *sync.Mutex
 	// See if any need to be removed
 	for _, id := range currentAsgnIds {
 		// change the is_assigned flag to false
-		query = &pb.RosterQuery{} //TODO HERE
+		query = &pb.RosterQuery{}
 		AddRosterFilter(query, pb.RosterFilter_GUARD_ASSIGNED_ID, pb.Filter_EQUAL, strconv.Itoa(id))
 		AddRosterFilter(query, pb.RosterFilter_ROSTER_ID, pb.Filter_EQUAL, strconv.Itoa(int(roster.RosteringId)))
 		_, err := UpdateRosterAssignments(db, &pb.RosterAssignement{

@@ -18,8 +18,7 @@ func testInsertBroadcast(serverAddr *string, serverPort *int) {
 	broadcast.Urgency = operations_ecosys.Broadcast_LOW
 	for _, rep := range broadcast.Recipients {
 		for i, brep := range rep.Recipient {
-			// TODO: REMOVE this is emily's chat id
-			brep.Recipient.TeleChatId = 223102557 // emily: 29333507
+			brep.Recipient.TeleChatId = -1
 			brep.BroadcastRecipientsId = int64(20 + i)
 		}
 	}

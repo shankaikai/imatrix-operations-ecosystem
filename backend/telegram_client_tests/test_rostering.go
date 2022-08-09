@@ -17,8 +17,7 @@ func testInsertRoster(serverAddr *string, serverPort *int) {
 		roster := fclient.CreateFakeRoster(2)
 		for _, guardAssigned := range roster.GuardAssigned {
 			user := guardAssigned.GuardAssigned.Employee
-			// TODO: REMOVE this is emily's chat id
-			user.TeleChatId = 223102557 // emily: 29333507
+			user.TeleChatId = -1
 		}
 		rosters = append(rosters, roster)
 	}
