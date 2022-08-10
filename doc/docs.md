@@ -4,9 +4,12 @@
 ## Table of Contents
 
 - [http_webapp.proto](#http_webapp-proto)
-    - [HTTPFormMessage](#http_webapp-HTTPFormMessage)
+    - [HTTPAssignmentResponse](#http_webapp-HTTPAssignmentResponse)
+    - [HTTPAssignmentsGetRequest](#http_webapp-HTTPAssignmentsGetRequest)
     - [HTTPMessage](#http_webapp-HTTPMessage)
-    - [HTTPRosterMessage](#http_webapp-HTTPRosterMessage)
+    - [HTTPRegistrationFormRequest](#http_webapp-HTTPRegistrationFormRequest)
+    - [HTTPReportPostRequest](#http_webapp-HTTPReportPostRequest)
+    - [HTTPRosterResponse](#http_webapp-HTTPRosterResponse)
   
     - [WebAppServices](#http_webapp-WebAppServices)
   
@@ -46,18 +49,28 @@
     - [EmployeeEvaluation](#operations_ecosys-EmployeeEvaluation)
     - [EmployeeEvaluationResponse](#operations_ecosys-EmployeeEvaluationResponse)
     - [Filter](#operations_ecosys-Filter)
+    - [FullUser](#operations_ecosys-FullUser)
     - [IncidentReport](#operations_ecosys-IncidentReport)
     - [IncidentReportContent](#operations_ecosys-IncidentReportContent)
     - [IncidentReportFilter](#operations_ecosys-IncidentReportFilter)
     - [IncidentReportQuery](#operations_ecosys-IncidentReportQuery)
     - [IncidentReportResponse](#operations_ecosys-IncidentReportResponse)
+    - [LoginRequest](#operations_ecosys-LoginRequest)
     - [OrderByBroadcast](#operations_ecosys-OrderByBroadcast)
     - [OrderByCameraIot](#operations_ecosys-OrderByCameraIot)
     - [OrderByClient](#operations_ecosys-OrderByClient)
     - [OrderByIncidentReport](#operations_ecosys-OrderByIncidentReport)
     - [OrderByQuery](#operations_ecosys-OrderByQuery)
+    - [OrderByRegistrationOTP](#operations_ecosys-OrderByRegistrationOTP)
     - [OrderByRoster](#operations_ecosys-OrderByRoster)
     - [OrderByUser](#operations_ecosys-OrderByUser)
+    - [OrderByUserToken](#operations_ecosys-OrderByUserToken)
+    - [RegistrationCode](#operations_ecosys-RegistrationCode)
+    - [RegistrationCodeRequest](#operations_ecosys-RegistrationCodeRequest)
+    - [RegistrationCodeResponse](#operations_ecosys-RegistrationCodeResponse)
+    - [RegistrationOTP](#operations_ecosys-RegistrationOTP)
+    - [RegistrationOTPFilter](#operations_ecosys-RegistrationOTPFilter)
+    - [RegistrationOTPQuery](#operations_ecosys-RegistrationOTPQuery)
     - [Response](#operations_ecosys-Response)
     - [ResponseNonce](#operations_ecosys-ResponseNonce)
     - [Roster](#operations_ecosys-Roster)
@@ -66,9 +79,14 @@
     - [RosterFilter](#operations_ecosys-RosterFilter)
     - [RosterQuery](#operations_ecosys-RosterQuery)
     - [RosterResponse](#operations_ecosys-RosterResponse)
+    - [SecurityStringResponse](#operations_ecosys-SecurityStringResponse)
     - [User](#operations_ecosys-User)
     - [UserFilter](#operations_ecosys-UserFilter)
     - [UserQuery](#operations_ecosys-UserQuery)
+    - [UserToken](#operations_ecosys-UserToken)
+    - [UserTokenFilter](#operations_ecosys-UserTokenFilter)
+    - [UserTokenQuery](#operations_ecosys-UserTokenQuery)
+    - [UserTokenResponse](#operations_ecosys-UserTokenResponse)
     - [UsersResponse](#operations_ecosys-UsersResponse)
   
     - [AvailabilityFilter.Field](#operations_ecosys-AvailabilityFilter-Field)
@@ -82,14 +100,19 @@
     - [IncidentReport.ReportType](#operations_ecosys-IncidentReport-ReportType)
     - [IncidentReportFilter.Field](#operations_ecosys-IncidentReportFilter-Field)
     - [OrderBy](#operations_ecosys-OrderBy)
+    - [RegistrationCodeRequest.CodeType](#operations_ecosys-RegistrationCodeRequest-CodeType)
+    - [RegistrationCodeResponse.CodeType](#operations_ecosys-RegistrationCodeResponse-CodeType)
+    - [RegistrationOTPFilter.Field](#operations_ecosys-RegistrationOTPFilter-Field)
     - [Response.Type](#operations_ecosys-Response-Type)
     - [Roster.Status](#operations_ecosys-Roster-Status)
     - [RosterFilter.Field](#operations_ecosys-RosterFilter-Field)
     - [User.UserType](#operations_ecosys-User-UserType)
     - [UserFilter.Field](#operations_ecosys-UserFilter-Field)
+    - [UserTokenFilter.Field](#operations_ecosys-UserTokenFilter-Field)
   
     - [AdminServices](#operations_ecosys-AdminServices)
     - [BroadcastServices](#operations_ecosys-BroadcastServices)
+    - [CameraIotServices](#operations_ecosys-CameraIotServices)
     - [IncidentReportServices](#operations_ecosys-IncidentReportServices)
     - [RosterServices](#operations_ecosys-RosterServices)
   
@@ -104,15 +127,34 @@
 
 
 
-<a name="http_webapp-HTTPFormMessage"></a>
+<a name="http_webapp-HTTPAssignmentResponse"></a>
 
-### HTTPFormMessage
+### HTTPAssignmentResponse
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| value | [string](#string) |  |  |
+| response | [HTTPMessage](#http_webapp-HTTPMessage) |  |  |
+| rosters | [HTTPRosterResponse](#http_webapp-HTTPRosterResponse) | repeated |  |
+
+
+
+
+
+
+<a name="http_webapp-HTTPAssignmentsGetRequest"></a>
+
+### HTTPAssignmentsGetRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| twan | [string](#string) |  |  |
+| tele_user_id | [int64](#int64) |  |  |
+| startDate | [string](#string) |  |  |
+| endDate | [string](#string) |  |  |
 
 
 
@@ -127,22 +169,79 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| status | [int64](#int64) |  | status==0 denotes no issues. status &gt; 0 denotes some issue. |
 | value | [string](#string) |  |  |
+| valueArr | [string](#string) | repeated |  |
 
 
 
 
 
 
-<a name="http_webapp-HTTPRosterMessage"></a>
+<a name="http_webapp-HTTPRegistrationFormRequest"></a>
 
-### HTTPRosterMessage
+### HTTPRegistrationFormRequest
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| roster_id | [int64](#int64) |  |  |
+| code | [string](#string) |  |  |
+| tele_user_id | [int64](#int64) |  |  |
+| name | [string](#string) |  |  |
+| email | [string](#string) |  |  |
+| phoneNumber | [string](#string) |  |  |
+| loginString | [string](#string) |  |  |
+| hasedLoginString | [string](#string) |  |  |
+| isPartTime | [bool](#bool) |  |  |
+| tele_handle | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="http_webapp-HTTPReportPostRequest"></a>
+
+### HTTPReportPostRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| twan | [string](#string) |  |  |
+| tele_user_id | [int64](#int64) |  |  |
+| title | [string](#string) |  |  |
+| report_type | [string](#string) |  |  |
+| address | [string](#string) |  |  |
+| date | [string](#string) |  |  |
+| time | [string](#string) |  |  |
+| details | [string](#string) |  |  |
+| isPeopleInjured | [bool](#bool) |  |  |
+| injuryDetails | [string](#string) |  |  |
+| isPoliceNotified | [bool](#bool) |  |  |
+| isPropertyStolen | [bool](#bool) |  |  |
+| propertyStolenDetails | [string](#string) |  |  |
+| isActionTaken | [bool](#bool) |  |  |
+| actionDetails | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="http_webapp-HTTPRosterResponse"></a>
+
+### HTTPRosterResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| aifs_id | [int64](#int64) |  |  |
+| startDatetime | [string](#string) |  |  |
+| endDatetime | [string](#string) |  |  |
+| addresses | [string](#string) | repeated |  |
 
 
 
@@ -162,8 +261,9 @@
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| GetRosterAssignmentsForWebApp | [HTTPRosterMessage](#http_webapp-HTTPRosterMessage) | [HTTPMessage](#http_webapp-HTTPMessage) | &lt;&gt;&lt;&gt; Telegram WebApp - HTTP &lt;&gt;&lt;&gt; |
-| PostWReportFromWebApp | [.operations_ecosys.IncidentReport](#operations_ecosys-IncidentReport) | [HTTPMessage](#http_webapp-HTTPMessage) |  |
+| GetRosterAssignmentsForWebApp | [HTTPAssignmentsGetRequest](#http_webapp-HTTPAssignmentsGetRequest) | [HTTPAssignmentResponse](#http_webapp-HTTPAssignmentResponse) | &lt;&gt;&lt;&gt; Telegram WebApp - HTTP &lt;&gt;&lt;&gt; |
+| PostWReportFromWebApp | [HTTPReportPostRequest](#http_webapp-HTTPReportPostRequest) | [HTTPMessage](#http_webapp-HTTPMessage) |  |
+| PostRegistrationFormFromWebApp | [HTTPRegistrationFormRequest](#http_webapp-HTTPRegistrationFormRequest) | [HTTPMessage](#http_webapp-HTTPMessage) |  |
 
  
 
@@ -379,7 +479,6 @@ Filter the types of availabilty to be returned.
 <a name="operations_ecosys-AvailabilityQuery"></a>
 
 ### AvailabilityQuery
-TODO: Find out if the user should be available
 throughout the whole duration.
 
 
@@ -597,9 +696,7 @@ A default limit of 10 will be used if the field is empty.
 <a name="operations_ecosys-Client"></a>
 
 ### Client
-All clients who hire the company to protect their compounds. 
-TODO: decide if we want to have an inactive field for clients
-      so that we don&#39;t need to delete cleints completely.
+All clients who hire the company to protect their compounds.
 
 
 | Field | Type | Label | Description |
@@ -724,6 +821,27 @@ The field to be compared with is in the corresponding XXXFilter message.
 
 
 
+<a name="operations_ecosys-FullUser"></a>
+
+### FullUser
+This message is mostly used by the internal server
+and for the creation of new users only. 
+There should be no other reasons to pass around these 
+confidential messages.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#operations_ecosys-User) |  |  |
+| nonce | [string](#string) |  |  |
+| security_string | [string](#string) |  |  |
+| hashed_password | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="operations_ecosys-IncidentReport"></a>
 
 ### IncidentReport
@@ -831,6 +949,23 @@ Passing around multiple reports in one message.
 
 
 
+<a name="operations_ecosys-LoginRequest"></a>
+
+### LoginRequest
+Any client that wishes to login send their hashed password to the backend  
+for authentication.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_email | [string](#string) |  | The user to login |
+| hashed_password | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="operations_ecosys-OrderByBroadcast"></a>
 
 ### OrderByBroadcast
@@ -898,12 +1033,28 @@ Passing around multiple reports in one message.
 <a name="operations_ecosys-OrderByQuery"></a>
 
 ### OrderByQuery
-TODO change name
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | field | [AvailabilityFilter.Field](#operations_ecosys-AvailabilityFilter-Field) |  |  |
+| order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-OrderByRegistrationOTP"></a>
+
+### OrderByRegistrationOTP
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [RegistrationOTPFilter.Field](#operations_ecosys-RegistrationOTPFilter-Field) |  |  |
 | order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
 
 
@@ -937,6 +1088,126 @@ TODO change name
 | ----- | ---- | ----- | ----------- |
 | field | [UserFilter.Field](#operations_ecosys-UserFilter-Field) |  |  |
 | order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-OrderByUserToken"></a>
+
+### OrderByUserToken
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [UserTokenFilter.Field](#operations_ecosys-UserTokenFilter-Field) |  |  |
+| order_by | [OrderBy](#operations_ecosys-OrderBy) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-RegistrationCode"></a>
+
+### RegistrationCode
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| code | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-RegistrationCodeRequest"></a>
+
+### RegistrationCodeRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user | [User](#operations_ecosys-User) |  |  |
+| type | [RegistrationCodeRequest.CodeType](#operations_ecosys-RegistrationCodeRequest-CodeType) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-RegistrationCodeResponse"></a>
+
+### RegistrationCodeResponse
+Returns a registration code that can be used to create a new user
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| response | [Response](#operations_ecosys-Response) |  |  |
+| type | [RegistrationCodeResponse.CodeType](#operations_ecosys-RegistrationCodeResponse-CodeType) |  |  |
+| code | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-RegistrationOTP"></a>
+
+### RegistrationOTP
+Message used iternally to get the registration OTP from the DB
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| registration_otp_id | [int64](#int64) |  |  |
+| token | [string](#string) |  |  |
+| user_type | [User.UserType](#operations_ecosys-User-UserType) |  |  |
+| creation_datetime | [string](#string) |  | Format must be in: YYYY-MM-DD HH:MM:SS |
+| creator | [User](#operations_ecosys-User) |  |  |
+| is_used | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-RegistrationOTPFilter"></a>
+
+### RegistrationOTPFilter
+Filter the types of registration otp to be returned.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [RegistrationOTPFilter.Field](#operations_ecosys-RegistrationOTPFilter-Field) |  |  |
+| comparisons | [Filter](#operations_ecosys-Filter) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-RegistrationOTPQuery"></a>
+
+### RegistrationOTPQuery
+Get specific types of Registration OTP as specified in the Filter. 
+If one wants to get all objects, leave filters empty. 
+A default limit of 10 will be used if the field is empty.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| filters | [RegistrationOTPFilter](#operations_ecosys-RegistrationOTPFilter) | repeated |  |
+| limit | [int64](#int64) |  | Limit the number of objects being returned. If only 5 objects should be shown, limit = 5; |
+| skip | [int64](#int64) |  | Skip n rows from the database |
+| order_by | [OrderByRegistrationOTP](#operations_ecosys-OrderByRegistrationOTP) |  | Order the queries, by default the order is desc by id |
 
 
 
@@ -1088,12 +1359,26 @@ Passing around multiple roster in one message.
 
 
 
+<a name="operations_ecosys-SecurityStringResponse"></a>
+
+### SecurityStringResponse
+Returns the security string that is tied to the user
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| response | [Response](#operations_ecosys-Response) |  |  |
+| security_string | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="operations_ecosys-User"></a>
 
 ### User
 All users who use the operations ecosystem.
-TODO: decide if we want to have an inactive field for users
-      so that we don&#39;t need to delete users completely.
 
 
 | Field | Type | Label | Description |
@@ -1143,6 +1428,77 @@ A default limit of 10 will be used if the field is empty.
 | limit | [int64](#int64) |  | Limit the number of objects being returned. If only 5 objects should be shown, limit = 5; |
 | skip | [int64](#int64) |  | Skip n rows from the database |
 | order_by | [OrderByUser](#operations_ecosys-OrderByUser) |  | Order the queries, by default the order is desc by creation date |
+
+
+
+
+
+
+<a name="operations_ecosys-UserToken"></a>
+
+### UserToken
+Message used to provide a user token to the client
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_token_id | [int64](#int64) |  |  |
+| user | [User](#operations_ecosys-User) |  |  |
+| token | [string](#string) |  |  |
+| creation_datetime | [string](#string) |  | Format must be in: YYYY-MM-DD HH:MM:SS |
+| expiry_datetime | [string](#string) |  | Format must be in: YYYY-MM-DD HH:MM:SS |
+
+
+
+
+
+
+<a name="operations_ecosys-UserTokenFilter"></a>
+
+### UserTokenFilter
+Filter the types of clients to be returned.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [UserTokenFilter.Field](#operations_ecosys-UserTokenFilter-Field) |  |  |
+| comparisons | [Filter](#operations_ecosys-Filter) |  |  |
+
+
+
+
+
+
+<a name="operations_ecosys-UserTokenQuery"></a>
+
+### UserTokenQuery
+Get specific types of user tokens as specified in the Filter. 
+If one wants to get all objects, leave filters empty. 
+A default limit of 10 will be used if the field is empty.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| filters | [UserTokenFilter](#operations_ecosys-UserTokenFilter) | repeated |  |
+| limit | [int64](#int64) |  | Limit the number of objects being returned. If only 5 objects should be shown, limit = 5; |
+| skip | [int64](#int64) |  | Skip n rows from the database |
+| order_by | [OrderByUserToken](#operations_ecosys-OrderByUserToken) |  | Order the queries, by default the order is desc by creation date |
+
+
+
+
+
+
+<a name="operations_ecosys-UserTokenResponse"></a>
+
+### UserTokenResponse
+Replies with a user token
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| response | [Response](#operations_ecosys-Response) |  |  |
+| userToken | [UserToken](#operations_ecosys-UserToken) |  |  |
 
 
 
@@ -1333,6 +1689,49 @@ More fields can be added in the future.
 
 
 
+<a name="operations_ecosys-RegistrationCodeRequest-CodeType"></a>
+
+### RegistrationCodeRequest.CodeType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ISPECIALIST | 0 |  |
+| SECURITYGUARD | 1 |  |
+| CONTROLLER | 2 |  |
+| MANAGER | 3 |  |
+
+
+
+<a name="operations_ecosys-RegistrationCodeResponse-CodeType"></a>
+
+### RegistrationCodeResponse.CodeType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ISPECIALIST | 0 |  |
+| CONTROLLER | 1 |  |
+| MANAGER | 2 |  |
+
+
+
+<a name="operations_ecosys-RegistrationOTPFilter-Field"></a>
+
+### RegistrationOTPFilter.Field
+More fields can be added in the future.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| REG_OTP_ID | 0 |  |
+| TOKEN | 1 |  |
+| USER_TYPE | 2 |  |
+| CREATION_DATE | 3 |  |
+| CREATOR_ID | 4 |  |
+| IS_USED | 5 |  |
+
+
+
 <a name="operations_ecosys-Response-Type"></a>
 
 ### Response.Type
@@ -1413,6 +1812,20 @@ More fields can be added in the future.
 | TELEGRAM_USER_ID | 7 |  |
 
 
+
+<a name="operations_ecosys-UserTokenFilter-Field"></a>
+
+### UserTokenFilter.Field
+More fields can be added in the future.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_TOKEN_ID | 0 |  |
+| USER_ID | 1 |  |
+| EXPIRY | 2 |  |
+| TOKEN | 3 |  |
+
+
  
 
  
@@ -1425,15 +1838,19 @@ More fields can be added in the future.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| AddUser | [User](#operations_ecosys-User) | [Response](#operations_ecosys-Response) | User |
+| AddUser | [FullUser](#operations_ecosys-FullUser) | [Response](#operations_ecosys-Response) | User |
 | UpdateUser | [User](#operations_ecosys-User) | [Response](#operations_ecosys-Response) |  |
 | DeleteUser | [User](#operations_ecosys-User) | [Response](#operations_ecosys-Response) |  |
-| FindUsers | [UserQuery](#operations_ecosys-UserQuery) | [UsersResponse](#operations_ecosys-UsersResponse) stream | TODO change user response to have user scoring and stuff |
-| GetWANonce | [User](#operations_ecosys-User) | [ResponseNonce](#operations_ecosys-ResponseNonce) |  |
+| FindUsers | [UserQuery](#operations_ecosys-UserQuery) | [UsersResponse](#operations_ecosys-UsersResponse) stream |  |
 | AddClient | [Client](#operations_ecosys-Client) | [Response](#operations_ecosys-Response) | Client |
 | UpdateClient | [Client](#operations_ecosys-Client) | [Response](#operations_ecosys-Response) |  |
 | DeleteClient | [Client](#operations_ecosys-Client) | [Response](#operations_ecosys-Response) |  |
 | FindClients | [ClientQuery](#operations_ecosys-ClientQuery) | [ClientResponse](#operations_ecosys-ClientResponse) stream |  |
+| GetWANonce | [User](#operations_ecosys-User) | [ResponseNonce](#operations_ecosys-ResponseNonce) | Security Related |
+| GetSecurityString | [User](#operations_ecosys-User) | [SecurityStringResponse](#operations_ecosys-SecurityStringResponse) |  |
+| AuthenticateUser | [LoginRequest](#operations_ecosys-LoginRequest) | [UserTokenResponse](#operations_ecosys-UserTokenResponse) |  |
+| GetRegistrationCode | [RegistrationCodeRequest](#operations_ecosys-RegistrationCodeRequest) | [RegistrationCodeResponse](#operations_ecosys-RegistrationCodeResponse) | Is this user or client? |
+| CheckRegistrationCode | [RegistrationCode](#operations_ecosys-RegistrationCode) | [SecurityStringResponse](#operations_ecosys-SecurityStringResponse) |  |
 
 
 <a name="operations_ecosys-BroadcastServices"></a>
@@ -1448,6 +1865,17 @@ More fields can be added in the future.
 | DeleteBroadcast | [Broadcast](#operations_ecosys-Broadcast) | [Response](#operations_ecosys-Response) |  |
 | FindBroadcasts | [BroadcastQuery](#operations_ecosys-BroadcastQuery) | [BroadcastResponse](#operations_ecosys-BroadcastResponse) stream |  |
 | UpdateBroadcastRecipient | [BroadcastRecipient](#operations_ecosys-BroadcastRecipient) | [Response](#operations_ecosys-Response) | Updating of broadcast recipients |
+
+
+<a name="operations_ecosys-CameraIotServices"></a>
+
+### CameraIotServices
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| SetGateState | [.gate_prototype.GateState](#gate_prototype-GateState) | [Response](#operations_ecosys-Response) |  |
+| GetIotState | [.google.protobuf.Empty](#google-protobuf-Empty) | [CameraIotResponse](#operations_ecosys-CameraIotResponse) stream | Continuously provides the states of the gates, fire alarms and cpu temperature as well as the camera endpoints. Responses are sent only when there is a change in state Upon connection, all states are sent for all locations are sent. |
 
 
 <a name="operations_ecosys-IncidentReportServices"></a>

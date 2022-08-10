@@ -21,7 +21,6 @@ service AdminServices {
     rpc AddUser(FullUser) returns (Response) {}
     rpc UpdateUser(User) returns (Response) {}
     rpc DeleteUser(User) returns (Response) {}
-    // TODO change user response to have user scoring and stuff
     rpc FindUsers(UserQuery) returns (stream UsersResponse) {}
 
     // Client
@@ -93,8 +92,6 @@ service CameraIotServices{
 *                              USER MESSAGES                               *
 ****************************************************************************/
 // All users who use the operations ecosystem.
-// TODO: decide if we want to have an inactive field for users
-//       so that we don't need to delete users completely. 
 message User {
     int64 user_id = 1;
     UserType user_type = 2;
@@ -192,8 +189,6 @@ message RegistrationCode{
 ****************************************************************************/
 
 // All clients who hire the company to protect their compounds. 
-// TODO: decide if we want to have an inactive field for clients
-//       so that we don't need to delete cleints completely. 
 message Client {
     int64 client_id = 1;
     string name = 2;
@@ -601,7 +596,6 @@ message OrderByRoster{
 // available for the whole time between a start 
 // and end time.
 
-// TODO: Find out if the user should be available
 // throughout the whole duration. 
 message AvailabilityQuery {
     string start_time = 1;
@@ -620,7 +614,6 @@ message AvailabilityQuery {
     OrderByQuery order_by = 6;
 }
 
-// TODO change name
 message OrderByQuery{
     AvailabilityFilter.Field field = 1;
     OrderBy order_by = 2;
