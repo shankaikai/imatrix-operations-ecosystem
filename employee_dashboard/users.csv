@@ -1,0 +1,9 @@
+user_id,user_type,name,email,phone_number,telegram_handle,user_security_img,is_part_timer,tele_user_id,nonce,security_string,hashed_password
+1,I-Specialist,Emily Lim,Emily_Lim_9@gmail.com,92807486,Emily_Lim_5,https://picsum.photos/200,0,213923368,,,
+2,I-Specialist,Xavier Chu,Xavier_Chu_7@gmail.com,97009463,Xavier_Chu_7,https://picsum.photos/200,0,223490402,,,
+3,I-Specialist,Jia Wei,Jia_Wei_1@gmail.com,80743930,Jia_Wei_2,https://picsum.photos/200,0,238363722,,,
+4,I-Specialist,Shan Kai,Shan_Kai_1@gmail.com,81840414,Shan_Kai_1,https://picsum.photos/200,0,257648377,,,
+5,I-Specialist,Hannah Mah,Hannah_Mah_5@gmail.com,98191021,Hannah_Mah_4,https://picsum.photos/200,0,283168657,,,
+6,I-Specialist,Gabriel Phang,Gabriel_Phang_1@gmail.com,81068008,Gabriel_Phang_2,https://picsum.photos/200,0,275298553,,,
+7,Controller,Mawi,Mawi_6@gmail.com,93073243,Mawi_4,https://picsum.photos/200,0,220471586,,,
+8,Controller,Satya,Satya_1@gmail.com,90495816,Satya_7,https://picsum.photos/200,0,219819001,,,
